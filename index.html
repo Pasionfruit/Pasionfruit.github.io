@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abe's Recipes</title>
+    <title>AP Cooks</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -11,7 +11,7 @@
     <header>
         <nav>
             <div class="logo">
-                <h1>Abe's Recipes</h1>
+                <h1>AP Cooks</h1>
             </div>
             <div class="nav-links">
                 <a href="index.html" class="active">Home</a>
@@ -23,32 +23,7 @@
     <main>
         <section id="featured-recipes" class="recipe-grid">
             <h2>Featured Recipes</h2>
-            <div class="recipes-container">
-                <article class="recipe-card">
-                    <img src="images/placeholder1.jpg" alt="Recipe 1">
-                    <div class="recipe-content">
-                        <h3>Classic Chocolate Cake</h3>
-                        <p>A rich and moist chocolate cake that's perfect for any occasion.</p>
-                        <a href="recipes/chocolate-cake.html" class="btn">View Recipe</a>
-                    </div>
-                </article>
-                <article class="recipe-card">
-                    <img src="images/placeholder2.jpg" alt="Recipe 2">
-                    <div class="recipe-content">
-                        <h3>Homemade Pizza</h3>
-                        <p>Delicious pizza with a crispy crust and your favorite toppings.</p>
-                        <a href="recipes/pizza.html" class="btn">View Recipe</a>
-                    </div>
-                </article>
-                <article class="recipe-card">
-                    <img src="images/placeholder3.jpg" alt="Recipe 3">
-                    <div class="recipe-content">
-                        <h3>Fresh Pasta</h3>
-                        <p>Learn how to make authentic Italian pasta from scratch.</p>
-                        <a href="recipes/pasta.html" class="btn">View Recipe</a>
-                    </div>
-                </article>
-            </div>
+            <div class="recipes-container" id="recipesContainer"></div>
         </section>
 
         <section id="categories" class="categories">
@@ -84,6 +59,42 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Function to fetch all recipes from the API
+        async function fetchRecipes() {
+            try {
+                const response = await fetch('/api/recipes');
+                const recipes = await response.json();
+                displayRecipes(recipes);
+            } catch (error) {
+                console.error('Error fetching recipes:', error);
+            }
+        }
+
+        // Function to create and display recipe cards
+        function displayRecipes(recipes) {
+            const container = document.getElementById('recipesContainer');
+            container.innerHTML = ''; // Clear existing content
+
+            recipes.forEach(recipe => {
+                const article = document.createElement('article');
+                article.className = 'recipe-card';
+                
+                article.innerHTML = `
+                    <img src="${recipe.image}" alt="${recipe.name}">
+                    <div class="recipe-content">
+                        <h3>${recipe.name}</h3>
+                        <p>Prep Time: ${recipe.prepTime} | Cook Time: ${recipe.cookTime}</p>
+                        <a href="/recipes?id=${recipe._id}" class="btn">View Recipe</a>
+                    </div>
+                `;
+                
+                container.appendChild(article);
+            });
+        }
+
+        // Load recipes when the page loads
+        window.addEventListener('load', fetchRecipes);
+    </script>
 </body>
 </html> 

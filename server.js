@@ -30,6 +30,15 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // API Routes
+app.get('/api/recipes', async (req, res) => {
+    try {
+        const recipes = await Recipe.find();
+        res.json(recipes);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching recipes', error: error.message });
+    }
+});
+
 app.get('/api/recipes/:id', async (req, res) => {
     try {
         const recipe = await Recipe.findById(req.params.id);
