@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .recipe-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .recipe-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .recipe-header {
+            margin: 1.5rem 0;
+        }
+        .recipe-times {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        .recipe-section {
+            margin: 2rem 0;
+        }
+        .ingredients-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .ingredients-list li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .ingredients-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff6b6b;
+        }
+        .instructions-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+        }
+        .instructions-list li {
+            margin: 1rem 0;
+        }
+        .tiktok-link {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .tiktok-link:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="recipe-container">
+        <img id="recipeImage" class="recipe-image" src="" alt="Recipe Image">
+        
+        <div class="recipe-header">
+            <h1 id="recipeName"></h1>
+            <div class="recipe-times">
+                <div>
+                    <strong>Prep Time:</strong>
+                    <span id="prepTime"></span>
+                </div>
+                <div>
+                    <strong>Cook Time:</strong>
+                    <span id="cookTime"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="recipe-section">
+            <h2>Ingredients</h2>
+            <ul id="ingredientsList" class="ingredients-list"></ul>
+        </div>
+
+        <div class="recipe-section">
+            <h2>Instructions</h2>
+            <ol id="instructionsList" class="instructions-list"></ol>
+        </div>
+
+        <a id="tiktokLink" class="tiktok-link" href="" target="_blank">
+            Watch on TikTok
+        </a>
+    </div>
+
+    <script>
+        // Get recipe ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get('id');
+
+        // Fetch recipe data from the backend
+        async function fetchRecipe() {
+            try {
+                const response = await fetch(`/api/recipes/${recipeId}`);
+                const recipe = await response.json();
+                
+                // Populate the page with recipe data
+                document.getElementById('recipeImage').src = recipe.image;
+                document.getElementById('recipeName').textContent = recipe.name;
+                document.getElementById('prepTime').textContent = recipe.prepTime;
+                document.getElementById('cookTime').textContent = recipe.cookTime;
+                
+                // Populate ingredients
+                const ingredientsList = document.getElementById('ingredientsList');
+                recipe.ingredients.forEach(ingredient => {
+                    const li = document.createElement('li');
+                    li.textContent = ingredient;
+                    ingredientsList.appendChild(li);
+                });
+
+                // Populate instructions
+                const instructionsList = document.getElementById('instructionsList');
+                recipe.instructions.forEach(instruction => {
+                    const li = document.createElement('li');
+                    li.textContent = instruction;
+                    instructionsList.appendChild(li);
+                });
+
+                // Set TikTok link
+                const tiktokLink = document.getElementById('tiktokLink');
+                tiktokLink.href = recipe.tiktokLink;
+            } catch (error) {
+                console.error('Error fetching recipe:', error);
+            }
+        }
+
+        // Load recipe when page loads
+        window.addEventListener('load', fetchRecipe);
+    </script>
+</body>
+</html> 
