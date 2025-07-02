@@ -8,7 +8,7 @@
 </head>
 <body>
   <header>
-    <h1>My Google Sheets Dashboard</h1>
+    <h1>Abe's Life Dashboard</h1>
     <p>Welcome to your personal data dashboard!</p>
   </header>
 
@@ -16,39 +16,21 @@
     <div class="loading" id="loading">
       <p>Loading your data...</p>
     </div>
-
     <div class="data-container" id="dataContainer" style="display: none;">
-      <!-- Goals Section -->
-      <section class="data-section">
-        <h2>📋 Goals</h2>
-        <div id="goalsData" class="data-grid">
-          <!-- Goals data will be populated here -->
-        </div>
-      </section>
-
-      <!-- Food Section -->
-      <section class="data-section">
-        <h2>🍽️ Food</h2>
-        <div id="foodData" class="data-grid">
-          <!-- Food data will be populated here -->
-        </div>
-      </section>
-
-      <!-- Money Section -->
-      <section class="data-section">
-        <h2>💰 Money</h2>
-        <div id="moneyData" class="data-grid">
-          <!-- Money data will be populated here -->
-        </div>
-      </section>
-
-      <!-- Travel Section -->
-      <section class="data-section">
-        <h2>✈️ Travel</h2>
-        <div id="travelData" class="data-grid">
-          <!-- Travel data will be populated here -->
-        </div>
-      </section>
+      <div class="button-container">
+        <button class="nav-button" onclick="window.location.href='goals.html'">
+          📋 Manage Goals
+        </button>
+        <button class="nav-button" onclick="window.location.href='food.html'">
+          🍽️ Manage Food
+        </button>
+        <button class="nav-button" onclick="window.location.href='money.html'">
+          💰 Manage Money
+        </button> 
+        <button class="nav-button" onclick="window.location.href='travel.html'">
+          ✈️ Manage Travel
+        </button>
+      </div>
     </div>
 
     <div class="error-message" id="errorMessage" style="display: none;">
