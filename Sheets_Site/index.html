@@ -7,7 +7,55 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <h1>This is a test</h1>
+  <header>
+    <h1>My Google Sheets Dashboard</h1>
+    <p>Welcome to your personal data dashboard!</p>
+  </header>
+
+  <main>
+    <div class="loading" id="loading">
+      <p>Loading your data...</p>
+    </div>
+
+    <div class="data-container" id="dataContainer" style="display: none;">
+      <!-- Goals Section -->
+      <section class="data-section">
+        <h2>📋 Goals</h2>
+        <div id="goalsData" class="data-grid">
+          <!-- Goals data will be populated here -->
+        </div>
+      </section>
+
+      <!-- Food Section -->
+      <section class="data-section">
+        <h2>🍽️ Food</h2>
+        <div id="foodData" class="data-grid">
+          <!-- Food data will be populated here -->
+        </div>
+      </section>
+
+      <!-- Money Section -->
+      <section class="data-section">
+        <h2>💰 Money</h2>
+        <div id="moneyData" class="data-grid">
+          <!-- Money data will be populated here -->
+        </div>
+      </section>
+
+      <!-- Travel Section -->
+      <section class="data-section">
+        <h2>✈️ Travel</h2>
+        <div id="travelData" class="data-grid">
+          <!-- Travel data will be populated here -->
+        </div>
+      </section>
+    </div>
+
+    <div class="error-message" id="errorMessage" style="display: none;">
+      <p>Oops! There was an error loading your data. Please try refreshing the page.</p>
+    </div>
+  </main>
+
   <script src="assets/script.js"></script>
 </body>
 </html>
