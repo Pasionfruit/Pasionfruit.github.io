@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sheets CRUD Site</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <title>Abe's Life Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="Personal dashboard for managing goals, food, money, and travel data">
 </head>
 <body>
   <header>
@@ -18,16 +19,16 @@
     </div>
     <div class="data-container" id="dataContainer" style="display: none;">
       <div class="button-container">
-        <button class="nav-button" onclick="window.location.href='goals.html'">
+        <button class="nav-button" onclick="window.location.href='pages/goals.html'">
           📋 Manage Goals
         </button>
-        <button class="nav-button" onclick="window.location.href='food.html'">
+        <button class="nav-button" onclick="window.location.href='pages/food.html'">
           🍽️ Manage Food
         </button>
-        <button class="nav-button" onclick="window.location.href='money.html'">
+        <button class="nav-button" onclick="window.location.href='pages/money.html'">
           💰 Manage Money
         </button> 
-        <button class="nav-button" onclick="window.location.href='travel.html'">
+        <button class="nav-button" onclick="window.location.href='pages/travel.html'">
           ✈️ Manage Travel
         </button>
       </div>
@@ -38,6 +39,7 @@
     </div>
   </main>
 
-  <script src="assets/script.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

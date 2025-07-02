@@ -169,6 +169,29 @@ main {
   font-style: italic;
 }
 
+/* Back button styling */
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
   header h1 {
     font-size: 2rem;
@@ -189,5 +212,12 @@ main {
   .data-table th,
   .data-table td {
     padding: 0.5rem;
+  }
+  
+  .back-button {
+    top: 10px;
+    left: 10px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 }
