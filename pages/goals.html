@@ -34,13 +34,8 @@
                 <h2>Add New Goal</h2>
                 <form id="goalForm" onsubmit="handleFormSubmit(event, 'goals')">
                     <div style="display: grid; gap: 1rem; margin-bottom: 1rem;">
+                        <input type="text" name="type" placeholder="Goal type (e.g., Personal, Professional)" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
                         <input type="text" name="goal" placeholder="Goal description" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                        <select name="priority" required style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                            <option value="">Select Priority</option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                        </select>
                         <input type="date" name="target_date" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
                         <button type="submit" style="padding: 0.75rem; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Goal</button>
                     </div>
