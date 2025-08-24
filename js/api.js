@@ -1,9 +1,49 @@
+
+// --- FIREBASE FIRESTORE SETUP ---
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBa9EfqxvYRfWT4LikWSAnexo80DqJzICw",
+  authDomain: "abepasion-90edd.firebaseapp.com",
+  projectId: "abepasion-90edd",
+  storageBucket: "abepasion-90edd.firebasestorage.app",
+  messagingSenderId: "25428321460",
+  appId: "1:25428321460:web:ee0ad15f679e08dcf663e1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Example: Add data to a Firestore collection
+export async function addData(collectionName, data) {
+  try {
+    const docRef = await addDoc(collection(db, collectionName), data);
+    return docRef.id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e;
+  }
+}
+
+// Example: Get all data from a Firestore collection
+export async function getData(collectionName) {
+  try {
+    const querySnapshot = await getDocs(collection(db, collectionName));
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (e) {
+    console.error("Error getting documents: ", e);
+    throw e;
+  }
+}
+
+// --- PREVIOUS GOOGLE SHEETS API CODE (COMMENTED OUT FOR REFERENCE) ---
+/*
 // API Configuration
 const CONFIG = {
-  // Base URL for Google Sheets API
   baseUrl: "https://script.google.com/macros/s/AKfycbxTMCxr-agTpxD-gqs5OGiCOujtIIuxMtwEu08ms_KTM8u3ZAWCDEl8vRCUCDtEjH7g/exec",
-  
-  // Sheet endpoints
   endpoints: {
     goals: "Goals",
     food: "Food", 
@@ -12,70 +52,13 @@ const CONFIG = {
   }
 };
 
-// API Functions
 class SheetsAPI {
-  static async fetchData(sheet, options = {}) {
-    try {
-      const url = `${CONFIG.baseUrl}?sheet=${sheet}`;
-      const response = await fetch(url, options);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(`Error fetching ${sheet} data:`, error);
-      throw error;
-    }
-  }
-
-  static async postData(sheet, data) {
-    try {
-      const url = `${CONFIG.baseUrl}?sheet=${sheet}`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return await response.text();
-    } catch (error) {
-      console.error(`Error posting to ${sheet}:`, error);
-      throw error;
-    }
-  }
-
-  static async getAllData() {
-    try {
-      const [goalsData, foodData, moneyData, travelData] = await Promise.all([
-        this.fetchData(CONFIG.endpoints.goals),
-        this.fetchData(CONFIG.endpoints.food),
-        this.fetchData(CONFIG.endpoints.money),
-        this.fetchData(CONFIG.endpoints.travel)
-      ]);
-
-      return {
-        goals: goalsData,
-        food: foodData,
-        money: moneyData,
-        travel: travelData
-      };
-    } catch (error) {
-      console.error("Error loading all data:", error);
-      throw error;
-    }
-  }
+  static async fetchData(sheet, options = {}) { /* ... */ }
+  static async postData(sheet, data) { /* ... */ }
+  static async getAllData() { /* ... */ }
 }
-
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { CONFIG, SheetsAPI };
 }
+*/
