@@ -17,16 +17,18 @@ class UIHelpers {
     headers.forEach(header => {
       tableHTML += `<th>${header}</th>`;
     });
+    tableHTML += '<th>Actions</th>';
     tableHTML += '</tr></thead>';
     
     // Create data rows
     tableHTML += '<tbody>';
-    data.forEach(row => {
-      tableHTML += '<tr>';
+    data.forEach((row, index) => {
+      tableHTML += `<tr data-row-index="${index}">`;
       headers.forEach(header => {
         const cellValue = row[header] || '';
-        tableHTML += `<td>${cellValue}</td>`;
+        tableHTML += `<td data-field="${header}">${cellValue}</td>`;
       });
+      tableHTML += `<td><button class="edit-btn" onclick="editRow(${index})">Edit</button></td>`;
       tableHTML += '</tr>';
     });
     tableHTML += '</tbody></table>';
@@ -114,6 +116,128 @@ function handleFormSubmit(event, sheet = 'goals') {
       submitButton.textContent = originalText;
       submitButton.disabled = false;
     });
+}
+
+// Row editing functionality
+let originalRowData = {};
+
+function editRow(rowIndex) {
+  const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+  if (!row) return;
+
+  // Store original data
+  originalRowData[rowIndex] = {};
+  const cells = row.querySelectorAll('td[data-field]');
+  
+  cells.forEach(cell => {
+    const field = cell.getAttribute('data-field');
+    const value = cell.textContent.trim();
+    originalRowData[rowIndex][field] = value;
+    
+    // Convert cell to input field
+    const input = createInputForField(field, value);
+    cell.innerHTML = '';
+    cell.appendChild(input);
+  });
+
+  // Replace edit button with save/cancel buttons
+  const actionCell = row.querySelector('td:last-child');
+  actionCell.innerHTML = `
+    <button class="save-btn" onclick="saveRow(${rowIndex})">Save</button>
+    <button class="cancel-btn" onclick="cancelEdit(${rowIndex})">Cancel</button>
+  `;
+}
+
+function createInputForField(field, value) {
+  let input;
+  
+  if (field === 'meal_type') {
+    input = document.createElement('select');
+    input.innerHTML = `
+      <option value="">Select Meal Type</option>
+      <option value="Breakfast">Breakfast</option>
+      <option value="Lunch">Lunch</option>
+      <option value="Dinner">Dinner</option>
+      <option value="Snack">Snack</option>
+    `;
+    input.value = value;
+  } else if (field === 'date') {
+    input = document.createElement('input');
+    input.type = 'date';
+    input.value = value;
+  } else if (field === 'calories') {
+    input = document.createElement('input');
+    input.type = 'number';
+    input.value = value;
+  } else {
+    input = document.createElement('input');
+    input.type = 'text';
+    input.value = value;
+  }
+  
+  input.style.width = '100%';
+  input.style.padding = '0.25rem';
+  input.style.border = '1px solid #ddd';
+  input.style.borderRadius = '4px';
+  
+  return input;
+}
+
+function saveRow(rowIndex) {
+  const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+  if (!row) return;
+
+  // Collect updated data
+  const updatedData = {};
+  const cells = row.querySelectorAll('td[data-field]');
+  
+  cells.forEach(cell => {
+    const field = cell.getAttribute('data-field');
+    const input = cell.querySelector('input, select');
+    updatedData[field] = input.value;
+  });
+
+  // Show loading on save button
+  const saveBtn = row.querySelector('.save-btn');
+  const originalText = saveBtn.textContent;
+  saveBtn.textContent = 'Saving...';
+  saveBtn.disabled = true;
+
+  // Update data via API (you'll need to implement this in your SheetsAPI)
+  // For now, we'll just update the display
+  cells.forEach(cell => {
+    const field = cell.getAttribute('data-field');
+    cell.textContent = updatedData[field];
+  });
+
+  // Reset action buttons
+  const actionCell = row.querySelector('td:last-child');
+  actionCell.innerHTML = `<button class="edit-btn" onclick="editRow(${rowIndex})">Edit</button>`;
+
+  // Clean up original data
+  delete originalRowData[rowIndex];
+  
+  console.log('Row updated:', updatedData);
+  alert('Row updated successfully!');
+}
+
+function cancelEdit(rowIndex) {
+  const row = document.querySelector(`tr[data-row-index="${rowIndex}"]`);
+  if (!row) return;
+
+  // Restore original data
+  const cells = row.querySelectorAll('td[data-field]');
+  cells.forEach(cell => {
+    const field = cell.getAttribute('data-field');
+    cell.textContent = originalRowData[rowIndex][field];
+  });
+
+  // Reset action buttons
+  const actionCell = row.querySelector('td:last-child');
+  actionCell.innerHTML = `<button class="edit-btn" onclick="editRow(${rowIndex})">Edit</button>`;
+
+  // Clean up original data
+  delete originalRowData[rowIndex];
 }
 
 // Initialize app when DOM is loaded
