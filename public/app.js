@@ -9,6 +9,7 @@ function googleLogin() {
         .then((result) => {
             const user = result.user;
             console.log(`Hello ${user.displayName}`);
+            document.body.innerHTML = `<h1>Welcome, ${user.displayName}!</h1>`;
         })
         .catch((error) => {
             console.error("Error during login", error);
