@@ -1,6 +1,19 @@
 document.addEventListener('DOMContentLoaded', event => {
     const app = firebase.app();
     console.log(app);
+
+    const db = firebase.firestore();
+
+    const myPost = db.collection('posts').doc('firstpost');
+
+    myPost.onSnapshot((doc) => {
+        const data = doc.data();
+        console.log("Current data: ", data);
+        const titleDiv = document.getElementById('title');
+        if (titleDiv && data && data.title) {
+            titleDiv.innerText = `title: ${data.title}`;
+        }
+    });
 });
 
 function googleLogin() {
