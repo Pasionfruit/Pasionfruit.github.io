@@ -1,10 +1,6 @@
-import firebase from "firebase/compat/app";
-
 document.addEventListener('DOMContentLoaded', event => {
-    
     const app = firebase.app();
     console.log(app);
-    
 });
 
 function googleLogin() {
@@ -18,5 +14,3 @@ function googleLogin() {
             console.error("Error during login", error);
         });
 }
-
-export { googleLogin };
