@@ -386,6 +386,7 @@ function App() {
 
   const [reqStatusFilter, setReqStatusFilter] = useState<RequirementStatus | "All">("All");
   const [reqSearch, setReqSearch] = useState<string>("");
+  const [reqFunctionBlockFilter, setReqFunctionBlockFilter] = useState<string>("");
 
   const [ticketStatusFilter, setTicketStatusFilter] = useState<TicketStatus | "All">("All");
   const [ticketPriorityFilter, setTicketPriorityFilter] = useState<TicketPriority | "All">("All");
@@ -531,6 +532,12 @@ function App() {
           : normalizeRequirementStatus(item.status) === normalizeRequirementStatus(reqStatusFilter)
       )
       .filter((item) => {
+        if (!reqFunctionBlockFilter.trim()) {
+          return true;
+        }
+        return item.functionBlock.toLowerCase().includes(reqFunctionBlockFilter.trim().toLowerCase());
+      })
+      .filter((item) => {
         if (!reqSearch.trim()) {
           return true;
         }
@@ -538,10 +545,11 @@ function App() {
         return (
           item.requirement.toLowerCase().includes(needle) ||
           item.description.toLowerCase().includes(needle) ||
+          item.functionBlock.toLowerCase().includes(needle) ||
           item.notes.toLowerCase().includes(needle)
         );
       });
-  }, [requirements, project, reqStatusFilter, reqSearch]);
+  }, [requirements, project, reqStatusFilter, reqFunctionBlockFilter, reqSearch]);
 
   const projectTickets = useMemo(() => {
     return tickets
@@ -1788,11 +1796,16 @@ function App() {
 
         <div className="panel requirements-panel">
           <h3>{project} Requirements</h3>
-          <div className="filter-toolbar">
+          <div className="filter-toolbar requirements-filter-toolbar">
             <input
               placeholder="Search requirement, description, or notes"
               value={reqSearch}
               onChange={(event) => setReqSearch(event.target.value)}
+            />
+            <input
+              placeholder="Filter Function Block #"
+              value={reqFunctionBlockFilter}
+              onChange={(event) => setReqFunctionBlockFilter(event.target.value)}
             />
             <select
               value={reqStatusFilter}
