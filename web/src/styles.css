@@ -281,6 +281,17 @@ button.danger {
   overflow: auto;
 }
 
+.requirements-panel {
+  height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
+.requirements-table-wrap {
+  flex: 1;
+  min-height: 0;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -451,5 +462,9 @@ tbody tr:nth-child(even) {
   .topbar-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .requirements-panel {
+    height: 520px;
   }
 }

@@ -71,7 +71,7 @@ async function writeRows(tabName: string, headers: string[], rows: string[][]): 
 // ---- Column ordering (must match Google Sheet header rows) ----
 
 const COLS = {
-  requirements:    ["id", "project", "requirement", "description", "notes", "status", "relatedTestcases"],
+  requirements:    ["id", "project", "requirement", "description", "functionBlock", "status", "relatedTestCases", "failedTestCases", "notes"],
   tickets:         ["id", "project", "ticket", "summary", "priority", "failureBuild", "fixedBuild", "status", "associatedTestCases", "resolutionNotes"],
   assignments:     ["id", "project", "date", "startDate", "dueDate", "teamMember", "taskName", "task", "status"],
   teamActions:     ["id", "project", "teamMember", "action", "dueDate", "status"],

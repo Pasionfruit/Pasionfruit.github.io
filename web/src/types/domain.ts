@@ -1,6 +1,6 @@
 export type ProjectName = "SunGuide" | "NG SELS";
 
-export type RequirementStatus = "Draft" | "In Review" | "Approved" | "Blocked";
+export type RequirementStatus = "Passed" | "Failed" | "Rewrite Requested";
 export type TicketStatus = "Open" | "In Progress" | "Done" | "Blocked";
 export type TicketPriority = "Low" | "Medium" | "High" | "Critical";
 export type AssignmentStatus = "Planned" | "In Progress" | "Done";
@@ -10,9 +10,11 @@ export interface Requirement {
   project: ProjectName;
   requirement: string;
   description: string;
-  notes: string;
+  functionBlock: string;
   status: RequirementStatus;
-  relatedTestcases: string;
+  relatedTestCases: string;
+  failedTestCases: string;
+  notes: string;
 }
 
 export interface Ticket {

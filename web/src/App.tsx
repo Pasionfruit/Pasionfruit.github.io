@@ -51,8 +51,10 @@ const sampleRequirements: Requirement[] = [
     requirement: "SG-REQ-001",
     description: "System should support user login with role-based access.",
     notes: "Core authentication flow",
-    status: "Approved",
-    relatedTestcases: "TC-SG-1, TC-SG-2",
+    functionBlock: "Authentication",
+    status: "Passed",
+    relatedTestCases: "TC-SG-1, TC-SG-2",
+    failedTestCases: "",
   },
   {
     id: "req-2",
@@ -60,8 +62,10 @@ const sampleRequirements: Requirement[] = [
     requirement: "NG-REQ-001",
     description: "System should ingest project requirements from Excel and PDF.",
     notes: "RAG ingestion baseline",
-    status: "In Review",
-    relatedTestcases: "",
+    functionBlock: "Ingestion",
+    status: "Passed",
+    relatedTestCases: "",
+    failedTestCases: "",
   },
 ];
 
@@ -343,6 +347,14 @@ function generateId(prefix: string): string {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+function normalizeRequirementStatus(status: string | undefined): RequirementStatus {
+  const value = (status ?? "").trim().toLowerCase();
+  if (value === "passed" || value === "approved") return "Passed";
+  if (value === "failed" || value === "blocked") return "Failed";
+  if (value === "rewrite requested" || value === "in review") return "Rewrite Requested";
+  return "Passed";
+}
+
 function App() {
   const [activeSection, setActiveSection] = useState<NavSection>("Overview");
   const [activeTab, setActiveTab] = useState<TabName>("Schedule");
@@ -365,8 +377,10 @@ function App() {
     requirement: "",
     description: "",
     notes: "",
-    status: "Draft",
-    relatedTestcases: "",
+    functionBlock: "",
+    status: "Passed",
+    relatedTestCases: "",
+    failedTestCases: "",
   });
   const [editingRequirementId, setEditingRequirementId] = useState<string | null>(null);
 
@@ -478,7 +492,12 @@ function App() {
           return result.status === "fulfilled" ? result.value : fallback;
         };
 
-        setRequirements(valueOr(reqs, sampleRequirements));
+        setRequirements(
+          valueOr(reqs, sampleRequirements).map((item) => ({
+            ...item,
+            status: normalizeRequirementStatus(item.status),
+          }))
+        );
         setTickets(valueOr(tix, sampleTickets));
         setTestcases(valueOr(tcs, sampleTestCases));
         setAssignments(valueOr(asgns, sampleAssignments));
@@ -506,7 +525,11 @@ function App() {
   const projectRequirements = useMemo(() => {
     return requirements
       .filter((item) => item.project === project)
-      .filter((item) => (reqStatusFilter === "All" ? true : item.status === reqStatusFilter))
+      .filter((item) =>
+        reqStatusFilter === "All"
+          ? true
+          : normalizeRequirementStatus(item.status) === normalizeRequirementStatus(reqStatusFilter)
+      )
       .filter((item) => {
         if (!reqSearch.trim()) {
           return true;
@@ -775,7 +798,7 @@ function App() {
         ];
     setRequirements(next);
     persistAll({ requirements: next });
-    setReqForm({ requirement: "", description: "", notes: "", status: "Draft", relatedTestcases: "" });
+    setReqForm({ requirement: "", description: "", notes: "", functionBlock: "", status: "Passed", relatedTestCases: "", failedTestCases: "" });
     setEditingRequirementId(null);
   }
 
@@ -786,14 +809,16 @@ function App() {
       requirement: item.requirement,
       description: item.description,
       notes: item.notes,
+      functionBlock: item.functionBlock,
       status: item.status,
-      relatedTestcases: item.relatedTestcases,
+      relatedTestCases: item.relatedTestCases,
+      failedTestCases: item.failedTestCases,
     });
   }
 
   function cancelRequirementEdit(): void {
     setEditingRequirementId(null);
-    setReqForm({ requirement: "", description: "", notes: "", status: "Draft", relatedTestcases: "" });
+    setReqForm({ requirement: "", description: "", notes: "", functionBlock: "", status: "Passed", relatedTestCases: "", failedTestCases: "" });
   }
 
   function removeRequirement(id: string): void {
@@ -836,9 +861,12 @@ function App() {
               project: item.project || project,
               requirement: item.requirement,
               description: item.description,
+              functionBlock: item.functionBlock || "",
+              status: normalizeRequirementStatus(item.status),
+              relatedTestCases:
+                item.relatedTestCases || (item as { relatedTestcases?: string }).relatedTestcases || "",
+              failedTestCases: item.failedTestCases || "",
               notes: item.notes || "",
-              status: (item.status || "Draft") as RequirementStatus,
-              relatedTestcases: item.relatedTestcases || "",
             });
           }
         }
@@ -1023,9 +1051,11 @@ function App() {
     const data = projectRequirements.map((req) => ({
       requirement: req.requirement,
       description: req.description,
-      notes: req.notes,
+      functionBlock: req.functionBlock,
       status: req.status,
-      relatedTestcases: req.relatedTestcases,
+      relatedTestCases: req.relatedTestCases,
+      failedTestCases: req.failedTestCases,
+      notes: req.notes,
     }));
     if (format === "csv") {
       exportToCSV(data, `${project}-requirements`);
@@ -1708,10 +1738,9 @@ function App() {
                   value={reqForm.status}
                   onChange={(event) => setReqForm({ ...reqForm, status: event.target.value as RequirementStatus })}
                 >
-                  <option>Draft</option>
-                  <option>In Review</option>
-                  <option>Approved</option>
-                  <option>Blocked</option>
+                  <option>Passed</option>
+                  <option>Failed</option>
+                  <option>Rewrite Requested</option>
                 </select>
                 <textarea
                   placeholder="Description"
@@ -1719,15 +1748,25 @@ function App() {
                   onChange={(event) => setReqForm({ ...reqForm, description: event.target.value })}
                   required
                 />
+                <input
+                  placeholder="Function Block"
+                  value={reqForm.functionBlock}
+                  onChange={(event) => setReqForm({ ...reqForm, functionBlock: event.target.value })}
+                />
+                <input
+                  placeholder="Related Test Cases"
+                  value={reqForm.relatedTestCases}
+                  onChange={(event) => setReqForm({ ...reqForm, relatedTestCases: event.target.value })}
+                />
+                <input
+                  placeholder="Failed Test Cases"
+                  value={reqForm.failedTestCases}
+                  onChange={(event) => setReqForm({ ...reqForm, failedTestCases: event.target.value })}
+                />
                 <textarea
                   placeholder="Notes"
                   value={reqForm.notes}
                   onChange={(event) => setReqForm({ ...reqForm, notes: event.target.value })}
-                />
-                <input
-                  placeholder="Related Test Cases"
-                  value={reqForm.relatedTestcases}
-                  onChange={(event) => setReqForm({ ...reqForm, relatedTestcases: event.target.value })}
                 />
               </div>
               <div className="button-row">
@@ -1747,7 +1786,7 @@ function App() {
           )}
         </form>
 
-        <div className="panel">
+        <div className="panel requirements-panel">
           <h3>{project} Requirements</h3>
           <div className="filter-toolbar">
             <input
@@ -1760,10 +1799,9 @@ function App() {
               onChange={(event) => setReqStatusFilter(event.target.value as RequirementStatus | "All")}
             >
               <option value="All">All Statuses</option>
-              <option value="Draft">Draft</option>
-              <option value="In Review">In Review</option>
-              <option value="Approved">Approved</option>
-              <option value="Blocked">Blocked</option>
+              <option value="Passed">Passed</option>
+              <option value="Failed">Failed</option>
+              <option value="Rewrite Requested">Rewrite Requested</option>
             </select>
             <button
               type="button"
@@ -1773,15 +1811,17 @@ function App() {
               Export CSV
             </button>
           </div>
-          <div className="table-wrap">
+          <div className="table-wrap requirements-table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Requirement</th>
                   <th>Description</th>
-                  <th>Notes</th>
+                  <th>Function Block</th>
                   <th>Status</th>
-                  <th>Related Testcases</th>
+                  <th>Related Test Cases</th>
+                  <th>Failed Test Cases</th>
+                  <th>Notes</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1790,9 +1830,11 @@ function App() {
                   <tr key={row.id}>
                     <td>{row.requirement}</td>
                     <td>{row.description}</td>
-                    <td>{row.notes}</td>
+                    <td>{row.functionBlock || "-"}</td>
                     <td>{row.status}</td>
-                    <td>{row.relatedTestcases || "-"}</td>
+                    <td>{row.relatedTestCases || "-"}</td>
+                    <td>{row.failedTestCases || "-"}</td>
+                    <td>{row.notes}</td>
                     <td>
                       <button
                         className="icon-button"
@@ -2084,7 +2126,7 @@ function App() {
             With Linked Testcases: {
               requirements
                 .filter((item) => item.project === project)
-                .filter((item) => item.relatedTestcases.trim().length > 0).length
+                .filter((item) => item.relatedTestCases.trim().length > 0).length
             }
           </p>
           <p>
