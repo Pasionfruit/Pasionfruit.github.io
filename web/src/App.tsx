@@ -2143,9 +2143,9 @@ function App() {
             }
           </p>
           <p>
-            In Review: {requirements.filter((item) => item.project === project && item.status === "In Review").length}
+            Rewrite Requested: {requirements.filter((item) => item.project === project && item.status === "Rewrite Requested").length}
           </p>
-          <p>Blocked: {requirements.filter((item) => item.project === project && item.status === "Blocked").length}</p>
+          <p>Failed: {requirements.filter((item) => item.project === project && item.status === "Failed").length}</p>
         </div>
       </div>
     );
