@@ -115,6 +115,28 @@ body {
   font-size: 1.1rem;
 }
 
+.global-theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1100;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  box-shadow: var(--panel-shadow);
+}
+
+.global-theme-toggle:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-soft);
+}
+
 .tabs {
   margin-top: 14px;
   display: flex;

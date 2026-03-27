@@ -225,7 +225,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   const dailyTodoWidget = (
     <article className="dashboard-widget dashboard-widget-todos">
       <div className="dashboard-widget-header">
-        <h3>CRUD Daily To-Do List</h3>
+        <h3>Daily To-Do List</h3>
         <button
           type="button"
           className="dashboard-collapse-toggle"

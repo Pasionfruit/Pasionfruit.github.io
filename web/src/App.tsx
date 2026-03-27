@@ -724,6 +724,19 @@ function App() {
   function toggleTheme(): void {
     setTheme((current) => (current === "light" ? "dark" : "light"));
   }
+  const globalThemeToggle = (
+    <button
+      className="global-theme-toggle"
+      type="button"
+      onClick={toggleTheme}
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+    >
+      <span className="theme-icon" aria-hidden="true">
+        {theme === "light" ? "☀" : "🌙"}
+      </span>
+    </button>
+  );
 
   function calculateBusinessDays(startDateStr: string, endDateStr: string): number {
     const start = new Date(startDateStr);
@@ -3372,82 +3385,119 @@ function App() {
     );
   }
 
+  function renderActiveTab() {
+    switch (activeTab) {
+      case "Schedule":
+        return renderCalendarTab();
+      case "Requirements":
+        return renderRequirementsTab();
+      case "Tickets":
+        return renderTicketsTab();
+      case "Overview":
+        return renderOverviewTab();
+      case "Members":
+        return renderMembersTab();
+      case "Milestones":
+        return renderMilestonesTab();
+      case "Tasks":
+        return renderTasksTab();
+      case "Automation":
+        return renderAutomationTab();
+      case "Devices":
+        return renderDevicesTab();
+      case "Simulator":
+        return renderSimulatorTab();
+      case "Test Case Generation":
+        return renderTestCaseTab();
+      case "Learning":
+        return renderLearningTab();
+      default:
+        return renderOverviewTab();
+    }
+  }
+
   if (isGisLoading) {
     return (
-      <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
-        <p>Loading authentication...</p>
-      </div>
+      <>
+        {globalThemeToggle}
+        <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
+          <p>Loading authentication...</p>
+        </div>
+      </>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <Homepage
-        authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
-        onNavigateToApp={() => setActiveView("app")}
-      />
+      <>
+        {globalThemeToggle}
+        <Homepage
+          authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
+          onNavigateToApp={() => setActiveView("app")}
+        />
+      </>
     );
   }
 
   if (activeView === "home") {
     return (
-      <Homepage
-        authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
-        onNavigateToApp={() => setActiveView("app")}
-      />
+      <>
+        {globalThemeToggle}
+        <Homepage
+          authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
+          onNavigateToApp={() => setActiveView("app")}
+        />
+      </>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
-        <p>Loading data from Google Sheets...</p>
-      </div>
+      <>
+        {globalThemeToggle}
+        <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
+          <p>Loading data from Google Sheets...</p>
+        </div>
+      </>
     );
   }
 
   if (sheetError) {
     return (
-      <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1.5rem" }}>
-        <p style={{ color: "var(--danger-color, #e53e3e)" }}>Error: {sheetError}</p>
-        <button type="button" onClick={() => signIn().catch(console.error)}>
-          Retry Sign In
-        </button>
-      </div>
+      <>
+        {globalThemeToggle}
+        <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1.5rem" }}>
+          <p style={{ color: "var(--danger-color, #e53e3e)" }}>Error: {sheetError}</p>
+          <button type="button" onClick={() => signIn().catch(console.error)}>
+            Retry Sign In
+          </button>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div>
-          <h1>SunRAG</h1>
-          <p>Requirements and Jira Monitoring with local RAG assistant</p>
-        </div>
-        <div className="topbar-actions">
-          <button
-            className="theme-toggle"
-            type="button"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-            title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-          >
-            <span className="theme-icon" aria-hidden="true">
-              {theme === "light" ? "☀" : "🌙"}
-            </span>
-          </button>
-          <select value={project} onChange={(event) => handleProjectChange(event.target.value as ProjectName)}>
-            <option value="SunGuide">SunGuide</option>
-            <option value="NG SELS">NG SELS</option>
-          </select>
-          <button type="button" className="secondary" onClick={() => setActiveView("home")} title="Return to home page">
-            Home
-          </button>
-          <button type="button" className="secondary" onClick={signOut} title="Sign out">
-            Sign out
-          </button>
-        </div>
-      </header>
+    <>
+      {globalThemeToggle}
+      <div className="app-shell">
+        <header className="topbar">
+          <div>
+            <h1>SunRAG</h1>
+            <p>Requirements and Jira Monitoring with local RAG assistant</p>
+          </div>
+          <div className="topbar-actions">
+            <select value={project} onChange={(event) => handleProjectChange(event.target.value as ProjectName)}>
+              <option value="SunGuide">SunGuide</option>
+              <option value="NG SELS">NG SELS</option>
+            </select>
+            <button type="button" className="secondary" onClick={() => setActiveView("home")} title="Return to home page">
+              Home
+            </button>
+            <button type="button" className="secondary" onClick={signOut} title="Sign out">
+              Sign out
+            </button>
+          </div>
+        </header>
 
       <nav className="nav-groups">
         <div className="tabs tabs-primary">
@@ -3491,7 +3541,9 @@ function App() {
         {activeTab === "Test Case Generation" ? renderTestCaseTab() : null}
         {activeTab === "Learning" ? renderLearningTab() : null}
       </main>
-    </div>
+        <main className="content">{renderActiveTab()}</main>
+      </div>
+    </>
   );
 }
 
