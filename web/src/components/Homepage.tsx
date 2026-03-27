@@ -1,5 +1,12 @@
 import { useState } from "react";
 import type { GoogleAuthState } from "../hooks/useGoogleAuth";
+import { AdventureHomepage } from "../panels/adventure/Homepage";
+import { CookingHomepage } from "../panels/cooking/Homepage";
+import { FamilyHomepage } from "../panels/family/Homepage";
+import { FinanceHomepage } from "../panels/finance/Homepage";
+import { LearningHomepage } from "../panels/learning/Homepage";
+import { MaintenanceHomepage } from "../panels/maintenance/Homepage";
+import { TrainingHomepage } from "../panels/training/Homepage";
 
 interface HomepageProps {
   authState: GoogleAuthState;
@@ -9,6 +16,9 @@ interface HomepageProps {
 export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
+  const [activePanel, setActivePanel] = useState<
+    "family" | "finance" | "cooking" | "adventure" | "learning" | "training" | "maintenance" | null
+  >(null);
 
   const handleSignIn = async () => {
     setSigningIn(true);
@@ -25,27 +35,27 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
 
   const panels = [
     {
-      id: "health",
-      name: "Health",
-      icon: "🏥",
-      description: "Health and wellness management",
-      action: () => console.log("Health panel clicked"),
+      id: "family",
+      name: "Family",
+      icon: "🏡",
+      description: "Family planning and household coordination",
+      action: () => setActivePanel("family"),
       bgColor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     },
     {
-      id: "training",
-      name: "Training",
-      icon: "💪",
-      description: "Training and development",
-      action: () => console.log("Training panel clicked"),
+      id: "finance",
+      name: "Finance",
+      icon: "💰",
+      description: "Budgeting, expenses, and financial tracking",
+      action: () => setActivePanel("finance"),
       bgColor: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
     },
     {
-      id: "learning",
-      name: "Learning",
-      icon: "📚",
-      description: "Learning resources",
-      action: () => console.log("Learning panel clicked"),
+      id: "cooking",
+      name: "Cooking",
+      icon: "🍳",
+      description: "Meal planning, recipes, and kitchen routines",
+      action: () => setActivePanel("cooking"),
       bgColor: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
     },
     {
@@ -53,8 +63,32 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
       name: "Adventure",
       icon: "🚀",
       description: "Adventure and exploration",
-      action: () => console.log("Adventure panel clicked"),
+      action: () => setActivePanel("adventure"),
       bgColor: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    },
+    {
+      id: "learning",
+      name: "Learning",
+      icon: "📚",
+      description: "Learning resources",
+      action: () => setActivePanel("learning"),
+      bgColor: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+    },
+    {
+      id: "training",
+      name: "Training",
+      icon: "💪",
+      description: "Training and development",
+      action: () => setActivePanel("training"),
+      bgColor: "linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%)",
+    },
+    {
+      id: "maintenance",
+      name: "Maintenance",
+      icon: "🛠️",
+      description: "Maintenance tasks and upkeep tracking",
+      action: () => setActivePanel("maintenance"),
+      bgColor: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
     },
     {
       id: "work",
@@ -65,6 +99,34 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
       bgColor: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
     },
   ];
+
+  if (authState.isAuthenticated && activePanel === "family") {
+    return <FamilyHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
+
+  if (authState.isAuthenticated && activePanel === "finance") {
+    return <FinanceHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
+
+  if (authState.isAuthenticated && activePanel === "cooking") {
+    return <CookingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
+
+  if (authState.isAuthenticated && activePanel === "adventure") {
+    return <AdventureHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
+
+  if (authState.isAuthenticated && activePanel === "learning") {
+    return <LearningHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
+
+  if (authState.isAuthenticated && activePanel === "training") {
+    return <TrainingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
+
+  if (authState.isAuthenticated && activePanel === "maintenance") {
+    return <MaintenanceHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  }
 
   return (
     <div className="homepage">
