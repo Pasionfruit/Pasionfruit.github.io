@@ -652,6 +652,10 @@ tbody tr:nth-child(even) {
   margin: 0 auto;
 }
 
+.homepage-dashboard.guest-mode {
+  grid-template-columns: minmax(280px, 1fr);
+}
+
 .homepage-dashboard-left {
   min-width: 0;
 }

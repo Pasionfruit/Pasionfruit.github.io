@@ -16,6 +16,7 @@ interface HomepageProps {
 export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
+  const [isGuestMode, setIsGuestMode] = useState(false);
   const [eventFilter, setEventFilter] = useState<"week" | "month">("week");
   const [isTodoCollapsed, setIsTodoCollapsed] = useState(false);
   const [newTodoText, setNewTodoText] = useState("");
@@ -112,6 +113,13 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
       bgColor: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
     },
   ];
+
+  const canAccessPanels = authState.isAuthenticated || isGuestMode;
+  const visiblePanels = isGuestMode
+    ? panels.filter((panel) =>
+      panel.id === "cooking" || panel.id === "learning" || panel.id === "training",
+    )
+    : panels;
 
   const upcomingEvents = [
     { id: "event-1", title: "Family Planning Session", date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) },
@@ -279,10 +287,10 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   );
 
   const homepageDashboard = (
-    <div className="homepage-dashboard">
+    <div className={`homepage-dashboard${isGuestMode ? " guest-mode" : ""}`}>
       <section className="homepage-dashboard-left" aria-label="Dashboard panels">
         <div className="panels-grid">
-          {panels.map((panel) => (
+          {visiblePanels.map((panel) => (
             <div
               key={panel.id}
               className="panel-card"
@@ -303,38 +311,40 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
         </div>
       </section>
 
-      <aside className="homepage-dashboard-right" aria-label="Upcoming events and daily to-do">
-        {upcomingEventsWidget}
-        {dailyTodoWidget}
-      </aside>
+      {!isGuestMode && (
+        <aside className="homepage-dashboard-right" aria-label="Upcoming events and daily to-do">
+          {upcomingEventsWidget}
+          {dailyTodoWidget}
+        </aside>
+      )}
     </div>
   );
 
-  if (authState.isAuthenticated && activePanel === "family") {
+  if (canAccessPanels && activePanel === "family") {
     return <FamilyHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
   }
 
-  if (authState.isAuthenticated && activePanel === "finance") {
+  if (canAccessPanels && activePanel === "finance") {
     return <FinanceHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
   }
 
-  if (authState.isAuthenticated && activePanel === "cooking") {
-    return <CookingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  if (canAccessPanels && activePanel === "cooking") {
+    return <CookingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => setIsGuestMode(false)} />;
   }
 
-  if (authState.isAuthenticated && activePanel === "adventure") {
+  if (canAccessPanels && activePanel === "adventure") {
     return <AdventureHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
   }
 
-  if (authState.isAuthenticated && activePanel === "learning") {
-    return <LearningHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  if (canAccessPanels && activePanel === "learning") {
+    return <LearningHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => setIsGuestMode(false)} />;
   }
 
-  if (authState.isAuthenticated && activePanel === "training") {
-    return <TrainingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
+  if (canAccessPanels && activePanel === "training") {
+    return <TrainingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => setIsGuestMode(false)} />;
   }
 
-  if (authState.isAuthenticated && activePanel === "maintenance") {
+  if (canAccessPanels && activePanel === "maintenance") {
     return <MaintenanceHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
   }
 
@@ -344,14 +354,14 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
         <div className="homepage-content">
           <h1>Welcome to Pasionfruit Hub</h1>
           <p className="homepage-subtitle">
-            {authState.isAuthenticated
+            {canAccessPanels
               ? "Access your life management tools"
               : "Sign in to manage your life"}
           </p>
         </div>
       </div>
 
-      {!authState.isAuthenticated ? (
+      {!canAccessPanels ? (
         <>
           <div className="homepage-signin">
             <div className="signin-card">
@@ -369,6 +379,17 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
               >
                 {authState.isGisLoading || signingIn ? "Loading..." : "Sign In with Google"}
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSignInError(null);
+                  setIsGuestMode(true);
+                }}
+                className="signin-button secondary"
+                style={{ marginTop: "10px" }}
+              >
+                Continue as Guest
+              </button>
             </div>
           </div>
         </>
@@ -378,10 +399,17 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
 
           <div className="user-card-footer">
             <button
-              onClick={authState.signOut}
+              onClick={() => {
+                setActivePanel(null);
+                if (isGuestMode) {
+                  setIsGuestMode(false);
+                  return;
+                }
+                authState.signOut();
+              }}
               className="signout-button"
             >
-              Sign Out
+              {isGuestMode ? "Exit Guest Mode" : "Sign Out"}
             </button>
           </div>
         </div>
