@@ -8,8 +8,8 @@ export function LearningHomepage({ onBackToHub, onSignOut }: LearningHomepagePro
     <div className="panel-homepage">
       <header className="panel-homepage-header">
         <div>
-          <h2>Learning</h2>
-          <p>Track courses, reading lists, and skill milestones.</p>
+          <h2>Projects</h2>
+          <p>Track project plans, resources, and delivery milestones.</p>
         </div>
         <div className="panel-homepage-actions">
           <button type="button" className="secondary" onClick={onBackToHub}>Back to Hub</button>

@@ -82,9 +82,9 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
     },
     {
       id: "learning",
-      name: "Learning",
+      name: "Projects",
       icon: "📚",
-      description: "Learning resources",
+      description: "Project planning and resources",
       action: () => setActivePanel("learning"),
       bgColor: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
     },

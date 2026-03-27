@@ -160,14 +160,14 @@ describe("App input coverage", () => {
     exerciseVisibleControls(getMainContent());
   });
 
-  it("covers test case generation and learning inputs", async () => {
+  it("covers test case generation and projects inputs", async () => {
     const user = userEvent.setup();
     render(<App />);
 
     await openTab(user, { section: "Project", tab: "Test case generation" });
     exerciseVisibleControls(getMainContent());
 
-    await openTab(user, { section: "Project", tab: "Learning" });
+    await openTab(user, { section: "Project", tab: "Projects" });
     exerciseVisibleControls(getMainContent());
 
     const learningPanel = within(getMainContent());

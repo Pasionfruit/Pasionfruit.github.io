@@ -3371,7 +3371,7 @@ function App() {
               value={learningQuery}
               onChange={(event) => setLearningQuery(event.target.value)}
             />
-            <button type="submit">Ask Learning Assistant</button>
+            <button type="submit">Ask Projects Assistant</button>
           </form>
         </div>
 

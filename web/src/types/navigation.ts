@@ -29,7 +29,7 @@ export const navSections: Array<{ name: NavSection; tabs: Array<{ key: TabName; 
       { key: "Requirements", label: "Requirements" },
       { key: "Tickets", label: "Tickets" },
       { key: "Test Case Generation", label: "Test case generation" },
-      { key: "Learning", label: "Learning" },
+      { key: "Learning", label: "Projects" },
     ],
   },
   {
