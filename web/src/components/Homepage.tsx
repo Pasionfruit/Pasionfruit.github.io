@@ -16,9 +16,21 @@ interface HomepageProps {
 export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
+  const [eventFilter, setEventFilter] = useState<"week" | "month">("week");
+  const [newTodoText, setNewTodoText] = useState("");
   const [activePanel, setActivePanel] = useState<
     "family" | "finance" | "cooking" | "adventure" | "learning" | "training" | "maintenance" | null
   >(null);
+
+  const [todos, setTodos] = useState<
+    Array<{ id: string; text: string; completed: boolean; isEditing: boolean }>
+  >([
+    { id: "todo-1", text: "Review daily priorities", completed: false, isEditing: false },
+    { id: "todo-2", text: "Complete one focused learning task", completed: false, isEditing: false },
+    { id: "todo-3", text: "Prepare meals for tomorrow", completed: false, isEditing: false },
+    { id: "todo-4", text: "Log expenses and update budget", completed: false, isEditing: false },
+    { id: "todo-5", text: "Plan one work deliverable", completed: false, isEditing: false },
+  ]);
 
   const handleSignIn = async () => {
     setSigningIn(true);
@@ -100,6 +112,188 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
     },
   ];
 
+  const upcomingEvents = [
+    { id: "event-1", title: "Family Planning Session", date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) },
+    { id: "event-2", title: "Training Block", date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) },
+    { id: "event-3", title: "Finance Review", date: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000) },
+    { id: "event-4", title: "Maintenance Check", date: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000) },
+  ];
+
+  const now = new Date();
+  const weekLimit = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const monthLimit = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  const filteredEvents = upcomingEvents.filter((event) => {
+    if (eventFilter === "week") {
+      return event.date <= weekLimit;
+    }
+    return event.date <= monthLimit;
+  });
+
+  const formatEventDate = (date: Date) =>
+    new Intl.DateTimeFormat(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(date);
+
+  const addTodo = () => {
+    const text = newTodoText.trim();
+    if (!text) return;
+    setTodos((prev) => [
+      ...prev,
+      { id: `todo-${Date.now()}`, text, completed: false, isEditing: false },
+    ]);
+    setNewTodoText("");
+  };
+
+  const toggleTodo = (id: string) => {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    );
+  };
+
+  const deleteTodo = (id: string) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
+
+  const startEditingTodo = (id: string) => {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, isEditing: true } : { ...todo, isEditing: false },
+      ),
+    );
+  };
+
+  const updateTodoText = (id: string, text: string) => {
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === id ? { ...todo, text } : todo)),
+    );
+  };
+
+  const finishEditingTodo = (id: string) => {
+    setTodos((prev) =>
+      prev
+        .map((todo) => (todo.id === id ? { ...todo, text: todo.text.trim(), isEditing: false } : todo))
+        .filter((todo) => todo.text.length > 0),
+    );
+  };
+
+  const upcomingEventsWidget = (
+    <article className="dashboard-widget dashboard-widget-events">
+      <h3>Upcoming Events</h3>
+      <div className="dashboard-filters" role="group" aria-label="Filter upcoming events">
+        <button
+          type="button"
+          className={eventFilter === "week" ? "active" : ""}
+          onClick={() => setEventFilter("week")}
+        >
+          Week
+        </button>
+        <button
+          type="button"
+          className={eventFilter === "month" ? "active" : ""}
+          onClick={() => setEventFilter("month")}
+        >
+          Month
+        </button>
+      </div>
+      <ul className="dashboard-list">
+        {filteredEvents.map((event) => (
+          <li key={event.id}>
+            <span>{event.title}</span>
+            <small>{formatEventDate(event.date)}</small>
+          </li>
+        ))}
+      </ul>
+    </article>
+  );
+
+  const dailyTodoWidget = (
+    <article className="dashboard-widget dashboard-widget-todos">
+      <h3>CRUD Daily To-Do List</h3>
+      <div className="dashboard-todo-add">
+        <input
+          type="text"
+          value={newTodoText}
+          onChange={(e) => setNewTodoText(e.target.value)}
+          placeholder="Add a task"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") addTodo();
+          }}
+        />
+        <button type="button" onClick={addTodo}>Add</button>
+      </div>
+      <ul className="dashboard-checklist">
+        {todos.map((task) => (
+          <li key={task.id}>
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => toggleTodo(task.id)}
+              aria-label={task.text}
+            />
+            {task.isEditing ? (
+              <input
+                className="dashboard-todo-edit"
+                type="text"
+                value={task.text}
+                onChange={(e) => updateTodoText(task.id, e.target.value)}
+                onBlur={() => finishEditingTodo(task.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") finishEditingTodo(task.id);
+                }}
+                autoFocus
+              />
+            ) : (
+              <span className={task.completed ? "todo-completed" : ""}>{task.text}</span>
+            )}
+            <div className="dashboard-todo-actions">
+              <button type="button" onClick={() => startEditingTodo(task.id)}>Edit</button>
+              <button type="button" onClick={() => deleteTodo(task.id)}>Delete</button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </article>
+  );
+
+  const homepageDashboard = (
+    <div className="homepage-dashboard">
+      <section className="homepage-dashboard-left" aria-label="Dashboard panels">
+        <div className="panels-grid">
+          {panels.map((panel) => (
+            <div
+              key={panel.id}
+              className="panel-card"
+              style={{ backgroundImage: panel.bgColor }}
+              onClick={panel.action}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  panel.action();
+                }
+              }}
+            >
+              <div className="panel-icon">{panel.icon}</div>
+              <h3>{panel.name}</h3>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <aside className="homepage-dashboard-right" aria-label="Upcoming events and daily to-do">
+        {upcomingEventsWidget}
+        {dailyTodoWidget}
+      </aside>
+    </div>
+  );
+
   if (authState.isAuthenticated && activePanel === "family") {
     return <FamilyHomepage onBackToHub={() => setActivePanel(null)} onSignOut={authState.signOut} />;
   }
@@ -142,47 +336,29 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
       </div>
 
       {!authState.isAuthenticated ? (
-        <div className="homepage-signin">
-          <div className="signin-card">
-            <h2>Get Started</h2>
-            <p>Sign in with your Google account to access your personal management tools.</p>
-            {signInError && (
-              <div style={{ marginBottom: "16px", padding: "12px", backgroundColor: "#fee", borderRadius: "8px", color: "#c33" }}>
-                {signInError}
-              </div>
-            )}
-            <button
-              onClick={handleSignIn}
-              disabled={authState.isGisLoading || signingIn}
-              className="signin-button"
-            >
-              {authState.isGisLoading || signingIn ? "Loading..." : "Sign In with Google"}
-            </button>
+        <>
+          <div className="homepage-signin">
+            <div className="signin-card">
+              <h2>Get Started</h2>
+              <p>Sign in with your Google account to access your personal management tools.</p>
+              {signInError && (
+                <div style={{ marginBottom: "16px", padding: "12px", backgroundColor: "#fee", borderRadius: "8px", color: "#c33" }}>
+                  {signInError}
+                </div>
+              )}
+              <button
+                onClick={handleSignIn}
+                disabled={authState.isGisLoading || signingIn}
+                className="signin-button"
+              >
+                {authState.isGisLoading || signingIn ? "Loading..." : "Sign In with Google"}
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <div className="homepage-authenticated">
-          <div className="panels-grid">
-            {panels.map((panel) => (
-              <div
-                key={panel.id}
-                className="panel-card"
-                style={{ backgroundImage: panel.bgColor }}
-                onClick={panel.action}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    panel.action();
-                  }
-                }}
-              >
-                <div className="panel-icon">{panel.icon}</div>
-                <h3>{panel.name}</h3>
-                <p>{panel.description}</p>
-              </div>
-            ))}
-          </div>
+          {homepageDashboard}
 
           <div className="user-card-footer">
             <button
