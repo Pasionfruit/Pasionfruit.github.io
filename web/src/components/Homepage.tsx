@@ -17,6 +17,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
   const [eventFilter, setEventFilter] = useState<"week" | "month">("week");
+  const [isTodoCollapsed, setIsTodoCollapsed] = useState(false);
   const [newTodoText, setNewTodoText] = useState("");
   const [activePanel, setActivePanel] = useState<
     "family" | "finance" | "cooking" | "adventure" | "learning" | "training" | "maintenance" | null
@@ -215,50 +216,65 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
 
   const dailyTodoWidget = (
     <article className="dashboard-widget dashboard-widget-todos">
-      <h3>CRUD Daily To-Do List</h3>
-      <div className="dashboard-todo-add">
-        <input
-          type="text"
-          value={newTodoText}
-          onChange={(e) => setNewTodoText(e.target.value)}
-          placeholder="Add a task"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") addTodo();
-          }}
-        />
-        <button type="button" onClick={addTodo}>Add</button>
+      <div className="dashboard-widget-header">
+        <h3>CRUD Daily To-Do List</h3>
+        <button
+          type="button"
+          className="dashboard-collapse-toggle"
+          onClick={() => setIsTodoCollapsed((prev) => !prev)}
+          aria-expanded={!isTodoCollapsed}
+          aria-controls="daily-todo-content"
+        >
+          {isTodoCollapsed ? "Expand" : "Collapse"}
+        </button>
       </div>
-      <ul className="dashboard-checklist">
-        {todos.map((task) => (
-          <li key={task.id}>
+      {!isTodoCollapsed && (
+        <div id="daily-todo-content" className="dashboard-widget-content">
+          <div className="dashboard-todo-add">
             <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={() => toggleTodo(task.id)}
-              aria-label={task.text}
+              type="text"
+              value={newTodoText}
+              onChange={(e) => setNewTodoText(e.target.value)}
+              placeholder="Add a task"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addTodo();
+              }}
             />
-            {task.isEditing ? (
-              <input
-                className="dashboard-todo-edit"
-                type="text"
-                value={task.text}
-                onChange={(e) => updateTodoText(task.id, e.target.value)}
-                onBlur={() => finishEditingTodo(task.id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") finishEditingTodo(task.id);
-                }}
-                autoFocus
-              />
-            ) : (
-              <span className={task.completed ? "todo-completed" : ""}>{task.text}</span>
-            )}
-            <div className="dashboard-todo-actions">
-              <button type="button" onClick={() => startEditingTodo(task.id)}>Edit</button>
-              <button type="button" onClick={() => deleteTodo(task.id)}>Delete</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+            <button type="button" onClick={addTodo}>Add</button>
+          </div>
+          <ul className="dashboard-checklist">
+            {todos.map((task) => (
+              <li key={task.id}>
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleTodo(task.id)}
+                  aria-label={task.text}
+                />
+                {task.isEditing ? (
+                  <input
+                    className="dashboard-todo-edit"
+                    type="text"
+                    value={task.text}
+                    onChange={(e) => updateTodoText(task.id, e.target.value)}
+                    onBlur={() => finishEditingTodo(task.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") finishEditingTodo(task.id);
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  <span className={task.completed ? "todo-completed" : ""}>{task.text}</span>
+                )}
+                <div className="dashboard-todo-actions">
+                  <button type="button" onClick={() => startEditingTodo(task.id)}>Edit</button>
+                  <button type="button" onClick={() => deleteTodo(task.id)}>Delete</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </article>
   );
 

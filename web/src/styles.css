@@ -730,6 +730,38 @@ tbody tr:nth-child(even) {
   margin: 0 0 12px;
 }
 
+.dashboard-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dashboard-widget-header h3 {
+  margin: 0;
+}
+
+.dashboard-collapse-toggle {
+  border: 1px solid var(--input-border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.dashboard-collapse-toggle:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-soft);
+}
+
+.dashboard-widget-content {
+  display: grid;
+  gap: 10px;
+}
+
 .dashboard-filters {
   display: inline-flex;
   gap: 8px;
