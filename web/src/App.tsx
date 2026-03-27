@@ -766,10 +766,40 @@ function App() {
     if (mode === "guest") {
       setIsGuestWorkMode(true);
       setActiveSection("Experience");
-      setActiveTab("Experience");
+      setActiveTab("Resume");
       return;
     }
     setIsGuestWorkMode(false);
+  }
+
+  useEffect(() => {
+    if (!isGuestWorkMode) {
+      return;
+    }
+    // Keep guest navigation pinned to the Experience section/tabs.
+    if (activeSection !== "Experience") {
+      setActiveSection("Experience");
+    }
+    const experienceTabs: ReadonlyArray<TabName> = [
+      "Resume",
+      "Technical Skills",
+      "Certifications",
+      "Contact Info",
+    ];
+    if (!experienceTabs.includes(activeTab)) {
+      setActiveTab("Resume");
+    }
+  }, [isGuestWorkMode, activeSection, activeTab]);
+
+  function handleSignOutClick(): void {
+    if (isGuestWorkMode) {
+      setActiveView("home");
+      setIsGuestWorkMode(false);
+      setActiveSection("Overview");
+      setActiveTab("Schedule");
+      return;
+    }
+    signOut();
   }
 
   function selectSection(section: NavSection): void {
@@ -3401,25 +3431,58 @@ function App() {
     );
   }
 
-  function renderExperienceTab() {
+  function renderExperienceTab(section: "Resume" | "Technical Skills" | "Certifications" | "Contact Info") {
+    const contentBySection = {
+      "Resume": {
+        title: "Resume",
+        description: "View and update your professional summary and work experience highlights.",
+      },
+      "Technical Skills": {
+        title: "Technical Skills",
+        description: "Track core tools, languages, frameworks, and proficiency levels.",
+      },
+      "Certifications": {
+        title: "Certifications",
+        description: "Maintain active certifications, issue dates, and renewal timelines.",
+      },
+      "Contact Info": {
+        title: "Contact Info",
+        description: "Manage your professional contact channels and preferred outreach details.",
+      },
+    } as const;
+
+    const content = contentBySection[section];
     return (
       <div className="tab-layout">
         <div className="panel">
-          <h3>Experience</h3>
-          <p>Explore the Work area in guest mode through this curated experience view.</p>
+          <h3>{content.title}</h3>
+          <p>{content.description}</p>
         </div>
       </div>
     );
   }
 
   function renderActiveTab() {
-    if (isGuestWorkMode && activeTab !== "Experience") {
-      return renderExperienceTab();
+    const experienceTabs: ReadonlyArray<TabName> = [
+      "Resume",
+      "Technical Skills",
+      "Certifications",
+      "Contact Info",
+    ];
+
+    if (isGuestWorkMode && !experienceTabs.includes(activeTab)) {
+      return renderExperienceTab("Resume");
     }
 
     switch (activeTab) {
-      case "Experience":
-        return renderExperienceTab();
+      case "Resume":
+        return renderExperienceTab("Resume");
+      case "Technical Skills":
+        return renderExperienceTab("Technical Skills");
+      case "Certifications":
+        return renderExperienceTab("Certifications");
+      case "Contact Info":
+        return renderExperienceTab("Contact Info");
       case "Schedule":
         return renderCalendarTab();
       case "Requirements":
@@ -3515,8 +3578,7 @@ function App() {
       <div className="app-shell">
         <header className="topbar">
           <div>
-            <h1>{project}</h1>
-            <p>Requirements and Jira Monitoring with local RAG assistant</p>
+            <h1>Work</h1>
           </div>
           <div className="topbar-actions">
             {!isGuestWorkMode ? (
@@ -3534,13 +3596,11 @@ function App() {
               }}
               title="Return to home page"
             >
-              Home
+              Back to Hub
             </button>
-            {isAuthenticated && !isGuestWorkMode ? (
-              <button type="button" className="secondary" onClick={signOut} title="Sign out">
-                Sign out
-              </button>
-            ) : null}
+            <button type="button" className="secondary" onClick={handleSignOutClick} title="Sign out">
+              Sign out
+            </button>
           </div>
         </header>
 

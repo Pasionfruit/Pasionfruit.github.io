@@ -11,7 +11,10 @@ export type TabName =
   | "Simulator"
   | "Test Case Generation"
   | "Learning"
-  | "Experience";
+  | "Resume"
+  | "Technical Skills"
+  | "Certifications"
+  | "Contact Info";
 
 export type NavSection = "Overview" | "Project" | "Team" | "Resources" | "Experience";
 
@@ -50,6 +53,11 @@ export const navSections: Array<{ name: NavSection; tabs: Array<{ key: TabName; 
   },
   {
     name: "Experience",
-    tabs: [{ key: "Experience", label: "Experience" }],
+    tabs: [
+      { key: "Resume", label: "Resume" },
+      { key: "Technical Skills", label: "Technical Skills" },
+      { key: "Certifications", label: "Certifications" },
+      { key: "Contact Info", label: "Contact Info" },
+    ],
   },
 ];
