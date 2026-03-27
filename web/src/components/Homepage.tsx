@@ -11,12 +11,13 @@ import { TrainingHomepage } from "../panels/training/Homepage";
 interface HomepageProps {
   authState: GoogleAuthState;
   onNavigateToApp: (mode?: "authenticated" | "guest") => void;
+  isGuestMode: boolean;
+  onGuestModeChange: (isGuestMode: boolean) => void;
 }
 
-export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
+export function Homepage({ authState, onNavigateToApp, isGuestMode, onGuestModeChange }: HomepageProps) {
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
-  const [isGuestMode, setIsGuestMode] = useState(false);
   const [eventFilter, setEventFilter] = useState<"week" | "month">("week");
   const [isTodoCollapsed, setIsTodoCollapsed] = useState(false);
   const [newTodoText, setNewTodoText] = useState("");
@@ -329,7 +330,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   }
 
   if (canAccessPanels && activePanel === "cooking") {
-    return <CookingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => setIsGuestMode(false)} />;
+    return <CookingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => onGuestModeChange(false)} />;
   }
 
   if (canAccessPanels && activePanel === "adventure") {
@@ -337,11 +338,11 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   }
 
   if (canAccessPanels && activePanel === "learning") {
-    return <LearningHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => setIsGuestMode(false)} />;
+    return <LearningHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => onGuestModeChange(false)} />;
   }
 
   if (canAccessPanels && activePanel === "training") {
-    return <TrainingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => setIsGuestMode(false)} />;
+    return <TrainingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => onGuestModeChange(false)} />;
   }
 
   if (canAccessPanels && activePanel === "maintenance") {
@@ -383,7 +384,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
                 type="button"
                 onClick={() => {
                   setSignInError(null);
-                  setIsGuestMode(true);
+                  onGuestModeChange(true);
                 }}
                 className="signin-button secondary"
                 style={{ marginTop: "10px" }}
@@ -402,7 +403,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
               onClick={() => {
                 setActivePanel(null);
                 if (isGuestMode) {
-                  setIsGuestMode(false);
+                  onGuestModeChange(false);
                   return;
                 }
                 authState.signOut();

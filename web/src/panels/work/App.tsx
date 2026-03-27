@@ -21,7 +21,6 @@ import {
   TicketStatus,
 } from "./types/domain";
 import { chunkText, retrieveTopChunks } from "./utils/rag";
-import { saveToStorage } from "./utils/storage";
 import {
   loadRequirements, saveRequirements,
   loadTickets, saveTickets,
@@ -35,15 +34,10 @@ import {
   loadChats, saveChats,
   setTokenGetter,
 } from "./utils/sheetsClient";
-import { useGoogleAuth } from "./hooks/useGoogleAuth";
 import { TabName, NavSection, navSections } from "./types/navigation";
-import { Homepage } from "./components/Homepage";
+import type { GoogleAuthState } from "../../hooks/useGoogleAuth";
 
 (pdfjsLib as typeof pdfjsLib & { GlobalWorkerOptions: { workerSrc: string } }).GlobalWorkerOptions.workerSrc = pdfWorker;
-
-const STORAGE_KEYS = {
-  theme: "sunrag.theme",
-};
 
 const sampleRequirements: Requirement[] = [
   {
@@ -334,16 +328,6 @@ const sampleTestCases: TestCase[] = [
   },
 ];
 
-type ThemeMode = "light" | "dark";
-
-function getInitialTheme(): ThemeMode {
-  const saved = localStorage.getItem(STORAGE_KEYS.theme);
-  if (saved === "light" || saved === "dark") {
-    return saved;
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
 function generateId(prefix: string): string {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -356,12 +340,16 @@ function normalizeRequirementStatus(status: string | undefined): RequirementStat
   return "Passed";
 }
 
-function App() {
-  const [activeSection, setActiveSection] = useState<NavSection>("Overview");
-  const [activeTab, setActiveTab] = useState<TabName>("Schedule");
-  const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
-  const [activeView, setActiveView] = useState<"home" | "app">("home");
-  const [isGuestWorkMode, setIsGuestWorkMode] = useState(false);
+interface WorkAppProps {
+  authState: GoogleAuthState;
+  isGuestMode: boolean;
+  onGuestModeChange: (isGuestMode: boolean) => void;
+  onBackToHub: () => void;
+}
+
+function WorkApp({ authState, isGuestMode, onGuestModeChange, onBackToHub }: WorkAppProps) {
+  const [activeSection, setActiveSection] = useState<NavSection>(isGuestMode ? "Experience" : "Overview");
+  const [activeTab, setActiveTab] = useState<TabName>(isGuestMode ? "Resume" : "Schedule");
   const [isLoading, setIsLoading] = useState(false);
   const [sheetError, setSheetError] = useState<string | null>(null);
   const [project, setProject] = useState<ProjectName>("SunGuide");
@@ -470,7 +458,7 @@ function App() {
   const [learningSources, setLearningSources] = useState<IngestedChunk[]>([]);
   const [learningStatus, setLearningStatus] = useState<string>("");
 
-  const { isAuthenticated, isGisLoading, signIn, signOut, getToken } = useGoogleAuth();
+  const { isAuthenticated, signIn, signOut, getToken } = authState;
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -717,28 +705,6 @@ function App() {
   const projectChunks = useMemo(() => chunks.filter((item) => item.project === project), [chunks, project]);
   const projectChats = useMemo(() => chats.filter((item) => item.project === project), [chats, project]);
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    saveToStorage(STORAGE_KEYS.theme, theme);
-  }, [theme]);
-
-  function toggleTheme(): void {
-    setTheme((current) => (current === "light" ? "dark" : "light"));
-  }
-  const globalThemeToggle = (
-    <button
-      className="global-theme-toggle"
-      type="button"
-      onClick={toggleTheme}
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-      title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-    >
-      <span className="theme-icon" aria-hidden="true">
-        {theme === "light" ? "☀" : "🌙"}
-      </span>
-    </button>
-  );
-
   function calculateBusinessDays(startDateStr: string, endDateStr: string): number {
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
@@ -757,23 +723,12 @@ function App() {
     return count;
   }
 
-  const visibleNavSections = isGuestWorkMode
+  const visibleNavSections = isGuestMode
     ? navSections.filter((section) => section.name === "Experience")
     : navSections;
 
-  function handleNavigateToApp(mode?: "authenticated" | "guest"): void {
-    setActiveView("app");
-    if (mode === "guest") {
-      setIsGuestWorkMode(true);
-      setActiveSection("Experience");
-      setActiveTab("Resume");
-      return;
-    }
-    setIsGuestWorkMode(false);
-  }
-
   useEffect(() => {
-    if (!isGuestWorkMode) {
+    if (!isGuestMode) {
       return;
     }
     // Keep guest navigation pinned to the Experience section/tabs.
@@ -789,12 +744,12 @@ function App() {
     if (!experienceTabs.includes(activeTab)) {
       setActiveTab("Resume");
     }
-  }, [isGuestWorkMode, activeSection, activeTab]);
+  }, [isGuestMode, activeSection, activeTab]);
 
   function handleSignOutClick(): void {
-    if (isGuestWorkMode) {
-      setActiveView("home");
-      setIsGuestWorkMode(false);
+    if (isGuestMode) {
+      onGuestModeChange(false);
+      onBackToHub();
       setActiveSection("Overview");
       setActiveTab("Schedule");
       return;
@@ -3470,7 +3425,7 @@ function App() {
       "Contact Info",
     ];
 
-    if (isGuestWorkMode && !experienceTabs.includes(activeTab)) {
+    if (isGuestMode && !experienceTabs.includes(activeTab)) {
       return renderExperienceTab("Resume");
     }
 
@@ -3512,131 +3467,84 @@ function App() {
     }
   }
 
-  if (isGisLoading && !isGuestWorkMode) {
-    return (
-      <>
-        {globalThemeToggle}
-        <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
-          <p>Loading authentication...</p>
-        </div>
-      </>
-    );
-  }
-
-  if (!isAuthenticated && !isGuestWorkMode) {
-    return (
-      <>
-        {globalThemeToggle}
-        <Homepage
-          authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
-          onNavigateToApp={handleNavigateToApp}
-        />
-      </>
-    );
-  }
-
-  if (activeView === "home") {
-    return (
-      <>
-        {globalThemeToggle}
-        <Homepage
-          authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
-          onNavigateToApp={handleNavigateToApp}
-        />
-      </>
-    );
-  }
-
   if (isLoading) {
     return (
-      <>
-        {globalThemeToggle}
-        <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
-          <p>Loading data from Google Sheets...</p>
-        </div>
-      </>
+      <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem" }}>
+        <p>Loading data from Google Sheets...</p>
+      </div>
     );
   }
 
   if (sheetError) {
     return (
-      <>
-        {globalThemeToggle}
-        <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1.5rem" }}>
-          <p style={{ color: "var(--danger-color, #e53e3e)" }}>Error: {sheetError}</p>
-          <button type="button" onClick={() => signIn().catch(console.error)}>
-            Retry Sign In
-          </button>
-        </div>
-      </>
+      <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1.5rem" }}>
+        <p style={{ color: "var(--danger-color, #e53e3e)" }}>Error: {sheetError}</p>
+        <button type="button" onClick={() => signIn().catch(console.error)}>
+          Retry Sign In
+        </button>
+      </div>
     );
   }
 
   return (
-    <>
-      {globalThemeToggle}
-      <div className="app-shell">
-        <header className="topbar">
-          <div>
-            <h1>Work</h1>
-          </div>
-          <div className="topbar-actions">
-            {!isGuestWorkMode ? (
-              <select value={project} onChange={(event) => handleProjectChange(event.target.value as ProjectName)}>
-                <option value="SunGuide">SunGuide</option>
-                <option value="NG SELS">NG SELS</option>
-              </select>
-            ) : null}
-            <button
-              type="button"
-              className="secondary"
-              onClick={() => {
-                setActiveView("home");
-                setIsGuestWorkMode(false);
-              }}
-              title="Return to home page"
-            >
-              Back to Hub
-            </button>
-            <button type="button" className="secondary" onClick={handleSignOutClick} title="Sign out">
-              Sign out
-            </button>
-          </div>
-        </header>
+    <div className="app-shell">
+      <header className="topbar">
+        <div>
+          <h1>Work</h1>
+        </div>
+        <div className="topbar-actions">
+          {!isGuestMode ? (
+            <select value={project} onChange={(event) => handleProjectChange(event.target.value as ProjectName)}>
+              <option value="SunGuide">SunGuide</option>
+              <option value="NG SELS">NG SELS</option>
+            </select>
+          ) : null}
+          <button
+            type="button"
+            className="secondary"
+            onClick={onBackToHub}
+            title="Return to home page"
+          >
+            Back to Hub
+          </button>
+          <button type="button" className="secondary" onClick={handleSignOutClick} title="Sign out">
+            Sign out
+          </button>
+        </div>
+      </header>
 
-        <nav className="nav-groups">
-          <div className="tabs tabs-primary">
-            {visibleNavSections.map((section) => (
+      <nav className="nav-groups">
+        <div className="tabs tabs-primary">
+          {visibleNavSections.map((section) => (
+            <button
+              key={section.name}
+              className={activeSection === section.name ? "active" : ""}
+              onClick={() => selectSection(section.name)}
+            >
+              {section.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="tabs tabs-secondary">
+          {visibleNavSections
+            .find((section) => section.name === activeSection)
+            ?.tabs.map((tab) => (
               <button
-                key={section.name}
-                className={activeSection === section.name ? "active" : ""}
-                onClick={() => selectSection(section.name)}
+                key={tab.key}
+                className={activeTab === tab.key ? "active" : ""}
+                onClick={() => selectTab(tab.key)}
               >
-                {section.name}
+                {tab.label}
               </button>
             ))}
-          </div>
+        </div>
+      </nav>
 
-          <div className="tabs tabs-secondary">
-            {visibleNavSections
-              .find((section) => section.name === activeSection)
-              ?.tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  className={activeTab === tab.key ? "active" : ""}
-                  onClick={() => selectTab(tab.key)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-          </div>
-        </nav>
-
-        <main className="content">{renderActiveTab()}</main>
-      </div>
-    </>
+      <main className="content">{renderActiveTab()}</main>
+    </div>
   );
 }
 
-export default App;
+export default WorkApp;
 

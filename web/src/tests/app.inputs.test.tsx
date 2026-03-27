@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
-import App from "../App";
+import { describe, expect, it, vi } from "vitest";
+import WorkApp from "../panels/work/App";
 
 type TabConfig = {
   section: string;
@@ -79,10 +79,29 @@ async function openTab(user: ReturnType<typeof userEvent.setup>, config: TabConf
   }
 }
 
+function renderWorkApp() {
+  const authState = {
+    isAuthenticated: false,
+    isGisLoading: false,
+    signIn: vi.fn(async () => undefined),
+    signOut: vi.fn(),
+    getToken: vi.fn(() => "test-token"),
+  };
+
+  return render(
+    <WorkApp
+      authState={authState}
+      isGuestMode={false}
+      onGuestModeChange={vi.fn()}
+      onBackToHub={vi.fn()}
+    />,
+  );
+}
+
 describe("App input coverage", () => {
   it("updates the top-level project selector and schedule inputs", async () => {
     const user = userEvent.setup();
-    const { container } = render(<App />);
+    const { container } = renderWorkApp();
 
     const projectSelect = container.querySelector("header select");
     expect(projectSelect).toBeInstanceOf(HTMLSelectElement);
@@ -109,7 +128,7 @@ describe("App input coverage", () => {
 
   it("covers requirements inputs and filters", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Project", tab: "Requirements", expandForm: true });
     exerciseVisibleControls(getMainContent());
@@ -117,7 +136,7 @@ describe("App input coverage", () => {
 
   it("covers ticket inputs and filters", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Project", tab: "Tickets", expandForm: true });
     exerciseVisibleControls(getMainContent());
@@ -125,7 +144,7 @@ describe("App input coverage", () => {
 
   it("covers milestone inputs, filters, and import control", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Team", tab: "Milestones", expandForm: true });
     exerciseVisibleControls(getMainContent());
@@ -138,7 +157,7 @@ describe("App input coverage", () => {
 
   it("covers member inputs", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Team", tab: "Members" });
     exerciseVisibleControls(getMainContent());
@@ -146,7 +165,7 @@ describe("App input coverage", () => {
 
   it("covers device inputs and filters", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Resources", tab: "Devices", expandForm: true });
     exerciseVisibleControls(getMainContent());
@@ -154,7 +173,7 @@ describe("App input coverage", () => {
 
   it("covers simulator inputs and filters", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Resources", tab: "Simulator", expandForm: true });
     exerciseVisibleControls(getMainContent());
@@ -162,7 +181,7 @@ describe("App input coverage", () => {
 
   it("covers test case generation and projects inputs", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderWorkApp();
 
     await openTab(user, { section: "Project", tab: "Test case generation" });
     exerciseVisibleControls(getMainContent());
