@@ -37,6 +37,7 @@ import {
 } from "./utils/sheetsClient";
 import { useGoogleAuth } from "./hooks/useGoogleAuth";
 import { TabName, NavSection, navSections } from "./types/navigation";
+import { Homepage } from "./components/Homepage";
 
 (pdfjsLib as typeof pdfjsLib & { GlobalWorkerOptions: { workerSrc: string } }).GlobalWorkerOptions.workerSrc = pdfWorker;
 
@@ -359,6 +360,7 @@ function App() {
   const [activeSection, setActiveSection] = useState<NavSection>("Overview");
   const [activeTab, setActiveTab] = useState<TabName>("Schedule");
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
+  const [activeView, setActiveView] = useState<"home" | "app">("home");
   const [isLoading, setIsLoading] = useState(false);
   const [sheetError, setSheetError] = useState<string | null>(null);
   const [project, setProject] = useState<ProjectName>("SunGuide");
@@ -3380,13 +3382,19 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="app-shell" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1.5rem" }}>
-        <h1>SunRAG</h1>
-        <p>Sign in with Google to access your data.</p>
-        <button type="button" onClick={() => signIn().catch(console.error)}>
-          Sign in with Google
-        </button>
-      </div>
+      <Homepage
+        authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
+        onNavigateToApp={() => setActiveView("app")}
+      />
+    );
+  }
+
+  if (activeView === "home") {
+    return (
+      <Homepage
+        authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
+        onNavigateToApp={() => setActiveView("app")}
+      />
     );
   }
 
@@ -3432,6 +3440,9 @@ function App() {
             <option value="SunGuide">SunGuide</option>
             <option value="NG SELS">NG SELS</option>
           </select>
+          <button type="button" className="secondary" onClick={() => setActiveView("home")} title="Return to home page">
+            Home
+          </button>
           <button type="button" className="secondary" onClick={signOut} title="Sign out">
             Sign out
           </button>
