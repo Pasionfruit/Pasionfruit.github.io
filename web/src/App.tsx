@@ -361,6 +361,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabName>("Schedule");
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [activeView, setActiveView] = useState<"home" | "app">("home");
+  const [isGuestWorkMode, setIsGuestWorkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sheetError, setSheetError] = useState<string | null>(null);
   const [project, setProject] = useState<ProjectName>("SunGuide");
@@ -756,9 +757,24 @@ function App() {
     return count;
   }
 
+  const visibleNavSections = isGuestWorkMode
+    ? navSections.filter((section) => section.name === "Experience")
+    : navSections;
+
+  function handleNavigateToApp(mode?: "authenticated" | "guest"): void {
+    setActiveView("app");
+    if (mode === "guest") {
+      setIsGuestWorkMode(true);
+      setActiveSection("Experience");
+      setActiveTab("Experience");
+      return;
+    }
+    setIsGuestWorkMode(false);
+  }
+
   function selectSection(section: NavSection): void {
     setActiveSection(section);
-    const firstTab = navSections.find((item) => item.name === section)?.tabs[0]?.key;
+    const firstTab = visibleNavSections.find((item) => item.name === section)?.tabs[0]?.key;
     if (firstTab) {
       setActiveTab(firstTab);
     }
@@ -766,7 +782,7 @@ function App() {
 
   function selectTab(tab: TabName): void {
     setActiveTab(tab);
-    const matchingSection = navSections.find((section) => section.tabs.some((item) => item.key === tab))?.name;
+    const matchingSection = visibleNavSections.find((section) => section.tabs.some((item) => item.key === tab))?.name;
     if (matchingSection) {
       setActiveSection(matchingSection);
     }
@@ -3385,8 +3401,25 @@ function App() {
     );
   }
 
+  function renderExperienceTab() {
+    return (
+      <div className="tab-layout">
+        <div className="panel">
+          <h3>Experience</h3>
+          <p>Explore the Work area in guest mode through this curated experience view.</p>
+        </div>
+      </div>
+    );
+  }
+
   function renderActiveTab() {
+    if (isGuestWorkMode && activeTab !== "Experience") {
+      return renderExperienceTab();
+    }
+
     switch (activeTab) {
+      case "Experience":
+        return renderExperienceTab();
       case "Schedule":
         return renderCalendarTab();
       case "Requirements":
@@ -3416,7 +3449,7 @@ function App() {
     }
   }
 
-  if (isGisLoading) {
+  if (isGisLoading && !isGuestWorkMode) {
     return (
       <>
         {globalThemeToggle}
@@ -3427,13 +3460,13 @@ function App() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isGuestWorkMode) {
     return (
       <>
         {globalThemeToggle}
         <Homepage
           authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
-          onNavigateToApp={() => setActiveView("app")}
+          onNavigateToApp={handleNavigateToApp}
         />
       </>
     );
@@ -3445,7 +3478,7 @@ function App() {
         {globalThemeToggle}
         <Homepage
           authState={{ isAuthenticated, isGisLoading, signIn, signOut, getToken }}
-          onNavigateToApp={() => setActiveView("app")}
+          onNavigateToApp={handleNavigateToApp}
         />
       </>
     );
@@ -3482,65 +3515,63 @@ function App() {
       <div className="app-shell">
         <header className="topbar">
           <div>
-            <h1>SunRAG</h1>
+            <h1>{project}</h1>
             <p>Requirements and Jira Monitoring with local RAG assistant</p>
           </div>
           <div className="topbar-actions">
-            <select value={project} onChange={(event) => handleProjectChange(event.target.value as ProjectName)}>
-              <option value="SunGuide">SunGuide</option>
-              <option value="NG SELS">NG SELS</option>
-            </select>
-            <button type="button" className="secondary" onClick={() => setActiveView("home")} title="Return to home page">
+            {!isGuestWorkMode ? (
+              <select value={project} onChange={(event) => handleProjectChange(event.target.value as ProjectName)}>
+                <option value="SunGuide">SunGuide</option>
+                <option value="NG SELS">NG SELS</option>
+              </select>
+            ) : null}
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => {
+                setActiveView("home");
+                setIsGuestWorkMode(false);
+              }}
+              title="Return to home page"
+            >
               Home
             </button>
-            <button type="button" className="secondary" onClick={signOut} title="Sign out">
-              Sign out
-            </button>
+            {isAuthenticated && !isGuestWorkMode ? (
+              <button type="button" className="secondary" onClick={signOut} title="Sign out">
+                Sign out
+              </button>
+            ) : null}
           </div>
         </header>
 
-      <nav className="nav-groups">
-        <div className="tabs tabs-primary">
-          {navSections.map((section) => (
-            <button
-              key={section.name}
-              className={activeSection === section.name ? "active" : ""}
-              onClick={() => selectSection(section.name)}
-            >
-              {section.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="tabs tabs-secondary">
-          {navSections
-            .find((section) => section.name === activeSection)
-            ?.tabs.map((tab) => (
+        <nav className="nav-groups">
+          <div className="tabs tabs-primary">
+            {visibleNavSections.map((section) => (
               <button
-                key={tab.key}
-                className={activeTab === tab.key ? "active" : ""}
-                onClick={() => selectTab(tab.key)}
+                key={section.name}
+                className={activeSection === section.name ? "active" : ""}
+                onClick={() => selectSection(section.name)}
               >
-                {tab.label}
+                {section.name}
               </button>
             ))}
-        </div>
-      </nav>
+          </div>
 
-      <main className="content">
-        {activeTab === "Requirements" ? renderRequirementsTab() : null}
-        {activeTab === "Tickets" ? renderTicketsTab() : null}
-        {activeTab === "Overview" ? renderOverviewTab() : null}
-        {activeTab === "Members" ? renderMembersTab() : null}
-        {activeTab === "Milestones" ? renderMilestonesTab() : null}
-        {activeTab === "Tasks" ? renderTasksTab() : null}
-        {activeTab === "Schedule" ? renderCalendarTab() : null}
-        {activeTab === "Automation" ? renderAutomationTab() : null}
-        {activeTab === "Devices" ? renderDevicesTab() : null}
-        {activeTab === "Simulator" ? renderSimulatorTab() : null}
-        {activeTab === "Test Case Generation" ? renderTestCaseTab() : null}
-        {activeTab === "Learning" ? renderLearningTab() : null}
-      </main>
+          <div className="tabs tabs-secondary">
+            {visibleNavSections
+              .find((section) => section.name === activeSection)
+              ?.tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  className={activeTab === tab.key ? "active" : ""}
+                  onClick={() => selectTab(tab.key)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+          </div>
+        </nav>
+
         <main className="content">{renderActiveTab()}</main>
       </div>
     </>
@@ -3548,7 +3579,4 @@ function App() {
 }
 
 export default App;
-
-
-                  <th>Resolution Notes</th>
 

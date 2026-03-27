@@ -10,7 +10,7 @@ import { TrainingHomepage } from "../panels/training/Homepage";
 
 interface HomepageProps {
   authState: GoogleAuthState;
-  onNavigateToApp: () => void;
+  onNavigateToApp: (mode?: "authenticated" | "guest") => void;
 }
 
 export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
@@ -109,7 +109,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
       name: "Work",
       icon: "💼",
       description: "Work management and projects",
-      action: onNavigateToApp,
+      action: () => onNavigateToApp(isGuestMode ? "guest" : "authenticated"),
       bgColor: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
     },
   ];
@@ -117,7 +117,7 @@ export function Homepage({ authState, onNavigateToApp }: HomepageProps) {
   const canAccessPanels = authState.isAuthenticated || isGuestMode;
   const visiblePanels = isGuestMode
     ? panels.filter((panel) =>
-      panel.id === "cooking" || panel.id === "learning" || panel.id === "training",
+      panel.id === "cooking" || panel.id === "learning" || panel.id === "training" || panel.id === "work",
     )
     : panels;
 

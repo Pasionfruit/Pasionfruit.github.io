@@ -10,9 +10,10 @@ export type TabName =
   | "Devices"
   | "Simulator"
   | "Test Case Generation"
-  | "Learning";
+  | "Learning"
+  | "Experience";
 
-export type NavSection = "Overview" | "Project" | "Team" | "Resources";
+export type NavSection = "Overview" | "Project" | "Team" | "Resources" | "Experience";
 
 export const navSections: Array<{ name: NavSection; tabs: Array<{ key: TabName; label: string }> }> = [
   {
@@ -46,5 +47,9 @@ export const navSections: Array<{ name: NavSection; tabs: Array<{ key: TabName; 
       { key: "Devices", label: "Devices" },
       { key: "Simulator", label: "Simulator" },
     ],
+  },
+  {
+    name: "Experience",
+    tabs: [{ key: "Experience", label: "Experience" }],
   },
 ];
