@@ -10,6 +10,7 @@ import type {
   TestCase,
   Ticket,
 } from "../types/domain";
+import type { GroceryListItem, StorePriceEntry } from "../../cooking/types";
 
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID as string;
 const API_BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`;
@@ -81,6 +82,8 @@ const COLS = {
   testCases:       ["id", "project", "title", "sourceType", "sourceId", "precondition", "steps", "expectedResult"],
   ingestedChunks:  ["id", "project", "sourceFile", "sourceType", "section", "text"],
   chatExchanges:   ["id", "project", "question", "answer", "sourceChunkIds", "createdAt"],
+  groceryList:     ["id", "item", "type", "quantity", "store"],
+  storePrices:     ["id", "item", "store", "price", "unitPrice"],
 };
 
 // ---- Serialisation helpers ----
@@ -248,5 +251,42 @@ export async function saveChats(data: ChatExchange[]): Promise<void> {
     "chatExchanges",
     COLS.chatExchanges,
     data.map((r) => objToRow(COLS.chatExchanges, r as unknown as Record<string, unknown>))
+  );
+}
+
+export async function loadGroceryList(): Promise<GroceryListItem[]> {
+  const rows = await readRows("groceryList");
+  return rows
+    .filter((r) => r[0])
+    .map((r) => rowToObj(COLS.groceryList, r) as unknown as GroceryListItem);
+}
+
+export async function saveGroceryList(data: GroceryListItem[]): Promise<void> {
+  await writeRows(
+    "groceryList",
+    COLS.groceryList,
+    data.map((r) => objToRow(COLS.groceryList, r as unknown as Record<string, unknown>))
+  );
+}
+
+export async function loadStorePrices(): Promise<StorePriceEntry[]> {
+  const rows = await readRows("storePrices");
+  return rows
+    .filter((r) => r[0])
+    .map((r) => {
+      const raw = rowToObj(COLS.storePrices, r);
+      return {
+        ...raw,
+        price: Number(raw.price || 0),
+        unitPrice: Number(raw.unitPrice || 0),
+      } as StorePriceEntry;
+    });
+}
+
+export async function saveStorePrices(data: StorePriceEntry[]): Promise<void> {
+  await writeRows(
+    "storePrices",
+    COLS.storePrices,
+    data.map((r) => objToRow(COLS.storePrices, r as unknown as Record<string, unknown>))
   );
 }

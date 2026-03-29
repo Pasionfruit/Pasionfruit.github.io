@@ -330,7 +330,20 @@ export function Homepage({ authState, onNavigateToApp, isGuestMode, onGuestModeC
   }
 
   if (canAccessPanels && activePanel === "cooking") {
-    return <CookingHomepage onBackToHub={() => setActivePanel(null)} onSignOut={() => onGuestModeChange(false)} />;
+    return (
+      <CookingHomepage
+        onBackToHub={() => setActivePanel(null)}
+        onSignOut={() => {
+          if (isGuestMode) {
+            onGuestModeChange(false);
+            return;
+          }
+          authState.signOut();
+        }}
+        isAuthenticated={authState.isAuthenticated}
+        getToken={authState.getToken}
+      />
+    );
   }
 
   if (canAccessPanels && activePanel === "adventure") {

@@ -952,6 +952,99 @@ tbody tr:nth-child(even) {
   color: var(--muted);
 }
 
+.cooking-nav-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.cooking-nav-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-strong);
+  box-shadow: 0 14px 30px rgba(16, 40, 74, 0.12);
+}
+
+.cooking-page-content {
+  display: grid;
+  gap: 16px;
+}
+
+.cooking-section-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--panel-shadow);
+}
+
+.cooking-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cooking-section-header h3 {
+  margin: 0;
+}
+
+.shopping-list-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.shopping-list-add-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1.3fr) minmax(120px, 1fr) minmax(120px, 1fr) minmax(160px, 1fr) auto;
+  gap: 10px;
+}
+
+.shopping-filters {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.shopping-store-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shopping-store-filters button {
+  border: 1px solid var(--input-border);
+  background: transparent;
+  color: var(--text);
+}
+
+.shopping-store-filters button.active {
+  border-color: var(--accent-strong);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.shopping-price-table {
+  min-width: 900px;
+}
+
+.shopping-price-cell {
+  display: grid;
+  gap: 2px;
+}
+
+.shopping-price-cell small {
+  color: var(--muted);
+}
+
+.cooking-error {
+  color: var(--danger);
+}
+
 @media (max-width: 980px) {
   .homepage-dashboard {
     grid-template-columns: 1fr;
@@ -1004,6 +1097,10 @@ tbody tr:nth-child(even) {
 
   .panel-homepage-actions .secondary {
     flex: 1;
+  }
+
+  .shopping-list-add-row {
+    grid-template-columns: 1fr;
   }
 
   .tab-layout {
