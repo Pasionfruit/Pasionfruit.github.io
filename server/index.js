@@ -1,6 +1,8 @@
 /* Simple Express server to proxy Google Sheets profiles
 
-Environment:
+Envir
+
+onment:
 - Place a Google service account JSON at server/credentials.json
 - Set SHEET_ID in environment or .env to the target Google Sheet ID
 
