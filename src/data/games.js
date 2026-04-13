@@ -1,0 +1,67 @@
+export const games = [
+  {
+    id: 'blackjack',
+    name: 'Blackjack',
+    tagline: 'Beat the dealer without busting over 21.',
+    ctaLabel: 'Enter Table',
+    rules: [
+      'Each player receives two cards; the dealer also starts with two cards with one usually face-down.',
+      'Card values are 2-10 as shown, face cards count as 10, and Aces count as 1 or 11.',
+      'Choose to hit for another card, stand to keep your total, double down in allowed situations, or split matching ranks.',
+      'If your total exceeds 21, you bust and lose the hand immediately.',
+      'Dealer reveals the hidden card and hits until reaching at least 17; highest non-busted hand wins.',
+    ],
+  },
+  {
+    id: 'craps',
+    name: 'Craps',
+    tagline: 'Two dice, many bets, nonstop energy.',
+    ctaLabel: 'Join Dice Pit',
+    rules: [
+      'The shooter rolls two dice to begin a round with a come-out roll.',
+      'A come-out total of 7 or 11 wins Pass Line bets, while 2, 3, or 12 loses Pass Line bets.',
+      'Any other total becomes the point, and the shooter keeps rolling.',
+      'After a point is set, rolling the point again wins Pass Line bets.',
+      'Rolling a 7 before the point is repeated ends the round and Pass Line bets lose.',
+    ],
+  },
+  {
+    id: 'baccarat',
+    name: 'Baccarat',
+    tagline: 'Bet Player, Banker, or Tie closest to 9.',
+    ctaLabel: 'Take A Seat',
+    rules: [
+      'You bet on Player, Banker, or Tie before cards are dealt.',
+      'Player and Banker each receive two cards; totals use the last digit only.',
+      'Tens and face cards count as 0, Aces count as 1, and all other cards count at face value.',
+      'If either hand totals 8 or 9 initially, it is a natural and the round ends.',
+      'If no natural occurs, drawing rules determine a third card, and the hand closest to 9 wins.',
+    ],
+  },
+  {
+    id: 'slots',
+    name: 'Slots',
+    tagline: 'Spin reels and chase line and bonus wins.',
+    ctaLabel: 'Spin Now',
+    rules: [
+      'Set your bet amount and spin the reels.',
+      'Winning combinations are defined by paylines or ways shown in the paytable.',
+      'Symbol combinations determine payouts, and special symbols can trigger features.',
+      'Wild symbols substitute for other symbols in most games.',
+      'Scatter symbols often trigger free spins, bonus rounds, or multipliers.',
+    ],
+  },
+  {
+    id: 'roulette',
+    name: 'Roulette',
+    tagline: 'Pick numbers, colors, or groups and watch the wheel.',
+    ctaLabel: 'Place Bets',
+    rules: [
+      'Place chips on inside bets (specific numbers) or outside bets (color, odd/even, ranges).',
+      'The dealer spins the wheel and releases a ball in the opposite direction.',
+      'When the ball settles, winning bets are paid according to posted odds.',
+      'Straight-up number bets pay the highest odds and have higher risk.',
+      'Outside bets pay less but generally cover more outcomes.',
+    ],
+  },
+]
