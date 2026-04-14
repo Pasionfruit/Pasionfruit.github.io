@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { apiFetch, apiJson } from '../lib/apiClient'
 
-const STARTING_BANKROLL = 1000
+const STARTING_BANKROLL = 5000
 const USERS_KEY = 'casino-users'
 const CURRENT_USER_KEY = 'casino-current-user'
 const LEGACY_KEY = 'casino-shared-bankroll'

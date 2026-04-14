@@ -58,6 +58,7 @@ describe('RideTheBusPage', () => {
       </MemoryRouter>,
     )
 
+    fireEvent.change(screen.getByLabelText('Ante'), { target: { value: '25' } })
     fireEvent.click(screen.getByRole('button', { name: 'Red' }))
     fireEvent.click(screen.getByRole('button', { name: 'Above' }))
     fireEvent.click(screen.getByRole('button', { name: 'In' }))

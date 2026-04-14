@@ -27,16 +27,16 @@ describe('BankrollContext', () => {
       </BankrollProvider>,
     )
 
-    expect(screen.getByTestId('balance')).toHaveTextContent('1000.00')
+    expect(screen.getByTestId('balance')).toHaveTextContent('5000.00')
 
     fireEvent.click(screen.getByRole('button', { name: 'bet' }))
-    expect(screen.getByTestId('balance')).toHaveTextContent('975.00')
+    expect(screen.getByTestId('balance')).toHaveTextContent('4975.00')
 
     fireEvent.click(screen.getByRole('button', { name: 'payout' }))
-    expect(screen.getByTestId('balance')).toHaveTextContent('987.34')
+    expect(screen.getByTestId('balance')).toHaveTextContent('4987.34')
 
     fireEvent.click(screen.getByRole('button', { name: 'reset' }))
-    expect(screen.getByTestId('balance')).toHaveTextContent('1000.00')
+    expect(screen.getByTestId('balance')).toHaveTextContent('5000.00')
   })
 
   it('rejects bets above bankroll', () => {
@@ -49,7 +49,7 @@ describe('BankrollContext', () => {
 
       return (
         <div>
-          <button type="button" onClick={() => setAccepted(placeBet(5000))}>reject</button>
+          <button type="button" onClick={() => setAccepted(placeBet(6000))}>reject</button>
           <p>
             {String(accepted)}|{balance.toFixed(2)}
           </p>
@@ -64,6 +64,6 @@ describe('BankrollContext', () => {
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'reject' }))
-    expect(screen.getByText('false|1000.00')).toBeInTheDocument()
+    expect(screen.getByText('false|5000.00')).toBeInTheDocument()
   })
 })
