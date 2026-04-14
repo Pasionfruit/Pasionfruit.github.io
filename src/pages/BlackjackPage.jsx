@@ -125,6 +125,12 @@ function createHand(cards, betAmount) {
   }
 }
 
+function playDealerDealFx(count = 1) {
+  for (let index = 0; index < count; index += 1) {
+    playCustomFx('finalCard', { volume: 0.85 })
+  }
+}
+
 function BlackjackPage() {
   const [bet, setBet] = useState(25)
   const [dealer, setDealer] = useState([])
@@ -224,6 +230,7 @@ function BlackjackPage() {
     let nextDealer = [...dealer]
 
     while (handValue(nextDealer) < 17) {
+      playDealerDealFx()
       nextDealer = [...nextDealer, drawCard()]
     }
 
@@ -269,7 +276,7 @@ function BlackjackPage() {
 
     const playerStart = [drawCard(), drawCard()]
     const dealerStart = [drawCard(), drawCard()]
-  playCustomFx('cardFlip', { volume: 0.6 })
+    playDealerDealFx(dealerStart.length)
 
     setDealer(dealerStart)
     setPlayerHands([createHand(playerStart, normalizedBet)])

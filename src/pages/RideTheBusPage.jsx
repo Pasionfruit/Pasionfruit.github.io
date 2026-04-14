@@ -133,6 +133,17 @@ function getPromptForPhase(phase, cards) {
   return ''
 }
 
+function getRideSuccessFxOptions(stepNumber) {
+  const normalizedStep = Math.min(4, Math.max(1, Number(stepNumber) || 1))
+  const playbackRatesByStep = [0.98, 1.18, 1.42, 1.78]
+  const volumesByStep = [0.58, 0.68, 0.8, 0.92]
+
+  return {
+    volume: volumesByStep[normalizedStep - 1],
+    playbackRate: playbackRatesByStep[normalizedStep - 1],
+  }
+}
+
 function RideTheBusPage() {
   const [bet, setBet] = useState(0)
   const [phase, setPhase] = useState(PHASE_RED_BLACK)
@@ -159,10 +170,11 @@ function RideTheBusPage() {
 
   const winRide = (finalCards) => {
     const winnings = normalizedBet * WIN_MULTIPLIER
+    playCustomFx('jackpot', { volume: 0.95 })
+
     if (winnings > 0) {
       payout(winnings)
       playCustomFx('win', { volume: 0.8 })
-      playCustomFx('jackpot', { volume: 0.9 })
     }
     setCards(finalCards)
     setPhase(PHASE_WON)
@@ -186,7 +198,6 @@ function RideTheBusPage() {
     }
 
     const firstCard = drawCard()
-      playCustomFx('cardFlip', { volume: 0.6 })
     const isCorrect = firstCard.suit.color === guess
 
     if (!isCorrect) {
@@ -194,6 +205,7 @@ function RideTheBusPage() {
       return
     }
 
+    playCustomFx('finalCard', getRideSuccessFxOptions(1))
     setCards([firstCard])
     setPhase(PHASE_ABOVE_EQUAL_BELOW)
     setResult(`Safe start. ${firstCard.rank}${firstCard.suit.symbol} was ${guess}.`)
@@ -204,9 +216,7 @@ function RideTheBusPage() {
     if (!previous) return
 
     const nextCard = drawCard()
-      playCustomFx('cardFlip', { volume: 0.6 })
     const isAbove = nextCard.value > previous.value
-      playCustomFx('cardFlip', { volume: 0.6 })
     const isEqual = nextCard.value === previous.value
     const isBelow = nextCard.value < previous.value
     const isCorrect = (guess === 'above' && isAbove) || (guess === 'equal' && isEqual) || (guess === 'below' && isBelow)
@@ -217,6 +227,7 @@ function RideTheBusPage() {
       return
     }
 
+    playCustomFx('finalCard', getRideSuccessFxOptions(2))
     setCards(nextCards)
     setPhase(PHASE_IN_OUT)
     setResult(`Round 2 clear. ${nextCard.rank}${nextCard.suit.symbol} was ${guess}.`)
@@ -239,14 +250,13 @@ function RideTheBusPage() {
       return
     }
 
+    playCustomFx('finalCard', getRideSuccessFxOptions(3))
     setCards(nextCards)
     setPhase(PHASE_SUIT)
     setResult(`Round 3 clear. ${nextCard.rank}${nextCard.suit.symbol} was ${guess}.`)
   }
 
   const handleSuit = (guess) => {
-    playCustomFx('finalCard', { volume: 0.85 })
-
     const nextCard = drawCard()
     const nextCards = [...cards, nextCard]
 
@@ -255,6 +265,7 @@ function RideTheBusPage() {
       return
     }
 
+    playCustomFx('finalCard', getRideSuccessFxOptions(4))
     winRide(nextCards)
   }
 

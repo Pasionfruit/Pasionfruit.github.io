@@ -151,7 +151,7 @@ export function stopCustomFx(effectKey) {
 }
 
 export function playCustomFx(effectKey, options = {}) {
-  const { loop = false, volume = 0.8 } = options
+  const { loop = false, volume = 0.8, playbackRate = 1 } = options
 
   if (typeof Audio === 'undefined') {
     return false
@@ -177,6 +177,7 @@ export function playCustomFx(effectKey, options = {}) {
   }
 
   const normalizedVolume = Math.min(1, Math.max(0, Number(volume) || 0.8))
+  const normalizedPlaybackRate = Math.min(2, Math.max(0.5, Number(playbackRate) || 1))
 
   const playCandidate = (index) => {
     if (index >= candidates.length) {
@@ -187,6 +188,7 @@ export function playCustomFx(effectKey, options = {}) {
     const audio = new Audio(candidates[index])
     audio.loop = loop
     audio.volume = normalizedVolume
+    audio.playbackRate = normalizedPlaybackRate
 
     const clearLoopRef = () => {
       if (loop && activeLoopMap.get(effectKey) === audio) {

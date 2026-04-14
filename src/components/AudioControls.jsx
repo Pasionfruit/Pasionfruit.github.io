@@ -36,7 +36,7 @@ function AudioControls() {
   const [isMuted, setIsMuted] = useState(() => readInitialAudioSettings().isMuted)
   const [hasStarted, setHasStarted] = useState(false)
   const [isAvailable, setIsAvailable] = useState(true)
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const [fxEnabledMap, setFxEnabledMap] = useState(() => readSoundFxEnabledMap())
   const [fxTestMessage, setFxTestMessage] = useState('')
   const audioRef = useRef(null)
@@ -191,7 +191,7 @@ function AudioControls() {
           onClick={() => setIsCollapsed(!isCollapsed)}
           aria-label={isCollapsed ? 'Expand audio controls' : 'Collapse audio controls'}
         >
-          {isCollapsed ? '▼' : '▲'}
+          {isCollapsed ? '▲' : '▼'}
         </button>
       </div>
       {!isCollapsed && (

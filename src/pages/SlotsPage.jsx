@@ -156,7 +156,6 @@ function SlotsPage() {
       setTimeout(() => {
         const revealed = outcomes.slice(0, index + 1)
         const revealedBest = getBestSymbolMatch(revealed)
-  playCustomFx('cardFlip', { volume: 0.6 })
 
         if ((revealedBest?.count || 0) >= 2) {
           playCustomFx('finalCard', { volume: 0.85 })
