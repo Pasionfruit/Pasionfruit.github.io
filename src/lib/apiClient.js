@@ -1,8 +1,10 @@
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '')
 const API_MODE = (import.meta.env.VITE_API_MODE || '').trim().toLowerCase()
-const USE_POST_FOR_UPDATES = String(import.meta.env.VITE_API_USE_POST_FOR_UPDATES || '').toLowerCase() === 'true'
-
-const IS_APPS_SCRIPT_MODE = API_MODE === 'apps-script'
+const IS_APPS_SCRIPT_URL = /script\.google\.com\/macros\/s\/.+\/exec/i.test(API_BASE_URL)
+const IS_APPS_SCRIPT_MODE = API_MODE === 'apps-script' || IS_APPS_SCRIPT_URL
+const USE_POST_FOR_UPDATES =
+  String(import.meta.env.VITE_API_USE_POST_FOR_UPDATES || '').toLowerCase() === 'true'
+  || IS_APPS_SCRIPT_MODE
 
 function appendQueryParam(url, key, value) {
   const separator = url.includes('?') ? '&' : '?'

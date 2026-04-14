@@ -30,6 +30,9 @@ function LoginPage() {
   const [googleStatus, setGoogleStatus] = useState('idle')
   const { login, loginWithGoogle } = useBankroll()
   const navigate = useNavigate()
+  const isAppsScriptDeployment =
+    (import.meta.env.VITE_API_MODE || '').trim().toLowerCase() === 'apps-script'
+    || /script\.google\.com\/macros\/s\/.+\/exec/i.test((import.meta.env.VITE_API_BASE_URL || '').trim())
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -77,8 +80,17 @@ function LoginPage() {
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: async (response) => {
+          const token = response?.credential
+          const fallbackProfile = decodeGoogleJwtPayload(token)
+
+          if (isAppsScriptDeployment && fallbackProfile) {
+            const user = loginWithGoogle(fallbackProfile)
+            if (user) navigate('/')
+            return
+          }
+
           try {
-            const id_token = response.credential
+            const id_token = token
             const resp = await apiJson('/auth/google', {
               method: 'POST',
               body: { id_token },
@@ -90,7 +102,6 @@ function LoginPage() {
             if (user) navigate('/')
           } catch {
             // fallback to local JWT decode for serverless deployments
-            const fallbackProfile = decodeGoogleJwtPayload(response.credential)
             if (fallbackProfile) {
               const user = loginWithGoogle(fallbackProfile)
               if (user) navigate('/')
