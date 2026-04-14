@@ -36,17 +36,21 @@ function randomSymbol() {
   return SYMBOLS[SYMBOLS.length - 1]
 }
 
-function getLeadingStreak(outcomes) {
-  const first = outcomes[0]
-  if (!first) return { symbol: null, count: 0 }
+function getBestSymbolMatch(outcomes) {
+  const countsBySymbol = outcomes.reduce((acc, symbol) => {
+    acc[symbol.id] = (acc[symbol.id] || 0) + 1
+    return acc
+  }, {})
 
-  let count = 1
-  for (let index = 1; index < outcomes.length; index += 1) {
-    if (outcomes[index].id !== first.id) break
-    count += 1
-  }
+  return SYMBOLS.reduce((best, symbol) => {
+    const count = countsBySymbol[symbol.id] || 0
 
-  return { symbol: first, count }
+    if (!best || count > best.count) {
+      return { symbol, count }
+    }
+
+    return best
+  }, null)
 }
 
 function createStrip(finalSymbol, length) {
@@ -330,9 +334,9 @@ function SlotsPage() {
     timerRef.current = setTimeout(() => {
       reelLockTimeoutsRef.current = []
 
-      const streak = getLeadingStreak(outcomes)
-      const topCount = streak.count
-      const matchedSymbol = streak.symbol
+      const bestMatch = getBestSymbolMatch(outcomes)
+      const topCount = bestMatch?.count || 0
+      const matchedSymbol = bestMatch?.symbol
 
       setIsSpinning(false)
 
@@ -343,10 +347,10 @@ function SlotsPage() {
         payout(earnings)
         if (topCount === 5) {
           playJackpotSound()
-          setResult(`Jackpot! Left-to-right ${matchedSymbol.label} x5 won $${earnings.toFixed(2)}.`)
+          setResult(`Jackpot! ${matchedSymbol.label} x5 won $${earnings.toFixed(2)}.`)
         } else {
           playPairWinSound()
-          setResult(`Left-to-right ${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
+          setResult(`${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
         }
         return
       }
@@ -453,7 +457,7 @@ function SlotsPage() {
           </div>
           <div className="payout-pill">
             <strong>Rule</strong>
-            <span>Left to right</span>
+            <span>Any 3+</span>
           </div>
           <div className="payout-pill">
             <strong>Miss</strong>

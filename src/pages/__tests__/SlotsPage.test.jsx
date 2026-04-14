@@ -46,7 +46,7 @@ describe('SlotsPage', () => {
 
     expect(placeBet).toHaveBeenCalledWith(25)
     expect(payout).toHaveBeenCalledWith(550)
-    expect(screen.getByText('Jackpot! Left-to-right Seven x5 won $550.00.')).toBeInTheDocument()
+    expect(screen.getByText('Jackpot! Seven x5 won $550.00.')).toBeInTheDocument()
   })
 
   it('shows miss when no symbol repeats 3 or more times', () => {
