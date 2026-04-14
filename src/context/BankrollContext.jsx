@@ -6,6 +6,7 @@ const USERS_KEY = 'casino-users'
 const CURRENT_USER_KEY = 'casino-current-user'
 const LEGACY_KEY = 'casino-shared-bankroll'
 const REMOTE_ONLY_MODE = Boolean((import.meta.env.VITE_API_BASE_URL || '').trim())
+const IS_TEST_MODE = import.meta.env.MODE === 'test'
 
 const BankrollContext = createContext(null)
 
@@ -37,10 +38,13 @@ function writeUsersToStorage(users) {
 }
 
 function readCurrentUserIdFromStorage() {
+  if (REMOTE_ONLY_MODE && !IS_TEST_MODE) return null
   return localStorage.getItem(CURRENT_USER_KEY)
 }
 
 function writeCurrentUserIdToStorage(id) {
+  if (REMOTE_ONLY_MODE && !IS_TEST_MODE) return
+
   if (id == null) {
     localStorage.removeItem(CURRENT_USER_KEY)
   } else {
@@ -64,6 +68,8 @@ function makeUser(name, opts = {}) {
 export function BankrollProvider({ children }) {
   const storedUsers = readUsersFromStorage()
   const [users, setUsers] = useState(() => {
+    if (REMOTE_ONLY_MODE && !IS_TEST_MODE) return []
+
     if (storedUsers && storedUsers.length > 0) return storedUsers
 
     // If an old single-user balance key exists, migrate it into a single player account
@@ -89,7 +95,7 @@ export function BankrollProvider({ children }) {
     return initial
   })
 
-  const [currentUserId, setCurrentUserId] = useState(() => readCurrentUserIdFromStorage() || (users[0] && users[0].id))
+  const [currentUserId, setCurrentUserId] = useState(() => readCurrentUserIdFromStorage() || (IS_TEST_MODE ? (users[0]?.id || null) : null))
 
   // Keep a ref for quick non-render reads, but prefer `users` state during render
   const usersRef = useRef(users)
@@ -124,8 +130,18 @@ export function BankrollProvider({ children }) {
         if (u.name && u.name.toLowerCase() === 'admin') u.isAdmin = true
       })
 
+      const previousCurrent = usersRef.current.find((u) => u.id === currentUserId) || null
+      const sameId = currentUserId ? mapped.find((u) => u.id === currentUserId) : null
+      const sameEmail = previousCurrent?.email
+        ? mapped.find((u) => u.email && u.email.toLowerCase() === previousCurrent.email.toLowerCase())
+        : null
+      const sameName = previousCurrent?.name
+        ? mapped.find((u) => u.name && u.name.toLowerCase() === previousCurrent.name.toLowerCase())
+        : null
+      const nextCurrent = sameId || sameEmail || sameName || null
+
       setUsers(mapped)
-      setCurrentUserId(mapped[0]?.id ?? null)
+      setCurrentUserId(nextCurrent?.id ?? null)
       return true
     } catch (err) {
       // network errors/absent server are fine; keep local users
@@ -164,6 +180,8 @@ export function BankrollProvider({ children }) {
           },
         })
         if (!updateResp.ok) return false
+        const updatedBody = await updateResp.json().catch(() => ({}))
+        if (updatedBody?.error) return false
         return true
       }
 
@@ -178,6 +196,7 @@ export function BankrollProvider({ children }) {
 
       if (!createResp.ok) return false
       const created = await createResp.json().catch(() => ({}))
+      if (created?.error) return false
       const rowIndex = Number(created?.rowIndex)
       if (!Number.isFinite(rowIndex)) return false
 

@@ -93,6 +93,7 @@ If you already deployed once, you must deploy a new version after script changes
 
 - Apps Script is used as a Sheets bridge and avoids needing paid server hosting.
 - In `apps-script` mode, profile updates are sent as POST with method override for compatibility.
+- The frontend now also supports query-based mutation fallback for Apps Script (`_method` over GET) to handle deployments where cross-origin POST is blocked.
 - Google sign-in can still work; if `/auth/google` is not hosted, the app falls back to decoding the Google token payload client-side.
 
 ### Quick API Smoke Test

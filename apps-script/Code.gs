@@ -64,6 +64,19 @@ function parseRequestBody(e) {
   }
 }
 
+function getRequestPayload(e) {
+  const fromBody = parseRequestBody(e);
+  if (Object.keys(fromBody).length > 0) return fromBody;
+
+  const p = (e && e.parameter) || {};
+  return {
+    _method: p._method || '',
+    name: p.name || '',
+    email: p.email || '',
+    balance: p.balance || 0,
+  };
+}
+
 function sendJson(payload) {
   const out = ContentService.createTextOutput(JSON.stringify(payload));
   out.setMimeType(ContentService.MimeType.JSON);
@@ -81,6 +94,17 @@ function getRoutePath(e) {
 function doGet(e) {
   try {
     const pathInfo = getRoutePath(e);
+    const body = getRequestPayload(e);
+    const parts = pathInfo.split('/').filter(Boolean);
+
+    // Query-based mutation fallback for Apps Script web app compatibility.
+    if (parts.length === 1 && parts[0] === 'profiles' && String(body._method || '').toUpperCase() === 'POST') {
+      return sendJson(appendProfile(body));
+    }
+
+    if (parts.length === 2 && parts[0] === 'profiles' && String(body._method || '').toUpperCase() === 'PUT') {
+      return sendJson(updateProfile(parts[1], body));
+    }
 
     if (!pathInfo || pathInfo === 'profiles') {
       return sendJson(readProfiles());
@@ -95,7 +119,7 @@ function doGet(e) {
 function doPost(e) {
   try {
     const pathInfo = getRoutePath(e);
-    const body = parseRequestBody(e);
+    const body = getRequestPayload(e);
     const parts = pathInfo.split('/').filter(Boolean);
 
     // Create profile: POST /profiles

@@ -9,6 +9,15 @@ function appendQueryParam(url, key, value) {
   return `${url}${separator}${encodeURIComponent(key)}=${encodeURIComponent(value)}`
 }
 
+function appendQueryParams(url, params) {
+  let next = url
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value === undefined || value === null) return
+    next = appendQueryParam(next, key, String(value))
+  })
+  return next
+}
+
 export function buildApiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
   if (!API_BASE_URL) return normalizedPath
@@ -31,6 +40,17 @@ export function apiJson(path, options = {}) {
 
   let effectiveMethod = method
   let effectiveBody = body
+
+  // In Apps Script mode, profile write calls are sent as query-based GET requests.
+  // This avoids cross-origin POST limitations that some web app deployments hit.
+  if (IS_APPS_SCRIPT_MODE && method !== 'GET' && path.startsWith('/profiles')) {
+    const mutationMethod = USE_POST_FOR_UPDATES && method === 'PUT' ? 'PUT' : method
+    const url = appendQueryParams(buildApiUrl(path), {
+      _method: mutationMethod,
+      ...(body && typeof body === 'object' && !Array.isArray(body) ? body : {}),
+    })
+    return fetch(url, { method: 'GET' })
+  }
 
   if (USE_POST_FOR_UPDATES && method === 'PUT') {
     effectiveMethod = 'POST'
