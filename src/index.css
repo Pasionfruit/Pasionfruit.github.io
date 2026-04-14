@@ -1388,6 +1388,121 @@ h1 {
   margin-top: 0.95rem;
 }
 
+.ride-bus-page {
+  max-width: 1100px;
+}
+
+.ride-bus-controls {
+  margin-top: 0.9rem;
+}
+
+.ride-bus-board {
+  margin-top: 0.9rem;
+  text-align: center;
+}
+
+.ride-bus-info {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+}
+
+.ride-bus-round {
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.ride-bus-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.ride-bus-card-row {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  min-height: 92px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ride-bus-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.7rem;
+  border: 1px solid rgba(255, 216, 148, 0.25);
+  border-radius: 14px;
+  background: rgba(4, 17, 22, 0.54);
+  padding: 0.8rem;
+}
+
+.ride-bus-ante-row {
+  flex: 1 1 520px;
+  display: grid;
+  grid-template-columns: auto minmax(140px, 180px) minmax(260px, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.ride-bus-controls label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.ride-bus-controls input,
+.ride-bus-controls button {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 216, 148, 0.38);
+  background: rgba(4, 17, 22, 0.72);
+  color: var(--text-main);
+  padding: 0.58rem 0.7rem;
+  font-family: 'Cinzel', serif;
+}
+
+.ride-bus-choice-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ride-bus-choice-grid.three-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 720px;
+}
+
+.ride-bus-choice-grid.four-options {
+  max-width: 720px;
+}
+
+.ride-bus-choice-grid button,
+.ride-bus-reset {
+  background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+  color: #1d1808;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.ride-bus-payout {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 216, 148, 0.25);
+  padding: 0.45rem 0.68rem;
+  text-align: center;
+  color: var(--accent);
+  font-weight: 700;
+  background: rgba(4, 17, 22, 0.54);
+}
+
 @media (max-width: 900px) {
   .lobby-page {
     padding: 1.6rem 0.9rem 8.3rem;
@@ -1461,6 +1576,18 @@ h1 {
   }
 
   .roulette-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ride-bus-choice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ride-bus-controls {
+    display: grid;
+  }
+
+  .ride-bus-ante-row {
     grid-template-columns: 1fr;
   }
 

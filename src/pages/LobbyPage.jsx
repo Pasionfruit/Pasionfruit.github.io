@@ -3,12 +3,21 @@ import GamePanel from '../components/GamePanel'
 import { games } from '../data/games'
 import { useBankroll } from '../context/BankrollContext'
 
+const featuredPartyGame = {
+  id: 'ride-the-bus',
+  name: 'Ride The Bus',
+  tagline: 'Layered card callouts that get tighter every round.',
+  ctaLabel: 'Ride Now',
+  rules: [
+    'Round 1: Guess whether the first card will be red or black.',
+    'Round 2: Using that card, guess whether the next card is above, equal, or below it.',
+    'Round 3: Using the prior two cards, guess whether the next card is in or out of that range.',
+    'Between is inclusive, so matching either boundary card still counts as in.',
+    'Final round: Guess the exact suit of the last card to clear the bus and win the payout.',
+  ],
+}
+
 const partyGames = [
-  {
-    id: 'ride-the-bus',
-    name: 'Ride The Bus',
-    tagline: 'Layered card callouts that build pressure each round.',
-  },
   {
     id: 'kings-cup',
     name: "King's Cup",
@@ -87,10 +96,12 @@ function LobbyPage() {
           <section className="party-lobby" aria-label="Party lobby game selection">
             <header className="party-header centered">
               <h2>Party Lobby</h2>
-              <p>Social party game tables you can host soon.</p>
+              <p>Social party tables with one live game and more on deck.</p>
             </header>
 
             <div className="panel-grid party-grid">
+              <GamePanel key={featuredPartyGame.id} game={featuredPartyGame} onPlay={() => navigate('/game/ride-the-bus')} />
+
               {partyGames.map((game) => (
                 <article key={game.id} className="game-panel party-panel">
                   <header className="panel-header">

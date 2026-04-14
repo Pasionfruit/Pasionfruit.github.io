@@ -5,6 +5,7 @@ import BaccaratPage from './pages/BaccaratPage'
 import BlackjackPage from './pages/BlackjackPage'
 import CrapsPage from './pages/CrapsPage'
 import LobbyPage from './pages/LobbyPage'
+import RideTheBusPage from './pages/RideTheBusPage'
 import RoulettePage from './pages/RoulettePage'
 import SlotsPage from './pages/SlotsPage'
 import LoginPage from './pages/LoginPage'
@@ -16,6 +17,7 @@ function App() {
       <Header />
       <Routes>
   <Route path="/" element={<LobbyPage />} />
+        <Route path="/game/ride-the-bus" element={<RideTheBusPage />} />
         <Route path="/game/slots" element={<SlotsPage />} />
         <Route path="/game/roulette" element={<RoulettePage />} />
         <Route path="/game/baccarat" element={<BaccaratPage />} />
