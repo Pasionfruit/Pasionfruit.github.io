@@ -31,9 +31,8 @@ function readUsersFromStorage() {
     const sanitized = parsed.filter((u) => {
       const name = String(u?.name || '').trim().toLowerCase()
       const isSeedName = name === 'player' || name === 'admin'
-      const hasRemote = Number.isFinite(Number(u?.sheetRowIndex))
       const hasCredentials = Boolean(u?.passwordHash || u?.googleId || u?.email)
-      return !isSeedName || hasRemote || hasCredentials
+      return !isSeedName || hasCredentials
     })
 
     return sanitized
@@ -127,17 +126,24 @@ export function BankrollProvider({ children }) {
       if (!Array.isArray(rows) || rows.length === 0) return false
 
       // Map sheet rows (rowIndex, name, email, balance) into users
-      const mapped = rows.map((r) => ({
-        id: `sheet-${r.rowIndex}`,
-        name: r.name || `Player-${r.rowIndex}`,
-        email: r.email || null,
-        balance: typeof r.balance === 'number' ? sanitizeBalance(r.balance) : sanitizeBalance(Number(r.balance) || 0),
-        isAdmin: false,
-        passwordHash: r.passwordHash || null,
-        authProvider: r.authProvider || AUTH_PROVIDER_LOCAL,
-        googleId: r.googleId || null,
-        sheetRowIndex: Number(r.rowIndex) || null,
-      }))
+      const mapped = rows
+        .map((r) => ({
+          id: `sheet-${r.rowIndex}`,
+          name: r.name || `Player-${r.rowIndex}`,
+          email: r.email || null,
+          balance: typeof r.balance === 'number' ? sanitizeBalance(r.balance) : sanitizeBalance(Number(r.balance) || 0),
+          isAdmin: false,
+          passwordHash: r.passwordHash || null,
+          authProvider: r.authProvider || AUTH_PROVIDER_LOCAL,
+          googleId: r.googleId || null,
+          sheetRowIndex: Number(r.rowIndex) || null,
+        }))
+        .filter((u) => {
+          const name = String(u.name || '').trim().toLowerCase()
+          const isLegacySeed = name === 'player' || name === 'admin'
+          const hasCredentials = Boolean(u.passwordHash || u.googleId || u.email)
+          return !isLegacySeed || hasCredentials
+        })
 
       // Preserve local users that have not been synced to a sheet row yet.
       const remoteKeys = new Set(mapped.flatMap((u) => {
