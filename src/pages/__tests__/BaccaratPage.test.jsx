@@ -13,6 +13,14 @@ function rankToRandom(rank) {
   return (rank - 0.5) / 13
 }
 
+function suitToRandom(suitIndex) {
+  return (suitIndex + 0.25) / 4
+}
+
+function cardRandom(rank, suitIndex) {
+  return [rankToRandom(rank), suitToRandom(suitIndex)]
+}
+
 describe('BaccaratPage', () => {
   const placeBet = vi.fn()
   const payout = vi.fn()
@@ -34,11 +42,19 @@ describe('BaccaratPage', () => {
   })
 
   it('pays 1:1 when player side wins', () => {
-    vi.spyOn(Math, 'random')
-      .mockReturnValueOnce(rankToRandom(4))
-      .mockReturnValueOnce(rankToRandom(4))
-      .mockReturnValueOnce(rankToRandom(3))
-      .mockReturnValueOnce(rankToRandom(3))
+    const randoms = [
+      ...cardRandom(4, 0),
+      ...cardRandom(4, 1),
+      ...cardRandom(3, 2),
+      ...cardRandom(3, 3),
+    ]
+
+    let pointer = 0
+    vi.spyOn(Math, 'random').mockImplementation(() => {
+      const value = randoms[pointer]
+      pointer += 1
+      return value ?? 0
+    })
 
     render(
       <MemoryRouter>
@@ -50,15 +66,23 @@ describe('BaccaratPage', () => {
 
     expect(placeBet).toHaveBeenCalledWith(25)
     expect(payout).toHaveBeenCalledWith(50)
-    expect(screen.getByText('Player wins. Paid 1:1.')).toBeInTheDocument()
+    expect(screen.getByText('Player won $50.00.')).toBeInTheDocument()
   })
 
   it('pays tie odds when tie side wins', () => {
-    vi.spyOn(Math, 'random')
-      .mockReturnValueOnce(rankToRandom(4))
-      .mockReturnValueOnce(rankToRandom(4))
-      .mockReturnValueOnce(rankToRandom(8))
-      .mockReturnValueOnce(rankToRandom(10))
+    const randoms = [
+      ...cardRandom(4, 0),
+      ...cardRandom(4, 1),
+      ...cardRandom(8, 2),
+      ...cardRandom(10, 3),
+    ]
+
+    let pointer = 0
+    vi.spyOn(Math, 'random').mockImplementation(() => {
+      const value = randoms[pointer]
+      pointer += 1
+      return value ?? 0
+    })
 
     render(
       <MemoryRouter>
@@ -66,11 +90,11 @@ describe('BaccaratPage', () => {
       </MemoryRouter>,
     )
 
-    fireEvent.change(screen.getByLabelText('Side'), { target: { value: 'tie' } })
+    fireEvent.click(screen.getByRole('button', { name: /tie\s*8:1/i }))
     fireEvent.click(screen.getByRole('button', { name: 'Deal' }))
 
     expect(payout).toHaveBeenCalledWith(225)
-    expect(screen.getByText('Tie wins. Paid 8:1.')).toBeInTheDocument()
+    expect(screen.getByText('Tie won $225.00.')).toBeInTheDocument()
   })
 
   it('shows rejected message when bankroll bet fails', () => {

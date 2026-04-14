@@ -1388,6 +1388,121 @@ h1 {
   margin-top: 0.95rem;
 }
 
+.baccarat-payout-strip {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.baccarat-payout-pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.72rem;
+  border: 1px solid rgba(255, 216, 148, 0.3);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.baccarat-payout-pill.player {
+  background: rgba(31, 101, 171, 0.28);
+  color: #c6e8ff;
+}
+
+.baccarat-payout-pill.tie {
+  background: rgba(136, 62, 151, 0.24);
+  color: #efd4ff;
+}
+
+.baccarat-payout-pill.banker {
+  background: rgba(179, 36, 29, 0.22);
+  color: #ffd8d4;
+}
+
+.baccarat-bet-board {
+  margin-top: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 216, 148, 0.25);
+  padding: 0.55rem;
+  background: linear-gradient(180deg, rgba(10, 55, 43, 0.86), rgba(7, 39, 31, 0.93));
+  display: grid;
+  grid-template-columns: 1fr 0.68fr 1fr;
+  gap: 0.5rem;
+}
+
+.baccarat-spot {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 216, 148, 0.28);
+  background: rgba(3, 20, 25, 0.58);
+  color: var(--text-main);
+  padding: 0.62rem 0.7rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.baccarat-spot span {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+}
+
+.baccarat-spot.player {
+  box-shadow: inset 0 0 0 1px rgba(54, 132, 211, 0.38);
+}
+
+.baccarat-spot.tie {
+  box-shadow: inset 0 0 0 1px rgba(179, 97, 197, 0.4);
+}
+
+.baccarat-spot.banker {
+  box-shadow: inset 0 0 0 1px rgba(214, 72, 66, 0.42);
+}
+
+.baccarat-spot.selected {
+  box-shadow: inset 0 0 0 2px rgba(128, 247, 255, 0.85), 0 0 0 1px rgba(128, 247, 255, 0.35);
+}
+
+.baccarat-table {
+  position: relative;
+  margin-top: 0.75rem;
+}
+
+.baccarat-lane.player h3 {
+  color: #9bd6ff;
+}
+
+.baccarat-lane.banker h3 {
+  color: #ffb5af;
+}
+
+.baccarat-center-mark {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 226, 174, 0.82);
+}
+
+.baccarat-bottom-controls {
+  align-items: center;
+}
+
+.baccarat-selected-side {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.86rem;
+}
+
 .ride-bus-page {
   max-width: 1100px;
 }
@@ -1550,6 +1665,10 @@ h1 {
   .control-row select,
   .control-row button {
     width: 100%;
+  }
+
+  .baccarat-bet-board {
+    grid-template-columns: 1fr;
   }
 
   .slots-reels {

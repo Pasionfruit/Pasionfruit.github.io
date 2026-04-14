@@ -9,6 +9,7 @@ const SUITS = [
   { id: 'clubs', symbol: '♣', color: 'black' },
   { id: 'diamonds', symbol: '♦', color: 'red' },
 ]
+const BLACKJACK_PAYOUT = 2.5
 
 let cardIdCounter = 0
 
@@ -37,6 +38,10 @@ function handValue(hand) {
   }
 
   return total
+}
+
+function isNaturalBlackjack(hand) {
+  return hand.length === 2 && handValue(hand) === 21
 }
 
 function normalizeBet(value) {
@@ -289,7 +294,12 @@ function BlackjackPage() {
       } else {
         playPushSound()
       }
-      setResult(`Round complete: ${summary.join(', ')}.`)
+
+      if (winCount > 0) {
+        setResult(`Round complete: won $${payoutTotal.toFixed(2)} (${summary.join(', ')}).`)
+      } else {
+        setResult(`Round complete: push returned $${payoutTotal.toFixed(2)}.`)
+      }
     }
 
     resetRound()
@@ -313,6 +323,14 @@ function BlackjackPage() {
     if (nextIndex !== -1) {
       setActiveHandIndex(nextIndex)
       setResult(`Playing hand ${nextIndex + 1}.`)
+      return
+    }
+
+    const allBusted = updatedHands.every((hand) => hand.status === 'bust')
+    if (allBusted) {
+      playLossSound()
+      setResult('All hands busted. Round over.')
+      resetRound()
       return
     }
 
@@ -347,8 +365,10 @@ function BlackjackPage() {
 
     const playerTotal = handValue(playerStart)
     const dealerTotal = handValue(dealerStart)
+    const playerNatural = isNaturalBlackjack(playerStart)
+    const dealerNatural = isNaturalBlackjack(dealerStart)
 
-    if (playerTotal === 21 && dealerTotal === 21) {
+    if (playerNatural && dealerNatural) {
       payout(normalizedBet)
       playPushSound()
       setResult('Push. Both hands opened with blackjack.')
@@ -356,15 +376,16 @@ function BlackjackPage() {
       return
     }
 
-    if (playerTotal === 21) {
-      payout(normalizedBet * 2.5)
+    if (playerNatural) {
+      const wonAmount = normalizedBet * BLACKJACK_PAYOUT
+      payout(wonAmount)
       playWinSound()
-      setResult('Blackjack! Paid 3:2.')
+      setResult(`Blackjack! You won $${wonAmount.toFixed(2)}.`)
       resetRound()
       return
     }
 
-    if (dealerTotal === 21) {
+    if (dealerNatural) {
       playLossSound()
       setResult('Dealer blackjack. Hand lost.')
       resetRound()
