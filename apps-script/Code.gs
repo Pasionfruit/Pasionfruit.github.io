@@ -1,8 +1,16 @@
 const SHEET_NAME = 'Profiles';
 const HEADERS = ['Name', 'Email', 'Balance', 'PasswordHash', 'AuthProvider', 'GoogleId'];
+const SPREADSHEET_ID = '1s42nfhLnBYr9kTA3N52oVSGqbX_IzjxyhRv6fIQ6Cz4';
+
+function getSpreadsheet() {
+  if (SPREADSHEET_ID) {
+    return SpreadsheetApp.openById(SPREADSHEET_ID);
+  }
+  return SpreadsheetApp.getActiveSpreadsheet();
+}
 
 function getSheet() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const sheet = getSpreadsheet().getSheetByName(SHEET_NAME);
   if (!sheet) throw new Error('Missing sheet: ' + SHEET_NAME);
   return sheet;
 }

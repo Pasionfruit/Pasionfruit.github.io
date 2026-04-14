@@ -18,8 +18,6 @@ function sanitizeBalance(value) {
 }
 
 function readUsersFromStorage() {
-  if (REMOTE_ONLY_MODE) return null
-
   try {
     const raw = localStorage.getItem(USERS_KEY)
 
@@ -36,18 +34,14 @@ function readUsersFromStorage() {
 }
 
 function writeUsersToStorage(users) {
-  if (REMOTE_ONLY_MODE) return
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }
 
 function readCurrentUserIdFromStorage() {
-  if (REMOTE_ONLY_MODE && !IS_TEST_MODE) return null
   return localStorage.getItem(CURRENT_USER_KEY)
 }
 
 function writeCurrentUserIdToStorage(id) {
-  if (REMOTE_ONLY_MODE && !IS_TEST_MODE) return
-
   if (id == null) {
     localStorage.removeItem(CURRENT_USER_KEY)
   } else {
@@ -91,8 +85,6 @@ async function hashPassword(password) {
 export function BankrollProvider({ children }) {
   const storedUsers = readUsersFromStorage()
   const [users, setUsers] = useState(() => {
-    if (REMOTE_ONLY_MODE && !IS_TEST_MODE) return []
-
     if (storedUsers && storedUsers.length > 0) return storedUsers
 
     // If an old single-user balance key exists, migrate it into a single player account
@@ -151,22 +143,43 @@ export function BankrollProvider({ children }) {
         sheetRowIndex: Number(r.rowIndex) || null,
       }))
 
+      // Preserve local users that have not been synced to a sheet row yet.
+      const remoteKeys = new Set(mapped.flatMap((u) => {
+        const keys = []
+        if (u.googleId) keys.push(`gid:${String(u.googleId).toLowerCase()}`)
+        if (u.email) keys.push(`email:${String(u.email).toLowerCase()}`)
+        if (u.name) keys.push(`name:${String(u.name).toLowerCase()}`)
+        return keys
+      }))
+
+      const localUnsynced = usersRef.current.filter((u) => !u.sheetRowIndex)
+      const localOnly = localUnsynced.filter((u) => {
+        const keys = []
+        if (u.googleId) keys.push(`gid:${String(u.googleId).toLowerCase()}`)
+        if (u.email) keys.push(`email:${String(u.email).toLowerCase()}`)
+        if (u.name) keys.push(`name:${String(u.name).toLowerCase()}`)
+        if (keys.length === 0) return true
+        return !keys.some((k) => remoteKeys.has(k))
+      })
+
+      const merged = [...mapped, ...localOnly]
+
       // If any of the sheet rows have the name 'Admin' (case-insensitive), mark as admin
-      mapped.forEach((u) => {
+      merged.forEach((u) => {
         if (u.name && u.name.toLowerCase() === 'admin') u.isAdmin = true
       })
 
       const previousCurrent = usersRef.current.find((u) => u.id === currentUserId) || null
-      const sameId = currentUserId ? mapped.find((u) => u.id === currentUserId) : null
+      const sameId = currentUserId ? merged.find((u) => u.id === currentUserId) : null
       const sameEmail = previousCurrent?.email
-        ? mapped.find((u) => u.email && u.email.toLowerCase() === previousCurrent.email.toLowerCase())
+        ? merged.find((u) => u.email && u.email.toLowerCase() === previousCurrent.email.toLowerCase())
         : null
       const sameName = previousCurrent?.name
-        ? mapped.find((u) => u.name && u.name.toLowerCase() === previousCurrent.name.toLowerCase())
+        ? merged.find((u) => u.name && u.name.toLowerCase() === previousCurrent.name.toLowerCase())
         : null
       const nextCurrent = sameId || sameEmail || sameName || null
 
-      setUsers(mapped)
+      setUsers(merged)
       setCurrentUserId(nextCurrent?.id ?? null)
       return true
     } catch (err) {
