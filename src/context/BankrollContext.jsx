@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { apiFetch, apiJson } from '../lib/apiClient'
 
 const STARTING_BANKROLL = 1000
 const USERS_KEY = 'casino-users'
 const CURRENT_USER_KEY = 'casino-current-user'
 const LEGACY_KEY = 'casino-shared-bankroll'
+const REMOTE_ONLY_MODE = Boolean((import.meta.env.VITE_API_BASE_URL || '').trim())
 
 const BankrollContext = createContext(null)
 
@@ -12,6 +14,8 @@ function sanitizeBalance(value) {
 }
 
 function readUsersFromStorage() {
+  if (REMOTE_ONLY_MODE) return null
+
   try {
     const raw = localStorage.getItem(USERS_KEY)
 
@@ -28,6 +32,7 @@ function readUsersFromStorage() {
 }
 
 function writeUsersToStorage(users) {
+  if (REMOTE_ONLY_MODE) return
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }
 
@@ -52,6 +57,7 @@ function makeUser(name, opts = {}) {
     isAdmin: Boolean(opts.isAdmin),
     email: opts.email || null,
     googleId: opts.googleId || null,
+    sheetRowIndex: Number.isFinite(opts.sheetRowIndex) ? opts.sheetRowIndex : null,
   }
 }
 
@@ -98,7 +104,7 @@ export function BankrollProvider({ children }) {
   // on mount, and also expose it so the Admin UI can manually refresh.
   const fetchRemoteProfiles = async () => {
     try {
-      const resp = await fetch('/profiles')
+      const resp = await apiFetch('/profiles')
       if (!resp.ok) return false
       const rows = await resp.json()
       if (!Array.isArray(rows) || rows.length === 0) return false
@@ -110,6 +116,7 @@ export function BankrollProvider({ children }) {
         email: r.email || null,
         balance: typeof r.balance === 'number' ? sanitizeBalance(r.balance) : sanitizeBalance(Number(r.balance) || 0),
         isAdmin: false,
+        sheetRowIndex: Number(r.rowIndex) || null,
       }))
 
       // If any of the sheet rows have the name 'Admin' (case-insensitive), mark as admin
@@ -143,11 +150,60 @@ export function BankrollProvider({ children }) {
 
   const getUserById = (id) => users.find((u) => u.id === id) || null
 
+  const syncUserToRemote = async (user) => {
+    if (!user) return false
+
+    try {
+      if (user.sheetRowIndex) {
+        const updateResp = await apiJson(`/profiles/${user.sheetRowIndex}`, {
+          method: 'PUT',
+          body: {
+            name: user.name,
+            email: user.email || '',
+            balance: sanitizeBalance(user.balance),
+          },
+        })
+        if (!updateResp.ok) return false
+        return true
+      }
+
+      const createResp = await apiJson('/profiles', {
+        method: 'POST',
+        body: {
+          name: user.name,
+          email: user.email || '',
+          balance: sanitizeBalance(user.balance),
+        },
+      })
+
+      if (!createResp.ok) return false
+      const created = await createResp.json().catch(() => ({}))
+      const rowIndex = Number(created?.rowIndex)
+      if (!Number.isFinite(rowIndex)) return false
+
+      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, sheetRowIndex: rowIndex } : u)))
+      return true
+    } catch {
+      return false
+    }
+  }
+
   // currentUser derived from state for safe render-time access
   const currentUser = users.find((u) => u.id === currentUserId) || null
 
-  const updateUser = (id, patch) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, ...patch } : u)))
+  const updateUser = (id, patch, opts = {}) => {
+    const { syncRemote = true } = opts
+    let nextUser = null
+
+    setUsers((prev) => prev.map((u) => {
+      if (u.id !== id) return u
+      nextUser = { ...u, ...patch }
+      return nextUser
+    }))
+
+    if (syncRemote && nextUser) {
+      void syncUserToRemote(nextUser)
+    }
   }
 
   const login = (name) => {
@@ -167,6 +223,7 @@ export function BankrollProvider({ children }) {
     const created = makeUser(normalized)
     setUsers((prev) => [...prev, created])
     setCurrentUserId(created.id)
+    void syncUserToRemote(created)
     return created
   }
 
@@ -187,7 +244,7 @@ export function BankrollProvider({ children }) {
 
     if (foundByEmail) {
       // attach google id if missing
-      if (!foundByEmail.googleId) updateUser(foundByEmail.id, { googleId: profile.sub })
+      if (!foundByEmail.googleId) updateUser(foundByEmail.id, { googleId: profile.sub }, { syncRemote: false })
       setCurrentUserId(foundByEmail.id)
       return foundByEmail
     }
@@ -196,6 +253,7 @@ export function BankrollProvider({ children }) {
     const created = makeUser(profile.name || profile.email || 'Player', { email: profile.email, googleId: profile.sub })
     setUsers((prev) => [...prev, created])
     setCurrentUserId(created.id)
+    void syncUserToRemote(created)
     return created
   }
 
@@ -257,6 +315,7 @@ export function BankrollProvider({ children }) {
   const createUser = (name, opts = {}) => {
     const created = makeUser(name, opts)
     setUsers((prev) => [...prev, created])
+    void syncUserToRemote(created)
     return created
   }
 

@@ -1,6 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBankroll } from '../context/BankrollContext'
+import { apiJson } from '../lib/apiClient'
+
+function decodeGoogleJwtPayload(idToken) {
+  try {
+    const parts = String(idToken || '').split('.')
+    if (parts.length < 2) return null
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+    const normalized = base64 + '='.repeat((4 - (base64.length % 4)) % 4)
+    const json = atob(normalized)
+    const payload = JSON.parse(json)
+
+    if (!payload?.sub) return null
+
+    return {
+      sub: payload.sub,
+      email: payload.email || null,
+      name: payload.name || payload.email || 'Google Player',
+    }
+  } catch {
+    return null
+  }
+}
 
 function LoginPage() {
   const [name, setName] = useState('')
@@ -51,20 +73,26 @@ function LoginPage() {
         callback: async (response) => {
           try {
             const id_token = response.credential
-            const resp = await fetch('/auth/google', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_token }) })
+            const resp = await apiJson('/auth/google', {
+              method: 'POST',
+              body: { id_token },
+            })
             if (!resp.ok) throw new Error('Auth verification failed')
             const body = await resp.json()
             const { profile } = body
             const user = loginWithGoogle(profile)
             if (user) navigate('/')
           } catch {
-            // fallback prompt flow on failure
-            const email = window.prompt('Google email (for test):', 'player@example.com')
-            if (!email) return
-            const nameFromPrompt = window.prompt('Display name (optional):', 'Google Player')
-            const fakeProfile = { sub: `google-${Date.now()}`, email, name: nameFromPrompt || email }
-            const user = loginWithGoogle(fakeProfile)
-            if (user) navigate('/')
+            // fallback to local JWT decode for serverless deployments
+            const fallbackProfile = decodeGoogleJwtPayload(response.credential)
+            if (fallbackProfile) {
+              const user = loginWithGoogle(fallbackProfile)
+              if (user) navigate('/')
+              return
+            }
+
+            // final manual fallback
+            fallbackGooglePrompt()
           }
         },
       })

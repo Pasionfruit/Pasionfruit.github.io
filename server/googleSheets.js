@@ -69,7 +69,11 @@ async function appendProfile({ name, email, balance }) {
     requestBody: { values },
   })
 
-  return { updatedRange: resp.data.updates.updatedRange }
+  const updatedRange = resp.data?.updates?.updatedRange || ''
+  const match = updatedRange.match(/![A-Z]+(\d+):/)
+  const rowIndex = match ? Number(match[1]) : null
+
+  return { updatedRange, rowIndex }
 }
 
 async function updateProfile(rowIndex, { name, email, balance }) {

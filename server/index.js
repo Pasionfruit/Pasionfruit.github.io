@@ -91,6 +91,23 @@ app.post('/profiles', async (req, res) => {
   }
 })
 
+app.post('/profiles/:rowIndex', async (req, res) => {
+  try {
+    // Optional method override for environments that cannot send PUT.
+    if (String(req.body?._method || '').toUpperCase() !== 'PUT') {
+      return res.status(405).json({ error: 'Method not allowed' })
+    }
+
+    const { rowIndex } = req.params
+    const { name, email, balance } = req.body
+    const updated = await updateProfile(Number(rowIndex), { name, email, balance })
+    res.json(updated)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: String(err) })
+  }
+})
+
 app.put('/profiles/:rowIndex', async (req, res) => {
   try {
     const { rowIndex } = req.params

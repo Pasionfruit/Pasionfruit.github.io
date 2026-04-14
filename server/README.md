@@ -25,3 +25,8 @@ API
 GET /profiles
 POST /profiles { name, email, balance }
 PUT /profiles/:rowIndex { name, email, balance }
+
+Notes
+
+- `POST /profiles` returns `{ updatedRange, rowIndex }`.
+- This server is for local/dev use. For GitHub Pages production, host this API on a separate backend URL and set `VITE_API_BASE_URL` in the frontend build.
