@@ -78,6 +78,8 @@ Use:
 - Who has access: Anyone
 - Copy the Web App URL (it ends with `/exec`)
 
+If you already deployed once, you must deploy a new version after script changes.
+
 5. In GitHub repository Settings -> Secrets and variables -> Actions -> Variables, set:
 - `VITE_API_BASE_URL` = your Apps Script web app URL
 - `VITE_API_MODE` = `apps-script`
@@ -92,6 +94,14 @@ Use:
 - Apps Script is used as a Sheets bridge and avoids needing paid server hosting.
 - In `apps-script` mode, profile updates are sent as POST with method override for compatibility.
 - Google sign-in can still work; if `/auth/google` is not hosted, the app falls back to decoding the Google token payload client-side.
+
+### Quick API Smoke Test
+
+After deployment, open this in your browser:
+
+`<YOUR_APPS_SCRIPT_URL>?path=/profiles`
+
+You should see JSON (array or object), not an HTML error page.
 
 ## Notes
 

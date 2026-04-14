@@ -70,9 +70,17 @@ function sendJson(payload) {
   return out;
 }
 
+function getRoutePath(e) {
+  const byQuery = String((e && e.parameter && e.parameter.path) || '').trim();
+  if (byQuery) return byQuery.replace(/^\/+/, '').replace(/\/+$/, '');
+
+  const byPathInfo = String((e && e.pathInfo) || '').trim();
+  return byPathInfo.replace(/^\/+/, '').replace(/\/+$/, '');
+}
+
 function doGet(e) {
   try {
-    const pathInfo = String((e && e.pathInfo) || '').replace(/^\/+/, '');
+    const pathInfo = getRoutePath(e);
 
     if (!pathInfo || pathInfo === 'profiles') {
       return sendJson(readProfiles());
@@ -86,7 +94,7 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    const pathInfo = String((e && e.pathInfo) || '').replace(/^\/+/, '');
+    const pathInfo = getRoutePath(e);
     const body = parseRequestBody(e);
     const parts = pathInfo.split('/').filter(Boolean);
 

@@ -27,6 +27,7 @@ function decodeGoogleJwtPayload(idToken) {
 function LoginPage() {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [googleStatus, setGoogleStatus] = useState('idle')
   const { login, loginWithGoogle } = useBankroll()
   const navigate = useNavigate()
 
@@ -42,7 +43,12 @@ function LoginPage() {
   // Attempt to initialize Google Identity Services if a client id is provided
   useEffect(() => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-    if (!clientId) return
+    if (!clientId) {
+      setGoogleStatus('unconfigured')
+      return
+    }
+
+    setGoogleStatus('loading')
 
     // dynamically insert the GSI script
     const id = 'gsi-script'
@@ -112,7 +118,15 @@ function LoginPage() {
     const timer = setInterval(() => {
       tries += 1
       const ok = tryInit()
-      if (ok || tries > 50) clearInterval(timer)
+      if (ok) {
+        setGoogleStatus('ready')
+        clearInterval(timer)
+      }
+
+      if (tries > 50) {
+        setGoogleStatus('unavailable')
+        clearInterval(timer)
+      }
     }, 200)
 
     return () => clearInterval(timer)
@@ -150,9 +164,11 @@ function LoginPage() {
             {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
               <>
                 <div ref={gsiButtonRef} />
-                <button type="button" onClick={fallbackGooglePrompt} style={{ marginLeft: '0.5rem' }}>
-                  Test sign-in
-                </button>
+                {googleStatus !== 'ready' ? (
+                  <button type="button" className="google-btn" onClick={fallbackGooglePrompt}>
+                    Continue with Google
+                  </button>
+                ) : null}
               </>
             ) : (
               <button type="button" className="google-btn" onClick={fallbackGooglePrompt}>

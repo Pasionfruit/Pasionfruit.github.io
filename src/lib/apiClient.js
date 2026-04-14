@@ -4,9 +4,19 @@ const USE_POST_FOR_UPDATES = String(import.meta.env.VITE_API_USE_POST_FOR_UPDATE
 
 const IS_APPS_SCRIPT_MODE = API_MODE === 'apps-script'
 
+function appendQueryParam(url, key, value) {
+  const separator = url.includes('?') ? '&' : '?'
+  return `${url}${separator}${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+}
+
 export function buildApiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
   if (!API_BASE_URL) return normalizedPath
+
+  if (IS_APPS_SCRIPT_MODE) {
+    return appendQueryParam(API_BASE_URL, 'path', normalizedPath)
+  }
+
   return `${API_BASE_URL}${normalizedPath}`
 }
 
