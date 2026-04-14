@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBankroll } from '../context/BankrollContext'
+import { playCustomFx } from '../lib/soundFx'
 
 const SUITS = [
   { id: 'spades', symbol: '♠', color: 'black' },
@@ -160,6 +161,7 @@ function RideTheBusPage() {
     const winnings = normalizedBet * WIN_MULTIPLIER
     if (winnings > 0) {
       payout(winnings)
+      playCustomFx('win', { volume: 0.8 })
     }
     setCards(finalCards)
     setPhase(PHASE_WON)
@@ -239,6 +241,8 @@ function RideTheBusPage() {
   }
 
   const handleSuit = (guess) => {
+    playCustomFx('finalCard', { volume: 0.85 })
+
     const nextCard = drawCard()
     const nextCards = [...cards, nextCard]
 

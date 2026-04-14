@@ -21,6 +21,20 @@
   box-sizing: border-box;
 }
 
+button {
+  transition: transform 90ms ease, box-shadow 120ms ease, filter 120ms ease;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.32), 0 8px 16px rgba(0, 0, 0, 0.16);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.32), 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  box-shadow: none;
+}
+
 html,
 body,
 #root {
@@ -552,6 +566,60 @@ h1 {
   margin: 0.55rem 0 0;
   font-size: 0.82rem;
   color: var(--text-muted);
+}
+
+.fx-panel {
+  margin-top: 0.7rem;
+  border-top: 1px solid rgba(255, 216, 148, 0.22);
+  padding-top: 0.7rem;
+}
+
+.fx-title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  color: var(--accent);
+  font-size: 0.92rem;
+}
+
+.fx-row {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.fx-label {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.fx-action {
+  border: 1px solid rgba(255, 216, 148, 0.42);
+  border-radius: 8px;
+  background: rgba(242, 158, 46, 0.16);
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+}
+
+.fx-action.secondary {
+  background: rgba(4, 17, 22, 0.62);
+}
+
+.fx-action.secondary.active {
+  background: rgba(242, 158, 46, 0.28);
+  border-color: rgba(255, 216, 148, 0.75);
+}
+
+.fx-state {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-width: 46px;
+  text-align: right;
 }
 
 .game-page {
@@ -1649,6 +1717,15 @@ h1 {
   .audio-row {
     grid-template-columns: 1fr;
     gap: 0.35rem;
+  }
+
+  .fx-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .fx-state {
+    text-align: left;
   }
 
   .game-topbar {

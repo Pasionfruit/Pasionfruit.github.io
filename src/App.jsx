@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AudioControls from './components/AudioControls'
 import Header from './components/Header'
+import { playCustomFx } from './lib/soundFx'
 import BaccaratPage from './pages/BaccaratPage'
 import BlackjackPage from './pages/BlackjackPage'
 import CrapsPage from './pages/CrapsPage'
@@ -12,6 +14,28 @@ import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
 
 function App() {
+  useEffect(() => {
+    const onPointerDown = (event) => {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+
+      const button = target.closest('button')
+      if (!button || button.disabled) {
+        return
+      }
+
+      playCustomFx('buttonClick', { volume: 0.45 })
+    }
+
+    window.addEventListener('pointerdown', onPointerDown)
+
+    return () => {
+      window.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [])
+
   return (
     <>
       <Header />

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBankroll } from '../context/BankrollContext'
+import { playCustomFx, stopCustomFx } from '../lib/soundFx'
 
 const RED_NUMBERS = new Set([
   1, 3, 5, 7, 9, 12, 14, 16, 18,
@@ -197,82 +198,12 @@ function RoulettePage() {
       if (spinSoundIntervalRef.current) {
         clearInterval(spinSoundIntervalRef.current)
       }
+
+      stopCustomFx('ballSpin')
     }
   }, [])
 
-  const ensureAudioContext = () => {
-    if (!audioContextRef.current) {
-      const AudioContextCtor = window.AudioContext || window.webkitAudioContext
 
-      if (!AudioContextCtor) {
-        return null
-      }
-
-      audioContextRef.current = new AudioContextCtor()
-    }
-
-    if (audioContextRef.current.state === 'suspended') {
-      audioContextRef.current.resume()
-    }
-
-    return audioContextRef.current
-  }
-
-  const playTone = ({ frequency, toFrequency, durationMs, type = 'sine', gain = 0.04 }) => {
-    const context = ensureAudioContext()
-
-    if (!context) {
-      return
-    }
-
-    const now = context.currentTime
-    const oscillator = context.createOscillator()
-    const envelope = context.createGain()
-
-    oscillator.type = type
-    oscillator.frequency.setValueAtTime(frequency, now)
-
-    if (toFrequency) {
-      oscillator.frequency.exponentialRampToValueAtTime(
-        Math.max(35, toFrequency),
-        now + durationMs / 1000,
-      )
-    }
-
-    envelope.gain.setValueAtTime(0.0001, now)
-    envelope.gain.exponentialRampToValueAtTime(gain, now + 0.01)
-    envelope.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000)
-
-    oscillator.connect(envelope)
-    envelope.connect(context.destination)
-    oscillator.start(now)
-    oscillator.stop(now + durationMs / 1000)
-  }
-
-  const stopSpinSound = () => {
-    if (spinSoundIntervalRef.current) {
-      clearInterval(spinSoundIntervalRef.current)
-      spinSoundIntervalRef.current = null
-    }
-  }
-
-  const startSpinSound = () => {
-    stopSpinSound()
-
-    spinSoundIntervalRef.current = setInterval(() => {
-      playTone({
-        frequency: 940 + Math.random() * 130,
-        toFrequency: 590,
-        durationMs: 65,
-        type: 'square',
-        gain: 0.03,
-      })
-    }, 92)
-  }
-
-  const playBallDropSound = () => {
-    playTone({ frequency: 270, toFrequency: 90, durationMs: 170, type: 'triangle', gain: 0.065 })
-  }
 
   const totalStake = useMemo(
     () => Object.values(chipBets).reduce((sum, item) => sum + item.amount, 0),
@@ -346,7 +277,7 @@ function RoulettePage() {
     setIsBallSpinning(true)
     setBallDropped(false)
     setResult('No more bets. Ball is spinning...')
-    startSpinSound()
+    playCustomFx('ballSpin', { loop: true, volume: 0.5 })
 
     const landed = Math.floor(Math.random() * 37)
     const color = getColor(landed)
@@ -358,13 +289,12 @@ function RoulettePage() {
     setWheelRotation(nextWheelRotation)
 
     spinTimerRef.current = setTimeout(() => {
-      stopSpinSound()
+      stopCustomFx('ballSpin')
       setIsBallSpinning(false)
       setBallAngle(finalBallAngle)
       setResult('Ball is dropping into the pocket...')
 
       landingTimerRef.current = setTimeout(() => {
-        playBallDropSound()
         setBallDropped(true)
         setLastSpin({ landed, color })
 
@@ -381,6 +311,7 @@ function RoulettePage() {
 
         if (totalPayout > 0) {
           payout(totalPayout)
+          playCustomFx('win', { volume: 0.8 })
           const profit = totalPayout - totalStake
           setResult(
             `Ball stopped on ${landed} (${color.toUpperCase()}). ${winningBets} bet(s) hit. Net ${profit >= 0 ? '+' : ''}$${profit.toFixed(2)}.`,

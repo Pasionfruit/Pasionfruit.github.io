@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBankroll } from '../context/BankrollContext'
+import { playCustomFx, stopCustomFx } from '../lib/soundFx'
 
 const ROW_HEIGHT = 72
 const REEL_COUNT = 5
@@ -14,11 +15,11 @@ const SYMBOLS = [
 ]
 
 const PAYOUTS = {
-  cherry: { 3: 1.6, 4: 3.5, 5: 8 },
-  bell: { 3: 2.2, 4: 4.5, 5: 10 },
-  clover: { 3: 1.8, 4: 4, 5: 9 },
-  diamond: { 3: 3, 4: 6, 5: 14 },
-  seven: { 3: 5, 4: 10, 5: 22 },
+  cherry: { 3: 0.8, 4: 1.5, 5: 3.5 },
+  bell: { 3: 1.0, 4: 2.0, 5: 5.0 },
+  clover: { 3: 0.9, 4: 1.8, 5: 4.5 },
+  diamond: { 3: 1.5, 4: 3.0, 5: 7.0 },
+  seven: { 3: 2.5, 4: 5.0, 5: 11.0 },
 }
 
 const TOTAL_SYMBOL_WEIGHT = SYMBOLS.reduce((sum, symbol) => sum + symbol.weight, 0)
@@ -83,10 +84,7 @@ function SlotsPage() {
   const [isLeverPulled, setIsLeverPulled] = useState(false)
   const [result, setResult] = useState('Place your bet and spin the reels.')
   const { balance, placeBet, payout } = useBankroll()
-  const audioContextRef = useRef(null)
   const timerRef = useRef(null)
-  const tickIntervalRef = useRef(null)
-  const tickStopTimeoutRef = useRef(null)
   const reelLockTimeoutsRef = useRef([])
   const leverTimeoutRef = useRef(null)
   const leverButtonRef = useRef(null)
@@ -109,162 +107,18 @@ function SlotsPage() {
         clearTimeout(timerRef.current)
       }
 
-      if (tickIntervalRef.current) {
-        clearInterval(tickIntervalRef.current)
-      }
-
-      if (tickStopTimeoutRef.current) {
-        clearTimeout(tickStopTimeoutRef.current)
-      }
-
       reelLockTimeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId))
       reelLockTimeoutsRef.current = []
 
       if (leverTimeoutRef.current) {
         clearTimeout(leverTimeoutRef.current)
       }
+
+      stopCustomFx('slotSpin')
     }
   }, [])
 
-  const ensureAudioContext = () => {
-    if (!audioContextRef.current) {
-      const AudioContextCtor = window.AudioContext || window.webkitAudioContext
 
-      if (!AudioContextCtor) {
-        return null
-      }
-
-      audioContextRef.current = new AudioContextCtor()
-    }
-
-    return audioContextRef.current
-  }
-
-  const playTone = ({ frequency, toFrequency, durationMs, type, gain }) => {
-    const context = ensureAudioContext()
-
-    if (!context) {
-      return
-    }
-
-    const now = context.currentTime
-    const oscillator = context.createOscillator()
-    const envelope = context.createGain()
-
-    oscillator.type = type
-    oscillator.frequency.setValueAtTime(frequency, now)
-
-    if (toFrequency) {
-      oscillator.frequency.exponentialRampToValueAtTime(
-        Math.max(40, toFrequency),
-        now + durationMs / 1000,
-      )
-    }
-
-    envelope.gain.setValueAtTime(0.0001, now)
-    envelope.gain.exponentialRampToValueAtTime(gain, now + 0.01)
-    envelope.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000)
-
-    oscillator.connect(envelope)
-    envelope.connect(context.destination)
-    oscillator.start(now)
-    oscillator.stop(now + durationMs / 1000)
-  }
-
-  const playToneAt = ({ frequency, toFrequency, durationMs, type, gain, delayMs }) => {
-    const context = ensureAudioContext()
-
-    if (!context) {
-      return
-    }
-
-    const startAt = context.currentTime + delayMs / 1000
-    const oscillator = context.createOscillator()
-    const envelope = context.createGain()
-
-    oscillator.type = type
-    oscillator.frequency.setValueAtTime(frequency, startAt)
-
-    if (toFrequency) {
-      oscillator.frequency.exponentialRampToValueAtTime(
-        Math.max(40, toFrequency),
-        startAt + durationMs / 1000,
-      )
-    }
-
-    envelope.gain.setValueAtTime(0.0001, startAt)
-    envelope.gain.exponentialRampToValueAtTime(gain, startAt + 0.008)
-    envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + durationMs / 1000)
-
-    oscillator.connect(envelope)
-    envelope.connect(context.destination)
-    oscillator.start(startAt)
-    oscillator.stop(startAt + durationMs / 1000)
-  }
-
-  const playLeverSound = () => {
-    playTone({
-      frequency: 230,
-      toFrequency: 95,
-      durationMs: 170,
-      type: 'sawtooth',
-      gain: 0.08,
-    })
-  }
-
-  const playTickSound = () => {
-    playTone({
-      frequency: 980,
-      toFrequency: 560,
-      durationMs: 55,
-      type: 'square',
-      gain: 0.04,
-    })
-  }
-
-  const startSpinSound = (totalDurationMs) => {
-    if (tickIntervalRef.current) {
-      clearInterval(tickIntervalRef.current)
-    }
-
-    if (tickStopTimeoutRef.current) {
-      clearTimeout(tickStopTimeoutRef.current)
-    }
-
-    tickIntervalRef.current = setInterval(() => {
-      playTickSound()
-    }, 105)
-
-    tickStopTimeoutRef.current = setTimeout(() => {
-      if (tickIntervalRef.current) {
-        clearInterval(tickIntervalRef.current)
-        tickIntervalRef.current = null
-      }
-    }, totalDurationMs + 120)
-  }
-
-  const playPairWinSound = () => {
-    playToneAt({ frequency: 520, toFrequency: 700, durationMs: 120, type: 'square', gain: 0.08, delayMs: 0 })
-    playToneAt({ frequency: 700, toFrequency: 880, durationMs: 130, type: 'square', gain: 0.09, delayMs: 135 })
-    playToneAt({ frequency: 880, toFrequency: 1040, durationMs: 160, type: 'triangle', gain: 0.08, delayMs: 290 })
-  }
-
-  const playJackpotSound = () => {
-    playToneAt({ frequency: 520, toFrequency: 660, durationMs: 140, type: 'triangle', gain: 0.1, delayMs: 0 })
-    playToneAt({ frequency: 660, toFrequency: 880, durationMs: 170, type: 'triangle', gain: 0.1, delayMs: 130 })
-    playToneAt({ frequency: 880, toFrequency: 1180, durationMs: 230, type: 'sine', gain: 0.11, delayMs: 290 })
-    playToneAt({ frequency: 1180, toFrequency: 1420, durationMs: 300, type: 'sine', gain: 0.12, delayMs: 470 })
-  }
-
-  const playReelLockSound = () => {
-    playTone({
-      frequency: 205,
-      toFrequency: 120,
-      durationMs: 85,
-      type: 'square',
-      gain: 0.075,
-    })
-  }
 
   const spin = () => {
     if (!Number.isFinite(normalizedBet) || normalizedBet <= 0) {
@@ -283,7 +137,7 @@ function SlotsPage() {
     setIsLeverPulled(true)
     setResult('Reels are spinning...')
 
-    playLeverSound()
+    playCustomFx('slotSpin', { loop: true, volume: 0.55 })
 
     const outcomes = Array.from({ length: REEL_COUNT }, () => randomSymbol())
     const reelDurations = REEL_DURATIONS_MS
@@ -298,9 +152,14 @@ function SlotsPage() {
     setSpinSequence((value) => value + 1)
 
     reelLockTimeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId))
-    reelLockTimeoutsRef.current = reelDurations.map((durationMs) =>
+    reelLockTimeoutsRef.current = reelDurations.map((durationMs, index) =>
       setTimeout(() => {
-        playReelLockSound()
+        const revealed = outcomes.slice(0, index + 1)
+        const revealedBest = getBestSymbolMatch(revealed)
+
+        if ((revealedBest?.count || 0) >= 2) {
+          playCustomFx('finalCard', { volume: 0.85 })
+        }
       }, durationMs),
     )
 
@@ -317,7 +176,6 @@ function SlotsPage() {
     })
 
     const totalDuration = reelDurations[reelDurations.length - 1]
-    startSpinSound(totalDuration)
 
     if (leverTimeoutRef.current) {
       clearTimeout(leverTimeoutRef.current)
@@ -333,6 +191,7 @@ function SlotsPage() {
 
     timerRef.current = setTimeout(() => {
       reelLockTimeoutsRef.current = []
+      stopCustomFx('slotSpin')
 
       const bestMatch = getBestSymbolMatch(outcomes)
       const topCount = bestMatch?.count || 0
@@ -345,13 +204,8 @@ function SlotsPage() {
 
         const earnings = normalizedBet * multiplier
         payout(earnings)
-        if (topCount === 5) {
-          playJackpotSound()
-          setResult(`Jackpot! ${matchedSymbol.label} x5 won $${earnings.toFixed(2)}.`)
-        } else {
-          playPairWinSound()
-          setResult(`${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
-        }
+        playCustomFx('win', { volume: 0.8 })
+        setResult(`${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
         return
       }
 

@@ -132,8 +132,6 @@ function BlackjackPage() {
   const [phase, setPhase] = useState('idle')
   const [result, setResult] = useState('Place your bet to deal a hand.')
   const { balance, placeBet, payout } = useBankroll()
-  const audioContextRef = useRef(null)
-
   const normalizedBet = useMemo(() => normalizeBet(bet), [bet])
 
   const canDeal = useMemo(
@@ -144,88 +142,10 @@ function BlackjackPage() {
   const activeHand = playerHands[activeHandIndex]
 
   useEffect(() => {
-    return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close()
-      }
-    }
+    return () => {}
   }, [])
 
-  const ensureAudioContext = () => {
-    if (!audioContextRef.current) {
-      const AudioContextCtor = window.AudioContext || window.webkitAudioContext
 
-      if (!AudioContextCtor) {
-        return null
-      }
-
-      audioContextRef.current = new AudioContextCtor()
-    }
-
-    if (audioContextRef.current.state === 'suspended') {
-      audioContextRef.current.resume()
-    }
-
-    return audioContextRef.current
-  }
-
-  const playToneAt = ({ frequency, toFrequency, durationMs, type = 'sine', gain = 0.05, delayMs = 0 }) => {
-    const context = ensureAudioContext()
-
-    if (!context) {
-      return
-    }
-
-    const startAt = context.currentTime + delayMs / 1000
-    const oscillator = context.createOscillator()
-    const envelope = context.createGain()
-
-    oscillator.type = type
-    oscillator.frequency.setValueAtTime(frequency, startAt)
-
-    if (toFrequency) {
-      oscillator.frequency.exponentialRampToValueAtTime(
-        Math.max(40, toFrequency),
-        startAt + durationMs / 1000,
-      )
-    }
-
-    envelope.gain.setValueAtTime(0.0001, startAt)
-    envelope.gain.exponentialRampToValueAtTime(gain, startAt + 0.01)
-    envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + durationMs / 1000)
-
-    oscillator.connect(envelope)
-    envelope.connect(context.destination)
-    oscillator.start(startAt)
-    oscillator.stop(startAt + durationMs / 1000)
-  }
-
-  const playCardDealSound = (delayMs = 0) => {
-    playToneAt({ frequency: 310, toFrequency: 235, durationMs: 85, type: 'square', gain: 0.04, delayMs })
-  }
-
-  const playDealSequenceSound = (count) => {
-    for (let index = 0; index < count; index += 1) {
-      playCardDealSound(index * 75)
-    }
-  }
-
-  const playStandSound = () => {
-    playToneAt({ frequency: 420, toFrequency: 310, durationMs: 120, type: 'triangle', gain: 0.055, delayMs: 0 })
-  }
-
-  const playWinSound = () => {
-    playToneAt({ frequency: 510, toFrequency: 660, durationMs: 110, type: 'triangle', gain: 0.08, delayMs: 0 })
-    playToneAt({ frequency: 660, toFrequency: 900, durationMs: 170, type: 'sine', gain: 0.09, delayMs: 120 })
-  }
-
-  const playPushSound = () => {
-    playToneAt({ frequency: 360, toFrequency: 360, durationMs: 120, type: 'triangle', gain: 0.055, delayMs: 0 })
-  }
-
-  const playLossSound = () => {
-    playToneAt({ frequency: 290, toFrequency: 130, durationMs: 220, type: 'sawtooth', gain: 0.07, delayMs: 0 })
-  }
 
   const canSplit = useMemo(() => {
     if (phase !== 'player' || !activeHand || playerHands.length !== 1) {
@@ -286,15 +206,8 @@ function BlackjackPage() {
     }
 
     if (winCount === 0 && pushCount === 0) {
-      playLossSound()
       setResult('Dealer wins all hands.')
     } else {
-      if (winCount > 0) {
-        playWinSound()
-      } else {
-        playPushSound()
-      }
-
       if (winCount > 0) {
         setResult(`Round complete: won $${payoutTotal.toFixed(2)} (${summary.join(', ')}).`)
       } else {
@@ -309,7 +222,6 @@ function BlackjackPage() {
     let nextDealer = [...dealer]
 
     while (handValue(nextDealer) < 17) {
-      playCardDealSound(0)
       nextDealer = [...nextDealer, drawCard()]
     }
 
@@ -328,7 +240,6 @@ function BlackjackPage() {
 
     const allBusted = updatedHands.every((hand) => hand.status === 'bust')
     if (allBusted) {
-      playLossSound()
       setResult('All hands busted. Round over.')
       resetRound()
       return
@@ -356,7 +267,6 @@ function BlackjackPage() {
 
     const playerStart = [drawCard(), drawCard()]
     const dealerStart = [drawCard(), drawCard()]
-    playDealSequenceSound(4)
 
     setDealer(dealerStart)
     setPlayerHands([createHand(playerStart, normalizedBet)])
@@ -370,7 +280,6 @@ function BlackjackPage() {
 
     if (playerNatural && dealerNatural) {
       payout(normalizedBet)
-      playPushSound()
       setResult('Push. Both hands opened with blackjack.')
       resetRound()
       return
@@ -379,14 +288,12 @@ function BlackjackPage() {
     if (playerNatural) {
       const wonAmount = normalizedBet * BLACKJACK_PAYOUT
       payout(wonAmount)
-      playWinSound()
       setResult(`Blackjack! You won $${wonAmount.toFixed(2)}.`)
       resetRound()
       return
     }
 
     if (dealerNatural) {
-      playLossSound()
       setResult('Dealer blackjack. Hand lost.')
       resetRound()
       return
@@ -410,7 +317,6 @@ function BlackjackPage() {
     const [firstCard, secondCard] = activeHand.cards
     const firstHand = createHand([firstCard, drawCard()], normalizedHandBet)
     const secondHand = createHand([secondCard, drawCard()], normalizedHandBet)
-    playDealSequenceSound(2)
 
     const nextHands = [firstHand, secondHand]
 
@@ -430,7 +336,6 @@ function BlackjackPage() {
       }
 
       const nextCards = [...hand.cards, drawCard()]
-      playCardDealSound(0)
       const nextTotal = handValue(nextCards)
       const nextStatus = nextTotal > 21 ? 'bust' : 'playing'
 
@@ -446,7 +351,6 @@ function BlackjackPage() {
     const current = updatedHands[activeHandIndex]
 
     if (current.status === 'bust') {
-      playLossSound()
       moveToNextHandOrDealer(updatedHands, activeHandIndex)
     }
   }
@@ -466,8 +370,6 @@ function BlackjackPage() {
         status: 'stood',
       }
     })
-
-    playStandSound()
 
     setPlayerHands(updatedHands)
     moveToNextHandOrDealer(updatedHands, activeHandIndex)

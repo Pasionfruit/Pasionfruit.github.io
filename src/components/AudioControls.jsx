@@ -1,4 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  playCustomFx,
+  readSoundFxEnabledMap,
+  writeSoundFxEnabledMap,
+} from '../lib/soundFx'
 
 const STORAGE_KEY = 'casino-lobby-audio'
 const DEFAULT_VOLUME = 0.5
@@ -32,14 +37,20 @@ function AudioControls() {
   const [hasStarted, setHasStarted] = useState(false)
   const [isAvailable, setIsAvailable] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [fxEnabledMap, setFxEnabledMap] = useState(() => readSoundFxEnabledMap())
+  const [fxTestMessage, setFxTestMessage] = useState('')
   const audioRef = useRef(null)
   const volumeRef = useRef(volume)
   const mutedRef = useRef(isMuted)
 
   const volumePercent = useMemo(() => Math.round(volume * 100), [volume])
+  const lobbyThemePath = useMemo(() => {
+    const base = String(import.meta.env.BASE_URL || '/').replace(/\/+$/, '')
+    return `${base}/audio/lobby-theme.mp3`
+  }, [])
 
   useEffect(() => {
-    const audio = new Audio('/audio/lobby-theme.mp3')
+    const audio = new Audio(lobbyThemePath)
     audio.loop = true
     audio.volume = volumeRef.current
     audio.muted = mutedRef.current
@@ -74,7 +85,7 @@ function AudioControls() {
       audio.currentTime = 0
       audioRef.current = null
     }
-  }, [])
+  }, [lobbyThemePath])
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -134,6 +145,40 @@ function AudioControls() {
     }
   }
 
+  const fxRows = [
+    { key: 'win', label: 'Winning' },
+    { key: 'ballSpin', label: 'Ball Spinning' },
+    { key: 'slotSpin', label: 'Slot Spinning' },
+    { key: 'finalCard', label: 'Dramatic Final Card' },
+    { key: 'buttonClick', label: 'Button Click' },
+  ]
+
+  const setFxEnabled = (effectKey, nextValue) => {
+    const next = {
+      ...fxEnabledMap,
+      [effectKey]: nextValue,
+    }
+
+    setFxEnabledMap(next)
+    writeSoundFxEnabledMap(next)
+  }
+
+  const testFx = (effectKey) => {
+    const ok = playCustomFx(effectKey)
+    if (ok) {
+      setFxTestMessage('')
+      return
+    }
+
+    const label = fxRows.find((fx) => fx.key === effectKey)?.label || effectKey
+    if (!fxEnabledMap[effectKey]) {
+      setFxTestMessage(`${label} is Off.`)
+      return
+    }
+
+    setFxTestMessage(`${label} could not play. Check file in public/audio/effects.`)
+  }
+
   return (
     <section className="audio-dock" aria-label="Casino audio controls">
       <div className="audio-title-bar">
@@ -174,6 +219,34 @@ function AudioControls() {
           ) : (
             <p className="audio-hint">Music is active.</p>
           )}
+
+          <div className="fx-panel" aria-label="Custom effects library">
+            <p className="fx-title">Effects Library</p>
+            {fxRows.map((fx) => (
+              <div className="fx-row" key={fx.key}>
+                <span className="fx-label">{fx.label}</span>
+                <button className="fx-action" type="button" onClick={() => testFx(fx.key)}>
+                  Test
+                </button>
+                <button
+                  className={`fx-action secondary ${fxEnabledMap[fx.key] ? 'active' : ''}`}
+                  type="button"
+                  onClick={() => setFxEnabled(fx.key, true)}
+                >
+                  On
+                </button>
+                <button
+                  className={`fx-action secondary ${!fxEnabledMap[fx.key] ? 'active' : ''}`}
+                  type="button"
+                  onClick={() => setFxEnabled(fx.key, false)}
+                >
+                  Off
+                </button>
+              </div>
+            ))}
+            <p className="audio-hint">Drop files into public/audio/effects with the configured names.</p>
+            {fxTestMessage ? <p className="audio-hint">{fxTestMessage}</p> : null}
+          </div>
         </>
       )}
     </section>
