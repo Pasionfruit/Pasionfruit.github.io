@@ -1387,11 +1387,26 @@ h1 {
   }
 
   .slots-reels {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(5, minmax(54px, 1fr));
+    gap: 0.4rem;
   }
 
   .slots-stage {
     grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .reel-window {
+    height: 174px;
+  }
+
+  .reel-symbol-row {
+    min-height: 58px;
+    padding: 0 0.42rem;
+  }
+
+  .symbol-label {
+    font-size: 0.78rem;
   }
 
   .roulette-layout {
@@ -1401,6 +1416,9 @@ h1 {
   .roulette-wheel-panel {
     width: 100%;
     order: -1;
+    position: sticky;
+    top: 0.45rem;
+    z-index: 8;
   }
 
   .roulette-main-grid {
@@ -1422,8 +1440,13 @@ h1 {
   }
 
   .wheel-shell {
-    width: 210px;
-    height: 210px;
+    width: 184px;
+    height: 184px;
+  }
+
+  .wheel-segment {
+    transform: translate(-50%, -50%) rotate(var(--segment-angle)) translateY(-70px)
+      rotate(calc(-1 * var(--segment-angle)));
   }
 
   .roulette-number-grid {

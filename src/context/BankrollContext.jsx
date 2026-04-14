@@ -27,7 +27,16 @@ function readUsersFromStorage() {
 
     if (!Array.isArray(parsed)) return null
 
-    return parsed
+    // Drop legacy seeded local placeholders that caused auth/sync confusion.
+    const sanitized = parsed.filter((u) => {
+      const name = String(u?.name || '').trim().toLowerCase()
+      const isSeedName = name === 'player' || name === 'admin'
+      const hasRemote = Number.isFinite(Number(u?.sheetRowIndex))
+      const hasCredentials = Boolean(u?.passwordHash || u?.googleId || u?.email)
+      return !isSeedName || hasRemote || hasCredentials
+    })
+
+    return sanitized
   } catch {
     return null
   }
@@ -87,27 +96,14 @@ export function BankrollProvider({ children }) {
   const [users, setUsers] = useState(() => {
     if (storedUsers && storedUsers.length > 0) return storedUsers
 
-    // If an old single-user balance key exists, migrate it into a single player account
-    try {
-      const legacy = localStorage.getItem(LEGACY_KEY)
-      const parsed = Number(legacy)
-      if (Number.isFinite(parsed) && parsed >= 0) {
-        const migrated = makeUser('Player', { balance: parsed })
-        const admin = makeUser('Admin', { isAdmin: true })
-        const initial = [migrated, admin]
-        writeUsersToStorage(initial)
-        return initial
-      }
-    } catch {
-      // fallthrough to defaults
+    if (IS_TEST_MODE) {
+      const player = makeUser('Player')
+      const admin = makeUser('Admin', { isAdmin: true })
+      return [player, admin]
     }
 
-    // Create a sensible initial state: one default player and one admin account
-    const player = makeUser('Player')
-    const admin = makeUser('Admin', { isAdmin: true })
-    const initial = [player, admin]
-    writeUsersToStorage(initial)
-    return initial
+    // No seeded local defaults; users are created explicitly via login/signup.
+    return []
   })
 
   const [currentUserId, setCurrentUserId] = useState(() => readCurrentUserIdFromStorage() || (IS_TEST_MODE ? (users[0]?.id || null) : null))
@@ -282,7 +278,18 @@ export function BankrollProvider({ children }) {
     const found = usersRef.current.find((u) => u.name.toLowerCase() === normalized.toLowerCase())
     if (found) {
       if (!found.passwordHash) {
-        // Accounts without a password hash are Google-only accounts.
+        // Legacy local account without password: convert to password auth.
+        if (!found.googleId) {
+          const upgradedHash = await hashPassword(password)
+          updateUser(found.id, {
+            passwordHash: upgradedHash,
+            authProvider: AUTH_PROVIDER_LOCAL,
+          })
+          setCurrentUserId(found.id)
+          return { ...found, passwordHash: upgradedHash, authProvider: AUTH_PROVIDER_LOCAL }
+        }
+
+        // Accounts without a password hash and with googleId are Google-only.
         return null
       }
 
