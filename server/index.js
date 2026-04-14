@@ -82,8 +82,8 @@ app.get('/', (req, res) => {
 
 app.post('/profiles', async (req, res) => {
   try {
-    const { name, email, balance } = req.body
-    const created = await appendProfile({ name, email, balance })
+    const { name, email, balance, passwordHash, authProvider, googleId } = req.body
+    const created = await appendProfile({ name, email, balance, passwordHash, authProvider, googleId })
     res.json(created)
   } catch (err) {
     console.error(err)
@@ -99,8 +99,8 @@ app.post('/profiles/:rowIndex', async (req, res) => {
     }
 
     const { rowIndex } = req.params
-    const { name, email, balance } = req.body
-    const updated = await updateProfile(Number(rowIndex), { name, email, balance })
+    const { name, email, balance, passwordHash, authProvider, googleId } = req.body
+    const updated = await updateProfile(Number(rowIndex), { name, email, balance, passwordHash, authProvider, googleId })
     res.json(updated)
   } catch (err) {
     console.error(err)
@@ -111,8 +111,8 @@ app.post('/profiles/:rowIndex', async (req, res) => {
 app.put('/profiles/:rowIndex', async (req, res) => {
   try {
     const { rowIndex } = req.params
-    const { name, email, balance } = req.body
-    const updated = await updateProfile(Number(rowIndex), { name, email, balance })
+    const { name, email, balance, passwordHash, authProvider, googleId } = req.body
+    const updated = await updateProfile(Number(rowIndex), { name, email, balance, passwordHash, authProvider, googleId })
     res.json(updated)
   } catch (err) {
     console.error(err)

@@ -7,6 +7,9 @@ const CURRENT_USER_KEY = 'casino-current-user'
 const LEGACY_KEY = 'casino-shared-bankroll'
 const REMOTE_ONLY_MODE = Boolean((import.meta.env.VITE_API_BASE_URL || '').trim())
 const IS_TEST_MODE = import.meta.env.MODE === 'test'
+const AUTH_PROVIDER_LOCAL = 'local'
+const AUTH_PROVIDER_GOOGLE = 'google'
+const AUTH_PROVIDER_LINKED = 'linked'
 
 const BankrollContext = createContext(null)
 
@@ -61,7 +64,27 @@ function makeUser(name, opts = {}) {
     isAdmin: Boolean(opts.isAdmin),
     email: opts.email || null,
     googleId: opts.googleId || null,
+    passwordHash: opts.passwordHash || null,
+    authProvider: opts.authProvider || AUTH_PROVIDER_LOCAL,
     sheetRowIndex: Number.isFinite(opts.sheetRowIndex) ? opts.sheetRowIndex : null,
+  }
+}
+
+async function hashPassword(password) {
+  const normalized = String(password || '')
+
+  if (globalThis.crypto?.subtle && globalThis.TextEncoder) {
+    const encoded = new TextEncoder().encode(normalized)
+    const digest = await globalThis.crypto.subtle.digest('SHA-256', encoded)
+    const bytes = Array.from(new Uint8Array(digest))
+    return bytes.map((b) => b.toString(16).padStart(2, '0')).join('')
+  }
+
+  // Fallback for older environments.
+  try {
+    return btoa(unescape(encodeURIComponent(normalized)))
+  } catch {
+    return normalized
   }
 }
 
@@ -122,6 +145,9 @@ export function BankrollProvider({ children }) {
         email: r.email || null,
         balance: typeof r.balance === 'number' ? sanitizeBalance(r.balance) : sanitizeBalance(Number(r.balance) || 0),
         isAdmin: false,
+        passwordHash: r.passwordHash || null,
+        authProvider: r.authProvider || AUTH_PROVIDER_LOCAL,
+        googleId: r.googleId || null,
         sheetRowIndex: Number(r.rowIndex) || null,
       }))
 
@@ -177,6 +203,9 @@ export function BankrollProvider({ children }) {
             name: user.name,
             email: user.email || '',
             balance: sanitizeBalance(user.balance),
+            passwordHash: user.passwordHash || '',
+            authProvider: user.authProvider || AUTH_PROVIDER_LOCAL,
+            googleId: user.googleId || '',
           },
         })
         if (!updateResp.ok) return false
@@ -191,6 +220,9 @@ export function BankrollProvider({ children }) {
           name: user.name,
           email: user.email || '',
           balance: sanitizeBalance(user.balance),
+          passwordHash: user.passwordHash || '',
+          authProvider: user.authProvider || AUTH_PROVIDER_LOCAL,
+          googleId: user.googleId || '',
         },
       })
 
@@ -225,8 +257,10 @@ export function BankrollProvider({ children }) {
     }
   }
 
-  const login = (name) => {
+  const login = async (name, password) => {
     if (!name || typeof name !== 'string') return null
+
+    if (!password || typeof password !== 'string' || password.trim().length === 0) return null
 
     const normalized = name.trim()
     if (normalized.length === 0) return null
@@ -234,12 +268,24 @@ export function BankrollProvider({ children }) {
     // try to find existing by case-insensitive match
     const found = usersRef.current.find((u) => u.name.toLowerCase() === normalized.toLowerCase())
     if (found) {
+      if (!found.passwordHash) {
+        // Accounts without a password hash are Google-only accounts.
+        return null
+      }
+
+      const incomingHash = await hashPassword(password)
+      if (incomingHash !== found.passwordHash) return null
+
       setCurrentUserId(found.id)
       return found
     }
 
     // create new user
-    const created = makeUser(normalized)
+    const passwordHash = await hashPassword(password)
+    const created = makeUser(normalized, {
+      passwordHash,
+      authProvider: AUTH_PROVIDER_LOCAL,
+    })
     setUsers((prev) => [...prev, created])
     setCurrentUserId(created.id)
     void syncUserToRemote(created)
@@ -262,14 +308,24 @@ export function BankrollProvider({ children }) {
       : null
 
     if (foundByEmail) {
-      // attach google id if missing
-      if (!foundByEmail.googleId) updateUser(foundByEmail.id, { googleId: profile.sub }, { syncRemote: false })
+      // attach google id if missing and mark as linked provider
+      if (!foundByEmail.googleId) {
+        updateUser(foundByEmail.id, {
+          googleId: profile.sub,
+          authProvider: foundByEmail.passwordHash ? AUTH_PROVIDER_LINKED : AUTH_PROVIDER_GOOGLE,
+        })
+      }
       setCurrentUserId(foundByEmail.id)
       return foundByEmail
     }
 
     // create a new user using google profile info
-    const created = makeUser(profile.name || profile.email || 'Player', { email: profile.email, googleId: profile.sub })
+    const created = makeUser(profile.name || profile.email || 'Player', {
+      email: profile.email,
+      googleId: profile.sub,
+      authProvider: AUTH_PROVIDER_GOOGLE,
+      passwordHash: null,
+    })
     setUsers((prev) => [...prev, created])
     setCurrentUserId(created.id)
     void syncUserToRemote(created)

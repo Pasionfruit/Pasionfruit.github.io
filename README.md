@@ -67,7 +67,7 @@ Use:
 - Google Apps Script as API layer (free)
 
 1. Create a Google Sheet with a tab named `Profiles` and row 1 headers:
-- `Name | Email | Balance`
+- `Name | Email | Balance | PasswordHash | AuthProvider | GoogleId`
 
 2. Open Extensions -> Apps Script on that sheet.
 

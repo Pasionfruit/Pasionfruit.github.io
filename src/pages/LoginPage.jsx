@@ -27,6 +27,7 @@ function decodeGoogleJwtPayload(idToken) {
 function LoginPage() {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const [googleStatus, setGoogleStatus] = useState('idle')
   const { login, loginWithGoogle } = useBankroll()
   const navigate = useNavigate()
@@ -34,13 +35,34 @@ function LoginPage() {
     (import.meta.env.VITE_API_MODE || '').trim().toLowerCase() === 'apps-script'
     || /script\.google\.com\/macros\/s\/.+\/exec/i.test((import.meta.env.VITE_API_BASE_URL || '').trim())
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // password is currently informational — admin is identified by name only
-    const user = login(name)
+  const fallbackGooglePrompt = () => {
+    const email = window.prompt('Google email (for test):', 'player@example.com')
+    if (!email) return
+    const nameFromPrompt = window.prompt('Display name (optional):', 'Google Player')
+    const fakeProfile = { sub: `google-${Date.now()}`, email, name: nameFromPrompt || email }
+    const user = loginWithGoogle(fakeProfile)
     if (user) {
+      setError('')
       navigate('/')
     }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!password.trim()) {
+      setError('Password is required for player login/create.')
+      return
+    }
+
+    const user = await login(name, password)
+    if (user) {
+      setError('')
+      navigate('/')
+      return
+    }
+
+    setError('Unable to log in. Check your name/password, or use Google sign-in for linked accounts.')
   }
 
   // Attempt to initialize Google Identity Services if a client id is provided
@@ -71,12 +93,11 @@ function LoginPage() {
 
     // Wait for GSI script to load
     const tryInit = () => {
-        // global provided by the GSI script
-        if (typeof window.google === 'undefined' || !window.google?.accounts?.id) {
+      // global provided by the GSI script
+      if (typeof window.google === 'undefined' || !window.google?.accounts?.id) {
         return false
       }
 
-  // Initialize GSI with a callback that sends the id_token to our server
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: async (response) => {
@@ -85,7 +106,10 @@ function LoginPage() {
 
           if (isAppsScriptDeployment && fallbackProfile) {
             const user = loginWithGoogle(fallbackProfile)
-            if (user) navigate('/')
+            if (user) {
+              setError('')
+              navigate('/')
+            }
             return
           }
 
@@ -99,12 +123,18 @@ function LoginPage() {
             const body = await resp.json()
             const { profile } = body
             const user = loginWithGoogle(profile)
-            if (user) navigate('/')
+            if (user) {
+              setError('')
+              navigate('/')
+            }
           } catch {
             // fallback to local JWT decode for serverless deployments
             if (fallbackProfile) {
               const user = loginWithGoogle(fallbackProfile)
-              if (user) navigate('/')
+              if (user) {
+                setError('')
+                navigate('/')
+              }
               return
             }
 
@@ -114,13 +144,9 @@ function LoginPage() {
         },
       })
 
-      // Render a GSI button into our placeholder node, if present
       if (gsiButtonRef.current) {
         window.google.accounts.id.renderButton(gsiButtonRef.current, { theme: 'outline', size: 'large' })
       }
-
-      // Optionally show One Tap
-      // window.google.accounts.id.prompt()
 
       return true
     }
@@ -141,16 +167,7 @@ function LoginPage() {
     }, 200)
 
     return () => clearInterval(timer)
-  }, [gsiButtonRef, loginWithGoogle, navigate])
-
-  const fallbackGooglePrompt = () => {
-    const email = window.prompt('Google email (for test):', 'player@example.com')
-    if (!email) return
-    const nameFromPrompt = window.prompt('Display name (optional):', 'Google Player')
-    const fakeProfile = { sub: `google-${Date.now()}`, email, name: nameFromPrompt || email }
-    const user = loginWithGoogle(fakeProfile)
-    if (user) navigate('/')
-  }
+  }, [gsiButtonRef, isAppsScriptDeployment, loginWithGoogle, navigate])
 
   return (
     <main className="auth-page">
@@ -166,12 +183,14 @@ function LoginPage() {
           </label>
 
           <label>
-            Password (optional)
-            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (not required)" type="password" />
+            Password
+            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" />
           </label>
 
+          {error ? <p role="alert">{error}</p> : null}
+
           <div className="actions">
-            <button type="submit">Enter</button>
+            <button type="submit">Login / Create</button>
             {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
               <>
                 <div ref={gsiButtonRef} />

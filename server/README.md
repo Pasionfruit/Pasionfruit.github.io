@@ -2,7 +2,7 @@ Setup
 
 1. Create a Google Cloud project and a service account with "Editor" or "Sheets API" permissions.
 2. Create a service account key (JSON) and place it at `server/credentials.json`.
-3. Create a Google Sheet and add a sheet named `Profiles` with headers in row 1: `Name | Email | Balance`.
+3. Create a Google Sheet and add a sheet named `Profiles` with headers in row 1: `Name | Email | Balance | PasswordHash | AuthProvider | GoogleId`.
 4. Set environment variable SHEET_ID to the sheet ID (in .env or in your environment).
 
 Start server
