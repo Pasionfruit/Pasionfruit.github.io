@@ -296,22 +296,30 @@ function RoulettePage() {
 
       landingTimerRef.current = setTimeout(() => {
         setBallDropped(true)
+          playCustomFx('cardFlip', { volume: 0.6 })
         setLastSpin({ landed, color })
 
         let totalPayout = 0
         let winningBets = 0
+  let hasNumberBet = false
 
         for (const bet of betsForRound) {
           if (isBetWin(bet, landed, color)) {
             const multiplier = getBetMultiplier(bet)
             totalPayout += bet.amount * multiplier
             winningBets += 1
+                      if (multiplier === 36) {
+                        hasNumberBet = true
+                      }
           }
         }
 
         if (totalPayout > 0) {
           payout(totalPayout)
           playCustomFx('win', { volume: 0.8 })
+                    if (hasNumberBet) {
+                      playCustomFx('jackpot', { volume: 0.9 })
+                    }
           const profit = totalPayout - totalStake
           setResult(
             `Ball stopped on ${landed} (${color.toUpperCase()}). ${winningBets} bet(s) hit. Net ${profit >= 0 ? '+' : ''}$${profit.toFixed(2)}.`,

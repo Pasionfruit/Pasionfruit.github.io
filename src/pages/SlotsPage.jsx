@@ -156,6 +156,7 @@ function SlotsPage() {
       setTimeout(() => {
         const revealed = outcomes.slice(0, index + 1)
         const revealedBest = getBestSymbolMatch(revealed)
+  playCustomFx('cardFlip', { volume: 0.6 })
 
         if ((revealedBest?.count || 0) >= 2) {
           playCustomFx('finalCard', { volume: 0.85 })
@@ -205,6 +206,9 @@ function SlotsPage() {
         const earnings = normalizedBet * multiplier
         payout(earnings)
         playCustomFx('win', { volume: 0.8 })
+        if (topCount === 5) {
+          playCustomFx('jackpot', { volume: 0.9 })
+        }
         setResult(`${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
         return
       }

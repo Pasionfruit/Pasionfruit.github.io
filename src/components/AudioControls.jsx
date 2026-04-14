@@ -147,9 +147,11 @@ function AudioControls() {
 
   const fxRows = [
     { key: 'win', label: 'Winning' },
+    { key: 'jackpot', label: 'Jackpot' },
     { key: 'ballSpin', label: 'Ball Spinning' },
     { key: 'slotSpin', label: 'Slot Spinning' },
     { key: 'finalCard', label: 'Dramatic Final Card' },
+    { key: 'cardFlip', label: 'Card Flip' },
     { key: 'buttonClick', label: 'Button Click' },
   ]
 

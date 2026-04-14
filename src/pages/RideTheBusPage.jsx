@@ -162,6 +162,7 @@ function RideTheBusPage() {
     if (winnings > 0) {
       payout(winnings)
       playCustomFx('win', { volume: 0.8 })
+      playCustomFx('jackpot', { volume: 0.9 })
     }
     setCards(finalCards)
     setPhase(PHASE_WON)
@@ -185,6 +186,7 @@ function RideTheBusPage() {
     }
 
     const firstCard = drawCard()
+      playCustomFx('cardFlip', { volume: 0.6 })
     const isCorrect = firstCard.suit.color === guess
 
     if (!isCorrect) {
@@ -202,7 +204,9 @@ function RideTheBusPage() {
     if (!previous) return
 
     const nextCard = drawCard()
+      playCustomFx('cardFlip', { volume: 0.6 })
     const isAbove = nextCard.value > previous.value
+      playCustomFx('cardFlip', { volume: 0.6 })
     const isEqual = nextCard.value === previous.value
     const isBelow = nextCard.value < previous.value
     const isCorrect = (guess === 'above' && isAbove) || (guess === 'equal' && isEqual) || (guess === 'below' && isBelow)

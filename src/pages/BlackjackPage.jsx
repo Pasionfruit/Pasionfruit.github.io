@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBankroll } from '../context/BankrollContext'
+import { playCustomFx } from '../lib/soundFx'
 
 const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const SUITS = [
@@ -209,6 +210,7 @@ function BlackjackPage() {
       setResult('Dealer wins all hands.')
     } else {
       if (winCount > 0) {
+        playCustomFx('win', { volume: 0.8 })
         setResult(`Round complete: won $${payoutTotal.toFixed(2)} (${summary.join(', ')}).`)
       } else {
         setResult(`Round complete: push returned $${payoutTotal.toFixed(2)}.`)
@@ -267,6 +269,7 @@ function BlackjackPage() {
 
     const playerStart = [drawCard(), drawCard()]
     const dealerStart = [drawCard(), drawCard()]
+  playCustomFx('cardFlip', { volume: 0.6 })
 
     setDealer(dealerStart)
     setPlayerHands([createHand(playerStart, normalizedBet)])
@@ -288,6 +291,7 @@ function BlackjackPage() {
     if (playerNatural) {
       const wonAmount = normalizedBet * BLACKJACK_PAYOUT
       payout(wonAmount)
+      playCustomFx('win', { volume: 0.8 })
       setResult(`Blackjack! You won $${wonAmount.toFixed(2)}.`)
       resetRound()
       return
@@ -336,6 +340,7 @@ function BlackjackPage() {
       }
 
       const nextCards = [...hand.cards, drawCard()]
+        playCustomFx('cardFlip', { volume: 0.6 })
       const nextTotal = handValue(nextCards)
       const nextStatus = nextTotal > 21 ? 'bust' : 'playing'
 

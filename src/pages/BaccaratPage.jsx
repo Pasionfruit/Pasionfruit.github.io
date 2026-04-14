@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBankroll } from '../context/BankrollContext'
+import { playCustomFx } from '../lib/soundFx'
 
 const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const SUITS = [
@@ -163,14 +164,17 @@ function BaccaratPage() {
       if (winner === 'player') {
         const wonAmount = bet * 2
         payout(wonAmount)
+        playCustomFx('win', { volume: 0.8 })
         setResult(`Player won $${wonAmount.toFixed(2)}.`)
       } else if (winner === 'banker') {
         const wonAmount = bet * 1.95
         payout(wonAmount)
+        playCustomFx('win', { volume: 0.8 })
         setResult(`Banker won $${wonAmount.toFixed(2)} after commission.`)
       } else {
         const wonAmount = bet * 9
         payout(wonAmount)
+        playCustomFx('win', { volume: 0.8 })
         setResult(`Tie won $${wonAmount.toFixed(2)}.`)
       }
     } else {

@@ -9,33 +9,41 @@ function withBasePath(relativePath) {
 
 const FX_FILENAMES = {
   win: 'win.mp3',
+  jackpot: 'jackpot.mp3',
   ballSpin: 'ball-spinning.mp3',
   slotSpin: 'slot-spinning.mp3',
   finalCard: 'dramatic-final-card.mp3',
+  cardFlip: 'card-flip.mp3',
   buttonClick: 'button-click.mp3',
 }
 
 const DEFAULT_FX_MAP = {
   win: withBasePath(`audio/effects/${FX_FILENAMES.win}`),
+  jackpot: withBasePath(`audio/effects/${FX_FILENAMES.jackpot}`),
   ballSpin: withBasePath(`audio/effects/${FX_FILENAMES.ballSpin}`),
   slotSpin: withBasePath(`audio/effects/${FX_FILENAMES.slotSpin}`),
   finalCard: withBasePath(`audio/effects/${FX_FILENAMES.finalCard}`),
+  cardFlip: withBasePath(`audio/effects/${FX_FILENAMES.cardFlip}`),
   buttonClick: withBasePath(`audio/effects/${FX_FILENAMES.buttonClick}`),
 }
 
 const LEGACY_FX_MAP = {
   win: withBasePath(`audio/${FX_FILENAMES.win}`),
+  jackpot: withBasePath(`audio/${FX_FILENAMES.jackpot}`),
   ballSpin: withBasePath(`audio/${FX_FILENAMES.ballSpin}`),
   slotSpin: withBasePath(`audio/${FX_FILENAMES.slotSpin}`),
   finalCard: withBasePath(`audio/${FX_FILENAMES.finalCard}`),
+  cardFlip: withBasePath(`audio/${FX_FILENAMES.cardFlip}`),
   buttonClick: withBasePath(`audio/${FX_FILENAMES.buttonClick}`),
 }
 
 const DEFAULT_FX_ENABLED_MAP = {
   win: true,
+  jackpot: true,
   ballSpin: true,
   slotSpin: true,
   finalCard: true,
+  cardFlip: true,
   buttonClick: true,
 }
 
@@ -81,9 +89,11 @@ export function readSoundFxMap() {
     return {
       ...DEFAULT_FX_MAP,
       win: normalizeStoredFxSrc('win', safe.win),
+      jackpot: normalizeStoredFxSrc('jackpot', safe.jackpot),
       ballSpin: normalizeStoredFxSrc('ballSpin', safe.ballSpin),
       slotSpin: normalizeStoredFxSrc('slotSpin', safe.slotSpin),
       finalCard: normalizeStoredFxSrc('finalCard', safe.finalCard),
+      cardFlip: normalizeStoredFxSrc('cardFlip', safe.cardFlip),
       buttonClick: normalizeStoredFxSrc('buttonClick', safe.buttonClick),
     }
   } catch {
@@ -110,9 +120,11 @@ export function readSoundFxEnabledMap() {
 
     return {
       win: typeof safe.win === 'boolean' ? safe.win : DEFAULT_FX_ENABLED_MAP.win,
+      jackpot: typeof safe.jackpot === 'boolean' ? safe.jackpot : DEFAULT_FX_ENABLED_MAP.jackpot,
       ballSpin: typeof safe.ballSpin === 'boolean' ? safe.ballSpin : DEFAULT_FX_ENABLED_MAP.ballSpin,
       slotSpin: typeof safe.slotSpin === 'boolean' ? safe.slotSpin : DEFAULT_FX_ENABLED_MAP.slotSpin,
       finalCard: typeof safe.finalCard === 'boolean' ? safe.finalCard : DEFAULT_FX_ENABLED_MAP.finalCard,
+      cardFlip: typeof safe.cardFlip === 'boolean' ? safe.cardFlip : DEFAULT_FX_ENABLED_MAP.cardFlip,
       buttonClick: typeof safe.buttonClick === 'boolean' ? safe.buttonClick : DEFAULT_FX_ENABLED_MAP.buttonClick,
     }
   } catch {
