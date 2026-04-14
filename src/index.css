@@ -1269,6 +1269,10 @@ h1 {
   justify-content: center;
 }
 
+.card-host {
+  display: contents;
+}
+
 .cards-empty {
   margin: 0;
   color: var(--text-muted);
@@ -1304,6 +1308,17 @@ h1 {
   font-size: 0.8rem;
   font-weight: 700;
   line-height: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.08rem;
+}
+
+.corner-rank {
+  font-size: 0.9rem;
+}
+
+.corner-suit {
+  font-size: 0.82rem;
 }
 
 .playing-card .corner.top {
@@ -1317,13 +1332,49 @@ h1 {
   transform: rotate(180deg);
 }
 
-.playing-card .center-suit {
+.card-pips {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.6rem;
+  inset: 16px 10px 16px;
+}
+
+.pip {
+  position: absolute;
+  font-size: 1.15rem;
   line-height: 1;
+}
+
+.pip.top-left { top: 4%; left: 12%; }
+.pip.top-center { top: 4%; left: 50%; transform: translateX(-50%); }
+.pip.top-right { top: 4%; right: 12%; }
+.pip.mid-left { top: 36%; left: 12%; }
+.pip.center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.pip.mid-right { top: 36%; right: 12%; }
+.pip.inner-left { top: 50%; left: 24%; transform: translateY(-50%); }
+.pip.inner-right { top: 50%; right: 24%; transform: translateY(-50%); }
+.pip.bottom-left { bottom: 4%; left: 12%; transform: rotate(180deg); }
+.pip.bottom-center { bottom: 4%; left: 50%; transform: translateX(-50%) rotate(180deg); }
+.pip.bottom-right { bottom: 4%; right: 12%; transform: rotate(180deg); }
+
+.card-face-figure {
+  position: absolute;
+  inset: 14px 10px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 21, 31, 0.12);
+  background: linear-gradient(160deg, rgba(250, 248, 241, 0.92), rgba(236, 234, 225, 0.92));
+}
+
+.figure-rank {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.figure-suit {
+  margin-top: -0.22rem;
+  font-size: 1.05rem;
 }
 
 .card-back {

@@ -49,6 +49,42 @@ function normalizeBet(value) {
   return Math.max(0, Math.round(parsed * 100) / 100)
 }
 
+const PIP_LAYOUTS = {
+  A: ['center'],
+  2: ['top-center', 'bottom-center'],
+  3: ['top-center', 'center', 'bottom-center'],
+  4: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+  5: ['top-left', 'top-right', 'center', 'bottom-left', 'bottom-right'],
+  6: ['top-left', 'top-right', 'mid-left', 'mid-right', 'bottom-left', 'bottom-right'],
+  7: ['top-left', 'top-right', 'mid-left', 'mid-right', 'center', 'bottom-left', 'bottom-right'],
+  8: ['top-left', 'top-center', 'top-right', 'mid-left', 'mid-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+  9: ['top-left', 'top-center', 'top-right', 'mid-left', 'center', 'mid-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+  10: ['top-left', 'top-center', 'top-right', 'mid-left', 'inner-left', 'inner-right', 'mid-right', 'bottom-left', 'bottom-center', 'bottom-right'],
+}
+
+function renderCardCenter(card) {
+  if (['J', 'Q', 'K'].includes(card.rank)) {
+    return (
+      <div className="card-face-figure" aria-hidden="true">
+        <span className="figure-rank">{card.rank}</span>
+        <span className="figure-suit">{card.suit.symbol}</span>
+      </div>
+    )
+  }
+
+  const positions = PIP_LAYOUTS[card.rank] || ['center']
+
+  return (
+    <div className="card-pips" aria-hidden="true">
+      {positions.map((position, index) => (
+        <span key={`${card.id}-${position}-${index}`} className={`pip ${position}`}>
+          {card.suit.symbol}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 function renderCard(card, hidden = false, delayMs = 0) {
   if (hidden) {
     return (
@@ -62,9 +98,15 @@ function renderCard(card, hidden = false, delayMs = 0) {
       style={{ animationDelay: `${delayMs}ms` }}
       aria-label={`${card.rank} of ${card.suit.id}`}
     >
-      <span className="corner top">{card.rank}{card.suit.symbol}</span>
-      <span className="center-suit">{card.suit.symbol}</span>
-      <span className="corner bottom">{card.rank}{card.suit.symbol}</span>
+      <span className="corner top">
+        <span className="corner-rank">{card.rank}</span>
+        <span className="corner-suit">{card.suit.symbol}</span>
+      </span>
+      {renderCardCenter(card)}
+      <span className="corner bottom">
+        <span className="corner-rank">{card.rank}</span>
+        <span className="corner-suit">{card.suit.symbol}</span>
+      </span>
     </div>
   )
 }
@@ -430,7 +472,11 @@ function BlackjackPage() {
             <h3>Dealer</h3>
             <div className="cards-row">
               {dealer.length
-                ? dealer.map((card, index) => renderCard(card, phase === 'player' && index === 1, index * 80))
+                ? dealer.map((card, index) => (
+                  <div key={card.id} className="card-host">
+                    {renderCard(card, phase === 'player' && index === 1, index * 80)}
+                  </div>
+                ))
                 : <p className="cards-empty">No cards dealt</p>}
             </div>
             <p>Total: {dealerTotal}</p>
@@ -461,7 +507,11 @@ function BlackjackPage() {
                 >
                   <h3>Player Hand {handIndex + 1}</h3>
                   <div className="cards-row">
-                    {hand.cards.map((card, cardIndex) => renderCard(card, false, cardIndex * 80))}
+                    {hand.cards.map((card, cardIndex) => (
+                      <div key={card.id} className="card-host">
+                        {renderCard(card, false, cardIndex * 80)}
+                      </div>
+                    ))}
                   </div>
                   <p>
                     Total: {total}

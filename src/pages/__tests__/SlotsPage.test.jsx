@@ -31,7 +31,7 @@ describe('SlotsPage', () => {
   })
 
   it('pays jackpot for 5 matching sevens', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.45)
+    vi.spyOn(Math, 'random').mockReturnValue(0.55)
 
     render(
       <MemoryRouter>
@@ -45,8 +45,8 @@ describe('SlotsPage', () => {
     })
 
     expect(placeBet).toHaveBeenCalledWith(25)
-    expect(payout).toHaveBeenCalledWith(700)
-    expect(screen.getByText('Jackpot! Seven x5 won $700.00.')).toBeInTheDocument()
+    expect(payout).toHaveBeenCalledWith(550)
+    expect(screen.getByText('Jackpot! Left-to-right Seven x5 won $550.00.')).toBeInTheDocument()
   })
 
   it('shows miss when no symbol repeats 3 or more times', () => {

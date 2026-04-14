@@ -6,15 +6,47 @@ const ROW_HEIGHT = 72
 const REEL_COUNT = 5
 const REEL_DURATIONS_MS = [1700, 2400, 3100, 3800, 4600]
 const SYMBOLS = [
-  { id: 'cherry', label: 'Cherry', icon: '🍒' },
-  { id: 'bell', label: 'Bell', icon: '🔔' },
-  { id: 'seven', label: 'Seven', icon: '7️⃣' },
-  { id: 'clover', label: 'Clover', icon: '🍀' },
-  { id: 'diamond', label: 'Diamond', icon: '💎' },
+  { id: 'cherry', label: 'Cherry', icon: '🍒', weight: 32 },
+  { id: 'bell', label: 'Bell', icon: '🔔', weight: 20 },
+  { id: 'seven', label: 'Seven', icon: '7️⃣', weight: 7 },
+  { id: 'clover', label: 'Clover', icon: '🍀', weight: 27 },
+  { id: 'diamond', label: 'Diamond', icon: '💎', weight: 14 },
 ]
 
+const PAYOUTS = {
+  cherry: { 3: 1.6, 4: 3.5, 5: 8 },
+  bell: { 3: 2.2, 4: 4.5, 5: 10 },
+  clover: { 3: 1.8, 4: 4, 5: 9 },
+  diamond: { 3: 3, 4: 6, 5: 14 },
+  seven: { 3: 5, 4: 10, 5: 22 },
+}
+
+const TOTAL_SYMBOL_WEIGHT = SYMBOLS.reduce((sum, symbol) => sum + symbol.weight, 0)
+
 function randomSymbol() {
-  return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
+  let roll = Math.random() * TOTAL_SYMBOL_WEIGHT
+
+  for (const symbol of SYMBOLS) {
+    roll -= symbol.weight
+    if (roll <= 0) {
+      return symbol
+    }
+  }
+
+  return SYMBOLS[SYMBOLS.length - 1]
+}
+
+function getLeadingStreak(outcomes) {
+  const first = outcomes[0]
+  if (!first) return { symbol: null, count: 0 }
+
+  let count = 1
+  for (let index = 1; index < outcomes.length; index += 1) {
+    if (outcomes[index].id !== first.id) break
+    count += 1
+  }
+
+  return { symbol: first, count }
 }
 
 function createStrip(finalSymbol, length) {
@@ -298,67 +330,23 @@ function SlotsPage() {
     timerRef.current = setTimeout(() => {
       reelLockTimeoutsRef.current = []
 
-      const countsBySymbol = outcomes.reduce((acc, symbol) => {
-        acc[symbol.id] = (acc[symbol.id] || 0) + 1
-        return acc
-      }, {})
-      const topSymbol = SYMBOLS.reduce((best, symbol) => {
-        const count = countsBySymbol[symbol.id] || 0
-
-        if (!best || count > best.count) {
-          return { symbol, count }
-        }
-
-        return best
-      }, null)
-      const topCount = topSymbol?.count || 0
-      const matchedSymbol = topSymbol?.symbol
+      const streak = getLeadingStreak(outcomes)
+      const topCount = streak.count
+      const matchedSymbol = streak.symbol
 
       setIsSpinning(false)
 
       if (topCount >= 3 && matchedSymbol) {
-        let multiplier = 0
-
-        if (topCount === 5) {
-          multiplier = 12
-
-          if (matchedSymbol.id === 'seven') {
-            multiplier = 28
-          } else if (matchedSymbol.id === 'cherry') {
-            multiplier = 20
-          } else if (matchedSymbol.id === 'bell') {
-            multiplier = 16
-          }
-        } else if (topCount === 4) {
-          multiplier = 6
-
-          if (matchedSymbol.id === 'seven') {
-            multiplier = 12
-          } else if (matchedSymbol.id === 'cherry') {
-            multiplier = 9
-          } else if (matchedSymbol.id === 'bell') {
-            multiplier = 8
-          }
-        } else {
-          multiplier = 3
-
-          if (matchedSymbol.id === 'seven') {
-            multiplier = 6
-          } else if (matchedSymbol.id === 'cherry') {
-            multiplier = 5
-          } else if (matchedSymbol.id === 'bell') {
-            multiplier = 4
-          }
-        }
+        const multiplier = PAYOUTS[matchedSymbol.id]?.[topCount] || 0
 
         const earnings = normalizedBet * multiplier
         payout(earnings)
         if (topCount === 5) {
           playJackpotSound()
-          setResult(`Jackpot! ${matchedSymbol.label} x5 won $${earnings.toFixed(2)}.`)
+          setResult(`Jackpot! Left-to-right ${matchedSymbol.label} x5 won $${earnings.toFixed(2)}.`)
         } else {
           playPairWinSound()
-          setResult(`${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
+          setResult(`Left-to-right ${matchedSymbol.label} x${topCount} won $${earnings.toFixed(2)}.`)
         }
         return
       }
@@ -453,15 +441,19 @@ function SlotsPage() {
         <div className="slots-payouts">
           <div className="payout-pill">
             <strong>5 Match</strong>
-            <span>12x+</span>
+            <span>8x-22x</span>
           </div>
           <div className="payout-pill">
             <strong>4 Match</strong>
-            <span>6x+</span>
+            <span>3.5x-10x</span>
           </div>
           <div className="payout-pill">
             <strong>3 Match</strong>
-            <span>3x+</span>
+            <span>1.6x-5x</span>
+          </div>
+          <div className="payout-pill">
+            <strong>Rule</strong>
+            <span>Left to right</span>
           </div>
           <div className="payout-pill">
             <strong>Miss</strong>
