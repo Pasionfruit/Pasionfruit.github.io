@@ -196,7 +196,7 @@ function SlotsPage() {
       setIsSpinning(false)
 
       if (topCount >= 3 && matchedSymbol) {
-        const multiplier = PAYOUTS[matchedSymbol.id]?.[topCount] || 0
+        const multiplier = Math.max(PAYOUTS[matchedSymbol.id]?.[topCount] || 0, 1)
 
         const earnings = normalizedBet * multiplier
         payout(earnings)
