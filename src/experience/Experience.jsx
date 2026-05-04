@@ -3,6 +3,7 @@ import { KeyboardControls, Stars } from '@react-three/drei'
 import Bike from './Bike.jsx'
 import World from './World.jsx'
 import FollowCamera from './FollowCamera.jsx'
+import { useGame } from '../context/GameContext.jsx'
 
 const KEY_MAP = [
   { name: 'forward',  keys: ['ArrowUp',    'w', 'W'] },
@@ -13,6 +14,11 @@ const KEY_MAP = [
 ]
 
 export default function Experience() {
+  const { isNight } = useGame()
+
+  const skyColor = isNight ? '#060b1a' : '#86b7d8'
+  const fogColor = isNight ? '#0a1020' : '#7faecf'
+
   return (
     <KeyboardControls map={KEY_MAP}>
       <Canvas
@@ -22,13 +28,19 @@ export default function Experience() {
         gl={{ antialias: true }}
         style={{ position: 'fixed', inset: 0 }}
       >
-        <color attach="background" args={['#0d1a0d']} />
-        <fog attach="fog" args={['#0d1a0d', 50, 130]} />
+        <color attach="background" args={[skyColor]} />
+        <fog attach="fog" args={[fogColor, 50, 130]} />
 
-        <ambientLight intensity={0.5} color="#b8d4ff" />
+        <ambientLight intensity={isNight ? 0.2 : 0.55} color={isNight ? '#8aa4ff' : '#dff2ff'} />
+        <hemisphereLight
+          intensity={isNight ? 0.1 : 0.45}
+          color={isNight ? '#5b74c9' : '#bde7ff'}
+          groundColor={isNight ? '#09130f' : '#476248'}
+        />
         <directionalLight
           position={[25, 35, 20]}
-          intensity={1.4}
+          intensity={isNight ? 0.35 : 1.3}
+          color={isNight ? '#a8bbff' : '#fff2c2'}
           castShadow
           shadow-mapSize={[2048, 2048]}
           shadow-camera-left={-55}
@@ -39,7 +51,7 @@ export default function Experience() {
           shadow-bias={-0.0005}
         />
 
-        <Stars radius={120} depth={60} count={3000} factor={4} fade speed={0.5} />
+        {isNight && <Stars radius={120} depth={60} count={3000} factor={4} fade speed={0.5} />}
 
         <World />
         <Bike />

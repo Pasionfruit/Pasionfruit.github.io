@@ -170,7 +170,7 @@ export default function Bike() {
 
         {/* ── Back wheel ── */}
         <group ref={backWheelRef} position={[0, 0, 0.37]}>
-          <mesh castShadow rotation={[0, 0, Math.PI / 2]}>
+          <mesh castShadow rotation={[0, Math.PI / 2, 0]}>
             <torusGeometry args={[0.22, 0.045, 8, 24]} />
             <meshStandardMaterial color="#1a1a1a" roughness={0.9} />
           </mesh>
@@ -182,7 +182,7 @@ export default function Bike() {
 
         {/* ── Front wheel ── */}
         <group ref={frontWheelRef} position={[0, 0, -0.37]}>
-          <mesh castShadow rotation={[0, 0, Math.PI / 2]}>
+          <mesh castShadow rotation={[0, Math.PI / 2, 0]}>
             <torusGeometry args={[0.22, 0.045, 8, 24]} />
             <meshStandardMaterial color="#1a1a1a" roughness={0.9} />
           </mesh>

@@ -6,6 +6,7 @@ export function GameProvider({ children }) {
   const [nearZone,   setNearZone]   = useState(null)
   const [panelMode,  setPanelMode]  = useState(false)
   const [activeZone, setActiveZone] = useState(null)
+  const [isNight, setIsNight] = useState(false)
 
   function enterZone(zone) {
     setActiveZone(zone)
@@ -17,8 +18,23 @@ export function GameProvider({ children }) {
     setActiveZone(null)
   }
 
+  function toggleDayNight() {
+    setIsNight(prev => !prev)
+  }
+
   return (
-    <GameContext.Provider value={{ nearZone, setNearZone, panelMode, activeZone, enterZone, exitZone }}>
+    <GameContext.Provider
+      value={{
+        nearZone,
+        setNearZone,
+        panelMode,
+        activeZone,
+        enterZone,
+        exitZone,
+        isNight,
+        toggleDayNight,
+      }}
+    >
       {children}
     </GameContext.Provider>
   )

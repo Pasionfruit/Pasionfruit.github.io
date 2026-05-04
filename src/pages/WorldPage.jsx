@@ -6,6 +6,7 @@ import Experience from "../experience/Experience.jsx"
 import HUD from "../components/HUD.jsx"
 import PanelOverlay from "../components/PanelOverlay.jsx"
 import DPad from "../components/DPad.jsx"
+import TopRightNav from "../components/TopRightNav.jsx"
 import "./WorldPage.css"
 
 function WorldScene() {
@@ -13,6 +14,7 @@ function WorldScene() {
     <>
       <Experience />
       <HUD />
+      <TopRightNav />
       <PanelOverlay />
       <div className="dpad-container">
         <DPad />
@@ -26,8 +28,10 @@ export default function WorldPage() {
   const navigate   = useNavigate()
 
   useEffect(() => {
+    if (!player.name) navigate('/', { replace: true })
   }, [player.name, navigate])
 
+  if (!player.name) return null
 
   return (
     <GameProvider>
