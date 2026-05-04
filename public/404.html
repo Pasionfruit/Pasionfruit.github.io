@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      // GitHub Pages SPA redirect: preserve the path and redirect to index.html
+      var path = window.location.pathname
+      var search = window.location.search
+      var hash = window.location.hash
+      var redirect = '/?p=' + encodeURIComponent(path.slice(1)) + (search ? '&q=' + encodeURIComponent(search.slice(1)) : '') + hash
+      window.location.replace(redirect)
+    </script>
+  </head>
+</html>
