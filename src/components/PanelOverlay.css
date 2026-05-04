@@ -1,0 +1,103 @@
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-fade-in 0.22s ease-out;
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.panel-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.panel-card {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: rgba(6, 12, 22, 0.97);
+  border: 1px solid var(--accent, #4287f5);
+  border-radius: 12px;
+  padding: 36px 32px;
+  box-shadow:
+    0 0 60px rgba(0,0,0,0.9),
+    0 0 0 1px var(--accent, #4287f5),
+    inset 0 0 40px rgba(0,0,0,0.4);
+  animation: card-pop-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes card-pop-in {
+  from { transform: scale(0.85) translateY(24px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.panel-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  color: var(--accent, #4287f5);
+  background: transparent;
+  border: 1px solid var(--accent, #4287f5);
+  border-radius: 4px;
+  padding: 7px 11px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, color 0.15s;
+}
+.panel-close:hover {
+  background: var(--accent, #4287f5);
+  color: #000;
+}
+
+.panel-header { text-align: center; margin-bottom: 20px; }
+
+.panel-emoji {
+  font-size: 2.8rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.panel-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  color: var(--accent, #e8f4ff);
+  margin: 0 0 12px;
+  text-shadow: 0 0 16px var(--accent, #4287f5);
+}
+
+.panel-desc {
+  font-family: 'VT323', monospace;
+  font-size: 1.25rem;
+  color: #7a98c0;
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+
+.panel-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent, #4287f5), transparent);
+  margin: 20px 0;
+}
+
+.panel-body { font-family: 'VT323', monospace; }
+
+.panel-placeholder {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #3a4a6a;
+  padding: 24px 0;
+}

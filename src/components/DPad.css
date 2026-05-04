@@ -1,0 +1,48 @@
+.dpad {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  grid-template-areas:
+    '. up .'
+    'left center right'
+    '. down .';
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 4px;
+  touch-action: none;
+  user-select: none;
+}
+
+.dpad-btn {
+  background: rgba(8, 12, 24, 0.82);
+  border: 1.5px solid #2a3a5a;
+  border-radius: 6px;
+  color: #5a88c0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dpad-btn:active,
+.dpad-btn:focus {
+  background: rgba(66, 135, 245, 0.35);
+  color: #fff;
+  border-color: #4287f5;
+  outline: none;
+}
+
+.dpad-up    { grid-area: up;    }
+.dpad-down  { grid-area: down;  }
+.dpad-left  { grid-area: left;  }
+.dpad-right { grid-area: right; }
+.dpad-center {
+  grid-area: center;
+  background: rgba(8,12,24,0.5);
+  border-radius: 50%;
+  border: 1px solid #1a2a4a;
+}

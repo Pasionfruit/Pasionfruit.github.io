@@ -1,0 +1,57 @@
+.hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.hud-zone-prompt {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  color: var(--zone-color, #fff);
+  background: rgba(0,0,0,0.78);
+  border: 1px solid var(--zone-color, #fff);
+  border-radius: 6px;
+  padding: 10px 16px;
+  text-shadow: 0 0 8px var(--zone-color);
+  white-space: nowrap;
+  animation: prompt-in 0.2s ease-out;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+@keyframes prompt-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.prompt-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--zone-color, #fff);
+  color: #000;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  flex-shrink: 0;
+}
+
+.hud-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
