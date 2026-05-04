@@ -1,0 +1,39 @@
+.map-viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.map-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.12s linear;
+  will-change: transform;
+}
+
+.tile-grid {
+  display: grid;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.tile {
+  outline: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+/* Subtle texture via box-shadow for depth */
+.tile-grass  { box-shadow: inset 0 0 2px rgba(255,255,255,0.04); }
+.tile-water  { box-shadow: inset 0 0 4px rgba(100,180,255,0.2); }
+.tile-path   { box-shadow: inset 0 0 2px rgba(0,0,0,0.3); }
+.tile-sand   { box-shadow: inset 0 0 2px rgba(255,220,100,0.1); }
+
+.character-wrapper {
+  position: absolute;
+  transform: translate(-50%, -80%);
+  z-index: 20;
+  pointer-events: none;
+}
