@@ -7,14 +7,14 @@ import { touchInput } from './inputManager.js'
 import { ZONES, ZONE_ENTER_RADIUS, COLLISION_OBSTACLES } from './worldData.js'
 import { useGame } from '../context/GameContext.jsx'
 
-const MAX_SPEED   = 14
+const MAX_SPEED   = 12
 const MAX_REV     = 5
-const ACCEL       = 22
+const ACCEL       = 18
 const DRAG        = 3.0
 const BRAKE_FORCE = 45
-const TURN_SPEED  = 2.5
+const TURN_SPEED  = 2
 const LEAN_MAX    = 0.36
-const LEAN_SPEED  = 8
+const LEAN_SPEED  = 6
 const WORLD_BOUND = 37
 const GROUND_Y    = 0.28
 const BIKE_RADIUS = 0.5

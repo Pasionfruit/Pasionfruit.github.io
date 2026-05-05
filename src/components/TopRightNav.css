@@ -63,3 +63,151 @@
 .top-right-nav-link:hover {
   background: rgba(26, 40, 66, 0.9);
 }
+
+.countdown-menu {
+  width: min(320px, calc(100vw - 24px));
+  max-height: min(68vh, 560px);
+  overflow: auto;
+  gap: 10px;
+}
+
+.countdown-card {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid rgba(120, 156, 210, 0.38);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(8, 14, 28, 0.88);
+}
+
+.countdown-progress-wrap {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+}
+
+.countdown-progress {
+  width: 56px;
+  height: 56px;
+  transform: rotate(-90deg);
+}
+
+.countdown-bg {
+  fill: none;
+  stroke: rgba(80, 106, 150, 0.32);
+  stroke-width: 6;
+}
+
+.countdown-fg {
+  fill: none;
+  stroke: #7ec8ff;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s linear;
+  filter: drop-shadow(0 0 4px rgba(126, 200, 255, 0.8));
+}
+
+.countdown-days {
+  position: absolute;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  color: #d8ebff;
+}
+
+.countdown-meta {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.countdown-name {
+  margin: 0;
+  color: #d8ebff;
+  font-family: 'VT323', monospace;
+  font-size: 1.18rem;
+  line-height: 1;
+}
+
+.countdown-sub {
+  margin: 0;
+  color: #8fb0d9;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.countdown-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.countdown-btn {
+  border: 1px solid #4f76ad;
+  background: rgba(17, 30, 56, 0.95);
+  color: #cce4ff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  border-radius: 4px;
+  padding: 7px 8px;
+  cursor: pointer;
+}
+
+.countdown-btn:hover {
+  background: rgba(27, 47, 83, 0.95);
+}
+
+.countdown-btn.ghost {
+  border-color: #566985;
+  color: #b5c3d9;
+}
+
+.countdown-btn.danger {
+  border-color: #b25a66;
+  color: #ffd7df;
+  background: rgba(56, 20, 31, 0.95);
+}
+
+.countdown-input {
+  width: 100%;
+  border: 1px solid #4b6b9a;
+  background: rgba(7, 13, 25, 0.9);
+  color: #d9ebff;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  border-radius: 4px;
+  padding: 5px 8px;
+  outline: none;
+}
+
+.countdown-input:focus {
+  border-color: #7ec8ff;
+  box-shadow: 0 0 0 1px rgba(126, 200, 255, 0.25);
+}
+
+@media (max-width: 700px) {
+  .top-right-nav {
+    top: 10px;
+    right: 10px;
+  }
+
+  .top-right-nav-btn {
+    font-size: 0.42rem;
+    padding: 8px 9px;
+  }
+
+  .countdown-card {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .countdown-progress,
+  .countdown-progress-wrap {
+    width: 50px;
+    height: 50px;
+  }
+}
