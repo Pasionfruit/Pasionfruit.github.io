@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { bikeState } from './bikeState.js'
 import { touchInput } from './inputManager.js'
 import { ZONES, ZONE_ENTER_RADIUS, COLLISION_OBSTACLES } from './worldData.js'
-import { RACE_START_ANGLE, RACE_TRACK_WIDTH, angularDistance, isOnRaceTrackBand, raceTrackDistanceToCenterline } from './raceTrack.js'
+import { RACE_START_ANGLE, RACE_TRACK_WIDTH, angularDistance, isOnRaceTrackBand, raceTrackDistanceToCenterline, raceTrackRadiusAt } from './raceTrack.js'
 import { useGame } from '../context/GameContext.jsx'
 
 const MAX_SPEED   = 12
@@ -16,7 +16,7 @@ const BRAKE_FORCE = 45
 const TURN_SPEED  = 2
 const LEAN_MAX    = 0.36
 const LEAN_SPEED  = 6
-const WORLD_BOUND = 37
+const WORLD_BOUND = 48
 const GROUND_Y    = 0.28
 const BIKE_RADIUS = 0.5
 const COLLISION_EPSILON = 0.001
@@ -34,6 +34,7 @@ const LAP_MIN_MS = 9000
 const LAP_UI_UPDATE_MS = 220
 const RACE_GATE_ANGLE_WINDOW = 0.14
 const RACE_CHECKPOINT_ANGLE_WINDOW = 0.24
+const TRACK_BORDER_PAD = 0.05
 const RACE_CHECKPOINTS = [
   RACE_START_ANGLE,
   0,
@@ -95,7 +96,7 @@ function resolveCollisions(x, z) {
   for (let i = 0; i < COLLISION_PASSES; i += 1) {
     let hadOverlap = false
     for (const obstacle of COLLISION_OBSTACLES) {
-      if (isOnRaceTrackBand(obstacle.x, obstacle.z, 2.7)) continue
+      if (isOnRaceTrackBand(obstacle.x, obstacle.z, 4.8)) continue
       const separation = separationFromObstacle(rx, rz, obstacle)
       if (!separation) continue
       hadOverlap = true
@@ -109,6 +110,31 @@ function resolveCollisions(x, z) {
   }
 
   return { x: rx, z: rz, hit }
+}
+
+function clampToTrackBorders(x, z) {
+  const angle = Math.atan2(z, x)
+  const radius = Math.hypot(x, z)
+  const centerRadius = raceTrackRadiusAt(angle)
+  const minRadius = centerRadius - RACE_TRACK_WIDTH / 2 + TRACK_BORDER_PAD
+  const maxRadius = centerRadius + RACE_TRACK_WIDTH / 2 - TRACK_BORDER_PAD
+  let nextRadius = radius
+  let hit = false
+
+  if (radius < minRadius) {
+    nextRadius = minRadius
+    hit = true
+  } else if (radius > maxRadius) {
+    nextRadius = maxRadius
+    hit = true
+  }
+
+  if (!hit) return { x, z, hit: false }
+  return {
+    x: Math.cos(angle) * nextRadius,
+    z: Math.sin(angle) * nextRadius,
+    hit: true,
+  }
 }
 
 export default function Bike() {
@@ -137,7 +163,9 @@ export default function Bike() {
     panelMode,
     enterZone,
     isNight,
-    startRaceLap,
+    raceStatus,
+    setRaceStartReady,
+    requestRaceStart,
     updateRaceLap,
     completeRaceLap,
   } = useGame()
@@ -147,13 +175,17 @@ export default function Bike() {
   // Zone entry via E / Enter
   useEffect(() => {
     function onKey(e) {
+      if ((e.key === 'Enter') && !panelMode && raceStatus.canStart && !raceStatus.lapActive && !raceStatus.countdownActive) {
+        requestRaceStart()
+        return
+      }
       if ((e.key === 'e' || e.key === 'E' || e.key === 'Enter') && nearZoneRef.current && !panelMode) {
         enterZone(nearZoneRef.current)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [panelMode, enterZone])
+  }, [panelMode, enterZone, raceStatus.canStart, raceStatus.lapActive, raceStatus.countdownActive, requestRaceStart])
 
   useEffect(() => {
     if (!headlightRef.current || !headlightTargetRef.current) return
@@ -161,9 +193,29 @@ export default function Bike() {
     headlightRef.current.target.updateMatrixWorld()
   }, [isNight])
 
+  useFrame(() => {
+    if (lapActiveRef.current !== raceStatus.lapActive) {
+      lapActiveRef.current = raceStatus.lapActive
+      if (!raceStatus.lapActive) {
+        lapStartTsRef.current = 0
+        checkpointMaskRef.current = 0
+      }
+    }
+  })
+
   useFrame((_, delta) => {
     if (panelMode) return
     const dt = Math.min(delta, 0.05)
+
+    if (raceStatus.countdownActive) {
+      speed.current = 0
+      bikeState.speed = 0
+      if (groupRef.current) {
+        groupRef.current.position.set(bikeState.position.x, GROUND_Y + bobOffset.current, bikeState.position.z)
+        groupRef.current.rotation.y = angle.current
+      }
+      return
+    }
 
     const keys = getKeys()
     const fwd  = keys.forward  || touchInput.forward
@@ -202,9 +254,19 @@ export default function Bike() {
     const nextZ = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.z + dz))
     const resolved = resolveCollisions(nextX, nextZ)
 
-    bikeState.position.x = resolved.x
-    bikeState.position.z = resolved.z
-    if (resolved.hit) speed.current *= 0.35
+    let finalX = resolved.x
+    let finalZ = resolved.z
+    let borderHit = false
+    if (lapActiveRef.current) {
+      const clamped = clampToTrackBorders(finalX, finalZ)
+      finalX = clamped.x
+      finalZ = clamped.z
+      borderHit = clamped.hit
+    }
+
+    bikeState.position.x = finalX
+    bikeState.position.z = finalZ
+    if (resolved.hit || borderHit) speed.current *= 0.35
 
     // ── Perimeter race lap logic ──────────────────────
     const bx = bikeState.position.x
@@ -228,27 +290,31 @@ export default function Bike() {
       inTrackBand &&
       angularDistance(trackAngle, RACE_START_ANGLE) <= RACE_GATE_ANGLE_WINDOW
 
+    const canStartRace = inStartGate && !lapActiveRef.current && !raceStatus.countdownActive
+    setRaceStartReady(canStartRace)
+
     if (inStartGate && !wasInStartGateRef.current && speedAbs > 2) {
-      if (!lapActiveRef.current) {
-        lapActiveRef.current = true
-        lapStartTsRef.current = nowTs
-        checkpointMaskRef.current = 0
-        startRaceLap(nowTs)
-      } else {
+      if (lapActiveRef.current) {
         const lapMs = nowTs - lapStartTsRef.current
         const completedPerimeter = checkpointMaskRef.current === 15
         if (completedPerimeter && lapMs >= LAP_MIN_MS) {
           completeRaceLap(lapMs, nowTs)
-          lapActiveRef.current = true
-          lapStartTsRef.current = nowTs
+          lapActiveRef.current = false
+          lapStartTsRef.current = 0
           checkpointMaskRef.current = 0
-          startRaceLap(nowTs)
         }
       }
     }
     wasInStartGateRef.current = inStartGate
 
-    if (lapActiveRef.current && nowTs - lastLapUiUpdateRef.current >= LAP_UI_UPDATE_MS) {
+    if (lapActiveRef.current) {
+      if (!lapStartTsRef.current && raceStatus.lapStartTs) {
+        lapStartTsRef.current = raceStatus.lapStartTs
+        checkpointMaskRef.current = 1
+      }
+    }
+
+    if (lapActiveRef.current && lapStartTsRef.current && nowTs - lastLapUiUpdateRef.current >= LAP_UI_UPDATE_MS) {
       lastLapUiUpdateRef.current = nowTs
       updateRaceLap(nowTs - lapStartTsRef.current, checkpointMaskRef.current)
     }

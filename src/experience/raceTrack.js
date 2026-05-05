@@ -1,6 +1,6 @@
-export const RACE_TRACK_BASE_RADIUS = 31
-export const RACE_TRACK_WIDTH = 6.2
-export const RACE_TRACK_WOBBLE = 3.1
+export const RACE_TRACK_BASE_RADIUS = 36.8
+export const RACE_TRACK_WIDTH = 7.2
+export const RACE_TRACK_WOBBLE = 1.35
 export const RACE_TRACK_PETALS = 5
 export const RACE_START_ANGLE = -Math.PI / 2
 
@@ -19,8 +19,9 @@ export function angularDistance(a, b) {
 export function raceTrackRadiusAt(angle) {
   return (
     RACE_TRACK_BASE_RADIUS +
-    RACE_TRACK_WOBBLE * Math.sin(RACE_TRACK_PETALS * angle + 0.35) +
-    1.2 * Math.sin(2 * angle - 0.6)
+    RACE_TRACK_WOBBLE * Math.sin(RACE_TRACK_PETALS * angle + 0.35) -
+    1.15 * Math.cos(4 * angle) +
+    0.45 * Math.sin(2 * angle - 0.6)
   )
 }
 

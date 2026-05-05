@@ -6,7 +6,7 @@ import { ZONES, TREE_POSITIONS, BUILDING_LAYOUTS, LAMP_POSITIONS } from './world
 import { RACE_START_ANGLE, RACE_TRACK_WIDTH, isOnRaceTrackBand, raceTrackPointAt } from './raceTrack.js'
 import { useGame } from '../context/GameContext.jsx'
 
-const WORLD_SIZE = 80
+const WORLD_SIZE = 100
 const ROAD_WIDTH = 7
 
 function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = 192) {
@@ -26,6 +26,18 @@ function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = 192
   const shape = new THREE.Shape(outerPoints)
   shape.holes.push(new THREE.Path(innerPoints.reverse()))
   return shape
+}
+
+function buildTrackRailGeometry(offset, tubeRadius = 0.11, steps = 420) {
+  const points = []
+  for (let i = 0; i <= steps; i += 1) {
+    const angle = (i / steps) * Math.PI * 2
+    const [x, , z] = raceTrackPointAt(angle, offset)
+    points.push(new THREE.Vector3(x, 0, z))
+  }
+
+  const curve = new THREE.CatmullRomCurve3(points, true, 'catmullrom', 0.5)
+  return new THREE.TubeGeometry(curve, steps * 2, tubeRadius, 10, true)
 }
 
 function Tree({ position }) {
@@ -187,10 +199,23 @@ function Lamp({ position, isNight }) {
 }
 
 export default function World() {
-  const { isNight } = useGame()
+  const { isNight, raceStatus } = useGame()
+  const outerRailRef = useRef()
+  const innerRailRef = useRef()
   const trackSurfaceShape = useMemo(() => buildTrackShape(0, RACE_TRACK_WIDTH), [])
   const trackStripeShape = useMemo(() => buildTrackShape(0, 0.26), [])
+  const trackOuterBorderShape = useMemo(() => buildTrackShape(RACE_TRACK_WIDTH / 2 - 0.08, 0.16), [])
+  const trackInnerBorderShape = useMemo(() => buildTrackShape(-(RACE_TRACK_WIDTH / 2 - 0.08), 0.16), [])
+  const outerRailGeometry = useMemo(() => buildTrackRailGeometry(RACE_TRACK_WIDTH / 2 + 0.2), [])
+  const innerRailGeometry = useMemo(() => buildTrackRailGeometry(-(RACE_TRACK_WIDTH / 2 + 0.2)), [])
   const [startX, , startZ] = useMemo(() => raceTrackPointAt(RACE_START_ANGLE, 0), [])
+  const startAcrossYaw = useMemo(() => {
+    const eps = 0.015
+    const [x1, , z1] = raceTrackPointAt(RACE_START_ANGLE - eps, 0)
+    const [x2, , z2] = raceTrackPointAt(RACE_START_ANGLE + eps, 0)
+    const tangentYaw = Math.atan2(z2 - z1, x2 - x1)
+    return tangentYaw + Math.PI / 2
+  }, [])
 
   const visibleTrees = useMemo(
     () => TREE_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 2.2)),
@@ -204,6 +229,19 @@ export default function World() {
     () => LAMP_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 2.2)),
     []
   )
+
+  useFrame((_, delta) => {
+    const shouldRaiseRails = raceStatus.countdownActive || raceStatus.lapActive
+    const targetY = shouldRaiseRails ? 0.23 : -0.08
+    const liftSpeed = 4.6
+
+    if (outerRailRef.current) {
+      outerRailRef.current.position.y += (targetY - outerRailRef.current.position.y) * Math.min(1, delta * liftSpeed)
+    }
+    if (innerRailRef.current) {
+      innerRailRef.current.position.y += (targetY - innerRailRef.current.position.y) * Math.min(1, delta * liftSpeed)
+    }
+  })
 
   return (
     <group>
@@ -284,17 +322,45 @@ export default function World() {
         <meshStandardMaterial color="#98d8ea" roughness={0.72} emissive="#98d8ea" emissiveIntensity={isNight ? 0.22 : 0.08} />
       </mesh>
 
-      {/* ── Start / finish line ── */}
-      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[startX, 0.015, startZ]}>
-        <planeGeometry args={[4.2, 0.9]} />
-        <meshStandardMaterial color="#f2f2f2" roughness={0.65} emissive="#f2f2f2" emissiveIntensity={isNight ? 0.15 : 0} />
+      {/* ── Track borders (anti-cut edges) ── */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.018, 0]}>
+        <shapeGeometry args={[trackOuterBorderShape]} />
+        <meshStandardMaterial color="#f4f1d0" roughness={0.66} emissive="#ebe2a5" emissiveIntensity={isNight ? 0.1 : 0.025} />
       </mesh>
-      {[0, 1, 2, 3].map(i => (
-        <mesh key={`start-stripe-${i}`} rotation={[-Math.PI / 2, 0, 0]} position={[startX - 1.6 + i * 1.06, 0.02, startZ]}>
-          <planeGeometry args={[0.5, 0.45]} />
-          <meshStandardMaterial color={i % 2 ? '#0d0d0d' : '#e9e9e9'} roughness={0.7} />
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.018, 0]}>
+        <shapeGeometry args={[trackInnerBorderShape]} />
+        <meshStandardMaterial color="#f4f1d0" roughness={0.66} emissive="#ebe2a5" emissiveIntensity={isNight ? 0.1 : 0.025} />
+      </mesh>
+
+      {/* ── Physical side walls to prevent escaping track ── */}
+      <group ref={outerRailRef} position={[0, -0.08, 0]}>
+        <mesh castShadow receiveShadow geometry={outerRailGeometry}>
+          <meshStandardMaterial color="#e6edf1" roughness={0.48} metalness={0.14} emissive="#d5e2ea" emissiveIntensity={isNight ? 0.05 : 0} />
         </mesh>
-      ))}
+      </group>
+      <group ref={innerRailRef} position={[0, -0.08, 0]}>
+        <mesh castShadow receiveShadow geometry={innerRailGeometry}>
+          <meshStandardMaterial color="#e6edf1" roughness={0.48} metalness={0.14} emissive="#d5e2ea" emissiveIntensity={isNight ? 0.05 : 0} />
+        </mesh>
+      </group>
+
+      {/* ── Start / finish line ── */}
+      <group position={[startX, 0.015, startZ]} rotation={[0, startAcrossYaw, 0]}>
+        <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[RACE_TRACK_WIDTH + 1.1, 0.9]} />
+          <meshStandardMaterial color="#f2f2f2" roughness={0.65} emissive="#f2f2f2" emissiveIntensity={isNight ? 0.15 : 0} />
+        </mesh>
+        {[0, 1, 2, 3, 4, 5].map(i => (
+          <mesh
+            key={`start-stripe-${i}`}
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[-(RACE_TRACK_WIDTH / 2 - 0.45) + i * (RACE_TRACK_WIDTH / 5), 0.005, 0]}
+          >
+            <planeGeometry args={[0.9, 0.28]} />
+            <meshStandardMaterial color={i % 2 ? '#0d0d0d' : '#e9e9e9'} roughness={0.7} />
+          </mesh>
+        ))}
+      </group>
 
       {/* ── Zone platforms ── */}
       {ZONES.map(z => <ZonePlatform key={z.id} zone={z} />)}

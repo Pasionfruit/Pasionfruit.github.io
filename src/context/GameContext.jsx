@@ -39,6 +39,9 @@ export function GameProvider({ children }) {
     checkpointMask: 0,
     lastLapMs: null,
     completedLaps: 0,
+    canStart: false,
+    countdownActive: false,
+    countdownRemainingMs: 0,
   })
   const [raceLeaderboard, setRaceLeaderboard] = useState(loadRaceLeaderboard)
   const [catsEnabled, setCatsEnabled] = useState(loadCatsEnabled)
@@ -69,6 +72,27 @@ export function GameProvider({ children }) {
     setCatsEnabled(prev => !prev)
   }
 
+  function setRaceStartReady(canStart) {
+    setRaceStatus(prev => {
+      if (prev.canStart === canStart) return prev
+      return {
+        ...prev,
+        canStart,
+      }
+    })
+  }
+
+  function requestRaceStart() {
+    setRaceStatus(prev => {
+      if (!prev.canStart || prev.lapActive || prev.countdownActive) return prev
+      return {
+        ...prev,
+        countdownActive: true,
+        countdownRemainingMs: 3000,
+      }
+    })
+  }
+
   function startRaceLap(startTs) {
     setRaceStatus(prev => ({
       ...prev,
@@ -76,6 +100,9 @@ export function GameProvider({ children }) {
       lapStartTs: startTs,
       currentLapMs: 0,
       checkpointMask: 0,
+      canStart: false,
+      countdownActive: false,
+      countdownRemainingMs: 0,
     }))
   }
 
@@ -99,6 +126,9 @@ export function GameProvider({ children }) {
       checkpointMask: 0,
       lastLapMs: lapMs,
       completedLaps: prev.completedLaps + 1,
+      canStart: false,
+      countdownActive: false,
+      countdownRemainingMs: 0,
     }))
 
     setRaceLeaderboard(prev => {
@@ -115,6 +145,28 @@ export function GameProvider({ children }) {
     })
   }
 
+  useEffect(() => {
+    if (!raceStatus.countdownActive) return
+    const countdownEndTs = Date.now() + raceStatus.countdownRemainingMs
+    const timer = window.setInterval(() => {
+      const remainingMs = Math.max(0, countdownEndTs - Date.now())
+      if (remainingMs <= 0) {
+        window.clearInterval(timer)
+        startRaceLap(Date.now())
+        return
+      }
+      setRaceStatus(prev => {
+        if (!prev.countdownActive) return prev
+        return {
+          ...prev,
+          countdownRemainingMs: remainingMs,
+        }
+      })
+    }, 60)
+
+    return () => window.clearInterval(timer)
+  }, [raceStatus.countdownActive])
+
   return (
     <GameContext.Provider
       value={{
@@ -130,6 +182,8 @@ export function GameProvider({ children }) {
         raceLeaderboard,
         catsEnabled,
         toggleCatsEnabled,
+        setRaceStartReady,
+        requestRaceStart,
         startRaceLap,
         updateRaceLap,
         completeRaceLap,

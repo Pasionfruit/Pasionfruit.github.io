@@ -265,7 +265,7 @@ export default function TopRightNav() {
               <strong>{raceStatus.completedLaps}</strong>
             </p>
             <p className="race-hint">
-              Cross the checkered line to start. Loop around the full circular track and cross it again to record a lap.
+              Stop at the checkered line and press Enter (or tap Enter Race). Countdown starts, then complete one full loop and cross again to finish.
             </p>
           </div>
 

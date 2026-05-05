@@ -5,11 +5,47 @@ import './HUD.css'
 const isTouchPrimary = window.matchMedia('(pointer: coarse)').matches
 
 export default function HUD() {
-  const { nearZone, panelMode, enterZone } = useGame()
+  const { nearZone, panelMode, enterZone, raceStatus, requestRaceStart } = useGame()
   if (panelMode) return null
+
+  const showRacePrompt = raceStatus.canStart && !raceStatus.lapActive && !raceStatus.countdownActive
+  const countdownValue = Math.max(1, Math.ceil(raceStatus.countdownRemainingMs / 1000))
+
+  const lapMs = raceStatus.currentLapMs
+  const totalSeconds = Math.floor(lapMs / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  const millis = lapMs % 1000
+  const lapClock = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`
 
   return (
     <div className="hud">
+      {(raceStatus.countdownActive || raceStatus.lapActive) && (
+        <div className="race-top-clock" aria-live="polite">
+          {raceStatus.countdownActive ? (
+            <>
+              <span className="race-clock-label">Race starts in</span>
+              <strong className="race-countdown-number">{countdownValue}</strong>
+            </>
+          ) : (
+            <>
+              <span className="race-clock-label">Race Clock</span>
+              <strong className="race-clock-value">{lapClock}</strong>
+            </>
+          )}
+        </div>
+      )}
+
+      {showRacePrompt && (
+        <div className="hud-race-prompt">
+          <span className="prompt-key">Enter</span>
+          <span>Ready to race</span>
+          <button className="hud-race-start-btn" onClick={requestRaceStart}>
+            Enter Race
+          </button>
+        </div>
+      )}
+
       {nearZone && (
         <div className="hud-zone-prompt" style={{ '--zone-color': nearZone.color }}>
           <span className="prompt-key">{isTouchPrimary ? 'TAP' : 'E'}</span>
