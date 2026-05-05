@@ -18,6 +18,8 @@ const LEAN_SPEED  = 8
 const WORLD_BOUND = 37
 const GROUND_Y    = 0.28
 const BIKE_RADIUS = 0.5
+const COLLISION_EPSILON = 0.001
+const COLLISION_PASSES = 4
 
 function intersectsObstacle(x, z, obstacle) {
   if (obstacle.type === 'circle') {
@@ -32,6 +34,60 @@ function intersectsObstacle(x, z, obstacle) {
 
 function hitsObstacle(x, z) {
   return COLLISION_OBSTACLES.some(obstacle => intersectsObstacle(x, z, obstacle))
+}
+
+function separationFromObstacle(x, z, obstacle) {
+  if (obstacle.type === 'circle') {
+    const dx = x - obstacle.x
+    const dz = z - obstacle.z
+    const dist = Math.hypot(dx, dz)
+    const minDist = obstacle.radius + BIKE_RADIUS
+    if (dist >= minDist) return null
+
+    if (dist < COLLISION_EPSILON) {
+      return { x: minDist + COLLISION_EPSILON, z: 0 }
+    }
+
+    const push = minDist - dist + COLLISION_EPSILON
+    return { x: (dx / dist) * push, z: (dz / dist) * push }
+  }
+
+  const dx = x - obstacle.x
+  const dz = z - obstacle.z
+  const limitX = obstacle.halfX + BIKE_RADIUS
+  const limitZ = obstacle.halfZ + BIKE_RADIUS
+  const overlapX = limitX - Math.abs(dx)
+  const overlapZ = limitZ - Math.abs(dz)
+  if (overlapX <= 0 || overlapZ <= 0) return null
+
+  if (overlapX < overlapZ) {
+    return { x: Math.sign(dx || 1) * (overlapX + COLLISION_EPSILON), z: 0 }
+  }
+
+  return { x: 0, z: Math.sign(dz || 1) * (overlapZ + COLLISION_EPSILON) }
+}
+
+function resolveCollisions(x, z) {
+  let rx = x
+  let rz = z
+  let hit = false
+
+  for (let i = 0; i < COLLISION_PASSES; i += 1) {
+    let hadOverlap = false
+    for (const obstacle of COLLISION_OBSTACLES) {
+      const separation = separationFromObstacle(rx, rz, obstacle)
+      if (!separation) continue
+      hadOverlap = true
+      hit = true
+      rx += separation.x
+      rz += separation.z
+      rx = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, rx))
+      rz = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, rz))
+    }
+    if (!hadOverlap) break
+  }
+
+  return { x: rx, z: rz, hit }
 }
 
 export default function Bike() {
@@ -115,17 +171,11 @@ export default function Bike() {
     const dz = -Math.cos(angle.current) * speed.current * dt
     const nextX = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.x + dx))
     const nextZ = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.z + dz))
-    const moveXOnly = !hitsObstacle(nextX, bikeState.position.z)
-    const moveZOnly = !hitsObstacle(bikeState.position.x, nextZ)
+    const resolved = resolveCollisions(nextX, nextZ)
 
-    if (!hitsObstacle(nextX, nextZ)) {
-      bikeState.position.x = nextX
-      bikeState.position.z = nextZ
-    } else {
-      if (moveXOnly) bikeState.position.x = nextX
-      if (moveZOnly) bikeState.position.z = nextZ
-      if (!moveXOnly && !moveZOnly) speed.current *= 0.15
-    }
+    bikeState.position.x = resolved.x
+    bikeState.position.z = resolved.z
+    if (resolved.hit) speed.current *= 0.35
 
     bikeState.angle = angle.current
     bikeState.speed = speed.current

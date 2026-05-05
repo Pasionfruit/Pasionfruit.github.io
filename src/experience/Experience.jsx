@@ -29,17 +29,17 @@ export default function Experience() {
         style={{ position: 'fixed', inset: 0 }}
       >
         <color attach="background" args={[skyColor]} />
-        <fog attach="fog" args={[fogColor, 50, isNight ? 200 : 130]} />
+        <fog attach="fog" args={[fogColor, 50, isNight ? 110 : 130]} />
 
-        <ambientLight intensity={isNight ? 0.2 : 0.55} color={isNight ? '#8aa4ff' : '#dff2ff'} />
+        <ambientLight intensity={isNight ? 0.4 : 0.55} color={isNight ? '#8aa4ff' : '#dff2ff'} />
         <hemisphereLight
-          intensity={isNight ? 0.1 : 0.45}
+          intensity={isNight ? 0.5 : 0.45}
           color={isNight ? '#5b74c9' : '#bde7ff'}
           groundColor={isNight ? '#09130f' : '#476248'}
         />
         <directionalLight
           position={[25, 35, 20]}
-          intensity={isNight ? 0.35 : 1.3}
+          intensity={isNight ? 0.55 : 1.3}
           color={isNight ? '#a8bbff' : '#fff2c2'}
           castShadow
           shadow-mapSize={[2048, 2048]}
@@ -60,9 +60,9 @@ export default function Experience() {
               position={[55, 50, -70]}
               target-position={[0, 0, 0]}
               color="#c8d6ff"
-              intensity={80}
-              distance={220}
-              angle={Math.PI / 3.8}
+              intensity={130}
+              distance={280}
+              angle={Math.PI / 3.2}
               penumbra={0.55}
               decay={1.4}
               castShadow={false}

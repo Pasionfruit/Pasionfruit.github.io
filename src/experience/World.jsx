@@ -1,4 +1,4 @@
-import { useRef, memo } from 'react'
+import { useRef, useEffect, memo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -106,6 +106,20 @@ function ZonePlatform({ zone }) {
 }
 
 function Lamp({ position, isNight }) {
+  const lightRef = useRef()
+  const targetRef = useRef()
+  const [x, , z] = position
+  const alongVerticalRoad = Math.abs(x) < Math.abs(z)
+  const dirX = alongVerticalRoad ? -Math.sign(x || 1) : 0
+  const dirZ = alongVerticalRoad ? 0 : -Math.sign(z || 1)
+  const headYaw = Math.atan2(dirZ, dirX)
+
+  useEffect(() => {
+    if (!lightRef.current || !targetRef.current) return
+    lightRef.current.target = targetRef.current
+    lightRef.current.target.updateMatrixWorld()
+  }, [])
+
   return (
     <group position={position}>
       {/* Pole */}
@@ -113,37 +127,41 @@ function Lamp({ position, isNight }) {
         <cylinderGeometry args={[0.06, 0.09, 4.0, 7]} />
         <meshStandardMaterial color="#2a2a3a" roughness={0.6} metalness={0.6} />
       </mesh>
-      {/* Arm */}
-      <mesh position={[0.55, 4.05, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.04, 0.04, 1.1, 6]} />
-        <meshStandardMaterial color="#2a2a3a" roughness={0.6} metalness={0.6} />
-      </mesh>
-      {/* Shade cap (inverted cone) */}
-      <mesh position={[1.05, 4.34, 0]} rotation={[Math.PI, 0, 0]}>
-        <coneGeometry args={[0.3, 0.22, 8]} />
-        <meshStandardMaterial color="#1e1e2e" roughness={0.5} metalness={0.7} />
-      </mesh>
-      {/* Globe */}
-      <mesh position={[1.05, 4.05, 0]}>
-        <sphereGeometry args={[0.18, 10, 10]} />
-        <meshStandardMaterial
-          color="#fffbe0"
-          emissive="#ffe877"
-          emissiveIntensity={isNight ? 3.0 : 0.2}
+      {/* Head rotated so every lamp faces inward to the road */}
+      <group rotation={[0, headYaw, 0]}>
+        {/* Arm */}
+        <mesh position={[0.55, 4.05, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.04, 0.04, 1.1, 6]} />
+          <meshStandardMaterial color="#2a2a3a" roughness={0.6} metalness={0.6} />
+        </mesh>
+        {/* Shade cap (inverted cone) */}
+        <mesh position={[1.05, 4.34, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[0.3, 0.22, 8]} />
+          <meshStandardMaterial color="#1e1e2e" roughness={0.5} metalness={0.7} />
+        </mesh>
+        {/* Globe */}
+        <mesh position={[1.05, 4.05, 0]}>
+          <sphereGeometry args={[0.18, 10, 10]} />
+          <meshStandardMaterial
+            color="#fffbe0"
+            emissive="#ffe877"
+            emissiveIntensity={isNight ? 3.0 : 0.2}
+          />
+        </mesh>
+        {/* Spotlight aimed straight down from the globe */}
+        <object3D ref={targetRef} position={[1.05, 0, 0]} />
+        <spotLight
+          ref={lightRef}
+          position={[1.05, 4.05, 0]}
+          color="#ffd97a"
+          intensity={isNight ? 60 : 0}
+          distance={34}
+          angle={Math.PI / 3.3}
+          penumbra={0.9}
+          decay={2}
+          castShadow={false}
         />
-      </mesh>
-      {/* Spotlight aimed straight down from the globe */}
-      <spotLight
-        position={[1.05, 4.05, 0]}
-        target-position={[1.05, 0, 0]}
-        color="#ffd97a"
-        intensity={isNight ? 28 : 0}
-        distance={12}
-        angle={Math.PI / 5}
-        penumbra={0.45}
-        decay={2}
-        castShadow={false}
-      />
+      </group>
     </group>
   )
 }
@@ -155,7 +173,7 @@ export default function World() {
       {/* ── Ground ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[WORLD_SIZE, WORLD_SIZE]} />
-        <meshStandardMaterial color="#193319" roughness={0.9} />
+        <meshStandardMaterial color="#264e26" roughness={0.9} />
       </mesh>
 
       {/* ── Path underlight ── */}
@@ -210,12 +228,6 @@ export default function World() {
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
         <planeGeometry args={[0.14, WORLD_SIZE]} />
         <meshStandardMaterial color="#555" roughness={0.8} />
-      </mesh>
-
-      {/* ── World edge (darker outer ring) ── */}
-      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <ringGeometry args={[37, 42, 4, 1]} />
-        <meshStandardMaterial color="#0d1a0d" roughness={1} />
       </mesh>
 
       {/* ── Zone platforms ── */}
