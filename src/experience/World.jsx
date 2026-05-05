@@ -8,6 +8,8 @@ import { useGame } from '../context/GameContext.jsx'
 
 const WORLD_SIZE = 100
 const ROAD_WIDTH = 7
+const BORDER_STRIP_WIDTH = 0.2
+const RAIL_RADIUS = 0.11
 
 function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = 192) {
   const outerOffset = centerOffset + width / 2
@@ -200,14 +202,17 @@ function Lamp({ position, isNight }) {
 
 export default function World() {
   const { isNight, raceStatus } = useGame()
+  const trackHalfWidth = RACE_TRACK_WIDTH / 2
+  const edgeStripOffset = trackHalfWidth - BORDER_STRIP_WIDTH / 2
+  const railOffset = trackHalfWidth + RAIL_RADIUS
   const outerRailRef = useRef()
   const innerRailRef = useRef()
   const trackSurfaceShape = useMemo(() => buildTrackShape(0, RACE_TRACK_WIDTH), [])
   const trackStripeShape = useMemo(() => buildTrackShape(0, 0.26), [])
-  const trackOuterBorderShape = useMemo(() => buildTrackShape(RACE_TRACK_WIDTH / 2 - 0.08, 0.16), [])
-  const trackInnerBorderShape = useMemo(() => buildTrackShape(-(RACE_TRACK_WIDTH / 2 - 0.08), 0.16), [])
-  const outerRailGeometry = useMemo(() => buildTrackRailGeometry(RACE_TRACK_WIDTH / 2 + 0.2), [])
-  const innerRailGeometry = useMemo(() => buildTrackRailGeometry(-(RACE_TRACK_WIDTH / 2 + 0.2)), [])
+  const trackOuterBorderShape = useMemo(() => buildTrackShape(edgeStripOffset, BORDER_STRIP_WIDTH), [edgeStripOffset])
+  const trackInnerBorderShape = useMemo(() => buildTrackShape(-edgeStripOffset, BORDER_STRIP_WIDTH), [edgeStripOffset])
+  const outerRailGeometry = useMemo(() => buildTrackRailGeometry(railOffset, RAIL_RADIUS), [railOffset])
+  const innerRailGeometry = useMemo(() => buildTrackRailGeometry(-railOffset, RAIL_RADIUS), [railOffset])
   const [startX, , startZ] = useMemo(() => raceTrackPointAt(RACE_START_ANGLE, 0), [])
   const startAcrossYaw = useMemo(() => {
     const eps = 0.015

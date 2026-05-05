@@ -74,6 +74,7 @@ export default function TopRightNav() {
     raceLeaderboard,
     catsEnabled,
     toggleCatsEnabled,
+    cancelRace,
   } = useGame()
   const catsVisible = catsEnabled && !raceStatus.lapActive
 
@@ -267,6 +268,11 @@ export default function TopRightNav() {
             <p className="race-hint">
               Stop at the checkered line and press Enter (or tap Enter Race). Countdown starts, then complete one full loop and cross again to finish.
             </p>
+            {(raceStatus.lapActive || raceStatus.countdownActive) && (
+              <div className="countdown-actions">
+                <button className="countdown-btn danger" onClick={cancelRace}>Exit Race</button>
+              </div>
+            )}
           </div>
 
           <div className="race-leaderboard">

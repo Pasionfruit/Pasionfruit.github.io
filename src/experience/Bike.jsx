@@ -166,6 +166,7 @@ export default function Bike() {
     raceStatus,
     setRaceStartReady,
     requestRaceStart,
+    cancelRace,
     updateRaceLap,
     completeRaceLap,
   } = useGame()
@@ -175,6 +176,10 @@ export default function Bike() {
   // Zone entry via E / Enter
   useEffect(() => {
     function onKey(e) {
+      if (e.key === 'Escape' && !panelMode && (raceStatus.lapActive || raceStatus.countdownActive)) {
+        cancelRace()
+        return
+      }
       if ((e.key === 'Enter') && !panelMode && raceStatus.canStart && !raceStatus.lapActive && !raceStatus.countdownActive) {
         requestRaceStart()
         return
@@ -185,7 +190,7 @@ export default function Bike() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [panelMode, enterZone, raceStatus.canStart, raceStatus.lapActive, raceStatus.countdownActive, requestRaceStart])
+  }, [panelMode, enterZone, raceStatus.canStart, raceStatus.lapActive, raceStatus.countdownActive, requestRaceStart, cancelRace])
 
   useEffect(() => {
     if (!headlightRef.current || !headlightTargetRef.current) return

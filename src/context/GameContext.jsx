@@ -93,6 +93,19 @@ export function GameProvider({ children }) {
     })
   }
 
+  function cancelRace() {
+    setRaceStatus(prev => ({
+      ...prev,
+      lapActive: false,
+      lapStartTs: null,
+      currentLapMs: 0,
+      checkpointMask: 0,
+      canStart: false,
+      countdownActive: false,
+      countdownRemainingMs: 0,
+    }))
+  }
+
   function startRaceLap(startTs) {
     setRaceStatus(prev => ({
       ...prev,
@@ -184,6 +197,7 @@ export function GameProvider({ children }) {
         toggleCatsEnabled,
         setRaceStartReady,
         requestRaceStart,
+        cancelRace,
         startRaceLap,
         updateRaceLap,
         completeRaceLap,

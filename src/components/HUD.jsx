@@ -5,7 +5,7 @@ import './HUD.css'
 const isTouchPrimary = window.matchMedia('(pointer: coarse)').matches
 
 export default function HUD() {
-  const { nearZone, panelMode, enterZone, raceStatus, requestRaceStart } = useGame()
+  const { nearZone, panelMode, enterZone, raceStatus, requestRaceStart, cancelRace } = useGame()
   if (panelMode) return null
 
   const showRacePrompt = raceStatus.canStart && !raceStatus.lapActive && !raceStatus.countdownActive
@@ -26,11 +26,17 @@ export default function HUD() {
             <>
               <span className="race-clock-label">Race starts in</span>
               <strong className="race-countdown-number">{countdownValue}</strong>
+              <button className="hud-race-start-btn hud-race-exit-btn" onClick={cancelRace}>
+                Exit Race
+              </button>
             </>
           ) : (
             <>
               <span className="race-clock-label">Race Clock</span>
               <strong className="race-clock-value">{lapClock}</strong>
+              <button className="hud-race-start-btn hud-race-exit-btn" onClick={cancelRace}>
+                Exit Race
+              </button>
             </>
           )}
         </div>
