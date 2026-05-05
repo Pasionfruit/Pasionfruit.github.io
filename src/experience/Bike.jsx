@@ -20,6 +20,12 @@ const GROUND_Y    = 0.28
 const BIKE_RADIUS = 0.5
 const COLLISION_EPSILON = 0.001
 const COLLISION_PASSES = 4
+const ROAD_HALF_WIDTH = 3.8
+const BOB_AMPLITUDE_ROAD = 0.012
+const BOB_AMPLITUDE_GRASS = 0.05
+const BOB_FREQ_ROAD = 1.3
+const BOB_FREQ_GRASS = 2.8
+const BOB_RESPONSE = 10
 
 function intersectsObstacle(x, z, obstacle) {
   if (obstacle.type === 'circle') {
@@ -102,6 +108,7 @@ export default function Bike() {
   const angle    = useRef(0)
   const lean     = useRef(0)
   const bobTime  = useRef(0)
+  const bobOffset = useRef(0)
   const wheelRot = useRef(0)
 
   const [, getKeys]  = useKeyboardControls()
@@ -157,15 +164,6 @@ export default function Bike() {
     const targetLean = rgt ? -LEAN_MAX : lft ? LEAN_MAX : 0
     lean.current += (targetLean - lean.current) * LEAN_SPEED * dt
 
-    // ── Bob ───────────────────────────────────────────
-    let bob = 0
-    if (Math.abs(speed.current) > 0.3) {
-      bobTime.current += dt * Math.abs(speed.current) * 2.5
-      bob = Math.sin(bobTime.current) * 0.05
-    } else {
-      bob *= 0.9
-    }
-
     // ── Position ──────────────────────────────────────
     const dx = -Math.sin(angle.current) * speed.current * dt
     const dz = -Math.cos(angle.current) * speed.current * dt
@@ -177,6 +175,20 @@ export default function Bike() {
     bikeState.position.z = resolved.z
     if (resolved.hit) speed.current *= 0.35
 
+    // ── Terrain-aware bob (smooth on road, bumpier on grass) ─────────────
+    const onRoad =
+      Math.abs(bikeState.position.x) <= ROAD_HALF_WIDTH ||
+      Math.abs(bikeState.position.z) <= ROAD_HALF_WIDTH
+    const speedAbs = Math.abs(speed.current)
+    let targetBob = 0
+    if (speedAbs > 0.2) {
+      const freq = onRoad ? BOB_FREQ_ROAD : BOB_FREQ_GRASS
+      const amp = onRoad ? BOB_AMPLITUDE_ROAD : BOB_AMPLITUDE_GRASS
+      bobTime.current += dt * speedAbs * freq
+      targetBob = Math.sin(bobTime.current) * amp
+    }
+    bobOffset.current += (targetBob - bobOffset.current) * Math.min(1, dt * BOB_RESPONSE)
+
     bikeState.angle = angle.current
     bikeState.speed = speed.current
 
@@ -185,7 +197,7 @@ export default function Bike() {
 
     // ── Apply to mesh ─────────────────────────────────
     if (groupRef.current) {
-      groupRef.current.position.set(bikeState.position.x, GROUND_Y + bob, bikeState.position.z)
+      groupRef.current.position.set(bikeState.position.x, GROUND_Y + bobOffset.current, bikeState.position.z)
       groupRef.current.rotation.y = angle.current
     }
     if (frameRef.current)      frameRef.current.rotation.z      = lean.current
