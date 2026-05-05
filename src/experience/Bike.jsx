@@ -8,9 +8,9 @@ import { ZONES, ZONE_ENTER_RADIUS, COLLISION_OBSTACLES } from './worldData.js'
 import { RACE_START_ANGLE, RACE_TRACK_WIDTH, angularDistance, isOnRaceTrackBand, raceTrackDistanceToCenterline, raceTrackRadiusAt, raceTrackPointAt } from './raceTrack.js'
 import { useGame } from '../context/GameContext.jsx'
 
-const MAX_SPEED   = 12
+const MAX_SPEED   = 8.6
 const MAX_REV     = 5
-const ACCEL       = 18
+const ACCEL       = 14
 const DRAG        = 3.0
 const BRAKE_FORCE = 45
 const TURN_SPEED  = 2
@@ -36,6 +36,15 @@ const RACE_GATE_ANGLE_WINDOW = 0.14
 const RACE_CHECKPOINT_ANGLE_WINDOW = 0.24
 const TRACK_BORDER_PAD = 0.05
 const START_TELEPORT_BEHIND = 2.1
+const DRIFT_MIN_SPEED = 3.8
+const DRIFT_TURN_MULT = 1.8
+const DRIFT_LEAN_MULT = 1.4
+const DRIFT_RED_CHARGE_MS = 550
+const DRIFT_BLUE_CHARGE_MS = 1300
+const DRIFT_RED_BOOST = 11
+const DRIFT_BLUE_BOOST = 16
+const DRIFT_BOOST_TIME = 0.72
+const DRIFT_ACTIVE_BOOST = 6.4
 const RACE_CHECKPOINTS = [
   RACE_START_ANGLE,
   0,
@@ -158,6 +167,17 @@ export default function Bike() {
   const wasInStartGateRef = useRef(false)
   const lastLapUiUpdateRef = useRef(0)
   const prevCountdownActiveRef = useRef(false)
+  const driftActiveRef = useRef(false)
+  const driftChargeMsRef = useRef(0)
+  const driftLevelRef = useRef(0)
+  const driftSideRef = useRef(0)
+  const driftBoostTimerRef = useRef(0)
+  const driftBoostAccelRef = useRef(0)
+  const sparkPulseRef = useRef(0)
+  const leftSparkRef = useRef()
+  const leftSparkTrailRef = useRef()
+  const rightSparkRef = useRef()
+  const rightSparkTrailRef = useRef()
 
   const [, getKeys]  = useKeyboardControls()
   const {
@@ -252,6 +272,11 @@ export default function Bike() {
     if (raceStatus.countdownActive) {
       speed.current = 0
       bikeState.speed = 0
+      driftActiveRef.current = false
+      driftChargeMsRef.current = 0
+      driftLevelRef.current = 0
+      driftBoostTimerRef.current = 0
+      driftBoostAccelRef.current = 0
       if (groupRef.current) {
         groupRef.current.position.set(bikeState.position.x, GROUND_Y + bobOffset.current, bikeState.position.z)
         groupRef.current.rotation.y = angle.current
@@ -265,6 +290,7 @@ export default function Bike() {
     const lft  = keys.left     || touchInput.left
     const rgt  = keys.right    || touchInput.right
     const brk  = keys.brake    || touchInput.brake
+    const driftHeld = !IS_TOUCH_PRIMARY && Boolean(keys.drift)
     const speedCap = IS_TOUCH_PRIMARY ? MAX_SPEED * MOBILE_SPEED_MULT : MAX_SPEED
     const revCap = IS_TOUCH_PRIMARY ? MAX_REV * MOBILE_SPEED_MULT : MAX_REV
     const accelRate = IS_TOUCH_PRIMARY ? ACCEL * MOBILE_ACCEL_MULT : ACCEL
@@ -277,16 +303,55 @@ export default function Bike() {
       if (Math.abs(speed.current) < 0.02) speed.current = 0
     }
     if (brk) speed.current *= Math.max(0, 1 - BRAKE_FORCE * dt)
+    const steerInput = lft ? 1 : rgt ? -1 : 0
+    const speedAbs = Math.abs(speed.current)
+
+    if (driftBoostTimerRef.current > 0 && speed.current > 0) {
+      driftBoostTimerRef.current = Math.max(0, driftBoostTimerRef.current - dt)
+      speed.current = Math.min(speedCap + 4.8, speed.current + driftBoostAccelRef.current * dt)
+      if (driftBoostTimerRef.current <= 0) driftBoostAccelRef.current = 0
+    }
+
+    if (driftActiveRef.current) {
+      const stopDrift = !driftHeld || steerInput === 0 || speedAbs < DRIFT_MIN_SPEED
+      if (stopDrift) {
+        if (speed.current > 0 && driftLevelRef.current > 0) {
+          driftBoostAccelRef.current = driftLevelRef.current >= 2 ? DRIFT_BLUE_BOOST : DRIFT_RED_BOOST
+          driftBoostTimerRef.current = DRIFT_BOOST_TIME
+        }
+        driftActiveRef.current = false
+        driftChargeMsRef.current = 0
+        driftLevelRef.current = 0
+      }
+    } else if (driftHeld && steerInput !== 0 && speed.current > DRIFT_MIN_SPEED) {
+      driftActiveRef.current = true
+      driftChargeMsRef.current = 0
+      driftLevelRef.current = 0
+      driftSideRef.current = steerInput
+    }
+
+    if (driftActiveRef.current) {
+      driftChargeMsRef.current += dt * 1000
+      if (driftChargeMsRef.current >= DRIFT_BLUE_CHARGE_MS) driftLevelRef.current = 2
+      else if (driftChargeMsRef.current >= DRIFT_RED_CHARGE_MS) driftLevelRef.current = 1
+
+      if (speed.current > 0) {
+        const chargeFactor = driftLevelRef.current >= 2 ? 1.35 : driftLevelRef.current >= 1 ? 1.15 : 1
+        speed.current = Math.min(speedCap + 3.4, speed.current + DRIFT_ACTIVE_BOOST * chargeFactor * dt)
+      }
+    }
 
     // ── Steering (only when moving) ────────────────────
     if (Math.abs(speed.current) > 0.1) {
       const dir = speed.current > 0 ? 1 : -1
-      if (lft) angle.current += TURN_SPEED * dir * dt
-      if (rgt) angle.current -= TURN_SPEED * dir * dt
+      const turnRate = TURN_SPEED * (driftActiveRef.current ? DRIFT_TURN_MULT : 1)
+      if (lft) angle.current += turnRate * dir * dt
+      if (rgt) angle.current -= turnRate * dir * dt
     }
 
     // ── Lean ──────────────────────────────────────────
-    const targetLean = rgt ? -LEAN_MAX : lft ? LEAN_MAX : 0
+    const leanMax = driftActiveRef.current ? LEAN_MAX * DRIFT_LEAN_MULT : LEAN_MAX
+    const targetLean = rgt ? -leanMax : lft ? leanMax : 0
     lean.current += (targetLean - lean.current) * LEAN_SPEED * dt
 
     // ── Position ──────────────────────────────────────
@@ -313,7 +378,7 @@ export default function Bike() {
     // ── Perimeter race lap logic ──────────────────────
     const bx = bikeState.position.x
     const bz = bikeState.position.z
-    const speedAbs = Math.abs(speed.current)
+    const speedAbsNow = Math.abs(speed.current)
     const nowTs = Date.now()
 
     const trackAngle = Math.atan2(bz, bx)
@@ -335,7 +400,7 @@ export default function Bike() {
     const canStartRace = inStartGate && !lapActiveRef.current && !raceStatus.countdownActive
     setRaceStartReady(canStartRace)
 
-    if (inStartGate && !wasInStartGateRef.current && speedAbs > 2) {
+    if (inStartGate && !wasInStartGateRef.current && speedAbsNow > 2) {
       if (lapActiveRef.current) {
         const lapMs = nowTs - lapStartTsRef.current
         const completedPerimeter = checkpointMaskRef.current === 15
@@ -366,10 +431,10 @@ export default function Bike() {
       Math.abs(bikeState.position.x) <= ROAD_HALF_WIDTH ||
       Math.abs(bikeState.position.z) <= ROAD_HALF_WIDTH
     let targetBob = 0
-    if (speedAbs > 0.2) {
+    if (speedAbsNow > 0.2) {
       const freq = onRoad ? BOB_FREQ_ROAD : BOB_FREQ_GRASS
       const amp = onRoad ? BOB_AMPLITUDE_ROAD : BOB_AMPLITUDE_GRASS
-      bobTime.current += dt * speedAbs * freq
+      bobTime.current += dt * speedAbsNow * freq
       targetBob = Math.sin(bobTime.current) * amp
     }
     bobOffset.current += (targetBob - bobOffset.current) * Math.min(1, dt * BOB_RESPONSE)
@@ -389,6 +454,34 @@ export default function Bike() {
     if (frontWheelRef.current) frontWheelRef.current.rotation.x = wheelRot.current
     if (backWheelRef.current)  backWheelRef.current.rotation.x  = wheelRot.current
     if (headlightRef.current?.target) headlightRef.current.target.updateMatrixWorld()
+
+    // ── Drift sparks (desktop only) ───────────────────
+    const sparkActive = driftActiveRef.current && driftLevelRef.current > 0 && !IS_TOUCH_PRIMARY
+    const sparkColor = driftLevelRef.current >= 2 ? '#4ab7ff' : '#ff4a2a'
+    const sparkIntensity = driftLevelRef.current >= 2 ? 4.8 : 3.2
+    sparkPulseRef.current += dt * 24
+    const sparkPulse = 0.85 + Math.sin(sparkPulseRef.current) * 0.2
+    const trailPulse = 0.75 + Math.cos(sparkPulseRef.current * 0.7) * 0.15
+    const sparkRefs = [leftSparkRef.current, rightSparkRef.current]
+    const trailRefs = [leftSparkTrailRef.current, rightSparkTrailRef.current]
+    for (const spark of sparkRefs) {
+      if (!spark) continue
+      spark.visible = sparkActive
+      if (!sparkActive) continue
+      spark.material.color.set(sparkColor)
+      spark.material.emissive.set(sparkColor)
+      spark.material.emissiveIntensity = sparkIntensity
+      spark.scale.setScalar(sparkPulse)
+    }
+    for (const trail of trailRefs) {
+      if (!trail) continue
+      trail.visible = sparkActive
+      if (!sparkActive) continue
+      trail.material.color.set(sparkColor)
+      trail.material.emissive.set(sparkColor)
+      trail.material.emissiveIntensity = sparkIntensity * 0.7
+      trail.scale.setScalar(trailPulse)
+    }
 
     // ── Zone proximity ────────────────────────────────
     let nearest = null, nearestDist = ZONE_ENTER_RADIUS
@@ -488,6 +581,22 @@ export default function Bike() {
           <mesh rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.025, 0.025, 0.08, 8]} />
             <meshStandardMaterial color={silver} metalness={0.8} />
+          </mesh>
+          <mesh ref={leftSparkRef} visible={false} position={[-0.16, 0.02, 0.08]}>
+            <sphereGeometry args={[0.035, 8, 8]} />
+            <meshStandardMaterial color="#ff4a2a" emissive="#ff4a2a" emissiveIntensity={2.5} transparent opacity={0.95} />
+          </mesh>
+          <mesh ref={rightSparkRef} visible={false} position={[0.16, 0.02, 0.08]}>
+            <sphereGeometry args={[0.035, 8, 8]} />
+            <meshStandardMaterial color="#ff4a2a" emissive="#ff4a2a" emissiveIntensity={2.5} transparent opacity={0.95} />
+          </mesh>
+          <mesh ref={leftSparkTrailRef} visible={false} position={[-0.19, 0.02, 0.23]}>
+            <sphereGeometry args={[0.022, 8, 8]} />
+            <meshStandardMaterial color="#ff4a2a" emissive="#ff4a2a" emissiveIntensity={2.0} transparent opacity={0.8} />
+          </mesh>
+          <mesh ref={rightSparkTrailRef} visible={false} position={[0.19, 0.02, 0.23]}>
+            <sphereGeometry args={[0.022, 8, 8]} />
+            <meshStandardMaterial color="#ff4a2a" emissive="#ff4a2a" emissiveIntensity={2.0} transparent opacity={0.8} />
           </mesh>
         </group>
 

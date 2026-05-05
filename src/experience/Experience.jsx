@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { KeyboardControls, Stars } from '@react-three/drei'
 import Bike from './Bike.jsx'
@@ -6,14 +6,6 @@ import Cat from './Cat.jsx'
 import World from './World.jsx'
 import FollowCamera from './FollowCamera.jsx'
 import { useGame } from '../context/GameContext.jsx'
-
-const KEY_MAP = [
-  { name: 'forward',  keys: ['ArrowUp',    'w', 'W'] },
-  { name: 'backward', keys: ['ArrowDown',  's', 'S'] },
-  { name: 'left',     keys: ['ArrowLeft',  'a', 'A'] },
-  { name: 'right',    keys: ['ArrowRight', 'd', 'D'] },
-  { name: 'brake',    keys: ['Space'] },
-]
 
 const CLOUD_CLUSTERS = [
   { base: [-42, 12, -24], scale: 1.05, speed: 0.85 },
@@ -71,14 +63,26 @@ function DayClouds() {
 }
 
 export default function Experience() {
-  const { isNight, raceStatus, catsEnabled } = useGame()
+  const { isNight, raceStatus, catsEnabled, controlBindings } = useGame()
   const showCats = catsEnabled && !raceStatus.lapActive
+
+  const keyMap = useMemo(() => {
+    const keyFor = (name, fallback) => [controlBindings?.[name] || fallback]
+    return [
+      { name: 'forward', keys: keyFor('forward', 'ArrowUp') },
+      { name: 'backward', keys: keyFor('backward', 'ArrowDown') },
+      { name: 'left', keys: keyFor('left', 'ArrowLeft') },
+      { name: 'right', keys: keyFor('right', 'ArrowRight') },
+      { name: 'brake', keys: keyFor('brake', 'Space') },
+      { name: 'drift', keys: keyFor('drift', 'ShiftLeft') },
+    ]
+  }, [controlBindings])
 
   const skyColor = isNight ? '#060b1a' : '#86b7d8'
   const fogColor = isNight ? '#0a1020' : '#7faecf'
 
   return (
-    <KeyboardControls map={KEY_MAP}>
+    <KeyboardControls map={keyMap}>
       <Canvas
         shadows
         dpr={[1, 2]}

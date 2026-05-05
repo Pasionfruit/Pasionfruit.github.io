@@ -68,7 +68,7 @@ export default function HUD() {
       <p className="hud-hint">
         {isTouchPrimary
           ? 'Joystick · ride to a zone · tap Open to enter'
-          : 'WASD · ride to a zone · press E to enter'}
+          : 'Use your configured keys · ride to a zone · press E to enter'}
       </p>
     </div>
   )

@@ -1,0 +1,130 @@
+.settings-panel {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 122;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.settings-cog-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #3c5f90;
+  background: rgba(6, 12, 24, 0.9);
+  color: #cde7ff;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.settings-cog-btn:hover {
+  background: rgba(20, 36, 68, 0.95);
+}
+
+.settings-menu {
+  width: min(320px, calc(100vw - 24px));
+  background: rgba(6, 12, 24, 0.95);
+  border: 1px solid #3c5f90;
+  border-radius: 8px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.settings-title {
+  margin: 2px 4px 8px;
+  color: #6f8eb3;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.settings-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.settings-tab-btn {
+  border: 1px solid #4f76ad;
+  background: rgba(17, 30, 56, 0.92);
+  color: #cce4ff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.44rem;
+  border-radius: 5px;
+  padding: 8px 9px;
+  cursor: pointer;
+}
+
+.settings-tab-btn.is-active {
+  background: rgba(40, 74, 124, 0.95);
+  border-color: #8bc5ff;
+}
+
+.settings-section {
+  display: grid;
+  gap: 8px;
+}
+
+.settings-hint {
+  margin: 0;
+  color: #8fb0d9;
+  font-family: 'VT323', monospace;
+  font-size: 0.98rem;
+  line-height: 1.05;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid rgba(79, 118, 173, 0.38);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: #d3e8ff;
+  font-family: 'VT323', monospace;
+  font-size: 1.05rem;
+  background: rgba(11, 20, 38, 0.92);
+}
+
+.settings-key-btn,
+.settings-mini-btn {
+  border: 1px solid #4f76ad;
+  background: rgba(17, 30, 56, 0.95);
+  color: #cce4ff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  border-radius: 4px;
+  padding: 7px 8px;
+  cursor: pointer;
+}
+
+.settings-key-btn.is-capturing {
+  border-color: #ffbf66;
+  color: #ffe8c5;
+  background: rgba(70, 47, 18, 0.9);
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 700px) {
+  .settings-panel {
+    top: 10px;
+    left: 10px;
+  }
+
+  .settings-cog-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+}

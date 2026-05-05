@@ -7,12 +7,14 @@ import HUD from "../components/HUD.jsx"
 import PanelOverlay from "../components/PanelOverlay.jsx"
 import DPad from "../components/DPad.jsx"
 import TopRightNav from "../components/TopRightNav.jsx"
+import SettingsPanel from "../components/SettingsPanel.jsx"
 import "./WorldPage.css"
 
 function WorldScene() {
   return (
     <>
       <Experience />
+      <SettingsPanel />
       <HUD />
       <TopRightNav />
       <PanelOverlay />

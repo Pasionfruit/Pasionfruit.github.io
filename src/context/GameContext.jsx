@@ -3,6 +3,15 @@ import { usePlayer } from './PlayerContext.jsx'
 
 const GameContext = createContext(null)
 
+const DEFAULT_CONTROL_BINDINGS = {
+  forward: 'ArrowUp',
+  backward: 'ArrowDown',
+  left: 'ArrowLeft',
+  right: 'ArrowRight',
+  brake: 'Space',
+  drift: 'ShiftLeft',
+}
+
 function loadRaceLeaderboard() {
   try {
     const raw = window.localStorage.getItem('pf.race.leaderboard')
@@ -32,6 +41,23 @@ function loadCatsEnabled() {
   }
 }
 
+function loadControlBindings() {
+  try {
+    const raw = window.localStorage.getItem('pf.controls.bindings')
+    if (!raw) return DEFAULT_CONTROL_BINDINGS
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') return DEFAULT_CONTROL_BINDINGS
+    return {
+      ...DEFAULT_CONTROL_BINDINGS,
+      ...Object.fromEntries(
+        Object.entries(parsed).filter(([, value]) => typeof value === 'string' && value.trim())
+      ),
+    }
+  } catch {
+    return DEFAULT_CONTROL_BINDINGS
+  }
+}
+
 export function GameProvider({ children }) {
   const { player } = usePlayer()
   const [nearZone,   setNearZone]   = useState(null)
@@ -51,6 +77,7 @@ export function GameProvider({ children }) {
   })
   const [raceLeaderboard, setRaceLeaderboard] = useState(loadRaceLeaderboard)
   const [catsEnabled, setCatsEnabled] = useState(loadCatsEnabled)
+  const [controlBindings, setControlBindings] = useState(loadControlBindings)
 
   useEffect(() => {
     window.localStorage.setItem('pf.race.leaderboard', JSON.stringify(raceLeaderboard))
@@ -59,6 +86,10 @@ export function GameProvider({ children }) {
   useEffect(() => {
     window.localStorage.setItem('pf.cats.enabled', String(catsEnabled))
   }, [catsEnabled])
+
+  useEffect(() => {
+    window.localStorage.setItem('pf.controls.bindings', JSON.stringify(controlBindings))
+  }, [controlBindings])
 
   function enterZone(zone) {
     setActiveZone(zone)
@@ -76,6 +107,19 @@ export function GameProvider({ children }) {
 
   function toggleCatsEnabled() {
     setCatsEnabled(prev => !prev)
+  }
+
+  function setControlBinding(action, key) {
+    if (!Object.prototype.hasOwnProperty.call(DEFAULT_CONTROL_BINDINGS, action)) return
+    if (typeof key !== 'string' || !key.trim()) return
+    setControlBindings(prev => ({
+      ...prev,
+      [action]: key,
+    }))
+  }
+
+  function resetControlBindings() {
+    setControlBindings(DEFAULT_CONTROL_BINDINGS)
   }
 
   function setRaceStartReady(canStart) {
@@ -202,7 +246,10 @@ export function GameProvider({ children }) {
         raceStatus,
         raceLeaderboard,
         catsEnabled,
+        controlBindings,
         toggleCatsEnabled,
+        setControlBinding,
+        resetControlBindings,
         setRaceStartReady,
         requestRaceStart,
         cancelRace,
