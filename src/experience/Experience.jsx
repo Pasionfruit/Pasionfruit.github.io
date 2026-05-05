@@ -71,7 +71,8 @@ function DayClouds() {
 }
 
 export default function Experience() {
-  const { isNight } = useGame()
+  const { isNight, raceStatus, catsEnabled } = useGame()
+  const showCats = catsEnabled && !raceStatus.lapActive
 
   const skyColor = isNight ? '#060b1a' : '#86b7d8'
   const fogColor = isNight ? '#0a1020' : '#7faecf'
@@ -139,9 +140,9 @@ export default function Experience() {
 
         <World />
         <Bike />
-        <Cat colorType="black" side="left" index={0} />
-        <Cat colorType="black" side="left" index={1} />
-        <Cat colorType="blackwhite" side="right" index={0} />
+        {showCats && <Cat colorType="black" side="left" index={0} />}
+        {showCats && <Cat colorType="black" side="left" index={1} />}
+        {showCats && <Cat colorType="blackwhite" side="right" index={0} />}
         <FollowCamera />
       </Canvas>
     </KeyboardControls>

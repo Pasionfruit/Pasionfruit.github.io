@@ -190,6 +190,83 @@
   box-shadow: 0 0 0 1px rgba(126, 200, 255, 0.25);
 }
 
+.race-menu {
+  width: min(340px, calc(100vw - 24px));
+  gap: 10px;
+}
+
+.race-status {
+  border: 1px solid rgba(120, 156, 210, 0.38);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(8, 14, 28, 0.88);
+  display: grid;
+  gap: 6px;
+}
+
+.race-line {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #cfe5ff;
+  font-family: 'VT323', monospace;
+  font-size: 1.12rem;
+}
+
+.race-line strong {
+  color: #f0f7ff;
+}
+
+.race-hint {
+  margin: 2px 0 0;
+  color: #8fb0d9;
+  font-family: 'VT323', monospace;
+  font-size: 0.98rem;
+  line-height: 1.05;
+}
+
+.race-leaderboard {
+  border: 1px solid rgba(120, 156, 210, 0.38);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(8, 14, 28, 0.88);
+  display: grid;
+  gap: 6px;
+}
+
+.race-board-title {
+  margin: 0;
+  color: #d8ebff;
+  font-family: 'VT323', monospace;
+  font-size: 1.18rem;
+}
+
+.race-empty {
+  margin: 0;
+  color: #8fb0d9;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+}
+
+.race-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(79, 118, 173, 0.4);
+  border-radius: 5px;
+  padding: 5px 7px;
+  color: #d3e8ff;
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  background: rgba(11, 20, 38, 0.92);
+}
+
+.race-row strong {
+  color: #f8fbff;
+  letter-spacing: 0.03em;
+}
+
 @media (max-width: 700px) {
   .top-right-nav {
     top: 10px;

@@ -1,12 +1,32 @@
-import { useRef, useEffect, memo } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { ZONES, TREE_POSITIONS, BUILDING_LAYOUTS, LAMP_POSITIONS } from './worldData.js'
+import { RACE_START_ANGLE, RACE_TRACK_WIDTH, isOnRaceTrackBand, raceTrackPointAt } from './raceTrack.js'
 import { useGame } from '../context/GameContext.jsx'
 
 const WORLD_SIZE = 80
 const ROAD_WIDTH = 7
+
+function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = 192) {
+  const outerOffset = centerOffset + width / 2
+  const innerOffset = centerOffset - width / 2
+
+  const outerPoints = []
+  const innerPoints = []
+  for (let i = 0; i <= steps; i += 1) {
+    const angle = (i / steps) * Math.PI * 2
+    const [ox, , oz] = raceTrackPointAt(angle, outerOffset)
+    const [ix, , iz] = raceTrackPointAt(angle, innerOffset)
+    outerPoints.push(new THREE.Vector2(ox, oz))
+    innerPoints.push(new THREE.Vector2(ix, iz))
+  }
+
+  const shape = new THREE.Shape(outerPoints)
+  shape.holes.push(new THREE.Path(innerPoints.reverse()))
+  return shape
+}
 
 function Tree({ position }) {
   return (
@@ -168,6 +188,23 @@ function Lamp({ position, isNight }) {
 
 export default function World() {
   const { isNight } = useGame()
+  const trackSurfaceShape = useMemo(() => buildTrackShape(0, RACE_TRACK_WIDTH), [])
+  const trackStripeShape = useMemo(() => buildTrackShape(0, 0.26), [])
+  const [startX, , startZ] = useMemo(() => raceTrackPointAt(RACE_START_ANGLE, 0), [])
+
+  const visibleTrees = useMemo(
+    () => TREE_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 2.2)),
+    []
+  )
+  const visibleBuildings = useMemo(
+    () => BUILDING_LAYOUTS.filter(({ position }) => !isOnRaceTrackBand(position[0], position[2], 2.6)),
+    []
+  )
+  const visibleLamps = useMemo(
+    () => LAMP_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 2.2)),
+    []
+  )
+
   return (
     <group>
       {/* ── Ground ── */}
@@ -230,17 +267,46 @@ export default function World() {
         <meshStandardMaterial color="#555" roughness={0.8} />
       </mesh>
 
+      {/* ── Obscure circular race track ── */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, 0]}>
+        <shapeGeometry args={[trackSurfaceShape]} />
+        <meshStandardMaterial
+          color="#1f5b6f"
+          roughness={0.84}
+          emissive="#0a303a"
+          emissiveIntensity={isNight ? 0.28 : 0.05}
+        />
+      </mesh>
+
+      {/* ── Track center stripe ── */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.013, 0]}>
+        <shapeGeometry args={[trackStripeShape]} />
+        <meshStandardMaterial color="#98d8ea" roughness={0.72} emissive="#98d8ea" emissiveIntensity={isNight ? 0.22 : 0.08} />
+      </mesh>
+
+      {/* ── Start / finish line ── */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[startX, 0.015, startZ]}>
+        <planeGeometry args={[4.2, 0.9]} />
+        <meshStandardMaterial color="#f2f2f2" roughness={0.65} emissive="#f2f2f2" emissiveIntensity={isNight ? 0.15 : 0} />
+      </mesh>
+      {[0, 1, 2, 3].map(i => (
+        <mesh key={`start-stripe-${i}`} rotation={[-Math.PI / 2, 0, 0]} position={[startX - 1.6 + i * 1.06, 0.02, startZ]}>
+          <planeGeometry args={[0.5, 0.45]} />
+          <meshStandardMaterial color={i % 2 ? '#0d0d0d' : '#e9e9e9'} roughness={0.7} />
+        </mesh>
+      ))}
+
       {/* ── Zone platforms ── */}
       {ZONES.map(z => <ZonePlatform key={z.id} zone={z} />)}
 
       {/* ── Trees ── */}
-      {TREE_POSITIONS.map((pos, i) => <Tree key={i} position={pos} />)}
+      {visibleTrees.map((pos, i) => <Tree key={i} position={pos} />)}
 
       {/* ── Buildings ── */}
-      {BUILDING_LAYOUTS.map((b, i) => <Building key={i} {...b} />)}
+      {visibleBuildings.map((b, i) => <Building key={i} {...b} />)}
 
       {/* ── Street lamps ── */}
-      {LAMP_POSITIONS.map((pos, i) => <Lamp key={i} position={pos} isNight={isNight} />)}
+      {visibleLamps.map((pos, i) => <Lamp key={i} position={pos} isNight={isNight} />)}
     </group>
   )
 }

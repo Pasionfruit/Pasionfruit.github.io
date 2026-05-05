@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { bikeState } from './bikeState.js'
 import { touchInput } from './inputManager.js'
 import { ZONES, ZONE_ENTER_RADIUS, COLLISION_OBSTACLES } from './worldData.js'
+import { RACE_START_ANGLE, RACE_TRACK_WIDTH, angularDistance, isOnRaceTrackBand, raceTrackDistanceToCenterline } from './raceTrack.js'
 import { useGame } from '../context/GameContext.jsx'
 
 const MAX_SPEED   = 12
@@ -29,6 +30,16 @@ const BOB_RESPONSE = 10
 const IS_TOUCH_PRIMARY = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
 const MOBILE_SPEED_MULT = 0.72
 const MOBILE_ACCEL_MULT = 0.78
+const LAP_MIN_MS = 9000
+const LAP_UI_UPDATE_MS = 220
+const RACE_GATE_ANGLE_WINDOW = 0.14
+const RACE_CHECKPOINT_ANGLE_WINDOW = 0.24
+const RACE_CHECKPOINTS = [
+  RACE_START_ANGLE,
+  0,
+  Math.PI / 2,
+  Math.PI,
+]
 
 function intersectsObstacle(x, z, obstacle) {
   if (obstacle.type === 'circle') {
@@ -84,6 +95,7 @@ function resolveCollisions(x, z) {
   for (let i = 0; i < COLLISION_PASSES; i += 1) {
     let hadOverlap = false
     for (const obstacle of COLLISION_OBSTACLES) {
+      if (isOnRaceTrackBand(obstacle.x, obstacle.z, 2.7)) continue
       const separation = separationFromObstacle(rx, rz, obstacle)
       if (!separation) continue
       hadOverlap = true
@@ -113,9 +125,22 @@ export default function Bike() {
   const bobTime  = useRef(0)
   const bobOffset = useRef(0)
   const wheelRot = useRef(0)
+  const lapActiveRef = useRef(false)
+  const lapStartTsRef = useRef(0)
+  const checkpointMaskRef = useRef(0)
+  const wasInStartGateRef = useRef(false)
+  const lastLapUiUpdateRef = useRef(0)
 
   const [, getKeys]  = useKeyboardControls()
-  const { setNearZone, panelMode, enterZone, isNight } = useGame()
+  const {
+    setNearZone,
+    panelMode,
+    enterZone,
+    isNight,
+    startRaceLap,
+    updateRaceLap,
+    completeRaceLap,
+  } = useGame()
   const nearZoneRef    = useRef(null)
   const prevNearZoneId = useRef(null)
 
@@ -181,11 +206,57 @@ export default function Bike() {
     bikeState.position.z = resolved.z
     if (resolved.hit) speed.current *= 0.35
 
+    // ── Perimeter race lap logic ──────────────────────
+    const bx = bikeState.position.x
+    const bz = bikeState.position.z
+    const speedAbs = Math.abs(speed.current)
+    const nowTs = Date.now()
+
+    const trackAngle = Math.atan2(bz, bx)
+    const trackDist = Math.abs(raceTrackDistanceToCenterline(bx, bz))
+    const inTrackBand = trackDist <= RACE_TRACK_WIDTH * 0.72
+
+    if (lapActiveRef.current) {
+      for (let i = 0; i < RACE_CHECKPOINTS.length; i += 1) {
+        if (inTrackBand && angularDistance(trackAngle, RACE_CHECKPOINTS[i]) <= RACE_CHECKPOINT_ANGLE_WINDOW) {
+          checkpointMaskRef.current |= (1 << i)
+        }
+      }
+    }
+
+    const inStartGate =
+      inTrackBand &&
+      angularDistance(trackAngle, RACE_START_ANGLE) <= RACE_GATE_ANGLE_WINDOW
+
+    if (inStartGate && !wasInStartGateRef.current && speedAbs > 2) {
+      if (!lapActiveRef.current) {
+        lapActiveRef.current = true
+        lapStartTsRef.current = nowTs
+        checkpointMaskRef.current = 0
+        startRaceLap(nowTs)
+      } else {
+        const lapMs = nowTs - lapStartTsRef.current
+        const completedPerimeter = checkpointMaskRef.current === 15
+        if (completedPerimeter && lapMs >= LAP_MIN_MS) {
+          completeRaceLap(lapMs, nowTs)
+          lapActiveRef.current = true
+          lapStartTsRef.current = nowTs
+          checkpointMaskRef.current = 0
+          startRaceLap(nowTs)
+        }
+      }
+    }
+    wasInStartGateRef.current = inStartGate
+
+    if (lapActiveRef.current && nowTs - lastLapUiUpdateRef.current >= LAP_UI_UPDATE_MS) {
+      lastLapUiUpdateRef.current = nowTs
+      updateRaceLap(nowTs - lapStartTsRef.current, checkpointMaskRef.current)
+    }
+
     // ── Terrain-aware bob (smooth on road, bumpier on grass) ─────────────
     const onRoad =
       Math.abs(bikeState.position.x) <= ROAD_HALF_WIDTH ||
       Math.abs(bikeState.position.z) <= ROAD_HALF_WIDTH
-    const speedAbs = Math.abs(speed.current)
     let targetBob = 0
     if (speedAbs > 0.2) {
       const freq = onRoad ? BOB_FREQ_ROAD : BOB_FREQ_GRASS
@@ -212,7 +283,6 @@ export default function Bike() {
     if (headlightRef.current?.target) headlightRef.current.target.updateMatrixWorld()
 
     // ── Zone proximity ────────────────────────────────
-    const bx = bikeState.position.x, bz = bikeState.position.z
     let nearest = null, nearestDist = ZONE_ENTER_RADIUS
     for (const z of ZONES) {
       const dist = Math.hypot(bx - z.position[0], bz - z.position[2])

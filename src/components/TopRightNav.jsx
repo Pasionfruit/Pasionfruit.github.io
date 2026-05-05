@@ -6,6 +6,15 @@ import './TopRightNav.css'
 const DAY_MS = 24 * 60 * 60 * 1000
 const TIMER_COLORS = ['#7ec8ff', '#8fff91', '#ffb36b', '#ff7ea6', '#d9a4ff']
 
+function formatLapTime(ms) {
+  if (typeof ms !== 'number' || ms <= 0) return '--:--.---'
+  const totalSeconds = Math.floor(ms / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  const millis = ms % 1000
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`
+}
+
 function createTimer(days, name, color) {
   return {
     id: `timer-${Math.random().toString(36).slice(2, 10)}`,
@@ -51,12 +60,22 @@ function loadTimers() {
 export default function TopRightNav() {
   const [open, setOpen] = useState(false)
   const [countdownOpen, setCountdownOpen] = useState(false)
+  const [raceOpen, setRaceOpen] = useState(false)
   const [timers, setTimers] = useState(loadTimers)
   const [nowTs, setNowTs] = useState(Date.now())
   const [editingId, setEditingId] = useState(null)
   const [editName, setEditName] = useState('')
   const [editDays, setEditDays] = useState('')
-  const { enterZone, isNight, toggleDayNight } = useGame()
+  const {
+    enterZone,
+    isNight,
+    toggleDayNight,
+    raceStatus,
+    raceLeaderboard,
+    catsEnabled,
+    toggleCatsEnabled,
+  } = useGame()
+  const catsVisible = catsEnabled && !raceStatus.lapActive
 
   const sections = useMemo(
     () => ZONES.map(z => ({ id: z.id, label: z.label, color: z.color })),
@@ -193,6 +212,14 @@ export default function TopRightNav() {
         Countdown Timers
       </button>
 
+      <button className="top-right-nav-btn" onClick={() => setRaceOpen(v => !v)}>
+        Race Leaderboard
+      </button>
+
+      <button className="top-right-nav-btn" onClick={toggleCatsEnabled}>
+        {raceStatus.lapActive ? 'Cats: Auto Off (Racing)' : `Cats: ${catsVisible ? 'On' : 'Off'}`}
+      </button>
+
       <button className="top-right-nav-btn" onClick={toggleDayNight}>
         {isNight ? 'Switch to Day' : 'Switch to Night'}
       </button>
@@ -217,6 +244,43 @@ export default function TopRightNav() {
         <div className="top-right-nav-menu countdown-menu">
           <p className="top-right-nav-title">Countdowns</p>
           {timers.map(renderTimer)}
+        </div>
+      )}
+
+      {raceOpen && (
+        <div className="top-right-nav-menu race-menu">
+          <p className="top-right-nav-title">Perimeter Race</p>
+
+          <div className="race-status">
+            <p className="race-line">
+              <span>Current Lap</span>
+              <strong>{raceStatus.lapActive ? formatLapTime(raceStatus.currentLapMs) : 'Waiting at Start'}</strong>
+            </p>
+            <p className="race-line">
+              <span>Last Lap</span>
+              <strong>{raceStatus.lastLapMs ? formatLapTime(raceStatus.lastLapMs) : '--:--.---'}</strong>
+            </p>
+            <p className="race-line">
+              <span>Completed Laps</span>
+              <strong>{raceStatus.completedLaps}</strong>
+            </p>
+            <p className="race-hint">
+              Cross the checkered line to start. Loop around the full circular track and cross it again to record a lap.
+            </p>
+          </div>
+
+          <div className="race-leaderboard">
+            <p className="race-board-title">Best Times</p>
+            {raceLeaderboard.length === 0 && (
+              <p className="race-empty">No laps yet. Start racing!</p>
+            )}
+            {raceLeaderboard.map((entry, i) => (
+              <div key={entry.id} className="race-row">
+                <span>#{i + 1}</span>
+                <strong>{formatLapTime(entry.ms)}</strong>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
