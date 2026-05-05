@@ -1,4 +1,5 @@
-import { Canvas } from '@react-three/fiber'
+import { useRef } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { KeyboardControls, Stars } from '@react-three/drei'
 import Bike from './Bike.jsx'
 import World from './World.jsx'
@@ -13,32 +14,51 @@ const KEY_MAP = [
   { name: 'brake',    keys: ['Space'] },
 ]
 
+const CLOUD_CLUSTERS = [
+  { base: [-42, 12, -24], scale: 1.05, speed: 0.85 },
+  { base: [-8,  13, -34], scale: 1.2,  speed: 0.65 },
+  { base: [24,  11, -12], scale: 0.95, speed: 0.9 },
+  { base: [46,  14, -26], scale: 1.1,  speed: 0.7 },
+  { base: [12,  15, -44], scale: 1.35, speed: 0.6 },
+]
+
 function DayClouds() {
-  const cloudClusters = [
-    { base: [-28, 28, -35], scale: 1.0 },
-    { base: [18, 30, -40], scale: 1.15 },
-    { base: [35, 26, -18], scale: 0.9 },
-    { base: [-12, 33, -48], scale: 1.25 },
-    { base: [4, 27, -22], scale: 0.8 },
-  ]
+  const cloudRefs = useRef([])
+
+  useFrame((_, delta) => {
+    for (let i = 0; i < cloudRefs.current.length; i += 1) {
+      const cloud = cloudRefs.current[i]
+      if (!cloud) continue
+      const speed = CLOUD_CLUSTERS[i].speed
+      cloud.position.x += speed * delta
+      if (cloud.position.x > 58) cloud.position.x = -58
+    }
+  })
 
   return (
     <group>
-      {cloudClusters.map((cluster, idx) => {
+      {CLOUD_CLUSTERS.map((cluster, idx) => {
         const [bx, by, bz] = cluster.base
         const s = cluster.scale
         return (
-          <group key={idx} position={[bx, by, bz]}>
-            {[[-2.8, 0, 0, 2.8], [0, 0.5, 0.6, 3.4], [2.6, 0.1, -0.2, 2.6], [0.8, -0.6, 1.2, 2.2]].map((p, i) => (
+          <group
+            key={idx}
+            ref={el => { cloudRefs.current[idx] = el }}
+            position={[bx, by, bz]}
+          >
+            {[[-3.2, 0.1, 0, 3.2], [-0.2, 0.9, 0.5, 3.8], [3.0, 0.2, -0.2, 3.0], [1.0, -0.8, 1.0, 2.5]].map((p, i) => (
               <mesh key={i} position={[p[0] * s, p[1] * s, p[2] * s]}>
-                <sphereGeometry args={[p[3] * s, 20, 16]} />
+                <sphereGeometry args={[p[3] * s, 22, 16]} />
                 <meshStandardMaterial
-                  color="#f6fbff"
+                  color="#f9fdff"
                   transparent
-                  opacity={0.78}
-                  roughness={0.95}
+                  opacity={0.9}
+                  roughness={0.9}
                   metalness={0}
+                  emissive="#dbeeff"
+                  emissiveIntensity={0.12}
                   depthWrite={false}
+                  fog={false}
                 />
               </mesh>
             ))}
