@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { KeyboardControls, Stars } from '@react-three/drei'
 import Bike from './Bike.jsx'
+import Cat from './Cat.jsx'
 import World from './World.jsx'
 import FollowCamera from './FollowCamera.jsx'
 import { useGame } from '../context/GameContext.jsx'
@@ -138,6 +139,9 @@ export default function Experience() {
 
         <World />
         <Bike />
+        <Cat colorType="black" side="left" index={0} />
+        <Cat colorType="black" side="left" index={1} />
+        <Cat colorType="blackwhite" side="right" index={0} />
         <FollowCamera />
       </Canvas>
     </KeyboardControls>
