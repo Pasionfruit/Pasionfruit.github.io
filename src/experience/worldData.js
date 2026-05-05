@@ -17,16 +17,7 @@ export const TREE_POSITIONS = [
   [-26, 0, -10], [ 26, 0, -10], [-26, 0,  10], [ 26, 0,  10],
 ]
 
-export const BUILDING_LAYOUTS = [
-  { position: [-10, 0, -10], size: [3.0, 4.0, 3.0], color: '#1e2e3e' },
-  { position: [ 11, 0, -11], size: [2.5, 6.5, 2.5], color: '#2a1e3a' },
-  { position: [-10, 0,  10], size: [4.0, 3.0, 3.5], color: '#1e3a2a' },
-  { position: [ 10, 0,  11], size: [3.0, 5.0, 3.0], color: '#3a2e1e' },
-  { position: [-20, 0,  -1], size: [2.0, 4.5, 2.0], color: '#1e2e3e' },
-  { position: [ 20, 0,   1], size: [2.5, 3.5, 2.5], color: '#2a2e3e' },
-  { position: [  1, 0, -20], size: [2.0, 5.0, 2.0], color: '#1e2a3e' },
-  { position: [ -1, 0,  20], size: [3.0, 3.0, 2.0], color: '#2e3a1e' },
-]
+export const BUILDING_LAYOUTS = []
 
 export const LAMP_POSITIONS = [
   // Horizontal road (Z=0) – north side z=-4.5

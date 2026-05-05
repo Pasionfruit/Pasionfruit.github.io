@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { usePlayer } from './PlayerContext.jsx'
 
 const GameContext = createContext(null)
 
@@ -10,6 +11,10 @@ function loadRaceLeaderboard() {
     if (!Array.isArray(parsed)) return []
     return parsed
       .filter(entry => entry && typeof entry.ms === 'number' && typeof entry.at === 'number')
+      .map(entry => ({
+        ...entry,
+        name: typeof entry.name === 'string' && entry.name.trim() ? entry.name.trim() : 'Guest',
+      }))
       .sort((a, b) => a.ms - b.ms)
       .slice(0, 8)
   } catch {
@@ -28,6 +33,7 @@ function loadCatsEnabled() {
 }
 
 export function GameProvider({ children }) {
+  const { player } = usePlayer()
   const [nearZone,   setNearZone]   = useState(null)
   const [panelMode,  setPanelMode]  = useState(false)
   const [activeZone, setActiveZone] = useState(null)
@@ -145,12 +151,14 @@ export function GameProvider({ children }) {
     }))
 
     setRaceLeaderboard(prev => {
+      const racerName = typeof player?.name === 'string' && player.name.trim() ? player.name.trim() : 'Guest'
       const next = [
         ...prev,
         {
           id: `lap-${finishedAtTs}-${Math.random().toString(36).slice(2, 8)}`,
           ms: lapMs,
           at: finishedAtTs,
+          name: racerName,
         },
       ]
       next.sort((a, b) => a.ms - b.ms)

@@ -266,7 +266,7 @@ export default function TopRightNav() {
               <strong>{raceStatus.completedLaps}</strong>
             </p>
             <p className="race-hint">
-              Stop at the checkered line and press Enter (or tap Enter Race). Countdown starts, then complete one full loop and cross again to finish.
+              Stop at the checkered line and press Enter (or tap Enter Race). Countdown starts, then complete one full loop and cross again to finish. Desktop: press Escape to exit race.
             </p>
             {(raceStatus.lapActive || raceStatus.countdownActive) && (
               <div className="countdown-actions">
@@ -282,7 +282,7 @@ export default function TopRightNav() {
             )}
             {raceLeaderboard.map((entry, i) => (
               <div key={entry.id} className="race-row">
-                <span>#{i + 1}</span>
+                <span>#{i + 1} {entry.name || 'Guest'}</span>
                 <strong>{formatLapTime(entry.ms)}</strong>
               </div>
             ))}

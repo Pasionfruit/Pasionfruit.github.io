@@ -14,7 +14,16 @@ const TRACK_STEPS = 360
 const FINISH_LINE_WIDTH = RACE_TRACK_WIDTH
 const FINISH_LINE_DEPTH = 0.9
 const FINISH_CHECKER_COLS = 6
-const FINISH_CHECKER_ROWS = 2
+const FINISH_CHECKER_ROWS = 3
+
+function formatLapTime(ms) {
+  if (typeof ms !== 'number' || ms <= 0) return '--:--.---'
+  const totalSeconds = Math.floor(ms / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  const millis = ms % 1000
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`
+}
 
 function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = TRACK_STEPS) {
   const outerOffset = centerOffset + width / 2
@@ -212,12 +221,13 @@ function Lamp({ position, isNight }) {
 }
 
 export default function World() {
-  const { isNight, raceStatus } = useGame()
+  const { isNight, raceStatus, raceLeaderboard } = useGame()
   const trackHalfWidth = RACE_TRACK_WIDTH / 2
   const edgeStripOffset = trackHalfWidth - BORDER_STRIP_WIDTH / 2
   const railOffset = trackHalfWidth + RAIL_RADIUS
   const outerRailRef = useRef()
   const innerRailRef = useRef()
+  const raceLaneShape = useMemo(() => buildTrackShape(0, RACE_TRACK_WIDTH), [])
   const trackOuterBorderShape = useMemo(() => buildTrackShape(edgeStripOffset, BORDER_STRIP_WIDTH), [edgeStripOffset])
   const trackInnerBorderShape = useMemo(() => buildTrackShape(-edgeStripOffset, BORDER_STRIP_WIDTH), [edgeStripOffset])
   const outerRailGeometry = useMemo(() => buildTrackRailGeometry(railOffset, RAIL_RADIUS), [railOffset])
@@ -230,6 +240,14 @@ export default function World() {
     const tangentYaw = Math.atan2(z2 - z1, x2 - x1)
     return tangentYaw + Math.PI / 2
   }, [])
+  const startRadialYaw = useMemo(() => Math.atan2(startZ, startX), [startX, startZ])
+  const finishBoardPosition = useMemo(() => {
+    const radialX = Math.cos(startRadialYaw)
+    const radialZ = Math.sin(startRadialYaw)
+    return [startX + radialX * 0.55, 2.65, startZ + radialZ * 0.55]
+  }, [startRadialYaw, startX, startZ])
+  const topThree = useMemo(() => raceLeaderboard.slice(0, 3), [raceLeaderboard])
+  const personalBestMs = topThree.length > 0 ? topThree[0].ms : null
 
   const visibleTrees = useMemo(
     () => TREE_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 0.9)),
@@ -319,6 +337,12 @@ export default function World() {
         <meshStandardMaterial color="#555" roughness={0.8} />
       </mesh>
 
+      {/* ── Race lane (tan) ── */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0]}>
+        <shapeGeometry args={[raceLaneShape]} />
+        <meshStandardMaterial color="#c7aa76" roughness={0.84} emissive="#9f7f48" emissiveIntensity={isNight ? 0.11 : 0.02} />
+      </mesh>
+
       {/* ── Track borders (anti-cut edges) ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.018, 0]}>
         <shapeGeometry args={[trackOuterBorderShape]} />
@@ -371,6 +395,39 @@ export default function World() {
             </mesh>
           )
         })}
+      </group>
+
+      {/* ── Floating leaderboard over finish line ── */}
+      <group position={[finishBoardPosition[0], finishBoardPosition[1], finishBoardPosition[2]]}>
+        <Html billboard center distanceFactor={12}>
+          <div
+            style={{
+              width: '230px',
+              padding: '10px 12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(141, 220, 255, 0.35)',
+              background: 'rgba(10, 16, 26, 0.86)',
+              boxShadow: '0 0 14px rgba(64, 178, 255, 0.26)',
+              fontFamily: "'Press Start 2P', monospace",
+              color: '#d9efff',
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          >
+            <div style={{ fontSize: '10px', marginBottom: '8px', color: '#a6e7ff' }}>RACE BOARD</div>
+            <div style={{ display: 'grid', gap: '6px', fontSize: '9px' }}>
+              {topThree.length === 0 && <div>TOP 3: --</div>}
+              {topThree.map((entry, i) => (
+                <div key={entry.id}>
+                  #{i + 1} {entry.name || 'Guest'} - {formatLapTime(entry.ms)}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: '9px', fontSize: '9px', color: '#fff8bf' }}>
+              PB: {formatLapTime(personalBestMs)}
+            </div>
+          </div>
+        </Html>
       </group>
 
       {/* ── Zone platforms ── */}

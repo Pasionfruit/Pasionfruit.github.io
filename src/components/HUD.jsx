@@ -26,6 +26,7 @@ export default function HUD() {
             <>
               <span className="race-clock-label">Race starts in</span>
               <strong className="race-countdown-number">{countdownValue}</strong>
+              {!isTouchPrimary && <span className="race-clock-label">Desktop: press Escape to exit</span>}
               <button className="hud-race-start-btn hud-race-exit-btn" onClick={cancelRace}>
                 Exit Race
               </button>
@@ -34,6 +35,7 @@ export default function HUD() {
             <>
               <span className="race-clock-label">Race Clock</span>
               <strong className="race-clock-value">{lapClock}</strong>
+              {!isTouchPrimary && <span className="race-clock-label">Desktop: press Escape to exit</span>}
               <button className="hud-race-start-btn hud-race-exit-btn" onClick={cancelRace}>
                 Exit Race
               </button>
