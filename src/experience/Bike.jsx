@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { bikeState } from './bikeState.js'
 import { touchInput } from './inputManager.js'
 import { ZONES, ZONE_ENTER_RADIUS, COLLISION_OBSTACLES } from './worldData.js'
-import { RACE_START_ANGLE, RACE_TRACK_WIDTH, angularDistance, isOnRaceTrackBand, raceTrackDistanceToCenterline, raceTrackRadiusAt } from './raceTrack.js'
+import { RACE_START_ANGLE, RACE_TRACK_WIDTH, angularDistance, isOnRaceTrackBand, raceTrackDistanceToCenterline, raceTrackRadiusAt, raceTrackPointAt } from './raceTrack.js'
 import { useGame } from '../context/GameContext.jsx'
 
 const MAX_SPEED   = 12
@@ -35,6 +35,7 @@ const LAP_UI_UPDATE_MS = 220
 const RACE_GATE_ANGLE_WINDOW = 0.14
 const RACE_CHECKPOINT_ANGLE_WINDOW = 0.24
 const TRACK_BORDER_PAD = 0.05
+const START_TELEPORT_BEHIND = 2.1
 const RACE_CHECKPOINTS = [
   RACE_START_ANGLE,
   0,
@@ -96,7 +97,7 @@ function resolveCollisions(x, z) {
   for (let i = 0; i < COLLISION_PASSES; i += 1) {
     let hadOverlap = false
     for (const obstacle of COLLISION_OBSTACLES) {
-      if (isOnRaceTrackBand(obstacle.x, obstacle.z, 4.8)) continue
+      if (isOnRaceTrackBand(obstacle.x, obstacle.z, 1.1)) continue
       const separation = separationFromObstacle(rx, rz, obstacle)
       if (!separation) continue
       hadOverlap = true
@@ -156,6 +157,7 @@ export default function Bike() {
   const checkpointMaskRef = useRef(0)
   const wasInStartGateRef = useRef(false)
   const lastLapUiUpdateRef = useRef(0)
+  const prevCountdownActiveRef = useRef(false)
 
   const [, getKeys]  = useKeyboardControls()
   const {
@@ -204,6 +206,41 @@ export default function Bike() {
       if (!raceStatus.lapActive) {
         lapStartTsRef.current = 0
         checkpointMaskRef.current = 0
+      }
+    }
+
+    const countdownJustStarted = raceStatus.countdownActive && !prevCountdownActiveRef.current
+    prevCountdownActiveRef.current = raceStatus.countdownActive
+
+    if (countdownJustStarted) {
+      const eps = 0.02
+      const [sx, , sz] = raceTrackPointAt(RACE_START_ANGLE, 0)
+      const [x1, , z1] = raceTrackPointAt(RACE_START_ANGLE - eps, 0)
+      const [x2, , z2] = raceTrackPointAt(RACE_START_ANGLE + eps, 0)
+      const txRaw = x2 - x1
+      const tzRaw = z2 - z1
+      const tLen = Math.hypot(txRaw, tzRaw) || 1
+      const tx = txRaw / tLen
+      const tz = tzRaw / tLen
+
+      const px = sx - tx * START_TELEPORT_BEHIND
+      const pz = sz - tz * START_TELEPORT_BEHIND
+
+      bikeState.position.x = px
+      bikeState.position.z = pz
+      speed.current = 0
+      bikeState.speed = 0
+      lean.current = 0
+      bobOffset.current = 0
+      bobTime.current = 0
+
+      // Face the bike forward along the race direction.
+      angle.current = Math.atan2(-tx, -tz)
+      bikeState.angle = angle.current
+
+      if (groupRef.current) {
+        groupRef.current.position.set(px, GROUND_Y, pz)
+        groupRef.current.rotation.y = angle.current
       }
     }
   })

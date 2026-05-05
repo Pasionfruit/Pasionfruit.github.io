@@ -10,8 +10,13 @@ const WORLD_SIZE = 100
 const ROAD_WIDTH = 7
 const BORDER_STRIP_WIDTH = 0.2
 const RAIL_RADIUS = 0.11
+const TRACK_STEPS = 360
+const FINISH_LINE_WIDTH = RACE_TRACK_WIDTH
+const FINISH_LINE_DEPTH = 0.9
+const FINISH_CHECKER_COLS = 6
+const FINISH_CHECKER_ROWS = 2
 
-function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = 192) {
+function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = TRACK_STEPS) {
   const outerOffset = centerOffset + width / 2
   const innerOffset = centerOffset - width / 2
 
@@ -30,16 +35,22 @@ function buildTrackShape(centerOffset = 0, width = RACE_TRACK_WIDTH, steps = 192
   return shape
 }
 
-function buildTrackRailGeometry(offset, tubeRadius = 0.11, steps = 420) {
+function buildTrackRailGeometry(offset, tubeRadius = RAIL_RADIUS, steps = TRACK_STEPS) {
   const points = []
-  for (let i = 0; i <= steps; i += 1) {
+  for (let i = 0; i < steps; i += 1) {
     const angle = (i / steps) * Math.PI * 2
     const [x, , z] = raceTrackPointAt(angle, offset)
     points.push(new THREE.Vector3(x, 0, z))
   }
 
-  const curve = new THREE.CatmullRomCurve3(points, true, 'catmullrom', 0.5)
-  return new THREE.TubeGeometry(curve, steps * 2, tubeRadius, 10, true)
+  const path = new THREE.CurvePath()
+  for (let i = 0; i < points.length; i += 1) {
+    const p1 = points[i]
+    const p2 = points[(i + 1) % points.length]
+    path.add(new THREE.LineCurve3(p1, p2))
+  }
+
+  return new THREE.TubeGeometry(path, steps * 2, tubeRadius, 10, true)
 }
 
 function Tree({ position }) {
@@ -207,8 +218,6 @@ export default function World() {
   const railOffset = trackHalfWidth + RAIL_RADIUS
   const outerRailRef = useRef()
   const innerRailRef = useRef()
-  const trackSurfaceShape = useMemo(() => buildTrackShape(0, RACE_TRACK_WIDTH), [])
-  const trackStripeShape = useMemo(() => buildTrackShape(0, 0.26), [])
   const trackOuterBorderShape = useMemo(() => buildTrackShape(edgeStripOffset, BORDER_STRIP_WIDTH), [edgeStripOffset])
   const trackInnerBorderShape = useMemo(() => buildTrackShape(-edgeStripOffset, BORDER_STRIP_WIDTH), [edgeStripOffset])
   const outerRailGeometry = useMemo(() => buildTrackRailGeometry(railOffset, RAIL_RADIUS), [railOffset])
@@ -223,15 +232,15 @@ export default function World() {
   }, [])
 
   const visibleTrees = useMemo(
-    () => TREE_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 2.2)),
+    () => TREE_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 0.9)),
     []
   )
   const visibleBuildings = useMemo(
-    () => BUILDING_LAYOUTS.filter(({ position }) => !isOnRaceTrackBand(position[0], position[2], 2.6)),
+    () => BUILDING_LAYOUTS.filter(({ position }) => !isOnRaceTrackBand(position[0], position[2], 1.2)),
     []
   )
   const visibleLamps = useMemo(
-    () => LAMP_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 2.2)),
+    () => LAMP_POSITIONS.filter(([x, , z]) => !isOnRaceTrackBand(x, z, 0.9)),
     []
   )
 
@@ -310,23 +319,6 @@ export default function World() {
         <meshStandardMaterial color="#555" roughness={0.8} />
       </mesh>
 
-      {/* ── Obscure circular race track ── */}
-      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, 0]}>
-        <shapeGeometry args={[trackSurfaceShape]} />
-        <meshStandardMaterial
-          color="#1f5b6f"
-          roughness={0.84}
-          emissive="#0a303a"
-          emissiveIntensity={isNight ? 0.28 : 0.05}
-        />
-      </mesh>
-
-      {/* ── Track center stripe ── */}
-      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.013, 0]}>
-        <shapeGeometry args={[trackStripeShape]} />
-        <meshStandardMaterial color="#98d8ea" roughness={0.72} emissive="#98d8ea" emissiveIntensity={isNight ? 0.22 : 0.08} />
-      </mesh>
-
       {/* ── Track borders (anti-cut edges) ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.018, 0]}>
         <shapeGeometry args={[trackOuterBorderShape]} />
@@ -337,7 +329,7 @@ export default function World() {
         <meshStandardMaterial color="#f4f1d0" roughness={0.66} emissive="#ebe2a5" emissiveIntensity={isNight ? 0.1 : 0.025} />
       </mesh>
 
-      {/* ── Physical side walls to prevent escaping track ── */}
+      {/* ── Physical side walls (raise during countdown/lap) ── */}
       <group ref={outerRailRef} position={[0, -0.08, 0]}>
         <mesh castShadow receiveShadow geometry={outerRailGeometry}>
           <meshStandardMaterial color="#e6edf1" roughness={0.48} metalness={0.14} emissive="#d5e2ea" emissiveIntensity={isNight ? 0.05 : 0} />
@@ -352,19 +344,33 @@ export default function World() {
       {/* ── Start / finish line ── */}
       <group position={[startX, 0.015, startZ]} rotation={[0, startAcrossYaw, 0]}>
         <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[RACE_TRACK_WIDTH + 1.1, 0.9]} />
+          <planeGeometry args={[FINISH_LINE_WIDTH, FINISH_LINE_DEPTH]} />
           <meshStandardMaterial color="#f2f2f2" roughness={0.65} emissive="#f2f2f2" emissiveIntensity={isNight ? 0.15 : 0} />
         </mesh>
-        {[0, 1, 2, 3, 4, 5].map(i => (
-          <mesh
-            key={`start-stripe-${i}`}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[-(RACE_TRACK_WIDTH / 2 - 0.45) + i * (RACE_TRACK_WIDTH / 5), 0.005, 0]}
-          >
-            <planeGeometry args={[0.9, 0.28]} />
-            <meshStandardMaterial color={i % 2 ? '#0d0d0d' : '#e9e9e9'} roughness={0.7} />
-          </mesh>
-        ))}
+        {Array.from({ length: FINISH_CHECKER_COLS * FINISH_CHECKER_ROWS }).map((_, idx) => {
+          const cols = FINISH_CHECKER_COLS
+          const rows = FINISH_CHECKER_ROWS
+          const col = idx % cols
+          const row = Math.floor(idx / cols)
+          const lineWidth = FINISH_LINE_WIDTH
+          const lineDepth = FINISH_LINE_DEPTH
+          const tileW = lineWidth / cols
+          const tileD = lineDepth / rows
+          const x = -lineWidth / 2 + tileW * (col + 0.5)
+          const z = -lineDepth / 2 + tileD * (row + 0.5)
+          const isDark = (row + col) % 2 === 0
+
+          return (
+            <mesh
+              key={`finish-checker-${row}-${col}`}
+              rotation={[-Math.PI / 2, 0, 0]}
+              position={[x, 0.006, z]}
+            >
+              <planeGeometry args={[tileW * 0.98, tileD * 0.98]} />
+              <meshStandardMaterial color={isDark ? '#0c0c0c' : '#ececec'} roughness={0.72} />
+            </mesh>
+          )
+        })}
       </group>
 
       {/* ── Zone platforms ── */}

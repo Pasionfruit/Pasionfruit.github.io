@@ -17,12 +17,8 @@ export function angularDistance(a, b) {
 }
 
 export function raceTrackRadiusAt(angle) {
-  return (
-    RACE_TRACK_BASE_RADIUS +
-    RACE_TRACK_WOBBLE * Math.sin(RACE_TRACK_PETALS * angle + 0.35) -
-    1.15 * Math.cos(4 * angle) +
-    0.45 * Math.sin(2 * angle - 0.6)
-  )
+  // Keep the race path perfectly circular so lane math and raised borders align exactly.
+  return RACE_TRACK_BASE_RADIUS
 }
 
 export function raceTrackPointAt(angle, radiusOffset = 0) {
