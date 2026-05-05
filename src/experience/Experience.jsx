@@ -55,15 +55,28 @@ export default function Experience() {
 
         {/* Moon */}
         {isNight && (
-          <mesh position={[55, 50, -70]}>
-            <sphereGeometry args={[6, 20, 20]} />
-            <meshStandardMaterial
-              color="#d8dcc8"
-              emissive="#b0ba90"
-              emissiveIntensity={1.6}
-              roughness={1}
+          <>
+            <spotLight
+              position={[55, 50, -70]}
+              target-position={[0, 0, 0]}
+              color="#c8d6ff"
+              intensity={26}
+              distance={220}
+              angle={Math.PI / 3.8}
+              penumbra={0.55}
+              decay={1.4}
+              castShadow={false}
             />
-          </mesh>
+            <mesh position={[55, 50, -70]}>
+              <sphereGeometry args={[6, 20, 20]} />
+              <meshStandardMaterial
+                color="#d8dcc8"
+                emissive="#b0ba90"
+                emissiveIntensity={100.6}
+                roughness={1}
+              />
+            </mesh>
+          </>
         )}
 
         <World />

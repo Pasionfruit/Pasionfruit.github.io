@@ -153,13 +153,17 @@ function Lamp({ position, isNight }) {
           emissiveIntensity={isNight ? 3.0 : 0.2}
         />
       </mesh>
-      {/* Point light */}
-      <pointLight
-        position={[1.05, 3.8, 0]}
+      {/* Spotlight aimed straight down from the globe */}
+      <spotLight
+        position={[1.05, 4.05, 0]}
+        target-position={[1.05, 0, 0]}
         color="#ffd97a"
-        intensity={isNight ? 8 : 0}
-        distance={14}
+        intensity={isNight ? 28 : 0}
+        distance={12}
+        angle={Math.PI / 5}
+        penumbra={0.45}
         decay={2}
+        castShadow={false}
       />
     </group>
   )
@@ -190,12 +194,22 @@ export default function World() {
       {/* ── Horizontal road ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
         <planeGeometry args={[WORLD_SIZE, ROAD_WIDTH]} />
-        <meshStandardMaterial color="#272727" roughness={0.85} />
+        <meshStandardMaterial
+          color="#272727"
+          roughness={0.85}
+          emissive="#3a2a00"
+          emissiveIntensity={isNight ? 0.08 : 0}
+        />
       </mesh>
       {/* ── Vertical road ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
         <planeGeometry args={[ROAD_WIDTH, WORLD_SIZE]} />
-        <meshStandardMaterial color="#272727" roughness={0.85} />
+        <meshStandardMaterial
+          color="#272727"
+          roughness={0.85}
+          emissive="#3a2a00"
+          emissiveIntensity={isNight ? 0.08 : 0}
+        />
       </mesh>
       {/* ── Road centre lines ── */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>

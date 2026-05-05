@@ -23,6 +23,8 @@ export default function Bike() {
   const frameRef      = useRef()
   const frontWheelRef = useRef()
   const backWheelRef  = useRef()
+  const headlightRef = useRef()
+  const headlightTargetRef = useRef()
 
   const speed    = useRef(0)
   const angle    = useRef(0)
@@ -31,7 +33,7 @@ export default function Bike() {
   const wheelRot = useRef(0)
 
   const [, getKeys]  = useKeyboardControls()
-  const { setNearZone, panelMode, enterZone } = useGame()
+  const { setNearZone, panelMode, enterZone, isNight } = useGame()
   const nearZoneRef    = useRef(null)
   const prevNearZoneId = useRef(null)
 
@@ -45,6 +47,12 @@ export default function Bike() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [panelMode, enterZone])
+
+  useEffect(() => {
+    if (!headlightRef.current || !headlightTargetRef.current) return
+    headlightRef.current.target = headlightTargetRef.current
+    headlightRef.current.target.updateMatrixWorld()
+  }, [isNight])
 
   useFrame((_, delta) => {
     if (panelMode) return
@@ -105,6 +113,7 @@ export default function Bike() {
     if (frameRef.current)      frameRef.current.rotation.z      = lean.current
     if (frontWheelRef.current) frontWheelRef.current.rotation.x = wheelRot.current
     if (backWheelRef.current)  backWheelRef.current.rotation.x  = wheelRot.current
+    if (headlightRef.current?.target) headlightRef.current.target.updateMatrixWorld()
 
     // ── Zone proximity ────────────────────────────────
     const bx = bikeState.position.x, bz = bikeState.position.z
@@ -167,6 +176,33 @@ export default function Bike() {
           <cylinderGeometry args={[0.018, 0.018, 0.42, 8]} />
           <meshStandardMaterial color={silver} metalness={0.9} roughness={0.1} />
         </mesh>
+        {/* Headlight */}
+        <mesh position={[0, 0.32, -0.49]}>
+          <cylinderGeometry args={[0.04, 0.05, 0.08, 10]} />
+          <meshStandardMaterial
+            color="#c8d1dd"
+            metalness={0.75}
+            roughness={0.2}
+            emissive="#fff4c2"
+            emissiveIntensity={isNight ? 0.8 : 0}
+          />
+        </mesh>
+        {isNight && (
+          <>
+            <object3D ref={headlightTargetRef} position={[0, 0.02, -9]} />
+            <spotLight
+              ref={headlightRef}
+              position={[0, 0.32, -0.5]}
+            color="#f7f0c8"
+            intensity={24}
+            distance={22}
+            angle={Math.PI / 6}
+            penumbra={0.45}
+            decay={1.6}
+            castShadow={false}
+            />
+          </>
+        )}
 
         {/* ── Back wheel ── */}
         <group ref={backWheelRef} position={[0, 0, 0.37]}>

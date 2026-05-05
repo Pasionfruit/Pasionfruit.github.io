@@ -1,6 +1,9 @@
 import { useGame } from '../context/GameContext.jsx'
 import './HUD.css'
 
+// true if the primary pointer is coarse (touch screen)
+const isTouchPrimary = window.matchMedia('(pointer: coarse)').matches
+
 export default function HUD() {
   const { nearZone, panelMode } = useGame()
   if (panelMode) return null
@@ -13,7 +16,11 @@ export default function HUD() {
           <span>Enter {nearZone.label}</span>
         </div>
       )}
-      <p className="hud-hint">WASD · ride to a zone · press E to enter</p>
+      <p className="hud-hint">
+        {isTouchPrimary
+          ? 'Joystick · ride to a zone · press E to enter'
+          : 'WASD · ride to a zone · press E to enter'}
+      </p>
     </div>
   )
 }
