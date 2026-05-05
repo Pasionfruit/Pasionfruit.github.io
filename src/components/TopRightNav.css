@@ -105,11 +105,11 @@
 
 .countdown-fg {
   fill: none;
-  stroke: #7ec8ff;
+  stroke: var(--timer-color, #7ec8ff);
   stroke-width: 6;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.6s linear;
-  filter: drop-shadow(0 0 4px rgba(126, 200, 255, 0.8));
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--timer-color, #7ec8ff) 80%, white));
 }
 
 .countdown-days {

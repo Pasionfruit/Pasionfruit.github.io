@@ -26,6 +26,9 @@ const BOB_AMPLITUDE_GRASS = 0.05
 const BOB_FREQ_ROAD = 1.3
 const BOB_FREQ_GRASS = 2.8
 const BOB_RESPONSE = 10
+const IS_TOUCH_PRIMARY = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+const MOBILE_SPEED_MULT = 0.72
+const MOBILE_ACCEL_MULT = 0.78
 
 function intersectsObstacle(x, z, obstacle) {
   if (obstacle.type === 'circle') {
@@ -143,10 +146,13 @@ export default function Bike() {
     const lft  = keys.left     || touchInput.left
     const rgt  = keys.right    || touchInput.right
     const brk  = keys.brake    || touchInput.brake
+    const speedCap = IS_TOUCH_PRIMARY ? MAX_SPEED * MOBILE_SPEED_MULT : MAX_SPEED
+    const revCap = IS_TOUCH_PRIMARY ? MAX_REV * MOBILE_SPEED_MULT : MAX_REV
+    const accelRate = IS_TOUCH_PRIMARY ? ACCEL * MOBILE_ACCEL_MULT : ACCEL
 
     // ── Speed ─────────────────────────────────────────
-    if (fwd)      speed.current = Math.min(speed.current + ACCEL * dt, MAX_SPEED)
-    else if (bwd) speed.current = Math.max(speed.current - ACCEL * dt, -MAX_REV)
+    if (fwd)      speed.current = Math.min(speed.current + accelRate * dt, speedCap)
+    else if (bwd) speed.current = Math.max(speed.current - accelRate * dt, -revCap)
     else {
       speed.current *= (1 - DRAG * dt)
       if (Math.abs(speed.current) < 0.02) speed.current = 0

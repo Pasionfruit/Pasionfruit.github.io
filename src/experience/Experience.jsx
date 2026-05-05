@@ -13,6 +13,42 @@ const KEY_MAP = [
   { name: 'brake',    keys: ['Space'] },
 ]
 
+function DayClouds() {
+  const cloudClusters = [
+    { base: [-28, 28, -35], scale: 1.0 },
+    { base: [18, 30, -40], scale: 1.15 },
+    { base: [35, 26, -18], scale: 0.9 },
+    { base: [-12, 33, -48], scale: 1.25 },
+    { base: [4, 27, -22], scale: 0.8 },
+  ]
+
+  return (
+    <group>
+      {cloudClusters.map((cluster, idx) => {
+        const [bx, by, bz] = cluster.base
+        const s = cluster.scale
+        return (
+          <group key={idx} position={[bx, by, bz]}>
+            {[[-2.8, 0, 0, 2.8], [0, 0.5, 0.6, 3.4], [2.6, 0.1, -0.2, 2.6], [0.8, -0.6, 1.2, 2.2]].map((p, i) => (
+              <mesh key={i} position={[p[0] * s, p[1] * s, p[2] * s]}>
+                <sphereGeometry args={[p[3] * s, 20, 16]} />
+                <meshStandardMaterial
+                  color="#f6fbff"
+                  transparent
+                  opacity={0.78}
+                  roughness={0.95}
+                  metalness={0}
+                  depthWrite={false}
+                />
+              </mesh>
+            ))}
+          </group>
+        )
+      })}
+    </group>
+  )
+}
+
 export default function Experience() {
   const { isNight } = useGame()
 
@@ -52,6 +88,7 @@ export default function Experience() {
         />
 
         {isNight && <Stars radius={120} depth={60} count={3000} factor={4} fade speed={0.5} />}
+        {!isNight && <DayClouds />}
 
         {/* Moon */}
         {isNight && (

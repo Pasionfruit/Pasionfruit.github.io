@@ -4,21 +4,23 @@ import { ZONES } from '../experience/worldData.js'
 import './TopRightNav.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
+const TIMER_COLORS = ['#7ec8ff', '#8fff91', '#ffb36b', '#ff7ea6', '#d9a4ff']
 
-function createTimer(days, name) {
+function createTimer(days, name, color) {
   return {
     id: `timer-${Math.random().toString(36).slice(2, 10)}`,
     name,
     totalDays: days,
     targetTs: Date.now() + days * DAY_MS,
+    color,
   }
 }
 
 function defaultTimers() {
   return [
-    createTimer(39, '39-Day Goal'),
-    createTimer(67, '67-Day Goal'),
-    createTimer(253, '253-Day Goal'),
+    createTimer(39, '39-Day Goal', TIMER_COLORS[0]),
+    createTimer(67, '67-Day Goal', TIMER_COLORS[1]),
+    createTimer(253, '253-Day Goal', TIMER_COLORS[2]),
   ]
 }
 
@@ -28,13 +30,19 @@ function loadTimers() {
     if (!raw) return defaultTimers()
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed) || parsed.length === 0) return defaultTimers()
-    return parsed.filter(t =>
-      t &&
-      typeof t.id === 'string' &&
-      typeof t.name === 'string' &&
-      typeof t.totalDays === 'number' &&
-      typeof t.targetTs === 'number'
-    )
+    const valid = parsed
+      .filter(t =>
+        t &&
+        typeof t.id === 'string' &&
+        typeof t.name === 'string' &&
+        typeof t.totalDays === 'number' &&
+        typeof t.targetTs === 'number'
+      )
+      .map((t, i) => ({
+        ...t,
+        color: typeof t.color === 'string' ? t.color : TIMER_COLORS[i % TIMER_COLORS.length],
+      }))
+    return valid.length > 0 ? valid : defaultTimers()
   } catch {
     return defaultTimers()
   }
@@ -111,6 +119,8 @@ export default function TopRightNav() {
     const remainingDays = Math.ceil(remainingMs / DAY_MS)
     const totalMs = Math.max(1, timer.totalDays * DAY_MS)
     const progress = Math.min(1, Math.max(0, remainingMs / totalMs))
+    const completedDays = Math.max(0, Math.min(timer.totalDays, timer.totalDays - remainingDays))
+    const isClosed = remainingDays <= 0
     const radius = 23
     const circumference = 2 * Math.PI * radius
     const dashOffset = circumference * (1 - progress)
@@ -119,7 +129,7 @@ export default function TopRightNav() {
     return (
       <div key={timer.id} className="countdown-card">
         <div className="countdown-progress-wrap" aria-hidden="true">
-          <svg className="countdown-progress" viewBox="0 0 56 56">
+          <svg className="countdown-progress" viewBox="0 0 56 56" style={{ '--timer-color': timer.color }}>
             <circle className="countdown-bg" cx="28" cy="28" r={radius} />
             <circle
               className="countdown-fg"
@@ -159,7 +169,9 @@ export default function TopRightNav() {
           ) : (
             <>
               <p className="countdown-name">{timer.name}</p>
-              <p className="countdown-sub">{remainingDays} day{remainingDays === 1 ? '' : 's'} left</p>
+              <p className="countdown-sub">
+                Completed: {completedDays} day{completedDays === 1 ? '' : 's'} · {isClosed ? 'Closed' : `${remainingDays} day${remainingDays === 1 ? '' : 's'} left`}
+              </p>
               <div className="countdown-actions">
                 <button className="countdown-btn" onClick={() => startEdit(timer)}>Edit</button>
                 <button className="countdown-btn danger" onClick={() => removeTimer(timer.id)}>Delete</button>
