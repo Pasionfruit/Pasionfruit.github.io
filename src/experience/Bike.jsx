@@ -290,7 +290,7 @@ export default function Bike() {
     const lft  = keys.left     || touchInput.left
     const rgt  = keys.right    || touchInput.right
     const brk  = keys.brake    || touchInput.brake
-    const driftHeld = !IS_TOUCH_PRIMARY && Boolean(keys.drift)
+    const boostHeld = !IS_TOUCH_PRIMARY && Boolean(keys.boost)
     const speedCap = IS_TOUCH_PRIMARY ? MAX_SPEED * MOBILE_SPEED_MULT : MAX_SPEED
     const revCap = IS_TOUCH_PRIMARY ? MAX_REV * MOBILE_SPEED_MULT : MAX_REV
     const accelRate = IS_TOUCH_PRIMARY ? ACCEL * MOBILE_ACCEL_MULT : ACCEL
@@ -312,8 +312,12 @@ export default function Bike() {
       if (driftBoostTimerRef.current <= 0) driftBoostAccelRef.current = 0
     }
 
+    if (boostHeld && !driftActiveRef.current && speed.current > 0) {
+      speed.current = Math.min(speedCap + 3.2, speed.current + DRIFT_ACTIVE_BOOST * 0.9 * dt)
+    }
+
     if (driftActiveRef.current) {
-      const stopDrift = !driftHeld || steerInput === 0 || speedAbs < DRIFT_MIN_SPEED
+      const stopDrift = !boostHeld || steerInput === 0 || speedAbs < DRIFT_MIN_SPEED
       if (stopDrift) {
         if (speed.current > 0 && driftLevelRef.current > 0) {
           driftBoostAccelRef.current = driftLevelRef.current >= 2 ? DRIFT_BLUE_BOOST : DRIFT_RED_BOOST
@@ -323,7 +327,7 @@ export default function Bike() {
         driftChargeMsRef.current = 0
         driftLevelRef.current = 0
       }
-    } else if (driftHeld && steerInput !== 0 && speed.current > DRIFT_MIN_SPEED) {
+    } else if (boostHeld && steerInput !== 0 && speed.current > DRIFT_MIN_SPEED) {
       driftActiveRef.current = true
       driftChargeMsRef.current = 0
       driftLevelRef.current = 0
@@ -456,7 +460,8 @@ export default function Bike() {
     if (headlightRef.current?.target) headlightRef.current.target.updateMatrixWorld()
 
     // ── Drift sparks (desktop only) ───────────────────
-    const sparkActive = driftActiveRef.current && driftLevelRef.current > 0 && !IS_TOUCH_PRIMARY
+    const boostSparkActive = boostHeld && speed.current > 1.6 && !IS_TOUCH_PRIMARY
+    const sparkActive = (driftActiveRef.current && driftLevelRef.current > 0 && !IS_TOUCH_PRIMARY) || boostSparkActive
     const sparkColor = driftLevelRef.current >= 2 ? '#4ab7ff' : '#ff4a2a'
     const sparkIntensity = driftLevelRef.current >= 2 ? 4.8 : 3.2
     sparkPulseRef.current += dt * 24

@@ -9,7 +9,7 @@ const DEFAULT_CONTROL_BINDINGS = {
   left: 'ArrowLeft',
   right: 'ArrowRight',
   brake: 'Space',
-  drift: 'ShiftLeft',
+  boost: 'ShiftLeft',
 }
 
 function loadRaceLeaderboard() {
@@ -47,12 +47,19 @@ function loadControlBindings() {
     if (!raw) return DEFAULT_CONTROL_BINDINGS
     const parsed = JSON.parse(raw)
     if (!parsed || typeof parsed !== 'object') return DEFAULT_CONTROL_BINDINGS
-    return {
+    const next = {
       ...DEFAULT_CONTROL_BINDINGS,
       ...Object.fromEntries(
         Object.entries(parsed).filter(([, value]) => typeof value === 'string' && value.trim())
       ),
     }
+
+    // Backward compatibility: migrate old "drift" binding to "boost".
+    if ((!next.boost || !next.boost.trim()) && typeof parsed.drift === 'string' && parsed.drift.trim()) {
+      next.boost = parsed.drift.trim()
+    }
+
+    return next
   } catch {
     return DEFAULT_CONTROL_BINDINGS
   }

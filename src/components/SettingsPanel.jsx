@@ -8,7 +8,7 @@ const CONTROL_FIELDS = [
   { id: 'left', label: 'Turn Left' },
   { id: 'right', label: 'Turn Right' },
   { id: 'brake', label: 'Brake' },
-  { id: 'drift', label: 'Drift (Desktop)' },
+  { id: 'boost', label: 'Boost (Desktop)' },
 ]
 
 function displayKeyName(key) {
@@ -63,9 +63,10 @@ export default function SettingsPanel() {
   return (
     <div className="settings-panel">
       <button
-        className="settings-cog-btn"
+        className={`settings-cog-btn ${open ? 'is-open' : ''}`}
         onClick={() => setOpen(prev => !prev)}
         aria-label="Open settings"
+        aria-expanded={open}
       >
         ⚙
       </button>

@@ -72,11 +72,8 @@ export default function TopRightNav() {
     toggleDayNight,
     raceStatus,
     raceLeaderboard,
-    catsEnabled,
-    toggleCatsEnabled,
     cancelRace,
   } = useGame()
-  const catsVisible = catsEnabled && !raceStatus.lapActive
 
   const sections = useMemo(
     () => ZONES.map(z => ({ id: z.id, label: z.label, color: z.color })),
@@ -215,10 +212,6 @@ export default function TopRightNav() {
 
       <button className="top-right-nav-btn" onClick={() => setRaceOpen(v => !v)}>
         Race Leaderboard
-      </button>
-
-      <button className="top-right-nav-btn" onClick={toggleCatsEnabled}>
-        {raceStatus.lapActive ? 'Cats: Auto Off (Racing)' : `Cats: ${catsVisible ? 'On' : 'Off'}`}
       </button>
 
       <button className="top-right-nav-btn" onClick={toggleDayNight}>

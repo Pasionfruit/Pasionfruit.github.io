@@ -74,7 +74,7 @@ export default function Experience() {
       { name: 'left', keys: keyFor('left', 'ArrowLeft') },
       { name: 'right', keys: keyFor('right', 'ArrowRight') },
       { name: 'brake', keys: keyFor('brake', 'Space') },
-      { name: 'drift', keys: keyFor('drift', 'ShiftLeft') },
+      { name: 'boost', keys: keyFor('boost', 'ShiftLeft') },
     ]
   }, [controlBindings])
 
