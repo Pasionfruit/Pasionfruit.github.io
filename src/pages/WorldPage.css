@@ -1,9 +1,15 @@
 .dpad-container {
   position: fixed;
-  bottom: 24px;
-  right: 20px;
+  bottom: 28px;
+  right: 24px;
   z-index: 100;
-}.world-page {
+}
+
+/* Hide joystick on devices with a precise pointer (mouse / trackpad) */
+@media (pointer: fine) {
+  .dpad-container { display: none; }
+}
+.world-page {
   position: fixed;
   inset: 0;
   overflow: hidden;

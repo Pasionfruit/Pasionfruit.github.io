@@ -29,7 +29,7 @@ export default function Experience() {
         style={{ position: 'fixed', inset: 0 }}
       >
         <color attach="background" args={[skyColor]} />
-        <fog attach="fog" args={[fogColor, 50, 130]} />
+        <fog attach="fog" args={[fogColor, 50, isNight ? 200 : 130]} />
 
         <ambientLight intensity={isNight ? 0.2 : 0.55} color={isNight ? '#8aa4ff' : '#dff2ff'} />
         <hemisphereLight
@@ -52,6 +52,19 @@ export default function Experience() {
         />
 
         {isNight && <Stars radius={120} depth={60} count={3000} factor={4} fade speed={0.5} />}
+
+        {/* Moon */}
+        {isNight && (
+          <mesh position={[55, 50, -70]}>
+            <sphereGeometry args={[6, 20, 20]} />
+            <meshStandardMaterial
+              color="#d8dcc8"
+              emissive="#b0ba90"
+              emissiveIntensity={1.6}
+              roughness={1}
+            />
+          </mesh>
+        )}
 
         <World />
         <Bike />

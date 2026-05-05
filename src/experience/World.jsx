@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { ZONES } from './worldData.js'
+import { useGame } from '../context/GameContext.jsx'
 
 const WORLD_SIZE = 80
 const ROAD_WIDTH = 7
@@ -125,7 +126,59 @@ const BUILDINGS = [
   { position: [ -1, 0,  20], size: [3.0, 3.0, 2.0], color: '#2e3a1e' },
 ]
 
+function Lamp({ position, isNight }) {
+  return (
+    <group position={position}>
+      {/* Pole */}
+      <mesh castShadow position={[0, 2.0, 0]}>
+        <cylinderGeometry args={[0.06, 0.09, 4.0, 7]} />
+        <meshStandardMaterial color="#2a2a3a" roughness={0.6} metalness={0.6} />
+      </mesh>
+      {/* Arm */}
+      <mesh position={[0.55, 4.05, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.04, 0.04, 1.1, 6]} />
+        <meshStandardMaterial color="#2a2a3a" roughness={0.6} metalness={0.6} />
+      </mesh>
+      {/* Shade cap (inverted cone) */}
+      <mesh position={[1.05, 4.34, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[0.3, 0.22, 8]} />
+        <meshStandardMaterial color="#1e1e2e" roughness={0.5} metalness={0.7} />
+      </mesh>
+      {/* Globe */}
+      <mesh position={[1.05, 4.05, 0]}>
+        <sphereGeometry args={[0.18, 10, 10]} />
+        <meshStandardMaterial
+          color="#fffbe0"
+          emissive="#ffe877"
+          emissiveIntensity={isNight ? 3.0 : 0.2}
+        />
+      </mesh>
+      {/* Point light */}
+      <pointLight
+        position={[1.05, 3.8, 0]}
+        color="#ffd97a"
+        intensity={isNight ? 8 : 0}
+        distance={14}
+        decay={2}
+      />
+    </group>
+  )
+}
+
+// Lamp positions – pairs on each side of both roads
+const LAMPS = [
+  // Horizontal road (Z=0) – north side z=-4.5
+  [-30, 0, -4.5], [-15, 0, -4.5], [15, 0, -4.5], [30, 0, -4.5],
+  // Horizontal road (Z=0) – south side z=+4.5
+  [-30, 0,  4.5], [-15, 0,  4.5], [15, 0,  4.5], [30, 0,  4.5],
+  // Vertical road (X=0) – west side x=-4.5
+  [-4.5, 0, -30], [-4.5, 0, -15], [-4.5, 0, 15], [-4.5, 0, 30],
+  // Vertical road (X=0) – east side x=+4.5
+  [ 4.5, 0, -30], [ 4.5, 0, -15], [ 4.5, 0, 15], [ 4.5, 0, 30],
+]
+
 export default function World() {
+  const { isNight } = useGame()
   return (
     <group>
       {/* ── Ground ── */}
@@ -168,6 +221,9 @@ export default function World() {
 
       {/* ── Buildings ── */}
       {BUILDINGS.map((b, i) => <Building key={i} {...b} />)}
+
+      {/* ── Street lamps ── */}
+      {LAMPS.map((pos, i) => <Lamp key={i} position={pos} isNight={isNight} />)}
     </group>
   )
 }

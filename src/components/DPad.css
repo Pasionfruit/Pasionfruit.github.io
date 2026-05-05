@@ -1,48 +1,32 @@
-.dpad {
+/* ── Joystick ── */
+.joystick-base {
   position: relative;
-  width: 112px;
-  height: 112px;
-  display: grid;
-  grid-template-areas:
-    '. up .'
-    'left center right'
-    '. down .';
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  gap: 4px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(8, 12, 24, 0.72);
+  border: 2px solid #2a3a5a;
+  box-shadow: 0 0 18px rgba(66, 135, 245, 0.12), inset 0 0 8px rgba(0,0,0,0.4);
   touch-action: none;
   user-select: none;
+  cursor: grab;
 }
 
-.dpad-btn {
-  background: rgba(8, 12, 24, 0.82);
-  border: 1.5px solid #2a3a5a;
-  border-radius: 6px;
-  color: #5a88c0;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.1s, color 0.1s;
-  -webkit-tap-highlight-color: transparent;
+.joystick-base:active {
+  cursor: grabbing;
 }
 
-.dpad-btn:active,
-.dpad-btn:focus {
-  background: rgba(66, 135, 245, 0.35);
-  color: #fff;
-  border-color: #4287f5;
-  outline: none;
-}
-
-.dpad-up    { grid-area: up;    }
-.dpad-down  { grid-area: down;  }
-.dpad-left  { grid-area: left;  }
-.dpad-right { grid-area: right; }
-.dpad-center {
-  grid-area: center;
-  background: rgba(8,12,24,0.5);
+.joystick-thumb {
+  position: absolute;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1px solid #1a2a4a;
+  top:  calc(50% - 22px);
+  left: calc(50% - 22px);
+  background: rgba(66, 135, 245, 0.50);
+  border: 2px solid #4287f5;
+  box-shadow: 0 0 14px rgba(66, 135, 245, 0.55);
+  transform: translate(0, 0);
+  pointer-events: none;
+  transition: box-shadow 0.08s;
 }
