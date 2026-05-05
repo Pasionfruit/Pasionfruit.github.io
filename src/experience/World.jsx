@@ -2,7 +2,7 @@ import { useRef, memo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
-import { ZONES } from './worldData.js'
+import { ZONES, TREE_POSITIONS, BUILDING_LAYOUTS, LAMP_POSITIONS } from './worldData.js'
 import { useGame } from '../context/GameContext.jsx'
 
 const WORLD_SIZE = 80
@@ -105,27 +105,6 @@ function ZonePlatform({ zone }) {
   )
 }
 
-const TREES = [
-  [-10, 0, -10], [-8, 0, -15], [-15, 0, -8], [-17, 0, -17], [-6, 0, -19],
-  [ 10, 0, -10], [ 8, 0, -15], [ 15, 0, -8], [ 17, 0, -17], [ 6, 0, -19],
-  [-10, 0,  10], [-8, 0,  15], [-15, 0,  8], [-17, 0,  17], [-6, 0,  19],
-  [ 10, 0,  10], [ 8, 0,  15], [ 15, 0,  8], [ 17, 0,  17], [ 6, 0,  19],
-  [-31, 0, -31], [ 31, 0, -31], [-31, 0,  31], [ 31, 0,  31],
-  [-31, 0,   0], [ 31, 0,   0], [  0, 0, -31], [  0, 0,  31],
-  [-26, 0, -10], [ 26, 0, -10], [-26, 0,  10], [ 26, 0,  10],
-]
-
-const BUILDINGS = [
-  { position: [-10, 0, -10], size: [3.0, 4.0, 3.0], color: '#1e2e3e' },
-  { position: [ 11, 0, -11], size: [2.5, 6.5, 2.5], color: '#2a1e3a' },
-  { position: [-10, 0,  10], size: [4.0, 3.0, 3.5], color: '#1e3a2a' },
-  { position: [ 10, 0,  11], size: [3.0, 5.0, 3.0], color: '#3a2e1e' },
-  { position: [-20, 0,  -1], size: [2.0, 4.5, 2.0], color: '#1e2e3e' },
-  { position: [ 20, 0,   1], size: [2.5, 3.5, 2.5], color: '#2a2e3e' },
-  { position: [  1, 0, -20], size: [2.0, 5.0, 2.0], color: '#1e2a3e' },
-  { position: [ -1, 0,  20], size: [3.0, 3.0, 2.0], color: '#2e3a1e' },
-]
-
 function Lamp({ position, isNight }) {
   return (
     <group position={position}>
@@ -169,18 +148,6 @@ function Lamp({ position, isNight }) {
   )
 }
 
-// Lamp positions – pairs on each side of both roads
-const LAMPS = [
-  // Horizontal road (Z=0) – north side z=-4.5
-  [-30, 0, -4.5], [-15, 0, -4.5], [15, 0, -4.5], [30, 0, -4.5],
-  // Horizontal road (Z=0) – south side z=+4.5
-  [-30, 0,  4.5], [-15, 0,  4.5], [15, 0,  4.5], [30, 0,  4.5],
-  // Vertical road (X=0) – west side x=-4.5
-  [-4.5, 0, -30], [-4.5, 0, -15], [-4.5, 0, 15], [-4.5, 0, 30],
-  // Vertical road (X=0) – east side x=+4.5
-  [ 4.5, 0, -30], [ 4.5, 0, -15], [ 4.5, 0, 15], [ 4.5, 0, 30],
-]
-
 export default function World() {
   const { isNight } = useGame()
   return (
@@ -189,6 +156,30 @@ export default function World() {
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[WORLD_SIZE, WORLD_SIZE]} />
         <meshStandardMaterial color="#193319" roughness={0.9} />
+      </mesh>
+
+      {/* ── Path underlight ── */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
+        <planeGeometry args={[WORLD_SIZE, ROAD_WIDTH + 2.8]} />
+        <meshStandardMaterial
+          color="#3e2f12"
+          emissive="#ffbf4d"
+          emissiveIntensity={isNight ? 0.22 : 0}
+          transparent
+          opacity={isNight ? 0.42 : 0}
+          roughness={1}
+        />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
+        <planeGeometry args={[ROAD_WIDTH + 2.8, WORLD_SIZE]} />
+        <meshStandardMaterial
+          color="#3e2f12"
+          emissive="#ffbf4d"
+          emissiveIntensity={isNight ? 0.22 : 0}
+          transparent
+          opacity={isNight ? 0.42 : 0}
+          roughness={1}
+        />
       </mesh>
 
       {/* ── Horizontal road ── */}
@@ -231,13 +222,13 @@ export default function World() {
       {ZONES.map(z => <ZonePlatform key={z.id} zone={z} />)}
 
       {/* ── Trees ── */}
-      {TREES.map((pos, i) => <Tree key={i} position={pos} />)}
+      {TREE_POSITIONS.map((pos, i) => <Tree key={i} position={pos} />)}
 
       {/* ── Buildings ── */}
-      {BUILDINGS.map((b, i) => <Building key={i} {...b} />)}
+      {BUILDING_LAYOUTS.map((b, i) => <Building key={i} {...b} />)}
 
       {/* ── Street lamps ── */}
-      {LAMPS.map((pos, i) => <Lamp key={i} position={pos} isNight={isNight} />)}
+      {LAMP_POSITIONS.map((pos, i) => <Lamp key={i} position={pos} isNight={isNight} />)}
     </group>
   )
 }

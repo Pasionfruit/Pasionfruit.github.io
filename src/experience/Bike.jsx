@@ -4,7 +4,7 @@ import { useKeyboardControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { bikeState } from './bikeState.js'
 import { touchInput } from './inputManager.js'
-import { ZONES, ZONE_ENTER_RADIUS } from './worldData.js'
+import { ZONES, ZONE_ENTER_RADIUS, COLLISION_OBSTACLES } from './worldData.js'
 import { useGame } from '../context/GameContext.jsx'
 
 const MAX_SPEED   = 14
@@ -17,6 +17,22 @@ const LEAN_MAX    = 0.36
 const LEAN_SPEED  = 8
 const WORLD_BOUND = 37
 const GROUND_Y    = 0.28
+const BIKE_RADIUS = 0.5
+
+function intersectsObstacle(x, z, obstacle) {
+  if (obstacle.type === 'circle') {
+    return Math.hypot(x - obstacle.x, z - obstacle.z) < obstacle.radius + BIKE_RADIUS
+  }
+
+  return (
+    Math.abs(x - obstacle.x) < obstacle.halfX + BIKE_RADIUS &&
+    Math.abs(z - obstacle.z) < obstacle.halfZ + BIKE_RADIUS
+  )
+}
+
+function hitsObstacle(x, z) {
+  return COLLISION_OBSTACLES.some(obstacle => intersectsObstacle(x, z, obstacle))
+}
 
 export default function Bike() {
   const groupRef      = useRef()
@@ -97,8 +113,20 @@ export default function Bike() {
     // ── Position ──────────────────────────────────────
     const dx = -Math.sin(angle.current) * speed.current * dt
     const dz = -Math.cos(angle.current) * speed.current * dt
-    bikeState.position.x = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.x + dx))
-    bikeState.position.z = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.z + dz))
+    const nextX = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.x + dx))
+    const nextZ = Math.max(-WORLD_BOUND, Math.min(WORLD_BOUND, bikeState.position.z + dz))
+    const moveXOnly = !hitsObstacle(nextX, bikeState.position.z)
+    const moveZOnly = !hitsObstacle(bikeState.position.x, nextZ)
+
+    if (!hitsObstacle(nextX, nextZ)) {
+      bikeState.position.x = nextX
+      bikeState.position.z = nextZ
+    } else {
+      if (moveXOnly) bikeState.position.x = nextX
+      if (moveZOnly) bikeState.position.z = nextZ
+      if (!moveXOnly && !moveZOnly) speed.current *= 0.15
+    }
+
     bikeState.angle = angle.current
     bikeState.speed = speed.current
 
@@ -132,6 +160,7 @@ export default function Bike() {
   const blue   = '#4287f5'
   const silver = '#aaaaaa'
   const dark   = '#111111'
+  const black  = '#111111'
   const navy   = '#1a3a6a'
   const skin   = '#f5d6a8'
 
@@ -184,7 +213,7 @@ export default function Bike() {
             metalness={0.75}
             roughness={0.2}
             emissive="#fff4c2"
-            emissiveIntensity={isNight ? 0.8 : 0}
+            emissiveIntensity={isNight ? 5.8 : 0}
           />
         </mesh>
         {isNight && (
@@ -193,13 +222,13 @@ export default function Bike() {
             <spotLight
               ref={headlightRef}
               position={[0, 0.32, -0.5]}
-            color="#f7f0c8"
-            intensity={24}
-            distance={22}
-            angle={Math.PI / 6}
-            penumbra={0.45}
-            decay={1.6}
-            castShadow={false}
+              color="#f7f0c8"
+              intensity={60}
+              distance={45}
+              angle={Math.PI / 6}
+              penumbra={0.45}
+              decay={1.6}
+              castShadow={false}
             />
           </>
         )}
@@ -232,21 +261,21 @@ export default function Bike() {
         {/* Legs */}
         <mesh castShadow position={[-0.06, 0.38, 0.18]} rotation={[0.2, 0, 0]}>
           <boxGeometry args={[0.07, 0.26, 0.09]} />
-          <meshStandardMaterial color={navy} roughness={0.7} />
+          <meshStandardMaterial color={black} roughness={0.7} />
         </mesh>
         <mesh castShadow position={[0.06, 0.38, 0.18]} rotation={[0.2, 0, 0]}>
           <boxGeometry args={[0.07, 0.26, 0.09]} />
-          <meshStandardMaterial color={navy} roughness={0.7} />
+          <meshStandardMaterial color={black} roughness={0.7} />
         </mesh>
         {/* Torso */}
         <mesh castShadow position={[0, 0.70, 0.06]} rotation={[-0.28, 0, 0]}>
           <boxGeometry args={[0.22, 0.34, 0.18]} />
-          <meshStandardMaterial color={navy} roughness={0.6} />
+          <meshStandardMaterial color={black} roughness={0.6} />
         </mesh>
         {/* Arms reaching to bars */}
         <mesh castShadow position={[0, 0.68, -0.20]} rotation={[0.44, 0, 0]}>
           <boxGeometry args={[0.22, 0.07, 0.28]} />
-          <meshStandardMaterial color={navy} roughness={0.6} />
+          <meshStandardMaterial color={black} roughness={0.6} />
         </mesh>
         {/* Head */}
         <mesh castShadow position={[0, 0.97, -0.02]}>
@@ -256,7 +285,7 @@ export default function Bike() {
         {/* Helmet */}
         <mesh castShadow position={[0, 1.03, -0.01]}>
           <sphereGeometry args={[0.148, 12, 8]} />
-          <meshStandardMaterial color={blue} roughness={0.4} metalness={0.3} />
+          <meshStandardMaterial color={black} roughness={0.4} metalness={0.3} />
         </mesh>
 
       </group>

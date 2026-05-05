@@ -60,7 +60,7 @@ export default function Experience() {
               position={[55, 50, -70]}
               target-position={[0, 0, 0]}
               color="#c8d6ff"
-              intensity={26}
+              intensity={80}
               distance={220}
               angle={Math.PI / 3.8}
               penumbra={0.55}
