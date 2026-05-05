@@ -24,6 +24,7 @@
   white-space: nowrap;
   animation: prompt-in 0.2s ease-out;
   box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  pointer-events: auto;
 }
 
 @keyframes prompt-in {
@@ -35,13 +36,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
+  min-width: 24px;
   height: 24px;
   background: var(--zone-color, #fff);
   color: #000;
   border-radius: 4px;
   font-size: 0.62rem;
   flex-shrink: 0;
+  padding: 0 6px;
+}
+
+.hud-zone-open-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  color: #091019;
+  background: var(--zone-color, #fff);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  padding: 7px 10px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hud-zone-open-btn:active {
+  transform: translateY(1px);
 }
 
 .hud-hint {
