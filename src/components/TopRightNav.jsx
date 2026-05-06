@@ -16,20 +16,64 @@ function formatLapTime(ms) {
 }
 
 function createTimer(days, name, color) {
+  const now = Date.now()
   return {
     id: `timer-${Math.random().toString(36).slice(2, 10)}`,
     name,
-    totalDays: days,
-    targetTs: Date.now() + days * DAY_MS,
+    startTs: now,
+    targetTs: now + days * DAY_MS,
     color,
   }
 }
 
+function endOfDayTimestamp(year, monthIndex, day) {
+  return new Date(year, monthIndex, day, 23, 59, 59, 999).getTime()
+}
+
+function createDateGoalTimer(name, targetTs, color) {
+  return {
+    id: `timer-${Math.random().toString(36).slice(2, 10)}`,
+    name,
+    startTs: Date.now(),
+    targetTs,
+    color,
+  }
+}
+
+function formatRemainingDDHHMMSS(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000))
+  const days = Math.floor(totalSeconds / 86400)
+  const hours = Math.floor((totalSeconds % 86400) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+function formatDateInputValue(ts) {
+  const d = new Date(ts)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function parseDateInputToEndOfDay(value) {
+  if (typeof value !== 'string' || !value) return null
+  const parts = value.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return null
+  return endOfDayTimestamp(parts[0], parts[1] - 1, parts[2])
+}
+
 function defaultTimers() {
+  const june13 = endOfDayTimestamp(2026, 5, 13)
+  const july11 = endOfDayTimestamp(2026, 6, 11)
+  const jan13 = endOfDayTimestamp(2027, 0, 13)
+
   return [
-    createTimer(39, '39-Day Goal', TIMER_COLORS[0]),
-    createTimer(67, '67-Day Goal', TIMER_COLORS[1]),
-    createTimer(253, '253-Day Goal', TIMER_COLORS[2]),
+    createDateGoalTimer('First Goal', june13, TIMER_COLORS[0]),
+    createDateGoalTimer('Second Goal', july11, TIMER_COLORS[1]),
+    createDateGoalTimer('Third Goal', jan13, TIMER_COLORS[2]),
   ]
 }
 
@@ -44,11 +88,11 @@ function loadTimers() {
         t &&
         typeof t.id === 'string' &&
         typeof t.name === 'string' &&
-        typeof t.totalDays === 'number' &&
         typeof t.targetTs === 'number'
       )
       .map((t, i) => ({
         ...t,
+        startTs: typeof t.startTs === 'number' ? t.startTs : Date.now(),
         color: typeof t.color === 'string' ? t.color : TIMER_COLORS[i % TIMER_COLORS.length],
       }))
     return valid.length > 0 ? valid : defaultTimers()
@@ -65,7 +109,7 @@ export default function TopRightNav() {
   const [nowTs, setNowTs] = useState(Date.now())
   const [editingId, setEditingId] = useState(null)
   const [editName, setEditName] = useState('')
-  const [editDays, setEditDays] = useState('')
+  const [editEndDate, setEditEndDate] = useState('')
   const {
     enterZone,
     isNight,
@@ -99,25 +143,25 @@ export default function TopRightNav() {
   function startEdit(timer) {
     setEditingId(timer.id)
     setEditName(timer.name)
-    setEditDays(String(timer.totalDays))
+    setEditEndDate(formatDateInputValue(timer.targetTs))
   }
 
   function cancelEdit() {
     setEditingId(null)
     setEditName('')
-    setEditDays('')
+    setEditEndDate('')
   }
 
   function saveEdit(id) {
     const nextName = editName.trim() || 'Countdown'
-    const nextDays = Math.max(1, Math.min(5000, Number(editDays) || 1))
+    const nextTargetTs = parseDateInputToEndOfDay(editEndDate)
+    if (!nextTargetTs) return
     setTimers(prev => prev.map(t => (
       t.id === id
         ? {
             ...t,
             name: nextName,
-            totalDays: nextDays,
-            targetTs: Date.now() + nextDays * DAY_MS,
+            targetTs: nextTargetTs,
           }
         : t
     )))
@@ -134,14 +178,14 @@ export default function TopRightNav() {
   function renderTimer(timer) {
     const remainingMs = Math.max(0, timer.targetTs - nowTs)
     const remainingDays = Math.ceil(remainingMs / DAY_MS)
-    const totalMs = Math.max(1, timer.totalDays * DAY_MS)
+    const totalMs = Math.max(1, timer.targetTs - (timer.startTs || nowTs))
     const progress = Math.min(1, Math.max(0, remainingMs / totalMs))
-    const completedDays = Math.max(0, Math.min(timer.totalDays, timer.totalDays - remainingDays))
     const isClosed = remainingDays <= 0
     const radius = 23
     const circumference = 2 * Math.PI * radius
     const dashOffset = circumference * (1 - progress)
     const isEditing = editingId === timer.id
+    const countdownLabel = formatRemainingDDHHMMSS(remainingMs)
 
     return (
       <div key={timer.id} className="countdown-card">
@@ -171,12 +215,9 @@ export default function TopRightNav() {
               />
               <input
                 className="countdown-input"
-                type="number"
-                min="1"
-                max="5000"
-                value={editDays}
-                onChange={e => setEditDays(e.target.value)}
-                placeholder="Days"
+                type="date"
+                value={editEndDate}
+                onChange={e => setEditEndDate(e.target.value)}
               />
               <div className="countdown-actions">
                 <button className="countdown-btn" onClick={() => saveEdit(timer.id)}>Save</button>
@@ -187,7 +228,7 @@ export default function TopRightNav() {
             <>
               <p className="countdown-name">{timer.name}</p>
               <p className="countdown-sub">
-                Completed: {completedDays} day{completedDays === 1 ? '' : 's'} · {isClosed ? 'Closed' : `${remainingDays} day${remainingDays === 1 ? '' : 's'} left`}
+                {isClosed ? 'Closed' : countdownLabel}
               </p>
               <div className="countdown-actions">
                 <button className="countdown-btn" onClick={() => startEdit(timer)}>Edit</button>

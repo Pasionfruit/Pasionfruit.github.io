@@ -42,9 +42,9 @@ const DRIFT_LEAN_MULT = 1.4
 const DRIFT_RED_CHARGE_MS = 550
 const DRIFT_BLUE_CHARGE_MS = 1300
 const DRIFT_RED_BOOST = 11
-const DRIFT_BLUE_BOOST = 16
-const DRIFT_BOOST_TIME = 0.72
-const DRIFT_ACTIVE_BOOST = 6.4
+const DRIFT_BLUE_BOOST = 44
+const DRIFT_BOOST_TIME = 1.15
+const DRIFT_ACTIVE_BOOST = 18
 const RACE_CHECKPOINTS = [
   RACE_START_ANGLE,
   0,
@@ -308,12 +308,12 @@ export default function Bike() {
 
     if (driftBoostTimerRef.current > 0 && speed.current > 0) {
       driftBoostTimerRef.current = Math.max(0, driftBoostTimerRef.current - dt)
-      speed.current = Math.min(speedCap + 4.8, speed.current + driftBoostAccelRef.current * dt)
+      speed.current = Math.min(speedCap + 18, speed.current + driftBoostAccelRef.current * dt)
       if (driftBoostTimerRef.current <= 0) driftBoostAccelRef.current = 0
     }
 
     if (boostHeld && !driftActiveRef.current && speed.current > 0) {
-      speed.current = Math.min(speedCap + 3.2, speed.current + DRIFT_ACTIVE_BOOST * 0.9 * dt)
+      speed.current = Math.min(speedCap + 15, speed.current + DRIFT_ACTIVE_BOOST * 1.25 * dt)
     }
 
     if (driftActiveRef.current) {
@@ -341,7 +341,7 @@ export default function Bike() {
 
       if (speed.current > 0) {
         const chargeFactor = driftLevelRef.current >= 2 ? 1.35 : driftLevelRef.current >= 1 ? 1.15 : 1
-        speed.current = Math.min(speedCap + 3.4, speed.current + DRIFT_ACTIVE_BOOST * chargeFactor * dt)
+        speed.current = Math.min(speedCap + 15.5, speed.current + DRIFT_ACTIVE_BOOST * chargeFactor * dt)
       }
     }
 
