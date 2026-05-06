@@ -3,12 +3,12 @@ import { useGame } from '../context/GameContext.jsx'
 import './SettingsPanel.css'
 
 const CONTROL_FIELDS = [
-  { id: 'forward', label: 'Forward' },
-  { id: 'backward', label: 'Backward' },
-  { id: 'left', label: 'Turn Left' },
-  { id: 'right', label: 'Turn Right' },
-  { id: 'brake', label: 'Brake' },
-  { id: 'boost', label: 'Boost (Desktop)' },
+  { id: 'forward', label: 'forward' },
+  { id: 'backward', label: 'backward' },
+  { id: 'left', label: 'left' },
+  { id: 'right', label: 'right' },
+  { id: 'brake', label: 'brake' },
+  { id: 'boost', label: 'boost' },
 ]
 
 function displayKeyName(key) {

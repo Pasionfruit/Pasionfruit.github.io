@@ -69,10 +69,10 @@ export default function Experience() {
   const keyMap = useMemo(() => {
     const keyFor = (name, fallback) => [controlBindings?.[name] || fallback]
     return [
-      { name: 'forward', keys: keyFor('forward', 'ArrowUp') },
-      { name: 'backward', keys: keyFor('backward', 'ArrowDown') },
-      { name: 'left', keys: keyFor('left', 'ArrowLeft') },
-      { name: 'right', keys: keyFor('right', 'ArrowRight') },
+      { name: 'forward', keys: keyFor('forward', 'w') },
+      { name: 'backward', keys: keyFor('backward', 's') },
+      { name: 'left', keys: keyFor('left', 'a') },
+      { name: 'right', keys: keyFor('right', 'd') },
       { name: 'brake', keys: keyFor('brake', 'Space') },
       { name: 'boost', keys: keyFor('boost', 'ShiftLeft') },
     ]

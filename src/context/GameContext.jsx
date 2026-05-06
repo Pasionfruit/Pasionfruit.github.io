@@ -1,13 +1,14 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { usePlayer } from './PlayerContext.jsx'
+import { fetchRemoteLeaderboard, isSheetsSyncEnabled, sendLapRecord, sendLogEvent } from '../services/sheetsSync.js'
 
 const GameContext = createContext(null)
 
 const DEFAULT_CONTROL_BINDINGS = {
-  forward: 'ArrowUp',
-  backward: 'ArrowDown',
-  left: 'ArrowLeft',
-  right: 'ArrowRight',
+  forward: 'w',
+  backward: 's',
+  left: 'a',
+  right: 'd',
   brake: 'Space',
   boost: 'ShiftLeft',
 }
@@ -29,6 +30,32 @@ function loadRaceLeaderboard() {
   } catch {
     return []
   }
+}
+
+function normalizeLeaderboardEntries(entries) {
+  if (!Array.isArray(entries)) return []
+  return entries
+    .filter(entry => entry && typeof entry.ms === 'number' && typeof entry.at === 'number')
+    .map((entry, idx) => ({
+      id: typeof entry.id === 'string' && entry.id ? entry.id : `lap-${entry.at}-${idx}`,
+      ms: entry.ms,
+      at: entry.at,
+      name: typeof entry.name === 'string' && entry.name.trim() ? entry.name.trim() : 'Guest',
+    }))
+}
+
+function mergeLeaderboards(localEntries, remoteEntries) {
+  const merged = [...normalizeLeaderboardEntries(localEntries), ...normalizeLeaderboardEntries(remoteEntries)]
+  const deduped = []
+  const seen = new Set()
+  for (const entry of merged) {
+    const key = `${entry.name}|${entry.ms}|${entry.at}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    deduped.push(entry)
+  }
+  deduped.sort((a, b) => a.ms - b.ms)
+  return deduped.slice(0, 8)
 }
 
 function loadCatsEnabled() {
@@ -67,6 +94,10 @@ function loadControlBindings() {
 
 export function GameProvider({ children }) {
   const { player } = usePlayer()
+  const playerName = useMemo(
+    () => (typeof player?.name === 'string' && player.name.trim() ? player.name.trim() : 'Guest'),
+    [player?.name]
+  )
   const [nearZone,   setNearZone]   = useState(null)
   const [panelMode,  setPanelMode]  = useState(false)
   const [activeZone, setActiveZone] = useState(null)
@@ -97,6 +128,27 @@ export function GameProvider({ children }) {
   useEffect(() => {
     window.localStorage.setItem('pf.controls.bindings', JSON.stringify(controlBindings))
   }, [controlBindings])
+
+  useEffect(() => {
+    if (!isSheetsSyncEnabled()) return
+    sendLogEvent('session_started', { playerName })
+  }, [playerName])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function syncRemoteLeaderboard() {
+      if (!isSheetsSyncEnabled()) return
+      const remote = await fetchRemoteLeaderboard()
+      if (cancelled || remote.length === 0) return
+      setRaceLeaderboard(prev => mergeLeaderboards(prev, remote))
+    }
+
+    syncRemoteLeaderboard()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   function enterZone(zone) {
     setActiveZone(zone)
@@ -188,6 +240,13 @@ export function GameProvider({ children }) {
   }
 
   function completeRaceLap(lapMs, finishedAtTs) {
+    const record = {
+      id: `lap-${finishedAtTs}-${Math.random().toString(36).slice(2, 8)}`,
+      ms: lapMs,
+      at: finishedAtTs,
+      name: playerName,
+    }
+
     setRaceStatus(prev => ({
       ...prev,
       lapActive: false,
@@ -202,19 +261,22 @@ export function GameProvider({ children }) {
     }))
 
     setRaceLeaderboard(prev => {
-      const racerName = typeof player?.name === 'string' && player.name.trim() ? player.name.trim() : 'Guest'
       const next = [
         ...prev,
-        {
-          id: `lap-${finishedAtTs}-${Math.random().toString(36).slice(2, 8)}`,
-          ms: lapMs,
-          at: finishedAtTs,
-          name: racerName,
-        },
+        record,
       ]
       next.sort((a, b) => a.ms - b.ms)
       return next.slice(0, 8)
     })
+
+    if (isSheetsSyncEnabled()) {
+      sendLapRecord(record)
+      sendLogEvent('lap_completed', {
+        playerName,
+        lapMs,
+        finishedAtTs,
+      })
+    }
   }
 
   useEffect(() => {

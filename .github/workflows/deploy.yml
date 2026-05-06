@@ -32,6 +32,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_SHEETS_WEB_APP_URL: ${{ vars.VITE_SHEETS_WEB_APP_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
