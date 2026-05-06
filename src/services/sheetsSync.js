@@ -168,6 +168,31 @@ export async function fetchRemoteLeaderboard() {
   }
 }
 
+export async function fetchCurrentUserRole(username) {
+  if (!isConfigured()) return { ok: false, reason: 'missing-url' }
+  const normalizedUsername = typeof username === 'string' ? username.trim().toLowerCase() : ''
+  if (!normalizedUsername) return { ok: false, reason: 'missing-username' }
+
+  try {
+    const players = await fetchPlayersDirectory()
+    const player = players.find(p => 
+      typeof p.name === 'string' && p.name.trim().toLowerCase() === normalizedUsername
+    )
+    
+    if (!player) {
+      return { ok: false, reason: 'player-not-found' }
+    }
+
+    return {
+      ok: true,
+      name: player.name,
+      role: player.role,
+    }
+  } catch {
+    return { ok: false, reason: 'network' }
+  }
+}
+
 export function isSheetsSyncEnabled() {
   return isConfigured()
 }

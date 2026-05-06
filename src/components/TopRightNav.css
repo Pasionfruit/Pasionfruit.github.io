@@ -267,6 +267,30 @@
   letter-spacing: 0.03em;
 }
 
+.top-right-nav-message {
+  border: 1px solid #3c5f90;
+  background: rgba(6, 12, 24, 0.95);
+  color: #8fff91;
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  animation: fadeInOut 0.3s ease-in;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 700px) {
   .top-right-nav {
     top: 10px;

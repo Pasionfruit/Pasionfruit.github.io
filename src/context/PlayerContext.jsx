@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react'
+import { fetchCurrentUserRole } from '../services/sheetsSync.js'
 
 const PlayerContext = createContext(null)
 
@@ -71,8 +72,28 @@ export function PlayerProvider({ children }) {
     persistPlayer({ name: null, role: 'guest', isGuest: true, authType: null })
   }
 
+  const refreshRole = async () => {
+    if (!player?.name || player?.isGuest) {
+      return { ok: false, reason: 'not-logged-in' }
+    }
+    
+    try {
+      const result = await fetchCurrentUserRole(player.name)
+      if (result.ok) {
+        persistPlayer({
+          ...player,
+          role: result.role,
+        })
+        return { ok: true, role: result.role }
+      }
+      return result
+    } catch {
+      return { ok: false, reason: 'refresh-failed' }
+    }
+  }
+
   return (
-    <PlayerContext.Provider value={{ player, setName, loginWithCredentials, loginAsGuest, logout }}>
+    <PlayerContext.Provider value={{ player, setName, loginWithCredentials, loginAsGuest, logout, refreshRole }}>
       {children}
     </PlayerContext.Provider>
   )

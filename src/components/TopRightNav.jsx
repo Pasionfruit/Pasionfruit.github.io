@@ -31,6 +31,16 @@ function endOfDayTimestamp(year, monthIndex, day) {
   return new Date(year, monthIndex, day, 23, 59, 59, 999).getTime()
 }
 
+function getStartOfDay(ts) {
+  const d = new Date(ts)
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0).getTime()
+}
+
+function getEndOfDay(ts) {
+  const d = new Date(ts)
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999).getTime()
+}
+
 function createDateGoalTimer(name, targetTs, color) {
   return {
     id: `timer-${Math.random().toString(36).slice(2, 10)}`,
@@ -103,7 +113,7 @@ function loadTimers() {
 }
 
 export default function TopRightNav() {
-  const { player } = usePlayer()
+  const { player, refreshRole } = usePlayer()
   const [open, setOpen] = useState(false)
   const [countdownOpen, setCountdownOpen] = useState(false)
   const [raceOpen, setRaceOpen] = useState(false)
@@ -112,6 +122,7 @@ export default function TopRightNav() {
   const [editingId, setEditingId] = useState(null)
   const [editName, setEditName] = useState('')
   const [editEndDate, setEditEndDate] = useState('')
+  const [refreshMessage, setRefreshMessage] = useState('')
   const {
     enterZone,
     isNight,
@@ -138,6 +149,18 @@ export default function TopRightNav() {
     const timer = window.setInterval(() => setNowTs(Date.now()), 1000)
     return () => window.clearInterval(timer)
   }, [])
+
+  const handleRefreshRole = async () => {
+    setRefreshMessage('Refreshing...')
+    const result = await refreshRole()
+    if (result.ok) {
+      setRefreshMessage(`✓ Role updated to: ${result.role}`)
+      setTimeout(() => setRefreshMessage(''), 3000)
+    } else {
+      setRefreshMessage('✗ Failed to refresh')
+      setTimeout(() => setRefreshMessage(''), 3000)
+    }
+  }
 
   useEffect(() => {
     window.localStorage.setItem('pf.countdowns', JSON.stringify(timers))
@@ -184,9 +207,26 @@ export default function TopRightNav() {
   function renderTimer(timer) {
     const remainingMs = Math.max(0, timer.targetTs - nowTs)
     const remainingDays = Math.ceil(remainingMs / DAY_MS)
-    const totalMs = Math.max(1, timer.targetTs - (timer.startTs || nowTs))
-    const progress = Math.min(1, Math.max(0, remainingMs / totalMs))
     const isClosed = remainingDays <= 0
+
+    // Calculate progress based on time within current day
+    const todayStart = getStartOfDay(nowTs)
+    const todayEnd = getEndOfDay(nowTs)
+    const targetDayStart = getStartOfDay(timer.targetTs)
+
+    let progress
+    if (targetDayStart === todayStart) {
+      // Today is the target day: ring disappears as the day progresses
+      const timeRemainingInDay = Math.max(0, todayEnd - nowTs)
+      progress = Math.min(1, Math.max(0, timeRemainingInDay / DAY_MS))
+    } else if (timer.targetTs > todayEnd) {
+      // Target is in the future: ring stays full
+      progress = 1
+    } else {
+      // Target is in the past: ring is gone
+      progress = 0
+    }
+
     const radius = 23
     const circumference = 2 * Math.PI * radius
     const dashOffset = circumference * (1 - progress)
@@ -268,6 +308,16 @@ export default function TopRightNav() {
       <button className="top-right-nav-btn" onClick={toggleDayNight}>
         {isNight ? 'Switch to Day' : 'Switch to Night'}
       </button>
+
+      {!player?.isGuest && (
+        <button className="top-right-nav-btn" onClick={handleRefreshRole} title="Refresh your role from the sheet">
+          Refresh Role
+        </button>
+      )}
+
+      {refreshMessage && (
+        <div className="top-right-nav-message">{refreshMessage}</div>
+      )}
 
       {open && (
         <div className="top-right-nav-menu">
