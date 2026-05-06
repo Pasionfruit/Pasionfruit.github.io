@@ -12,6 +12,7 @@ const DEFAULT_CONTROL_BINDINGS = {
   brake: 'Space',
   boost: 'ShiftLeft',
 }
+const MAX_RACE_LEADERBOARD_ENTRIES = 5
 
 function loadRaceLeaderboard() {
   try {
@@ -26,7 +27,7 @@ function loadRaceLeaderboard() {
         name: typeof entry.name === 'string' && entry.name.trim() ? entry.name.trim() : 'Guest',
       }))
       .sort((a, b) => a.ms - b.ms)
-      .slice(0, 8)
+      .slice(0, MAX_RACE_LEADERBOARD_ENTRIES)
   } catch {
     return []
   }
@@ -55,7 +56,7 @@ function mergeLeaderboards(localEntries, remoteEntries) {
     deduped.push(entry)
   }
   deduped.sort((a, b) => a.ms - b.ms)
-  return deduped.slice(0, 8)
+  return deduped.slice(0, MAX_RACE_LEADERBOARD_ENTRIES)
 }
 
 function loadCatsEnabled() {
@@ -303,7 +304,7 @@ export function GameProvider({ children }) {
         record,
       ]
       next.sort((a, b) => a.ms - b.ms)
-      return next.slice(0, 8)
+      return next.slice(0, MAX_RACE_LEADERBOARD_ENTRIES)
     })
 
     if (isSheetsSyncEnabled()) {

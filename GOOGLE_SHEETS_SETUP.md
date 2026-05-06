@@ -166,7 +166,7 @@ function doGet(e) {
     }))
     .filter(r => Number.isFinite(r.ms) && r.ms > 0)
     .sort((a, b) => a.ms - b.ms)
-    .slice(0, 8);
+    .slice(0, 5);
 
   return jsonOut({ leaderboard: rows });
 }

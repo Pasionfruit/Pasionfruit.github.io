@@ -1,5 +1,6 @@
 const SHEETS_WEB_APP_URL = import.meta.env.VITE_SHEETS_WEB_APP_URL || ''
 const APP_NAME = 'pasionfruit-world'
+const MAX_RACE_LEADERBOARD_ENTRIES = 5
 
 function isConfigured() {
   return typeof SHEETS_WEB_APP_URL === 'string' && SHEETS_WEB_APP_URL.trim().length > 0
@@ -161,7 +162,7 @@ export async function fetchRemoteLeaderboard() {
         name: typeof row.name === 'string' && row.name.trim() ? row.name.trim() : 'Guest',
       }))
       .sort((a, b) => a.ms - b.ms)
-      .slice(0, 8)
+      .slice(0, MAX_RACE_LEADERBOARD_ENTRIES)
   } catch {
     return []
   }
