@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useGame } from '../context/GameContext.jsx'
+import { usePlayer } from '../context/PlayerContext.jsx'
 import { ZONES } from '../experience/worldData.js'
 import './TopRightNav.css'
 
@@ -102,6 +103,7 @@ function loadTimers() {
 }
 
 export default function TopRightNav() {
+  const { player } = usePlayer()
   const [open, setOpen] = useState(false)
   const [countdownOpen, setCountdownOpen] = useState(false)
   const [raceOpen, setRaceOpen] = useState(false)
@@ -123,6 +125,7 @@ export default function TopRightNav() {
     () => ZONES.map(z => ({ id: z.id, label: z.label, color: z.color })),
     []
   )
+  const canEditTimers = player?.role === 'admin'
 
   function openSection(id) {
     const zone = ZONES.find(z => z.id === id)
@@ -141,6 +144,7 @@ export default function TopRightNav() {
   }, [timers])
 
   function startEdit(timer) {
+    if (!canEditTimers) return
     setEditingId(timer.id)
     setEditName(timer.name)
     setEditEndDate(formatDateInputValue(timer.targetTs))
@@ -153,6 +157,7 @@ export default function TopRightNav() {
   }
 
   function saveEdit(id) {
+    if (!canEditTimers) return
     const nextName = editName.trim() || 'Countdown'
     const nextTargetTs = parseDateInputToEndOfDay(editEndDate)
     if (!nextTargetTs) return
@@ -169,6 +174,7 @@ export default function TopRightNav() {
   }
 
   function removeTimer(id) {
+    if (!canEditTimers) return
     setTimers(prev => {
       const next = prev.filter(t => t.id !== id)
       return next.length > 0 ? next : defaultTimers()
@@ -230,10 +236,14 @@ export default function TopRightNav() {
               <p className="countdown-sub">
                 {isClosed ? 'Closed' : countdownLabel}
               </p>
-              <div className="countdown-actions">
-                <button className="countdown-btn" onClick={() => startEdit(timer)}>Edit</button>
-                <button className="countdown-btn danger" onClick={() => removeTimer(timer.id)}>Delete</button>
-              </div>
+              {canEditTimers ? (
+                <div className="countdown-actions">
+                  <button className="countdown-btn" onClick={() => startEdit(timer)}>Edit</button>
+                  <button className="countdown-btn danger" onClick={() => removeTimer(timer.id)}>Delete</button>
+                </div>
+              ) : (
+                <p className="countdown-sub">Admin only: timer edits</p>
+              )}
             </>
           )}
         </div>

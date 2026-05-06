@@ -288,6 +288,15 @@ export function GameProvider({ children }) {
       countdownRemainingMs: 0,
     }))
 
+    if (player?.isGuest) {
+      logIfEnabled('lap_completed_guest_unsaved', {
+        playerName,
+        lapMs,
+        finishedAtTs,
+      })
+      return
+    }
+
     setRaceLeaderboard(prev => {
       const next = [
         ...prev,

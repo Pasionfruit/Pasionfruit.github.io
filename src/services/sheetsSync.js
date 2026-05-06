@@ -32,6 +32,107 @@ export async function sendLogEvent(eventName, payload = {}) {
   })
 }
 
+async function sha256Hex(value) {
+  const data = new TextEncoder().encode(value)
+  const digest = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(digest))
+    .map(byte => byte.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+export async function loginWithSheets(username, password) {
+  if (!isConfigured()) return { ok: false, reason: 'missing-url' }
+  const normalizedUsername = typeof username === 'string' ? username.trim() : ''
+  const normalizedPassword = typeof password === 'string' ? password : ''
+  if (!normalizedUsername || !normalizedPassword) return { ok: false, reason: 'missing-credentials' }
+
+  try {
+    const passwordHash = await sha256Hex(normalizedPassword)
+    const payload = {
+      type: 'auth_login',
+      app: APP_NAME,
+      at: Date.now(),
+      username: normalizedUsername,
+      passwordHash,
+    }
+
+    const res = await fetch(SHEETS_WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) return { ok: false, reason: 'request-failed' }
+    const data = await res.json().catch(() => null)
+    if (!data || data.ok !== true) return { ok: false, reason: data?.reason || 'invalid-response' }
+
+    return {
+      ok: true,
+      user: {
+        name: typeof data.name === 'string' && data.name.trim() ? data.name.trim() : normalizedUsername,
+        role: typeof data.role === 'string' && data.role.trim() ? data.role.trim() : 'user',
+      },
+    }
+  } catch {
+    return { ok: false, reason: 'network' }
+  }
+}
+
+export async function createProfileWithSheets(username, password) {
+  if (!isConfigured()) return { ok: false, reason: 'missing-url' }
+  const normalizedUsername = typeof username === 'string' ? username.trim() : ''
+  const normalizedPassword = typeof password === 'string' ? password : ''
+  if (!normalizedUsername || !normalizedPassword) return { ok: false, reason: 'missing-credentials' }
+
+  try {
+    const passwordHash = await sha256Hex(normalizedPassword)
+    const payload = {
+      type: 'auth_create',
+      app: APP_NAME,
+      at: Date.now(),
+      username: normalizedUsername,
+      passwordHash,
+    }
+
+    const res = await fetch(SHEETS_WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) return { ok: false, reason: 'request-failed' }
+    const data = await res.json().catch(() => null)
+    if (!data || data.ok !== true) return { ok: false, reason: data?.reason || 'invalid-response' }
+
+    return {
+      ok: true,
+      user: {
+        name: typeof data.name === 'string' && data.name.trim() ? data.name.trim() : normalizedUsername,
+        role: typeof data.role === 'string' && data.role.trim() ? data.role.trim() : 'user',
+      },
+    }
+  } catch {
+    return { ok: false, reason: 'network' }
+  }
+}
+
+export async function fetchPlayersDirectory() {
+  if (!isConfigured()) return []
+  try {
+    const url = `${SHEETS_WEB_APP_URL}?type=players`
+    const res = await fetch(url, { method: 'GET' })
+    if (!res.ok) return []
+    const data = await res.json()
+    const players = Array.isArray(data?.players) ? data.players : []
+    return players
+      .filter(player => player && typeof player.name === 'string' && player.name.trim())
+      .map(player => ({
+        name: player.name.trim(),
+        role: typeof player.role === 'string' && player.role.trim() ? player.role.trim() : 'user',
+      }))
+  } catch {
+    return []
+  }
+}
+
 export async function sendLapRecord(record) {
   return postToSheets({
     type: 'lap',

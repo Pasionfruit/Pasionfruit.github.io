@@ -71,6 +71,94 @@
   background: linear-gradient(90deg, transparent, #1e3a6a, transparent);
 }
 
+.login-form {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.login-input {
+  width: 100%;
+  border: 1px solid #2b4f80;
+  background: rgba(7, 13, 25, 0.92);
+  color: #d9ebff;
+  font-family: 'VT323', monospace;
+  font-size: 1.05rem;
+  border-radius: 4px;
+  padding: 7px 10px;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #7ec8ff;
+  box-shadow: 0 0 0 1px rgba(126, 200, 255, 0.25);
+}
+
+.btn-login {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  color: #041217;
+  background: #7ee8c9;
+  border: none;
+  border-radius: 4px;
+  padding: 11px 14px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 0 12px rgba(126, 232, 201, 0.35);
+}
+
+.btn-login:hover {
+  background: #95f1d8;
+}
+
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.btn-create {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  color: #dff4ff;
+  background: rgba(25, 56, 98, 0.95);
+  border: 1px solid #4e88c8;
+  border-radius: 4px;
+  padding: 10px 12px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.btn-create:hover {
+  background: rgba(36, 73, 123, 0.95);
+}
+
+.btn-create:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.login-password-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #a9c7ea;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.login-password-toggle input {
+  accent-color: #7ec8ff;
+}
+
+.login-error {
+  margin: 0;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: #ff9da8;
+}
+
 .btn-guest {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.7rem;
@@ -95,6 +183,33 @@
 .btn-guest:active {
   transform: translateY(1px);
   box-shadow: none;
+}
+
+.login-players {
+  width: 100%;
+  border: 1px solid #1e3a6a;
+  border-radius: 6px;
+  background: rgba(6, 12, 24, 0.7);
+  padding: 8px 10px;
+  display: grid;
+  gap: 3px;
+  max-height: 124px;
+  overflow: auto;
+}
+
+.login-players-title {
+  margin: 0 0 4px;
+  color: #8fb0d9;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+}
+
+.login-players-empty,
+.login-player-row {
+  margin: 0;
+  color: #cbe2ff;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
 }
 
 .login-hint {
