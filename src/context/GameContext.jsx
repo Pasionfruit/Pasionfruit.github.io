@@ -92,6 +92,11 @@ function loadControlBindings() {
   }
 }
 
+function logIfEnabled(eventName, payload) {
+  if (!isSheetsSyncEnabled()) return
+  sendLogEvent(eventName, payload)
+}
+
 export function GameProvider({ children }) {
   const { player } = usePlayer()
   const playerName = useMemo(
@@ -130,8 +135,7 @@ export function GameProvider({ children }) {
   }, [controlBindings])
 
   useEffect(() => {
-    if (!isSheetsSyncEnabled()) return
-    sendLogEvent('session_started', { playerName })
+    logIfEnabled('session_started', { playerName })
   }, [playerName])
 
   useEffect(() => {
@@ -151,6 +155,11 @@ export function GameProvider({ children }) {
   }, [])
 
   function enterZone(zone) {
+    logIfEnabled('zone_entered', {
+      playerName,
+      zoneId: zone?.id || null,
+      zoneLabel: zone?.label || null,
+    })
     setActiveZone(zone)
     setPanelMode(true)
   }
@@ -192,6 +201,13 @@ export function GameProvider({ children }) {
   }
 
   function requestRaceStart() {
+    logIfEnabled('race_start_requested', {
+      playerName,
+      canStart: raceStatus.canStart,
+      lapActive: raceStatus.lapActive,
+      countdownActive: raceStatus.countdownActive,
+    })
+
     setRaceStatus(prev => {
       if (!prev.canStart || prev.lapActive || prev.countdownActive) return prev
       return {
@@ -203,6 +219,13 @@ export function GameProvider({ children }) {
   }
 
   function cancelRace() {
+    logIfEnabled('race_canceled', {
+      playerName,
+      lapActive: raceStatus.lapActive,
+      countdownActive: raceStatus.countdownActive,
+      currentLapMs: raceStatus.currentLapMs,
+    })
+
     setRaceStatus(prev => ({
       ...prev,
       lapActive: false,
@@ -216,6 +239,11 @@ export function GameProvider({ children }) {
   }
 
   function startRaceLap(startTs) {
+    logIfEnabled('race_started', {
+      playerName,
+      startTs,
+    })
+
     setRaceStatus(prev => ({
       ...prev,
       lapActive: true,
@@ -271,7 +299,7 @@ export function GameProvider({ children }) {
 
     if (isSheetsSyncEnabled()) {
       sendLapRecord(record)
-      sendLogEvent('lap_completed', {
+      logIfEnabled('lap_completed', {
         playerName,
         lapMs,
         finishedAtTs,

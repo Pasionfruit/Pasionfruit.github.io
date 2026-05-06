@@ -9,9 +9,11 @@ async function postToSheets(body) {
   if (!isConfigured()) return { ok: false, reason: 'missing-url' }
 
   try {
+    // Use text/plain so browser requests remain "simple" and avoid CORS preflight.
+    // Apps Script still receives the same JSON string in e.postData.contents.
     const res = await fetch(SHEETS_WEB_APP_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(body),
     })
     return { ok: res.ok }
