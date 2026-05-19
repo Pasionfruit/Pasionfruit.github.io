@@ -391,7 +391,6 @@ export const detailPages: Record<string, SubpageContent> = {
       { title: 'Health Data Terms', body: 'Filterable list of health data terms and their definitions' },
       { title: 'Tools', body: 'Tools on calculating and visualizing training data' },
       { title: 'Equipment', body: 'Links to training equipment and gear' },
-      { title: 'Personal Notes', body: 'Ancedotal observations and reflections on training' },
       { title: 'Learning', body: 'Gemini Notebook with resources and top recommended videos' },
     ],
     note: 'Keep this page readable first and analytical second.',

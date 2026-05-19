@@ -1,4 +1,5 @@
 import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react'
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
   NavLink,
@@ -24,9 +25,24 @@ import {
   type ProfessionalExperienceEntry,
   type SectionId,
 } from './siteContent'
+import {
+  getBucketList,
+  getCountries,
+  getPolls,
+  setBucketCompleted,
+  setCountryVisited,
+  votePoll,
+} from './data/sheets/repositories'
+import type {
+  BucketListRecord,
+  CountryRecord,
+  PollRecord,
+} from './data/sheets/types'
 
 type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
+
+const googleClientConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim())
 
 function getInitialProfile(): UserProfile {
   if (typeof window === 'undefined') {
@@ -37,6 +53,14 @@ function getInitialProfile(): UserProfile {
   return storedProfile === 'admin' ? 'admin' : 'guest'
 }
 
+function getInitialGoogleToken() {
+  if (typeof window === 'undefined') {
+    return ''
+  }
+
+  return window.localStorage.getItem('google-id-token') ?? ''
+}
+
 function getActiveSectionId(pathname: string): SectionId | undefined {
   return navSections.find(
     (section) => pathname === section.path || pathname.startsWith(`${section.path}/`),
@@ -45,27 +69,59 @@ function getActiveSectionId(pathname: string): SectionId | undefined {
 
 function App() {
   const [profile, setProfile] = useState<UserProfile>(() => getInitialProfile())
+  const [googleIdToken, setGoogleIdToken] = useState(() => getInitialGoogleToken())
 
   useEffect(() => {
     window.localStorage.setItem('demo-profile', profile)
   }, [profile])
 
+  useEffect(() => {
+    if (!googleIdToken) {
+      window.localStorage.removeItem('google-id-token')
+      return
+    }
+
+    window.localStorage.setItem('google-id-token', googleIdToken)
+  }, [googleIdToken])
+
   return (
     <Routes>
       <Route element={<SiteLayout profile={profile} />}>
         <Route index element={<HomePage />} />
-        <Route path="login" element={<LoginPage profile={profile} onSwitchProfile={setProfile} />} />
-        <Route path="mrpasionfruit" element={<SectionPage sectionId="mrpasionfruit" profile={profile} />} />
+        <Route
+          path="login"
+          element={(
+            <LoginPage
+              profile={profile}
+              onSwitchProfile={setProfile}
+              googleIdToken={googleIdToken}
+              onGoogleTokenChange={setGoogleIdToken}
+            />
+          )}
+        />
+        <Route
+          path="mrpasionfruit"
+          element={<SectionPage sectionId="mrpasionfruit" profile={profile} googleIdToken={googleIdToken} />}
+        />
         <Route path="mrpasionfruit/oreo-gang" element={<DetailPage path="/mrpasionfruit/oreo-gang" />} />
         <Route path="mrpasionfruit/interests" element={<DetailPage path="/mrpasionfruit/interests" />} />
-        <Route path="training" element={<SectionPage sectionId="training" profile={profile} />} />
+        <Route
+          path="training"
+          element={<SectionPage sectionId="training" profile={profile} googleIdToken={googleIdToken} />}
+        />
         <Route path="training/records" element={<DetailPage path="/training/records" />} />
         <Route path="training/data" element={<DetailPage path="/training/data" />} />
         <Route path="training/learn" element={<DetailPage path="/training/learn" />} />
-        <Route path="experiences" element={<SectionPage sectionId="experiences" profile={profile} />} />
+        <Route
+          path="experiences"
+          element={<SectionPage sectionId="experiences" profile={profile} googleIdToken={googleIdToken} />}
+        />
         <Route path="experiences/studying" element={<DetailPage path="/experiences/studying" />} />
         <Route path="experience/studying" element={<Navigate replace to="/experiences/studying" />} />
-        <Route path="cooking" element={<SectionPage sectionId="cooking" profile={profile} />} />
+        <Route
+          path="cooking"
+          element={<SectionPage sectionId="cooking" profile={profile} googleIdToken={googleIdToken} />}
+        />
         <Route path="cooking/recipes" element={<DetailPage path="/cooking/recipes" />} />
         <Route path="cooking/plan" element={<DetailPage path="/cooking/plan" />} />
         <Route path="cooking/learn" element={<DetailPage path="/cooking/learn" />} />
@@ -559,9 +615,11 @@ function HomePage() {
 function SectionPage({
   sectionId,
   profile,
+  googleIdToken,
 }: {
   sectionId: SectionId
   profile: UserProfile
+  googleIdToken: string
 }) {
   const section = sectionPages[sectionId]
   const navSection = navSections.find((item) => item.id === sectionId)
@@ -586,6 +644,42 @@ function SectionPage({
       downloadWordHref={experienceDownloads?.wordHref}
     >
       {section.cards.map((card) => {
+        if (sectionId === 'mrpasionfruit' && card.title === 'Personal interests/questions') {
+          return (
+            <PollCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={profile === 'admin'}
+              idToken={googleIdToken}
+            />
+          )
+        }
+
+        if (sectionId === 'mrpasionfruit' && card.title === 'Bucket List') {
+          return (
+            <BucketListCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={profile === 'admin'}
+              idToken={googleIdToken}
+            />
+          )
+        }
+
+        if (sectionId === 'mrpasionfruit' && card.title === 'Places visited') {
+          return (
+            <CountriesCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={profile === 'admin'}
+              idToken={googleIdToken}
+            />
+          )
+        }
+
         if (sectionId === 'training' && card.title === 'Next Event Countdown') {
           return <NextEventCountdownCard key={card.title} title={card.title} canEdit={profile === 'admin'} />
         }
@@ -646,6 +740,321 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
           )
         })}
       </ul>
+    </article>
+  )
+}
+
+function parseBucketFallback(body: string): BucketListRecord[] {
+  return body
+    .split('\n')
+    .map((line) => line.replace(/^\s*[•-]\s*/, '').trim())
+    .filter((line) => line.length > 0)
+    .map((item, index) => ({
+      bucket_id: `fallback-bucket-${index}`,
+      item,
+      completed: false,
+    }))
+}
+
+function PollCard({
+  title,
+  fallbackBody,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  fallbackBody: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [rows, setRows] = useState<PollRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+
+  async function loadPolls() {
+    try {
+      const data = await getPolls()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadPolls()
+  }, [])
+
+  async function handleVote(selectedOption: 'A' | 'B') {
+    if (!idToken || !activePoll || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+
+    try {
+      await votePoll(idToken, activePoll.poll_id, selectedOption)
+      await loadPolls()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to submit vote')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  const activePoll = [...rows].sort((a, b) => {
+    const aTime = a.created_date ? new Date(a.created_date).getTime() : 0
+    const bTime = b.created_date ? new Date(b.created_date).getTime() : 0
+    return bTime - aTime
+  })[0]
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <h3>{title}</h3>
+      {isLoading ? <p className="sheets-meta">Loading poll...</p> : null}
+
+      {activePoll ? (
+        <>
+          <p className="sheets-question">{activePoll.question}</p>
+          <ul className="sheets-list">
+            <li className="sheets-item">A: {activePoll.option_a} ({activePoll.option_a_votes ?? 0})</li>
+            <li className="sheets-item">B: {activePoll.option_b} ({activePoll.option_b_votes ?? 0})</li>
+          </ul>
+          {canWrite ? (
+            idToken ? (
+              <div className="sheets-actions">
+                <button
+                  type="button"
+                  className="secondary-action"
+                  disabled={isWriting}
+                  onClick={() => void handleVote('A')}
+                >
+                  Vote A
+                </button>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  disabled={isWriting}
+                  onClick={() => void handleVote('B')}
+                >
+                  Vote B
+                </button>
+              </div>
+            ) : (
+              <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+            )
+          ) : null}
+          <p className="sheets-meta">Total votes: {activePoll.total_votes ?? 0}</p>
+          {activePoll.winning_option ? (
+            <p className="sheets-meta">Winning option: {activePoll.winning_option}</p>
+          ) : null}
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : (
+        <p>{fallbackBody}</p>
+      )}
+    </article>
+  )
+}
+
+function BucketListCard({
+  title,
+  fallbackBody,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  fallbackBody: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [rows, setRows] = useState<BucketListRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+
+  async function loadBucketList() {
+    try {
+      const data = await getBucketList()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadBucketList()
+  }, [])
+
+  const visibleRows = rows.length > 0 ? rows : parseBucketFallback(fallbackBody)
+
+  async function handleToggle(row: BucketListRecord) {
+    if (!idToken || row.bucket_id.startsWith('fallback-') || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+
+    try {
+      await setBucketCompleted(idToken, row.bucket_id, !row.completed)
+      await loadBucketList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update bucket list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <h3>{title}</h3>
+      {isLoading ? <p className="sheets-meta">Loading list...</p> : null}
+
+      <ul className="sheets-list">
+        {visibleRows.map((row) => (
+          <li key={row.bucket_id} className={`sheets-item ${row.completed ? 'completed' : ''}`}>
+            <div className="sheets-row">
+              <span>
+                {row.item}
+                {row.completed_date ? <span className="sheets-date"> ({row.completed_date})</span> : null}
+              </span>
+              {canWrite && !row.bucket_id.startsWith('fallback-') ? (
+                <button
+                  type="button"
+                  className="secondary-action"
+                  disabled={!idToken || isWriting}
+                  onClick={() => void handleToggle(row)}
+                >
+                  {row.completed ? 'Mark Incomplete' : 'Mark Complete'}
+                </button>
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ul>
+      {canWrite && !idToken ? (
+        <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+      ) : null}
+      {writeError ? <p className="sheets-error">{writeError}</p> : null}
+    </article>
+  )
+}
+
+function CountriesCard({
+  title,
+  fallbackBody,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  fallbackBody: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [rows, setRows] = useState<CountryRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+
+  async function loadCountries() {
+    try {
+      const data = await getCountries()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadCountries()
+  }, [])
+
+  const visited = rows
+    .filter((row) => row.visited)
+    .sort((a, b) => a.country_state_name.localeCompare(b.country_state_name))
+
+  async function handleToggle(row: CountryRecord) {
+    if (!idToken || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+
+    try {
+      await setCountryVisited(idToken, row.country_id, !row.visited)
+      await loadCountries()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update country status')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <h3>{title}</h3>
+      {isLoading ? <p className="sheets-meta">Loading places...</p> : null}
+
+      {visited.length > 0 ? (
+        <ul className="sheets-list">
+          {visited.map((row) => (
+            <li key={row.country_id} className="sheets-item">
+              <div className="sheets-row">
+                <span>
+                  {row.country_state_name}
+                  {row.visited_date ? <span className="sheets-date"> ({row.visited_date})</span> : null}
+                </span>
+                {canWrite ? (
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    disabled={!idToken || isWriting}
+                    onClick={() => void handleToggle(row)}
+                  >
+                    Mark Unvisited
+                  </button>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>{fallbackBody}</p>
+      )}
+
+      {canWrite && rows.length > 0 ? (
+        <ul className="sheets-list">
+          {rows.filter((row) => !row.visited).map((row) => (
+            <li key={`${row.country_id}-pending`} className="sheets-item">
+              <div className="sheets-row">
+                <span>{row.country_state_name}</span>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  disabled={!idToken || isWriting}
+                  onClick={() => void handleToggle(row)}
+                >
+                  Mark Visited
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {canWrite && !idToken ? (
+        <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+      ) : null}
+      {writeError ? <p className="sheets-error">{writeError}</p> : null}
     </article>
   )
 }
@@ -1335,11 +1744,22 @@ function DetailPage({ path }: { path: string }) {
 function LoginPage({
   profile,
   onSwitchProfile,
+  googleIdToken,
+  onGoogleTokenChange,
 }: {
   profile: UserProfile
   onSwitchProfile: (profile: UserProfile) => void
+  googleIdToken: string
+  onGoogleTokenChange: (token: string) => void
 }) {
   const navigate = useNavigate()
+
+  function handleGoogleSuccess(response: CredentialResponse) {
+    const token = response.credential ?? ''
+    if (token) {
+      onGoogleTokenChange(token)
+    }
+  }
 
   return (
     <section className="page auth-page">
@@ -1354,6 +1774,23 @@ function LoginPage({
       >
         <div className="login-card">
           <p className="summary-line">Current profile: {profile.toUpperCase()}</p>
+          <div className="google-auth-block">
+            <p className="summary-line">Google auth: {googleIdToken ? 'Connected' : 'Not connected'}</p>
+            {googleClientConfigured && !googleIdToken ? (
+              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => onGoogleTokenChange('')} />
+            ) : !googleClientConfigured ? (
+              <p className="sheets-meta">Set VITE_GOOGLE_CLIENT_ID in .env to enable Google Sign-In.</p>
+            ) : null}
+            {googleIdToken ? (
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => onGoogleTokenChange('')}
+              >
+                Sign Out Google Session
+              </button>
+            ) : null}
+          </div>
           <div className="profile-switch-grid">
             <article className={`profile-option ${profile === 'guest' ? 'active' : ''}`}>
               <h3>Guest</h3>

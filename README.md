@@ -1,73 +1,111 @@
-# React + TypeScript + Vite
+# Pasionfruit.github.io
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal website built with React + TypeScript + Vite.
 
-Currently, two official plugins are available:
+## Local Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Install dependencies:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm ci
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Create `.env` at the project root and set your Sheets API URL:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_SHEETS_API_BASE_URL=https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT/exec
 ```
+
+3. Start development server:
+
+```bash
+npm run dev
+```
+
+4. Production build check:
+
+```bash
+npm run build
+```
+
+## Google Sheets API Setup (Apps Script)
+
+This app expects REST-style read endpoints for these tables:
+
+- `polls`
+- `bucket_list`
+- `countries`
+
+Expected URL shape:
+
+- `{VITE_SHEETS_API_BASE_URL}/polls`
+- `{VITE_SHEETS_API_BASE_URL}/bucket_list`
+- `{VITE_SHEETS_API_BASE_URL}/countries`
+
+Accepted response shapes:
+
+1. Array response:
+
+```json
+[
+  { "poll_id": "1", "question": "..." }
+]
+```
+
+2. Wrapped response:
+
+```json
+{
+  "data": [
+    { "poll_id": "1", "question": "..." }
+  ]
+}
+```
+
+### Minimum Apps Script Steps
+
+1. Create a Google Sheet with tabs named exactly:
+   - `polls`
+   - `bucket_list`
+   - `countries`
+2. Add header row matching schema fields.
+3. Create Apps Script project linked to that Sheet.
+4. Implement `doGet(e)` routing by path/table name.
+5. Deploy as Web App and copy the deployed URL.
+6. Put that URL in `VITE_SHEETS_API_BASE_URL`.
+
+## Environment Files
+
+- `.env.example` contains the template variable.
+- `.env` is for local development.
+- For production (GitHub Actions), provide the same variable during build.
+
+## GitHub Pages + Actions
+
+If deploying via GitHub Actions, ensure the build step receives `VITE_SHEETS_API_BASE_URL`.
+
+Example build step snippet:
+
+```yaml
+- name: Build
+  run: npm run build
+  env:
+    VITE_SHEETS_API_BASE_URL: ${{ vars.VITE_SHEETS_API_BASE_URL }}
+```
+
+Then set repository variable:
+
+- Settings -> Secrets and variables -> Actions -> Variables
+- Name: `VITE_SHEETS_API_BASE_URL`
+- Value: your Apps Script Web App URL
+
+## Troubleshooting
+
+1. Blank cards but no app crash:
+   - Check browser network tab for failing `/polls`, `/bucket_list`, `/countries` calls.
+   - Verify `VITE_SHEETS_API_BASE_URL` is set and correct.
+2. CORS errors:
+   - Ensure Apps Script response includes appropriate CORS headers.
+3. Old data after deploy:
+   - Confirm Actions build used the variable.
+   - Hard refresh browser cache.
