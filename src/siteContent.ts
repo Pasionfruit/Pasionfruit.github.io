@@ -468,6 +468,6 @@ export const detailPages: Record<string, SubpageContent> = {
       { title: 'Specific store deals', body: 'Keep an eye on the ingredients that matter most to the weekly budget.' },
       { title: 'Fast Food Deals', body: 'Keep track of limited-time offers and discounts at fast food restaurants.' },
     ],
-    note: '',
+    note: 'test',
   },
 }
