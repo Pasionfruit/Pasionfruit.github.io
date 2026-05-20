@@ -33,6 +33,11 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_GOOGLE_CLIENT_ID: ${{ vars['VITE_GOOGLE_CLIENT_ID'] }}
+          VITE_SHEETS_SPREADSHEET_ID: ${{ vars['VITE_SHEETS_SPREADSHEET_ID'] }}
+          VITE_SHEETS_API_KEY: ${{ vars['VITE_SHEETS_API_KEY'] }}
+          VITE_SHEETS_API_BASE_URL: ${{ vars['VITE_SHEETS_API_BASE_URL'] }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -10,10 +10,13 @@ Personal website built with React + TypeScript + Vite.
 npm ci
 ```
 
-2. Create `.env` at the project root and set your Sheets API URL:
+2. Create `.env` at the project root and set your Sheets variables:
 
 ```env
+VITE_SHEETS_SPREADSHEET_ID=REPLACE_WITH_YOUR_SPREADSHEET_ID
+VITE_SHEETS_API_KEY=REPLACE_WITH_YOUR_GOOGLE_SHEETS_API_KEY
 VITE_SHEETS_API_BASE_URL=https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT/exec
+VITE_GOOGLE_CLIENT_ID=REPLACE_WITH_YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com
 ```
 
 3. Start development server:
@@ -74,6 +77,48 @@ Accepted response shapes:
 5. Deploy as Web App and copy the deployed URL.
 6. Put that URL in `VITE_SHEETS_API_BASE_URL`.
 
+### Apps Script Authorization
+
+If your web app returns an error like `You do not have permission to call UrlFetchApp.fetch`, the script has not been authorized for external HTTP requests yet.
+
+1. In Apps Script, save your `Code.gs`.
+2. Run a helper that directly calls `UrlFetchApp.fetch` so Apps Script requests the missing scope immediately:
+
+```javascript
+function authorizeExternalRequest() {
+  const response = UrlFetchApp.fetch(
+    'https://oauth2.googleapis.com/tokeninfo?id_token=invalid-token',
+    { muteHttpExceptions: true }
+  )
+  Logger.log(response.getResponseCode())
+}
+```
+
+3. Accept the Google authorization prompt for external requests.
+4. Remove the helper if you do not want to keep it.
+5. Deploy a new Web App version after authorization.
+
+If you use a manifest file, the required scope is:
+
+```json
+{
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/spreadsheets"
+  ]
+}
+```
+
+### Apps Script Performance
+
+Apps Script writes can feel slow if every admin action re-validates the Google ID token against `tokeninfo`. Cache successful token verification results for a short window to remove that extra roundtrip from repeated actions.
+
+Example replacement for `verifyGoogleIdToken(idToken)`:
+
+```javascript
+
+```
+
 ## Environment Files
 
 - `.env.example` contains the template variable.
@@ -104,8 +149,9 @@ Then set repository variable:
 1. Blank cards but no app crash:
    - Check browser network tab for failing `/polls`, `/bucket_list`, `/countries` calls.
    - Verify `VITE_SHEETS_API_BASE_URL` is set and correct.
-2. CORS errors:
-   - Ensure Apps Script response includes appropriate CORS headers.
+2. Write actions feel slow:
+  - Add `CacheService` token verification caching in Apps Script.
+  - The frontend already applies optimistic updates and then refreshes in the background.
 3. Old data after deploy:
    - Confirm Actions build used the variable.
    - Hard refresh browser cache.

@@ -792,13 +792,40 @@ function PollCard({
       return
     }
 
+    const previousRows = rows
     setIsWriting(true)
     setWriteError('')
+    setRows((currentRows) =>
+      currentRows.map((row) => {
+        if (row.poll_id !== activePoll.poll_id) {
+          return row
+        }
+
+        const optionAVotes = row.option_a_votes ?? 0
+        const optionBVotes = row.option_b_votes ?? 0
+        const nextOptionAVotes = selectedOption === 'A' ? optionAVotes + 1 : optionAVotes
+        const nextOptionBVotes = selectedOption === 'B' ? optionBVotes + 1 : optionBVotes
+
+        return {
+          ...row,
+          option_a_votes: nextOptionAVotes,
+          option_b_votes: nextOptionBVotes,
+          total_votes: (row.total_votes ?? 0) + 1,
+          winning_option:
+            nextOptionAVotes === nextOptionBVotes
+              ? 'tie'
+              : nextOptionAVotes > nextOptionBVotes
+                ? 'A'
+                : 'B',
+        }
+      }),
+    )
 
     try {
       await votePoll(idToken, activePoll.poll_id, selectedOption)
-      await loadPolls()
+      void loadPolls()
     } catch (error) {
+      setRows(previousRows)
       setWriteError(error instanceof Error ? error.message : 'Unable to submit vote')
     } finally {
       setIsWriting(false)
@@ -898,13 +925,27 @@ function BucketListCard({
       return
     }
 
+    const previousRows = rows
+    const nextCompleted = !row.completed
     setIsWriting(true)
     setWriteError('')
+    setRows((currentRows) =>
+      currentRows.map((currentRow) =>
+        currentRow.bucket_id === row.bucket_id
+          ? {
+              ...currentRow,
+              completed: nextCompleted,
+              completed_date: nextCompleted ? new Date().toISOString() : '',
+            }
+          : currentRow,
+      ),
+    )
 
     try {
-      await setBucketCompleted(idToken, row.bucket_id, !row.completed)
-      await loadBucketList()
+      await setBucketCompleted(idToken, row.bucket_id, nextCompleted)
+      void loadBucketList()
     } catch (error) {
+      setRows(previousRows)
       setWriteError(error instanceof Error ? error.message : 'Unable to update bucket list item')
     } finally {
       setIsWriting(false)
@@ -986,13 +1027,27 @@ function CountriesCard({
       return
     }
 
+    const previousRows = rows
+    const nextVisited = !row.visited
     setIsWriting(true)
     setWriteError('')
+    setRows((currentRows) =>
+      currentRows.map((currentRow) =>
+        currentRow.country_id === row.country_id
+          ? {
+              ...currentRow,
+              visited: nextVisited,
+              visited_date: nextVisited ? new Date().toISOString() : '',
+            }
+          : currentRow,
+      ),
+    )
 
     try {
-      await setCountryVisited(idToken, row.country_id, !row.visited)
-      await loadCountries()
+      await setCountryVisited(idToken, row.country_id, nextVisited)
+      void loadCountries()
     } catch (error) {
+      setRows(previousRows)
       setWriteError(error instanceof Error ? error.message : 'Unable to update country status')
     } finally {
       setIsWriting(false)

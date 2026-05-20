@@ -17,7 +17,20 @@ function getGoogleSheetsConfig() {
 
 // For admin writes: Apps Script endpoint (requires authentication)
 function getAppsScriptUrl() {
-  return import.meta.env.VITE_SHEETS_API_BASE_URL?.trim() ?? ''
+  const rawUrl = import.meta.env.VITE_SHEETS_API_BASE_URL?.trim() ?? ''
+
+  if (!rawUrl) {
+    return ''
+  }
+
+  // Apps Script writes must target a deployed Web App URL ending in /exec.
+  if (!rawUrl.includes('/macros/s/') || !rawUrl.endsWith('/exec')) {
+    throw new Error(
+      'VITE_SHEETS_API_BASE_URL must be a deployed Apps Script Web App URL ending with /exec',
+    )
+  }
+
+  return rawUrl
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -96,7 +109,9 @@ export async function postSheetsAction<T>(payload: Record<string, unknown>): Pro
   const response = await fetch(appsScriptUrl, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      // Keep this as a simple request so the browser does not send an OPTIONS preflight,
+      // which Apps Script web app endpoints do not handle consistently.
+      'Content-Type': 'text/plain;charset=utf-8',
       Accept: 'application/json',
     },
     body: JSON.stringify(payload),
