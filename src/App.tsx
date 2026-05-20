@@ -743,6 +743,10 @@ function SectionPage({
           return <NextEventCountdownCard key={card.title} title={card.title} canEdit={profile === 'admin'} />
         }
 
+        if (sectionId === 'training' && card.title === 'Workout(s) of the Day') {
+          return <CollapsibleTextCard key={card.title} title={card.title} body={card.body} />
+        }
+
         if (sectionId === 'experiences' && card.title === 'Actuary Exams') {
           return <ActuaryExamsCard key={card.title} title={card.title} />
         }
@@ -800,6 +804,36 @@ function CollapsibleTextCard({ title, body }: { title: string; body: string }) {
   )
 }
 
+function CollapsibleSectionCard({
+  title,
+  className = '',
+  children,
+}: {
+  title: string
+  className?: string
+  children: ReactNode
+}) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  return (
+    <article className={`info-card section-page-card ${className}`.trim()}>
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((value) => !value)}
+        >
+          {isCollapsed ? 'Show' : 'Hide'}
+        </button>
+      </div>
+
+      {!isCollapsed ? children : null}
+    </article>
+  )
+}
+
 function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
   const lines = body
     .split('\n')
@@ -807,8 +841,7 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
     .filter((line) => line.length > 0)
 
   return (
-    <article className="info-card section-page-card technical-skills-card">
-      <h3>{title}</h3>
+    <CollapsibleSectionCard title={title} className="technical-skills-card">
       <ul className="technical-skills-list">
         {lines.map((line) => {
           const cleanedLine = line.replace(/^•\s*/, '')
@@ -821,7 +854,7 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
           )
         })}
       </ul>
-    </article>
+    </CollapsibleSectionCard>
   )
 }
 
@@ -1952,9 +1985,7 @@ function NextEventCountdownCard({
   const targetLabel = targetDateTime ? new Date(targetDateTime).toLocaleString() : 'Set a date'
 
   return (
-    <article className="info-card section-page-card countdown-card">
-      <h3>{title}</h3>
-
+    <CollapsibleSectionCard title={title} className="countdown-card">
       {canEdit ? (
         <div className="countdown-inputs">
           <label>
@@ -2007,14 +2038,13 @@ function NextEventCountdownCard({
       {isFinished ? (
         <p className="countdown-complete">Your event countdown is complete.</p>
       ) : null}
-    </article>
+    </CollapsibleSectionCard>
   )
 }
 
 function ActuaryExamsCard({ title }: { title: string }) {
   return (
-    <article className="info-card section-page-card experience-card">
-      <h3>{title}</h3>
+    <CollapsibleSectionCard title={title} className="experience-card">
       <ul className="experience-list">
         {actuaryExamEntries.map((entry) => (
           <ActuaryExamRow
@@ -2023,7 +2053,7 @@ function ActuaryExamsCard({ title }: { title: string }) {
           />
         ))}
       </ul>
-    </article>
+    </CollapsibleSectionCard>
   )
 }
 
@@ -2038,8 +2068,7 @@ function ActuaryExamRow({ entry }: { entry: ActuaryExamEntry }) {
 
 function EducationCard({ title }: { title: string }) {
   return (
-    <article className="info-card section-page-card experience-card">
-      <h3>{title}</h3>
+    <CollapsibleSectionCard title={title} className="experience-card">
       <ul className="experience-list">
         {educationEntries.map((entry) => (
           <EducationRow
@@ -2048,7 +2077,7 @@ function EducationCard({ title }: { title: string }) {
           />
         ))}
       </ul>
-    </article>
+    </CollapsibleSectionCard>
   )
 }
 
@@ -2149,9 +2178,7 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
       : professionalExperienceEntries.filter((entry) => entry.category === 'technical')
 
   return (
-    <article className="info-card section-page-card experience-card">
-      <h3>{title}</h3>
-
+    <CollapsibleSectionCard title={title} className="experience-card">
       <div className="experience-toggle" role="tablist" aria-label="Professional experience filter">
         <button
           type="button"
@@ -2182,7 +2209,7 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
           />
         ))}
       </ul>
-    </article>
+    </CollapsibleSectionCard>
   )
 }
 
@@ -2589,16 +2616,28 @@ function CurrentStudyPlanCard({
     }
   }
 
+  // Exclude topics: 'Rest Day' and 'Take Sample Exam #(any number)'
+  function isExcludedTopic(topic: string) {
+    if (!topic) return false
+    const trimmed = topic.trim()
+    if (trimmed.toLowerCase() === 'rest day') return true
+    if (/^take sample exam #\d+$/i.test(trimmed)) return true
+    if (/^attempt \d+ problems$/i.test(trimmed)) return true
+    return false
+  }
+
+  const filteredRowsAll = rows.filter((row) => !isExcludedTopic(row.topic))
+
   const todayKey = toDateOnlyKey(new Date().toISOString())
-  const todaysLessons = rows
+  const todaysLessons = filteredRowsAll
     .filter((row) => toDateOnlyKey(row.date) === todayKey)
     .sort((a, b) => a.topic.localeCompare(b.topic))
 
   const relatedExams = Array.from(
-    new Set(rows.map((row) => row.related_exam).filter((value) => value.trim().length > 0)),
+    new Set(filteredRowsAll.map((row) => row.related_exam).filter((value) => value.trim().length > 0)),
   ).sort((a, b) => a.localeCompare(b))
 
-  const filteredRows = rows
+  const filteredRows = filteredRowsAll
     .filter((row) => relatedExamFilter === 'all' || row.related_exam === relatedExamFilter)
     .sort((a, b) => a.topic.localeCompare(b.topic))
 
@@ -2763,12 +2802,34 @@ function DetailPage({
           return <MilestonesCard key={card.title} title={card.title} canEdit={false} />
         }
 
-        return (
-          <article key={card.title} className="info-card">
-            <h3>{card.title}</h3>
-            <p>{card.body}</p>
-          </article>
-        )
+        // Add Google Drive Study Notes link with icon for Study Materials card
+        if (path === '/experiences/studying' && card.title === 'Study Materials') {
+          return (
+            <article key={card.title} className="info-card">
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+              <a
+                href="https://drive.google.com/drive/folders/1mbcZlFIksypI088sjbO5q14xp6s0M6Fz?usp=drive_link"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="study-drive-link"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.6rem', fontWeight: 500 }}
+              >
+                <span aria-hidden="true" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  {/* Google Drive SVG icon */}
+                  <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="25,8 39,32 33,32 19,8" fill="#2196F3"/>
+                    <polygon points="19,8 5,32 11,32 25,8" fill="#4CAF50"/>
+                    <polygon points="5,32 11,32 17,42 11,42" fill="#FFC107"/>
+                    <polygon points="39,32 33,32 27,42 33,42" fill="#FFC107"/>
+                    <polygon points="17,42 27,42 33,32 11,32" fill="#F44336"/>
+                  </svg>
+                </span>
+                <span>Study Notes (Google Drive)</span>
+              </a>
+            </article>
+          )
+        }
       })}
     </PageFrame>
   )
