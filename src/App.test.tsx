@@ -6,10 +6,12 @@ import userEvent from '@testing-library/user-event'
 
 const repoMocks = vi.hoisted(() => ({
   getBucketList: vi.fn(),
+  getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
   getPolls: vi.fn(),
   setBucketCompleted: vi.fn(),
   setCountryVisited: vi.fn(),
+  setCurrentStudyCompleted: vi.fn(),
   createBucketItem: vi.fn(),
   updateBucketItem: vi.fn(),
   deleteBucketItem: vi.fn(),
@@ -52,6 +54,14 @@ import App from './App'
 function renderAdminAboutMePage() {
   return render(
     <MemoryRouter initialEntries={['/mrpasionfruit']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function renderAdminStudyingPage() {
+  return render(
+    <MemoryRouter initialEntries={['/experiences/studying']}>
       <App />
     </MemoryRouter>,
   )
@@ -142,8 +152,46 @@ beforeEach(() => {
     },
   ])
 
+  const now = new Date()
+  const tomorrow = new Date(now)
+  tomorrow.setDate(now.getDate() + 1)
+
+  repoMocks.getCurrentStudy.mockResolvedValue([
+    {
+      study_id: 'study-1',
+      related_exam: 'Exam FM',
+      topic: 'Interest Theory',
+      date: now.toISOString(),
+      own_terms: 'Rates and discounting',
+      problems_solved: 3,
+      problems_worked: 6,
+      completed: false,
+    },
+    {
+      study_id: 'study-2',
+      related_exam: 'Exam P',
+      topic: 'Bayes Rule',
+      date: now.toISOString(),
+      own_terms: 'Conditional probability',
+      problems_solved: 4,
+      problems_worked: 5,
+      completed: true,
+    },
+    {
+      study_id: 'study-3',
+      related_exam: 'Exam FM',
+      topic: 'Annuities',
+      date: tomorrow.toISOString(),
+      own_terms: 'Present value',
+      problems_solved: 8,
+      problems_worked: 10,
+      completed: false,
+    },
+  ])
+
   repoMocks.setBucketCompleted.mockResolvedValue(undefined)
   repoMocks.setCountryVisited.mockResolvedValue(undefined)
+  repoMocks.setCurrentStudyCompleted.mockResolvedValue(undefined)
   repoMocks.createBucketItem.mockResolvedValue(undefined)
   repoMocks.updateBucketItem.mockResolvedValue(undefined)
   repoMocks.deleteBucketItem.mockResolvedValue(undefined)
@@ -213,7 +261,7 @@ describe('admin about me page', () => {
     const user = userEvent.setup()
     renderAdminAboutMePage()
 
-    const pollHeading = (await screen.findAllByRole('heading', { name: 'Personal interests/questions' }))[0]
+    const pollHeading = (await screen.findAllByRole('heading', { name: 'Question of the Day' }))[0]
     const card = pollHeading.closest('article')
     if (!card) {
       throw new Error('Poll card not found')
@@ -239,6 +287,66 @@ describe('admin about me page', () => {
         'Garden',
         'NAS',
       )
+    })
+  })
+
+  it('filters Current Study Plan rows by related exam', async () => {
+    const user = userEvent.setup()
+    renderAdminStudyingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Current Study Plan' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Current Study Plan card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Show Study Table' }))
+
+    const combo = within(card).getByRole('combobox')
+    await user.selectOptions(combo, 'Exam FM')
+
+    const tables = within(card).getAllByRole('table')
+    const studyTable = tables[1]
+
+    expect(within(studyTable).getByText('Interest Theory')).toBeTruthy()
+    expect(within(studyTable).getByText('Annuities')).toBeTruthy()
+    expect(within(studyTable).queryByText('Bayes Rule')).toBeNull()
+  })
+
+  it('allows admin to mark today lesson completed or not completed', async () => {
+    const user = userEvent.setup()
+    renderAdminStudyingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Current Study Plan' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Current Study Plan card not found')
+    }
+
+    const interestTopic = within(card).getByText('Interest Theory')
+    const interestRow = interestTopic.closest('tr')
+    if (!interestRow) {
+      throw new Error('Interest Theory row not found')
+    }
+
+    const markCompleteButton = within(interestRow).getByRole('button', { name: 'Mark Complete' })
+    await user.click(markCompleteButton)
+
+    await waitFor(() => {
+      expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith('valid-token', 'study-1', true)
+    })
+
+    const bayesTopic = within(card).getByText('Bayes Rule')
+    const bayesRow = bayesTopic.closest('tr')
+    if (!bayesRow) {
+      throw new Error('Bayes Rule row not found')
+    }
+
+    const markIncompleteButton = within(bayesRow).getByRole('button', { name: '✓ Completed' })
+    await user.click(markIncompleteButton)
+
+    await waitFor(() => {
+      expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith('valid-token', 'study-2', false)
     })
   })
 })

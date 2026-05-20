@@ -24,6 +24,17 @@ export type CountryRecord = {
   visited: boolean
 }
 
+export type CurrentStudyRecord = {
+  study_id: string
+  related_exam: string
+  topic: string
+  date?: string
+  own_terms?: string
+  problems_solved?: number
+  problems_worked?: number
+  completed: boolean
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

@@ -74,7 +74,7 @@ export const experiencesDetailPages: Record<string, SubpageContent> = {
         body: 'Google Drive links to all my notes and previous studying trackers',
       },
     ],
-    note: 'Use this as the nested page for the experiences section.',
+    note: '',
   },
 }
 

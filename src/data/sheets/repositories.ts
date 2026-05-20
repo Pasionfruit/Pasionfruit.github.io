@@ -1,5 +1,5 @@
 import { fetchSheetTable, postSheetsAction, type SheetsWriteResponse } from './client'
-import type { BucketListRecord, CountryRecord, PollRecord } from './types'
+import type { BucketListRecord, CountryRecord, CurrentStudyRecord, PollRecord } from './types'
 
 function parseBoolean(value: unknown) {
   if (typeof value === 'boolean') {
@@ -75,6 +75,23 @@ export async function getCountries(): Promise<CountryRecord[]> {
     .filter((row) => row.country_id && row.country_state_name)
 }
 
+export async function getCurrentStudy(): Promise<CurrentStudyRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('current_study')
+
+  return rows
+    .map((row) => ({
+      study_id: String(row.study_id ?? ''),
+      related_exam: String(row.related_exam ?? ''),
+      topic: String(row.topic ?? ''),
+      date: row.date ? String(row.date) : undefined,
+      own_terms: row.own_terms ? String(row.own_terms) : undefined,
+      problems_solved: parseNumber(row.problems_solved),
+      problems_worked: parseNumber(row.problems_worked),
+      completed: parseBoolean(row.completed),
+    }))
+    .filter((row) => row.study_id && row.topic)
+}
+
 async function runWrite(payload: Record<string, unknown>) {
   const result = await postSheetsAction<SheetsWriteResponse>(payload)
 
@@ -122,6 +139,15 @@ export async function setCountryVisited(idToken: string, countryId: string, visi
     idToken,
     country_id: countryId,
     visited,
+  })
+}
+
+export async function setCurrentStudyCompleted(idToken: string, studyId: string, completed: boolean) {
+  await runWrite({
+    action: 'setCurrentStudyCompleted',
+    idToken,
+    study_id: studyId,
+    completed,
   })
 }
 

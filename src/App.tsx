@@ -35,10 +35,12 @@ import {
   deleteCountry,
   deletePoll,
   getBucketList,
+  getCurrentStudy,
   getCountries,
   getPolls,
   setBucketCompleted,
   setCountryVisited,
+  setCurrentStudyCompleted,
   updateBucketItem,
   updateCountry,
   votePoll,
@@ -46,6 +48,7 @@ import {
 import type {
   BucketListRecord,
   CountryRecord,
+  CurrentStudyRecord,
   PollRecord,
 } from './data/sheets/types'
 
@@ -162,7 +165,10 @@ function App() {
           path="experiences"
           element={<SectionPage sectionId="experiences" profile={profile} googleIdToken={googleIdToken} />}
         />
-        <Route path="experiences/studying" element={<DetailPage path="/experiences/studying" />} />
+        <Route
+          path="experiences/studying"
+          element={<DetailPage path="/experiences/studying" profile={profile} googleIdToken={googleIdToken} />}
+        />
         <Route path="experience/studying" element={<Navigate replace to="/experiences/studying" />} />
         <Route
           path="cooking"
@@ -267,20 +273,23 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
 
         <nav className="menu-root" aria-label="Primary">
           {navSections.map((section) => {
-            const isExpanded = expandedSectionIds.includes(section.id)
+            const hasChildren = section.children.length > 0
+            const isExpanded = hasChildren && expandedSectionIds.includes(section.id)
 
             return (
               <div key={section.id} className="menu-section-card">
                 <div className="menu-section-row">
-                  <button
-                    type="button"
-                    className="menu-expander"
-                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${section.title}`}
-                    aria-expanded={isExpanded}
-                    onClick={() => toggleSection(section.id)}
-                  >
-                    {isExpanded ? '▾' : '▸'}
-                  </button>
+                  {hasChildren ? (
+                    <button
+                      type="button"
+                      className="menu-expander"
+                      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${section.title}`}
+                      aria-expanded={isExpanded}
+                      onClick={() => toggleSection(section.id)}
+                    >
+                      {isExpanded ? '▾' : '▸'}
+                    </button>
+                  ) : null}
 
                   <NavLink
                     to={section.path}
@@ -294,7 +303,7 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
 
                 <p className="menu-section-summary">{section.summary}</p>
 
-                {isExpanded ? (
+                {hasChildren && isExpanded ? (
                   <div className="menu-children">
                     {section.children.map((child) => (
                       <NavLink
@@ -2508,7 +2517,213 @@ function PomodoroTimerCard({ title, body }: { title: string; body: string }) {
   )
 }
 
-function DetailPage({ path }: { path: string }) {
+function toDateOnlyKey(value?: string) {
+  if (!value) {
+    return ''
+  }
+
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return ''
+  }
+
+  return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`
+}
+
+function CurrentStudyPlanCard({
+  title,
+  body,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  body: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [rows, setRows] = useState<CurrentStudyRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [expanded, setExpanded] = useState(false)
+  const [relatedExamFilter, setRelatedExamFilter] = useState('all')
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+
+  async function loadCurrentStudy() {
+    try {
+      const data = await getCurrentStudy()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadCurrentStudy()
+  }, [])
+
+  async function handleToggleCompleted(row: CurrentStudyRecord) {
+    if (!canWrite || !idToken || isWriting) {
+      return
+    }
+
+    const previousRows = rows
+    const nextCompleted = !row.completed
+    setIsWriting(true)
+    setWriteError('')
+    setRows((currentRows) =>
+      currentRows.map((currentRow) =>
+        currentRow.study_id === row.study_id ? { ...currentRow, completed: nextCompleted } : currentRow,
+      ),
+    )
+
+    try {
+      await setCurrentStudyCompleted(idToken, row.study_id, nextCompleted)
+      void loadCurrentStudy()
+    } catch (error) {
+      setRows(previousRows)
+      setWriteError(error instanceof Error ? error.message : 'Unable to update completion state')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  const todayKey = toDateOnlyKey(new Date().toISOString())
+  const todaysLessons = rows
+    .filter((row) => toDateOnlyKey(row.date) === todayKey)
+    .sort((a, b) => a.topic.localeCompare(b.topic))
+
+  const relatedExams = Array.from(
+    new Set(rows.map((row) => row.related_exam).filter((value) => value.trim().length > 0)),
+  ).sort((a, b) => a.localeCompare(b))
+
+  const filteredRows = rows
+    .filter((row) => relatedExamFilter === 'all' || row.related_exam === relatedExamFilter)
+    .sort((a, b) => a.topic.localeCompare(b.topic))
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <h3>{title}</h3>
+
+      {isLoading ? <p className="sheets-meta">Loading current study...</p> : null}
+
+      {!isLoading ? (
+        <>
+          <p className="sheets-meta">Today's Lesson</p>
+          {todaysLessons.length > 0 ? (
+            <div className="study-today-shell">
+              <table className="study-today-table">
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Topic</th>
+                    <th>Completed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {todaysLessons.map((row) => (
+                    <tr key={row.study_id}>
+                      <td>{row.date ? formatSheetDate(row.date) : '—'}</td>
+                      <td>{row.topic}</td>
+                      <td className="study-complete-cell" aria-label={row.completed ? 'Completed' : 'Not completed'}>
+                        {canWrite ? (
+                          <button
+                            type="button"
+                            className="secondary-action study-complete-btn"
+                            onClick={() => void handleToggleCompleted(row)}
+                            disabled={!idToken || isWriting}
+                          >
+                            {row.completed ? '✓ Completed' : 'Mark Complete'}
+                          </button>
+                        ) : row.completed ? (
+                          '✓'
+                        ) : (
+                          ''
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="sheets-meta">No lesson scheduled for today.</p>
+          )}
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={expanded}
+            onClick={() => setExpanded((current) => !current)}
+          >
+            {expanded ? 'Hide Study Table' : 'Show Study Table'}
+          </button>
+
+          {expanded ? (
+            <div className="study-table-panel">
+              <label className="study-filter-row">
+                <span className="sheets-meta">Filter by related exam</span>
+                <select
+                  className="sheets-input"
+                  value={relatedExamFilter}
+                  onChange={(event) => setRelatedExamFilter(event.target.value)}
+                >
+                  <option value="all">All exams</option>
+                  {relatedExams.map((exam) => (
+                    <option key={exam} value={exam}>
+                      {exam}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="sheets-table-shell">
+                <table className="sheets-table">
+                  <thead>
+                    <tr>
+                      <th>Topic</th>
+                      <th>Problems Solved</th>
+                      <th>Problems Worked</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRows.map((row) => (
+                      <tr key={`study-${row.study_id}`}>
+                        <td>{row.topic}</td>
+                        <td>{row.problems_solved ?? 0}</td>
+                        <td>{row.problems_worked ?? 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredRows.length === 0 ? <p className="sheets-meta">No rows for this exam filter.</p> : null}
+            </div>
+          ) : null}
+        </>
+      ) : null}
+
+      {!isLoading && rows.length === 0 ? <p>{body}</p> : null}
+      {writeError ? <p className="sheets-error">{writeError}</p> : null}
+    </article>
+  )
+}
+
+function DetailPage({
+  path,
+  profile = 'guest',
+  googleIdToken = '',
+}: {
+  path: string
+  profile?: UserProfile
+  googleIdToken?: string
+}) {
   const page = detailPages[path]
   const parentPath = path.split('/').slice(0, 2).join('/')
   const parentSection = navSections.find((section) => section.path === parentPath)
@@ -2528,6 +2743,18 @@ function DetailPage({ path }: { path: string }) {
       note={page.note}
     >
       {page.cards.map((card) => {
+        if (path === '/experiences/studying' && card.title === 'Current Study Plan') {
+          return (
+            <CurrentStudyPlanCard
+              key={card.title}
+              title={card.title}
+              body={card.body}
+              canWrite={profile === 'admin'}
+              idToken={googleIdToken}
+            />
+          )
+        }
+
         if (path === '/experiences/studying' && card.title === 'Pomodoro Timer') {
           return <PomodoroTimerCard key={card.title} title={card.title} body={card.body} />
         }

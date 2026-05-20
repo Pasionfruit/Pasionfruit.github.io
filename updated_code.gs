@@ -24,6 +24,9 @@ function doPost(e) {
       case 'setCountryVisited':
         return jsonResponse_(setCountryVisited_(payload))
 
+      case 'setCurrentStudyCompleted':
+        return jsonResponse_(setCurrentStudyCompleted_(payload))
+
       case 'createPoll':
         return jsonResponse_(createPoll_(payload))
 
@@ -354,6 +357,21 @@ function setCountryVisited_(payload) {
 
   sheet.getRange(row, requireHeader_(h, 'visited')).setValue(visited)
   sheet.getRange(row, requireHeader_(h, 'visited_date')).setValue(visited ? nowIso_() : '')
+
+  return { ok: true }
+}
+
+function setCurrentStudyCompleted_(payload) {
+  var studyId = String(payload.study_id || '').trim()
+  if (!studyId) return { ok: false, error: 'study_id is required' }
+
+  var completed = toBoolean_(payload.completed)
+  var sheet = getSheet_('current_study')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'study_id'), studyId)
+  if (row < 0) return { ok: false, error: 'Study row not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'completed')).setValue(completed)
 
   return { ok: true }
 }
