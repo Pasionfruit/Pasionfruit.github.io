@@ -1,0 +1,1006 @@
+
+> pasionfruit-github-io@0.0.0 test
+> vitest run --reporter=default
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90mC:/Users/alpasion/Documents/GitHub/Pasionfruit.github.io[39m
+
+[90mstderr[2m | src/App.test.tsx[2m > [22m[2madmin about me page[2m > [22m[2mshows the guest-style Places visited card and opens the contained edit table
+[22m[39m⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ [31m❯[39m src/App.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 2212[2mms[22m[39m
+[31m     [31m×[31m shows the guest-style Places visited card and opens the contained edit table[39m[32m 172[2mms[22m[39m
+[31m     [31m×[31m creates, updates, and deletes places from the contained admin table[39m[33m 1013[2mms[22m[39m
+[31m     [31m×[31m uses Add New Poll and creates a poll from the admin edit form[39m[33m 1026[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/App.test.tsx[2m > [22madmin about me page[2m > [22mshows the guest-style Places visited card and opens the contained edit table
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an element with the text: Color of the world, with countries/states visited highlighted.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<article[39m
+  [33mclass[39m=[32m"info-card section-page-card sheets-card"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"section-card-header"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0mPlaces visited[0m
+    [36m</h3>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"section-card-actions"[39m
+    [36m>[39m
+      [36m<button[39m
+        [33maria-pressed[39m=[32m"true"[39m
+        [33mclass[39m=[32m"section-edit-btn active"[39m
+        [33mtitle[39m=[32m"Edit values"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0m✎[0m
+      [36m</button>[39m
+      [36m<button[39m
+        [33maria-expanded[39m=[32m"true"[39m
+        [33mclass[39m=[32m"section-collapse-btn"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0mHide[0m
+      [36m</button>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"world-map-container"[39m
+  [36m>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"sheets-meta"[39m
+    [36m>[39m
+      [0mLoading map...[0m
+    [36m</p>[39m
+  [36m</div>[39m
+  [36m<p[39m
+    [33mclass[39m=[32m"sheets-meta"[39m
+  [36m>[39m
+    [0m1 place visited[0m
+  [36m</p>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"sheets-editor"[39m
+  [36m>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"sheets-meta"[39m
+    [36m>[39m
+      [0mEdit places visited[0m
+    [36m</p>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"sheets-editor-row"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"sheets-input"[39m
+        [33mplaceholder[39m=[32m"New place"[39m
+        [33mtype[39m=[32m"text"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"secondary-action"[39m
+        [33mtype[39m=[32m"button"[39m
+      [36m>[39m
+        [0mAdd[0m
+      [36m</button>[39m
+    [36m</div>[39m
+    [36m<input[39m
+      [33mclass[39m=[32m"sheets-input"[39m
+      [33mplaceholder[39m=[32m"Filter by name"[39m
+      [33mtype[39m=[32m"text"[39m
+      [33mvalue[39m=[32m""[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"sheets-table-shell"[39m
+    [36m>[39m
+      [36m<table[39m
+        [33mclass[39m=[32m"sheets-table"[39m
+      [36m>[39m
+        [36m<thead>[39m
+          [36m<tr>[39m
+            [36m<th>[39m
+              [0mName[0m
+            [36m</th>[39m
+            [36m<th>[39m
+              [0mVisited[0m
+            [36m</th>[39m
+            [36m<th>[39m
+              [0mActions[0m
+            [36m</th>[39m
+          [36m</tr>[39m
+        [36m</thead>[39m
+        [36m<tbody>[39m
+          [36m<tr>[39m
+            [36m<td>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"sheets-input sheets-table-input"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m"Japan"[39m
+              [36m/>[39m
+            [36m</td>[39m
+            [36m<td>[39m
+              [0mYes[0m
+            [36m</td>[39m
+            [36m<td>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"sheets-table-actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"secondary-action"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mSave[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"secondary-action"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mUnvisit[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"secondary-action"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mDelete[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</td>[39m
+          [36m</tr>[39m
+          [36m<tr>[39m
+            [36m<td>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"sheets-input sheets-table-input"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m"New Zealand"[39m
+              [36m/>[39m
+            [36m</td>[39m
+            [36m<td>[39m
+              [0mNo[0m
+            [36m</td>[39m
+            [36m<td>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"sheets-table-actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"secondary-action"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mSave[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"secondary-action"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mVisit[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"secondary-action"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mDelete[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</td>[39m
+          [36m</tr>[39m
+        [36m</tbody>[39m
+      [36m</table>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</article>[39m
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/App.test.tsx:[2m165:25[22m[39m
+    [90m163|[39m     [35mconst[39m { card[33m,[39m user } [33m=[39m [35mawait[39m [34mopenPlacesVisitedEditor[39m()
+    [90m164|[39m
+    [90m165|[39m     expect(within(card).getByText('Color of the world, with countries/…
+    [90m   |[39m                         [31m^[39m
+    [90m166|[39m     expect(within(card).getByRole('img', { name: 'World map showing vi…
+    [90m167|[39m     expect(within(card).getByPlaceholderText('Filter by name')).toBeTr…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/App.test.tsx[2m > [22madmin about me page[2m > [22mcreates, updates, and deletes places from the contained admin table
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: Places visited
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<h3>[39m
+  [0mPlaces visited[0m
+[36m</h3>[39m
+
+Ignored nodes: comments, script, style
+[36m<h3>[39m
+  [0mPlaces visited[0m
+[36m</h3>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"topbar"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33maria-label[39m=[32m"Go to home page"[39m
+          [33mclass[39m=[32m"brand"[39m
+          [33mhref[39m=[32m"/"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-mark"[39m
+          [36m>[39m
+            [0mPF[0m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-copy"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPasionfruit[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mEnjoying life[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"topbar-actions"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Current profile"[39m
+            [33mclass[39m=[32m"profile-pill"[39m
+          [36m>[39m
+            [0mADMIN[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Enable dark mode"[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"theme-toggle"[39m
+            [33mtitle[39m=[32m"Enable dark mode"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon active"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mr[39m=[32m"4"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23L5.46 5.46"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon "[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.53 3.73a8.9 8.9 0 1 0 4.74 15.82A9.6 9.6 0 0 1 15.53 3.73Z"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"login-link"[39m
+            [33mhref[39m=[32m"/login"[39m
+          [36m>[39m
+            [0mLogin[0m
+          [36m</a>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"site-menu"[39m
+            [33maria-expanded[39m=[32m"false"[39m
+            [33mclass[39m=[32m"menu-toggle"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"sr-only"[39m
+            [36m>[39m
+              [0mToggle navigation[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"menu-backdrop "[39m
+      [36m/>[39m
+      [36m<aside[39m
+        [33mclass[39m=[32m"menu-panel "[39m
+        [33mid[39m=[32m"site-menu"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"menu-panel-header"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0mBrowse pages[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"menu-close"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mClose[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"Primary"[39m
+          [33mclass[39m=[32m"menu-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Experiences"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/experiences"[39m
+              [36m>[39m
+                [0mExperiences[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mProfessional experiences, education, and the practical things I've learned along the way[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Training"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/training"[39m
+              [36m>[39m
+                [0mTraining[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mRecords, data, and learning resources to understand and track progress [0m
+            [36m</...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"topbar"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33maria-label[39m=[32m"Go to home page"[39m
+          [33mclass[39m=[32m"brand"[39m
+          [33mhref[39m=[32m"/"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-mark"[39m
+          [36m>[39m
+            [0mPF[0m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-copy"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPasionfruit[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mEnjoying life[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"topbar-actions"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Current profile"[39m
+            [33mclass[39m=[32m"profile-pill"[39m
+          [36m>[39m
+            [0mADMIN[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Enable dark mode"[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"theme-toggle"[39m
+            [33mtitle[39m=[32m"Enable dark mode"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon active"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mr[39m=[32m"4"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23L5.46 5.46"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon "[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.53 3.73a8.9 8.9 0 1 0 4.74 15.82A9.6 9.6 0 0 1 15.53 3.73Z"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"login-link"[39m
+            [33mhref[39m=[32m"/login"[39m
+          [36m>[39m
+            [0mLogin[0m
+          [36m</a>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"site-menu"[39m
+            [33maria-expanded[39m=[32m"false"[39m
+            [33mclass[39m=[32m"menu-toggle"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"sr-only"[39m
+            [36m>[39m
+              [0mToggle navigation[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"menu-backdrop "[39m
+      [36m/>[39m
+      [36m<aside[39m
+        [33mclass[39m=[32m"menu-panel "[39m
+        [33mid[39m=[32m"site-menu"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"menu-panel-header"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0mBrowse pages[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"menu-close"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mClose[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"Primary"[39m
+          [33mclass[39m=[32m"menu-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Experiences"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/experiences"[39m
+              [36m>[39m
+                [0mExperiences[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mProfessional experiences, education, and the practical things I've learned along the way[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Training"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/training"[39m
+              [36m>[39m
+                [0mTraining[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mRecords, data, and learning resources to understand and track progress [0m
+            [36m</...
+[90m [2m❯[22m waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m86:33[22m[39m
+[36m [2m❯[22m openPlacesVisitedEditor src/App.test.tsx:[2m64:35[22m[39m
+    [90m 62|[39m   [34mrenderAdminAboutMePage[39m()
+    [90m 63|[39m
+    [90m 64|[39m   [35mconst[39m placesCard [33m=[39m [35mawait[39m screen[33m.[39m[34mfindByText[39m([32m'Places visited'[39m)
+    [90m   |[39m                                   [31m^[39m
+    [90m 65|[39m   [35mconst[39m card [33m=[39m placesCard[33m.[39m[34mclosest[39m([32m'article'[39m)
+    [90m 66|[39m   [35mif[39m ([33m![39mcard) {
+[90m [2m❯[22m src/App.test.tsx:[2m177:34[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/App.test.tsx[2m > [22madmin about me page[2m > [22muses Add New Poll and creates a poll from the admin edit form
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: Personal interests/questions
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<h3>[39m
+  [0mPersonal interests/questions[0m
+[36m</h3>[39m
+
+Ignored nodes: comments, script, style
+[36m<h3>[39m
+  [0mPersonal interests/questions[0m
+[36m</h3>[39m
+
+Ignored nodes: comments, script, style
+[36m<h3>[39m
+  [0mPersonal interests/questions[0m
+[36m</h3>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"topbar"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33maria-label[39m=[32m"Go to home page"[39m
+          [33mclass[39m=[32m"brand"[39m
+          [33mhref[39m=[32m"/"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-mark"[39m
+          [36m>[39m
+            [0mPF[0m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-copy"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPasionfruit[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mEnjoying life[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"topbar-actions"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Current profile"[39m
+            [33mclass[39m=[32m"profile-pill"[39m
+          [36m>[39m
+            [0mADMIN[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Enable dark mode"[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"theme-toggle"[39m
+            [33mtitle[39m=[32m"Enable dark mode"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon active"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mr[39m=[32m"4"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23L5.46 5.46"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon "[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.53 3.73a8.9 8.9 0 1 0 4.74 15.82A9.6 9.6 0 0 1 15.53 3.73Z"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"login-link"[39m
+            [33mhref[39m=[32m"/login"[39m
+          [36m>[39m
+            [0mLogin[0m
+          [36m</a>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"site-menu"[39m
+            [33maria-expanded[39m=[32m"false"[39m
+            [33mclass[39m=[32m"menu-toggle"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"sr-only"[39m
+            [36m>[39m
+              [0mToggle navigation[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"menu-backdrop "[39m
+      [36m/>[39m
+      [36m<aside[39m
+        [33mclass[39m=[32m"menu-panel "[39m
+        [33mid[39m=[32m"site-menu"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"menu-panel-header"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0mBrowse pages[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"menu-close"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mClose[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"Primary"[39m
+          [33mclass[39m=[32m"menu-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Experiences"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/experiences"[39m
+              [36m>[39m
+                [0mExperiences[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mProfessional experiences, education, and the practical things I've learned along the way[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Training"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/training"[39m
+              [36m>[39m
+                [0mTraining[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mRecords, data, and learning resources to understand and track progress [0m
+            [36m</...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"topbar"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33maria-label[39m=[32m"Go to home page"[39m
+          [33mclass[39m=[32m"brand"[39m
+          [33mhref[39m=[32m"/"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-mark"[39m
+          [36m>[39m
+            [0mPF[0m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"brand-copy"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mPasionfruit[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mEnjoying life[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"topbar-actions"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Current profile"[39m
+            [33mclass[39m=[32m"profile-pill"[39m
+          [36m>[39m
+            [0mADMIN[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Enable dark mode"[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mclass[39m=[32m"theme-toggle"[39m
+            [33mtitle[39m=[32m"Enable dark mode"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon active"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mr[39m=[32m"4"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2.75v2.5M12 18.75v2.5M21.25 12h-2.5M5.25 12h-2.5M18.54 5.46l-1.77 1.77M7.23 16.77l-1.77 1.77M18.54 18.54l-1.77-1.77M7.23 7.23L5.46 5.46"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"theme-icon "[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.53 3.73a8.9 8.9 0 1 0 4.74 15.82A9.6 9.6 0 0 1 15.53 3.73Z"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"1.8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"login-link"[39m
+            [33mhref[39m=[32m"/login"[39m
+          [36m>[39m
+            [0mLogin[0m
+          [36m</a>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"site-menu"[39m
+            [33maria-expanded[39m=[32m"false"[39m
+            [33mclass[39m=[32m"menu-toggle"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span />[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"sr-only"[39m
+            [36m>[39m
+              [0mToggle navigation[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"menu-backdrop "[39m
+      [36m/>[39m
+      [36m<aside[39m
+        [33mclass[39m=[32m"menu-panel "[39m
+        [33mid[39m=[32m"site-menu"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"menu-panel-header"[39m
+        [36m>[39m
+          [36m<p>[39m
+            [0mBrowse pages[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"menu-close"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mClose[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"Primary"[39m
+          [33mclass[39m=[32m"menu-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Experiences"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/experiences"[39m
+              [36m>[39m
+                [0mExperiences[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mProfessional experiences, education, and the practical things I've learned along the way[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"menu-section-card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"menu-section-row"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-label[39m=[32m"Expand Training"[39m
+                [33mclass[39m=[32m"menu-expander"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m▸[0m
+              [36m</button>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"menu-main-link "[39m
+                [33mhref[39m=[32m"/training"[39m
+              [36m>[39m
+                [0mTraining[0m
+              [36m</a>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"menu-section-summary"[39m
+            [36m>[39m
+              [0mRecords, data, and learning resources to understand and track progress [0m
+            [36m</...
+[90m [2m❯[22m waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m86:33[22m[39m
+[36m [2m❯[22m src/App.test.tsx:[2m213:38[22m[39m
+    [90m211|[39m     [34mrenderAdminAboutMePage[39m()
+    [90m212|[39m
+    [90m213|[39m     const pollHeading = await screen.findByText('Personal interests/qu…
+    [90m   |[39m                                      [31m^[39m
+    [90m214|[39m     [35mconst[39m card [33m=[39m pollHeading[33m.[39m[34mclosest[39m([32m'article'[39m)
+    [90m215|[39m     [35mif[39m ([33m![39mcard) {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m   Start at [22m 12:50:09
+[2m   Duration [22m 3.13s[2m (transform 128ms, setup 0ms, import 268ms, tests 2.21s, environment 550ms)[22m
+

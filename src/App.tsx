@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
@@ -10,6 +10,8 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom'
+import { feature } from 'topojson-client'
+import type { Topology } from 'topojson-specification'
 import './App.css'
 import {
   actuaryExamEntries,
@@ -26,11 +28,19 @@ import {
   type SectionId,
 } from './siteContent'
 import {
+  createBucketItem,
+  createCountry,
+  createPoll,
+  deleteBucketItem,
+  deleteCountry,
+  deletePoll,
   getBucketList,
   getCountries,
   getPolls,
   setBucketCompleted,
   setCountryVisited,
+  updateBucketItem,
+  updateCountry,
   votePoll,
 } from './data/sheets/repositories'
 import type {
@@ -43,6 +53,32 @@ type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
 
 const googleClientConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim())
+
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split('.')
+    if (parts.length < 2) {
+      return null
+    }
+
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+    const json = window.atob(base64)
+    return JSON.parse(json) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
+
+function isExpiredGoogleIdToken(token: string) {
+  const payload = decodeJwtPayload(token)
+  const exp = typeof payload?.exp === 'number' ? payload.exp : undefined
+  if (!exp) {
+    return false
+  }
+
+  const nowSeconds = Math.floor(Date.now() / 1000)
+  return exp <= nowSeconds
+}
 
 function getInitialProfile(): UserProfile {
   if (typeof window === 'undefined') {
@@ -58,7 +94,17 @@ function getInitialGoogleToken() {
     return ''
   }
 
-  return window.localStorage.getItem('google-id-token') ?? ''
+  const token = window.localStorage.getItem('google-id-token') ?? ''
+  if (!token) {
+    return ''
+  }
+
+  if (isExpiredGoogleIdToken(token)) {
+    window.localStorage.removeItem('google-id-token')
+    return ''
+  }
+
+  return token
 }
 
 function getActiveSectionId(pathname: string): SectionId | undefined {
@@ -644,7 +690,11 @@ function SectionPage({
       downloadWordHref={experienceDownloads?.wordHref}
     >
       {section.cards.map((card) => {
-        if (sectionId === 'mrpasionfruit' && card.title === 'Personal interests/questions') {
+        if (sectionId === 'mrpasionfruit' && card.title === 'Meet the Oreo Gang') {
+          return <CollapsibleTextCard key={card.title} title={card.title} body={card.body} />
+        }
+
+        if (sectionId === 'mrpasionfruit' && card.title === 'Question of the Day') {
           return (
             <PollCard
               key={card.title}
@@ -719,6 +769,28 @@ function SectionPage({
   )
 }
 
+function CollapsibleTextCard({ title, body }: { title: string; body: string }) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  return (
+    <article className="info-card section-page-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((value) => !value)}
+        >
+          {isCollapsed ? 'Show' : 'Hide'}
+        </button>
+      </div>
+
+      {!isCollapsed ? <p>{body}</p> : null}
+    </article>
+  )
+}
+
 function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
   const lines = body
     .split('\n')
@@ -742,6 +814,23 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
       </ul>
     </article>
   )
+}
+
+function formatSheetDate(value?: string) {
+  if (!value) {
+    return 'Pending'
+  }
+
+  const parsedDate = new Date(value)
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value
+  }
+
+  return parsedDate.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
 }
 
 function parseBucketFallback(body: string): BucketListRecord[] {
@@ -768,9 +857,26 @@ function PollCard({
   idToken: string
 }) {
   const [rows, setRows] = useState<PollRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
+  const [draftQuestion, setDraftQuestion] = useState('')
+  const [draftOptionA, setDraftOptionA] = useState('')
+  const [draftOptionB, setDraftOptionB] = useState('')
+  const [votedPollIds, setVotedPollIds] = useState<Record<string, boolean>>(() => {
+    if (typeof window === 'undefined') {
+      return {}
+    }
+
+    try {
+      const raw = window.localStorage.getItem('voted-poll-ids')
+      return raw ? (JSON.parse(raw) as Record<string, boolean>) : {}
+    } catch {
+      return {}
+    }
+  })
 
   async function loadPolls() {
     try {
@@ -787,102 +893,253 @@ function PollCard({
     void loadPolls()
   }, [])
 
-  async function handleVote(selectedOption: 'A' | 'B') {
-    if (!idToken || !activePoll || isWriting) {
-      return
-    }
-
-    const previousRows = rows
-    setIsWriting(true)
-    setWriteError('')
-    setRows((currentRows) =>
-      currentRows.map((row) => {
-        if (row.poll_id !== activePoll.poll_id) {
-          return row
-        }
-
-        const optionAVotes = row.option_a_votes ?? 0
-        const optionBVotes = row.option_b_votes ?? 0
-        const nextOptionAVotes = selectedOption === 'A' ? optionAVotes + 1 : optionAVotes
-        const nextOptionBVotes = selectedOption === 'B' ? optionBVotes + 1 : optionBVotes
-
-        return {
-          ...row,
-          option_a_votes: nextOptionAVotes,
-          option_b_votes: nextOptionBVotes,
-          total_votes: (row.total_votes ?? 0) + 1,
-          winning_option:
-            nextOptionAVotes === nextOptionBVotes
-              ? 'tie'
-              : nextOptionAVotes > nextOptionBVotes
-                ? 'A'
-                : 'B',
-        }
-      }),
-    )
-
-    try {
-      await votePoll(idToken, activePoll.poll_id, selectedOption)
-      void loadPolls()
-    } catch (error) {
-      setRows(previousRows)
-      setWriteError(error instanceof Error ? error.message : 'Unable to submit vote')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
   const activePoll = [...rows].sort((a, b) => {
     const aTime = a.created_date ? new Date(a.created_date).getTime() : 0
     const bTime = b.created_date ? new Date(b.created_date).getTime() : 0
     return bTime - aTime
   })[0]
 
+  const optionAVotes = activePoll?.option_a_votes ?? 0
+  const optionBVotes = activePoll?.option_b_votes ?? 0
+  const distributionTotalVotes = optionAVotes + optionBVotes
+  const optionAPercent = distributionTotalVotes > 0 ? (optionAVotes / distributionTotalVotes) * 100 : 50
+  const optionBPercent = 100 - optionAPercent
+  const hasVotedActivePoll = activePoll ? Boolean(votedPollIds[activePoll.poll_id]) : false
+
+  useEffect(() => {
+    setDraftQuestion(activePoll?.question ?? '')
+    setDraftOptionA(activePoll?.option_a ?? '')
+    setDraftOptionB(activePoll?.option_b ?? '')
+  }, [activePoll?.poll_id])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    window.localStorage.setItem('voted-poll-ids', JSON.stringify(votedPollIds))
+  }, [votedPollIds])
+
+  async function handleVote(selectedOption: 'A' | 'B') {
+    if (!idToken || !activePoll || isWriting || hasVotedActivePoll) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await votePoll(idToken, activePoll.poll_id, selectedOption)
+      setVotedPollIds((current) => ({ ...current, [activePoll.poll_id]: true }))
+      await loadPolls()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to submit vote')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleSavePoll() {
+    if (!idToken || isWriting) {
+      return
+    }
+
+    const question = draftQuestion.trim()
+    const optionA = draftOptionA.trim()
+    const optionB = draftOptionB.trim()
+    if (!question || !optionA || !optionB) {
+      setWriteError('Question and both options are required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+
+    try {
+      await createPoll(idToken, question, optionA, optionB)
+      await loadPolls()
+      setIsEditing(false)
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to save poll')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDeletePoll() {
+    if (!idToken || !activePoll || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deletePoll(idToken, activePoll.poll_id)
+      await loadPolls()
+      setIsEditing(false)
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete poll')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   return (
     <article className="info-card section-page-card sheets-card">
-      <h3>{title}</h3>
-      {isLoading ? <p className="sheets-meta">Loading poll...</p> : null}
-
-      {activePoll ? (
-        <>
-          <p className="sheets-question">{activePoll.question}</p>
-          <ul className="sheets-list">
-            <li className="sheets-item">A: {activePoll.option_a} ({activePoll.option_a_votes ?? 0})</li>
-            <li className="sheets-item">B: {activePoll.option_b} ({activePoll.option_b_votes ?? 0})</li>
-          </ul>
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
           {canWrite ? (
-            idToken ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading poll...</p> : null}
+
+          {activePoll ? (
+            <>
+              <p className="sheets-question">{activePoll.question}</p>
+              <div className="poll-distribution" aria-label="Current vote distribution">
+                <div className="poll-distribution-bar" role="img" aria-label="Current vote split">
+                  <span
+                    className="poll-distribution-segment poll-distribution-segment-a"
+                    style={{ width: `${optionAPercent}%` }}
+                  />
+                  <span
+                    className="poll-distribution-segment poll-distribution-segment-b"
+                    style={{ width: `${optionBPercent}%` }}
+                  />
+                </div>
+                <div className="poll-distribution-meta">
+                  <span>
+                    A: {activePoll.option_a} ({optionAVotes}) {Math.round(optionAPercent)}%
+                  </span>
+                  <span>
+                    B: {activePoll.option_b} ({optionBVotes}) {Math.round(optionBPercent)}%
+                  </span>
+                </div>
+              </div>
+              <ul className="sheets-list">
+                <li className="sheets-item">A: {activePoll.option_a} ({activePoll.option_a_votes ?? 0})</li>
+                <li className="sheets-item">B: {activePoll.option_b} ({activePoll.option_b_votes ?? 0})</li>
+              </ul>
+              {!canWrite ? (
+                idToken ? (
+                  hasVotedActivePoll ? (
+                    <p className="sheets-meta">You have already voted on this poll.</p>
+                  ) : (
+                    <div className="sheets-actions">
+                      <button
+                        type="button"
+                        className="secondary-action"
+                        disabled={isWriting}
+                        onClick={() => void handleVote('A')}
+                      >
+                        Vote A
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary-action"
+                        disabled={isWriting}
+                        onClick={() => void handleVote('B')}
+                      >
+                        Vote B
+                      </button>
+                    </div>
+                  )
+                ) : (
+                  <p className="sheets-meta">Sign in with Google on Login page to vote.</p>
+                )
+              ) : null}
+              <p className="sheets-meta">Total votes: {activePoll.total_votes ?? 0}</p>
+              {activePoll.winning_option ? (
+                <p className="sheets-meta">Winning option: {activePoll.winning_option}</p>
+              ) : null}
+            </>
+          ) : (
+            <p>{fallbackBody}</p>
+          )}
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          {canWrite && isEditing ? (
+            <div className="sheets-editor">
+              <label>
+                <span className="sheets-meta">Question</span>
+                <input
+                  className="sheets-input"
+                  type="text"
+                  value={draftQuestion}
+                  onChange={(event) => setDraftQuestion(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
+              </label>
+              <label>
+                <span className="sheets-meta">Option A</span>
+                <input
+                  className="sheets-input"
+                  type="text"
+                  value={draftOptionA}
+                  onChange={(event) => setDraftOptionA(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
+              </label>
+              <label>
+                <span className="sheets-meta">Option B</span>
+                <input
+                  className="sheets-input"
+                  type="text"
+                  value={draftOptionB}
+                  onChange={(event) => setDraftOptionB(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
+              </label>
               <div className="sheets-actions">
                 <button
                   type="button"
                   className="secondary-action"
-                  disabled={isWriting}
-                  onClick={() => void handleVote('A')}
+                  onClick={() => void handleSavePoll()}
+                  disabled={!idToken || isWriting}
                 >
-                  Vote A
+                  Add New Poll
                 </button>
-                <button
-                  type="button"
-                  className="secondary-action"
-                  disabled={isWriting}
-                  onClick={() => void handleVote('B')}
-                >
-                  Vote B
-                </button>
+                {activePoll ? (
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleDeletePoll()}
+                    disabled={!idToken || isWriting}
+                  >
+                    Delete Poll
+                  </button>
+                ) : null}
               </div>
-            ) : (
-              <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
-            )
+            </div>
           ) : null}
-          <p className="sheets-meta">Total votes: {activePoll.total_votes ?? 0}</p>
-          {activePoll.winning_option ? (
-            <p className="sheets-meta">Winning option: {activePoll.winning_option}</p>
-          ) : null}
+
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
         </>
-      ) : (
-        <p>{fallbackBody}</p>
-      )}
+      ) : null}
     </article>
   )
 }
@@ -899,9 +1156,13 @@ function BucketListCard({
   idToken: string
 }) {
   const [rows, setRows] = useState<BucketListRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
+  const [newItem, setNewItem] = useState('')
+  const [editedItems, setEditedItems] = useState<Record<string, string>>({})
 
   async function loadBucketList() {
     try {
@@ -917,6 +1178,14 @@ function BucketListCard({
   useEffect(() => {
     void loadBucketList()
   }, [])
+
+  useEffect(() => {
+    const next: Record<string, string> = {}
+    rows.forEach((row) => {
+      next[row.bucket_id] = row.item
+    })
+    setEditedItems(next)
+  }, [rows])
 
   const visibleRows = rows.length > 0 ? rows : parseBucketFallback(fallbackBody)
 
@@ -952,38 +1221,349 @@ function BucketListCard({
     }
   }
 
+  async function handleCreate() {
+    if (!idToken || isWriting) {
+      return
+    }
+    const item = newItem.trim()
+    if (!item) {
+      setWriteError('Item is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createBucketItem(idToken, item)
+      setNewItem('')
+      await loadBucketList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleRename(row: BucketListRecord) {
+    if (!idToken || isWriting || row.bucket_id.startsWith('fallback-')) {
+      return
+    }
+    const item = (editedItems[row.bucket_id] ?? row.item).trim()
+    if (!item) {
+      setWriteError('Item is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateBucketItem(idToken, row.bucket_id, item)
+      await loadBucketList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDelete(row: BucketListRecord) {
+    if (!idToken || isWriting || row.bucket_id.startsWith('fallback-')) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteBucketItem(idToken, row.bucket_id)
+      await loadBucketList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   return (
     <article className="info-card section-page-card sheets-card">
-      <h3>{title}</h3>
-      {isLoading ? <p className="sheets-meta">Loading list...</p> : null}
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
+        </div>
+      </div>
 
-      <ul className="sheets-list">
-        {visibleRows.map((row) => (
-          <li key={row.bucket_id} className={`sheets-item ${row.completed ? 'completed' : ''}`}>
-            <div className="sheets-row">
-              <span>
-                {row.item}
-                {row.completed_date ? <span className="sheets-date"> ({row.completed_date})</span> : null}
-              </span>
-              {canWrite && !row.bucket_id.startsWith('fallback-') ? (
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading list...</p> : null}
+
+          <ol className="bucket-guest-list">
+            {visibleRows.map((row) => (
+              <li key={row.bucket_id} className={`bucket-guest-item ${row.completed ? 'completed' : ''}`}>
+                <div className="bucket-guest-row">
+                  <span>{row.item}</span>
+                  <span className="bucket-guest-date">{formatSheetDate(row.completed_date)}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          {canWrite && isEditing ? (
+            <div className="sheets-editor">
+              <p className="sheets-meta">Edit bucket list</p>
+              <div className="sheets-editor-row">
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="New item"
+                  value={newItem}
+                  onChange={(event) => setNewItem(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
                 <button
                   type="button"
                   className="secondary-action"
+                  onClick={() => void handleCreate()}
                   disabled={!idToken || isWriting}
-                  onClick={() => void handleToggle(row)}
                 >
-                  {row.completed ? 'Mark Incomplete' : 'Mark Complete'}
+                  Add
                 </button>
-              ) : null}
+              </div>
+
+              {rows.map((row) => (
+                <div key={`edit-${row.bucket_id}`} className="sheets-editor-row">
+                  <input
+                    className="sheets-input"
+                    type="text"
+                    value={editedItems[row.bucket_id] ?? row.item}
+                    onChange={(event) =>
+                      setEditedItems((current) => ({ ...current, [row.bucket_id]: event.target.value }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleRename(row)}
+                    disabled={!idToken || isWriting}
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleToggle(row)}
+                    disabled={!idToken || isWriting}
+                  >
+                    {row.completed ? 'Uncheck' : 'Check'}
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleDelete(row)}
+                    disabled={!idToken || isWriting}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
             </div>
-          </li>
-        ))}
-      </ul>
-      {canWrite && !idToken ? (
-        <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
       ) : null}
-      {writeError ? <p className="sheets-error">{writeError}</p> : null}
     </article>
+  )
+}
+
+const WORLD_GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
+const SVG_W = 960
+const SVG_H = 480
+
+// Maps sheet names → world-atlas Natural Earth names (and reverse)
+const COUNTRY_NAME_ALIASES: Record<string, string> = {
+  // Americas
+  'united states': 'united states of america',
+  'usa': 'united states of america',
+  // Europe
+  'uk': 'united kingdom',
+  'great britain': 'united kingdom',
+  'czech republic': 'czechia',
+  'czechia': 'czech republic',
+  'turkey': 'türkiye',
+  'türkiye': 'turkey',
+  'moldova': 'republic of moldova',
+  'republic of moldova': 'moldova',
+  'north macedonia': 'macedonia',
+  'macedonia': 'north macedonia',
+  'bosnia and herzegovina': 'bosnia and herz.',
+  'bosnia and herz.': 'bosnia and herzegovina',
+  // Africa — world-atlas 110m uses abbreviated names
+  'democratic republic of the congo': 'dem. rep. congo',
+  'dem. rep. congo': 'democratic republic of the congo',
+  'central african republic': 'central african rep.',
+  'central african rep.': 'central african republic',
+  'equatorial guinea': 'eq. guinea',
+  'eq. guinea': 'equatorial guinea',
+  'south sudan': 's. sudan',
+  's. sudan': 'south sudan',
+  'gambia': 'the gambia',
+  'the gambia': 'gambia',
+  'tanzania': 'united rep. of tanzania',
+  'united rep. of tanzania': 'tanzania',
+  'ivory coast': "côte d'ivoire",
+  "côte d'ivoire": 'ivory coast',
+  'cape verde': 'cabo verde',
+  'cabo verde': 'cape verde',
+  'swaziland': 'eswatini',
+  'eswatini': 'swaziland',
+  // Asia
+  'north korea': 'dem. rep. korea',
+  'dem. rep. korea': 'north korea',
+  'south korea': 'republic of korea',
+  'republic of korea': 'south korea',
+  'laos': 'lao pdr',
+  'lao pdr': 'laos',
+  'timor-leste': 'east timor',
+  'east timor': 'timor-leste',
+  'myanmar': 'burma',
+  'burma': 'myanmar',
+  'vietnam': 'viet nam',
+  'viet nam': 'vietnam',
+  // Oceania
+  'micronesia': 'federated states of micronesia',
+  'federated states of micronesia': 'micronesia',
+}
+
+type GeoFeature = {
+  id: string | number
+  type: string
+  properties: Record<string, unknown>
+  geometry: { type: string; coordinates: number[][][][] }
+}
+
+function projectXY(lon: number, lat: number): [number, number] {
+  return [(lon + 180) * (SVG_W / 360), (90 - lat) * (SVG_H / 180)]
+}
+
+function ringToPath(ring: number[][]): string {
+  if (ring.length === 0) return ''
+
+  let d = ''
+  let prevLon: number | null = null
+
+  for (let i = 0; i < ring.length; i += 1) {
+    const coord = ring[i]
+    const lon = coord[0]
+    const lat = coord[1]
+    const [x, y] = projectXY(lon, lat)
+
+    // Break the segment when crossing the antimeridian to avoid long seam lines.
+    const crossesDateLine = prevLon !== null && Math.abs(lon - prevLon) > 180
+    const cmd = i === 0 || crossesDateLine ? 'M' : 'L'
+    d += `${cmd}${x.toFixed(1)},${y.toFixed(1)}`
+    prevLon = lon
+  }
+
+  return d + 'Z'
+}
+
+function geoToPath(geometry: GeoFeature['geometry']): string {
+  if (geometry.type === 'Polygon') {
+    return (geometry.coordinates as unknown as number[][][]).map((ring) => ringToPath(ring)).join('')
+  }
+  if (geometry.type === 'MultiPolygon') {
+    return (geometry.coordinates as number[][][][])
+      .flatMap((poly) => poly.map((ring) => ringToPath(ring)))
+      .join('')
+  }
+  return ''
+}
+
+function WorldMap({ rows }: { rows: CountryRecord[] }) {
+  const [geographies, setGeographies] = useState<GeoFeature[]>([])
+
+  useEffect(() => {
+    fetch(WORLD_GEO_URL)
+      .then((r) => r.json())
+      .then((topology: Topology) => {
+        const countries = feature(
+          topology,
+          (topology.objects as Record<string, Parameters<typeof feature>[1]>)['countries'],
+        )
+        setGeographies('features' in countries ? (countries.features as GeoFeature[]) : [])
+      })
+      .catch(() => {})
+  }, [])
+
+  const visitedNormalized = useMemo(() => {
+    const set = new Set<string>()
+    rows
+      .filter((r) => r.visited)
+      .forEach((r) => set.add(r.country_state_name.toLowerCase().trim()))
+    return set
+  }, [rows])
+
+  function isVisited(geoName: string): boolean {
+    const n = geoName.toLowerCase().trim()
+    if (visitedNormalized.has(n)) return true
+    const alias = COUNTRY_NAME_ALIASES[n]
+    if (alias && visitedNormalized.has(alias)) return true
+    // Prefix match: "United States" in sheet matches "United States of America" in atlas
+    for (const v of visitedNormalized) {
+      if (v.length >= 5 && n.startsWith(v)) return true
+    }
+    return false
+  }
+
+  return (
+    <div className="world-map-container">
+      {geographies.length === 0 ? (
+        <p className="sheets-meta">Loading map...</p>
+      ) : (
+        <svg
+          viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ width: '100%', height: 'auto', display: 'block' }}
+          aria-label="World map showing visited countries"
+        >
+          {geographies.map((geo) => {
+            const name = String(geo.properties?.name ?? '')
+            const visited = isVisited(name)
+            return (
+              <path
+                key={String(geo.id)}
+                d={geoToPath(geo.geometry)}
+                className={visited ? 'map-country map-country--visited' : 'map-country'}
+                stroke="var(--map-stroke)"
+                strokeWidth={0.5}
+              />
+            )
+          })}
+        </svg>
+      )}
+    </div>
   )
 }
 
@@ -999,9 +1579,14 @@ function CountriesCard({
   idToken: string
 }) {
   const [rows, setRows] = useState<CountryRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
+  const [newPlace, setNewPlace] = useState('')
+  const [placeFilter, setPlaceFilter] = useState('')
+  const [editedPlaces, setEditedPlaces] = useState<Record<string, string>>({})
 
   async function loadCountries() {
     try {
@@ -1018,8 +1603,19 @@ function CountriesCard({
     void loadCountries()
   }, [])
 
+  useEffect(() => {
+    const next: Record<string, string> = {}
+    rows.forEach((row) => {
+      next[row.country_id] = row.country_state_name
+    })
+    setEditedPlaces(next)
+  }, [rows])
+
   const visited = rows
     .filter((row) => row.visited)
+    .sort((a, b) => a.country_state_name.localeCompare(b.country_state_name))
+  const filteredRows = rows
+    .filter((row) => row.country_state_name.toLowerCase().includes(placeFilter.toLowerCase().trim()))
     .sort((a, b) => a.country_state_name.localeCompare(b.country_state_name))
 
   async function handleToggle(row: CountryRecord) {
@@ -1054,62 +1650,217 @@ function CountriesCard({
     }
   }
 
+  async function handleCreate() {
+    if (!idToken || isWriting) {
+      return
+    }
+
+    const name = newPlace.trim()
+    if (!name) {
+      setWriteError('Place name is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createCountry(idToken, name, false)
+      setNewPlace('')
+      await loadCountries()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create place')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleRename(row: CountryRecord) {
+    if (!idToken || isWriting) {
+      return
+    }
+
+    const name = (editedPlaces[row.country_id] ?? row.country_state_name).trim()
+    if (!name) {
+      setWriteError('Place name is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateCountry(idToken, row.country_id, name)
+      await loadCountries()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update place')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDelete(row: CountryRecord) {
+    if (!idToken || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteCountry(idToken, row.country_id)
+      await loadCountries()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete place')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   return (
     <article className="info-card section-page-card sheets-card">
-      <h3>{title}</h3>
-      {isLoading ? <p className="sheets-meta">Loading places...</p> : null}
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
+        </div>
+      </div>
 
-      {visited.length > 0 ? (
-        <ul className="sheets-list">
-          {visited.map((row) => (
-            <li key={row.country_id} className="sheets-item">
-              <div className="sheets-row">
-                <span>
-                  {row.country_state_name}
-                  {row.visited_date ? <span className="sheets-date"> ({row.visited_date})</span> : null}
-                </span>
-                {canWrite ? (
-                  <button
-                    type="button"
-                    className="secondary-action"
-                    disabled={!idToken || isWriting}
-                    onClick={() => void handleToggle(row)}
-                  >
-                    Mark Unvisited
-                  </button>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>{fallbackBody}</p>
-      )}
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading places...</p> : null}
 
-      {canWrite && rows.length > 0 ? (
-        <ul className="sheets-list">
-          {rows.filter((row) => !row.visited).map((row) => (
-            <li key={`${row.country_id}-pending`} className="sheets-item">
-              <div className="sheets-row">
-                <span>{row.country_state_name}</span>
+          {
+            <>
+              <WorldMap rows={rows} />
+              {!isLoading ? (
+                <p className="sheets-meta">
+                  {visited.length > 0
+                    ? `${visited.length} ${visited.length === 1 ? 'place' : 'places'} visited`
+                    : fallbackBody}
+                </p>
+              ) : null}
+            </>
+          }
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          {canWrite && isEditing ? (
+            <div className="sheets-editor">
+              <p className="sheets-meta">Edit places visited</p>
+              <div className="sheets-editor-row">
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="New place"
+                  value={newPlace}
+                  onChange={(event) => setNewPlace(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
                 <button
                   type="button"
                   className="secondary-action"
+                  onClick={() => void handleCreate()}
                   disabled={!idToken || isWriting}
-                  onClick={() => void handleToggle(row)}
                 >
-                  Mark Visited
+                  Add
                 </button>
               </div>
-            </li>
-          ))}
-        </ul>
-      ) : null}
 
-      {canWrite && !idToken ? (
-        <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+              <input
+                className="sheets-input"
+                type="text"
+                placeholder="Filter by name"
+                value={placeFilter}
+                onChange={(event) => setPlaceFilter(event.target.value)}
+                disabled={!idToken || isWriting}
+              />
+
+              <div className="sheets-table-shell">
+                <table className="sheets-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Visited</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRows.map((row) => (
+                      <tr key={`edit-${row.country_id}`}>
+                        <td>
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={editedPlaces[row.country_id] ?? row.country_state_name}
+                            onChange={(event) =>
+                              setEditedPlaces((current) => ({
+                                ...current,
+                                [row.country_id]: event.target.value,
+                              }))
+                            }
+                            disabled={!idToken || isWriting}
+                          />
+                        </td>
+                        <td>{row.visited ? 'Yes' : 'No'}</td>
+                        <td>
+                          <div className="sheets-table-actions">
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleRename(row)}
+                              disabled={!idToken || isWriting}
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleToggle(row)}
+                              disabled={!idToken || isWriting}
+                            >
+                              {row.visited ? 'Unvisit' : 'Visit'}
+                            </button>
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleDelete(row)}
+                              disabled={!idToken || isWriting}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredRows.length === 0 ? <p className="sheets-meta">No places match that filter.</p> : null}
+            </div>
+          ) : null}
+
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
       ) : null}
-      {writeError ? <p className="sheets-error">{writeError}</p> : null}
     </article>
   )
 }
@@ -1855,7 +2606,7 @@ function LoginPage({
                 className="secondary-action"
                 onClick={() => {
                   onSwitchProfile('guest')
-                  navigate('/training')
+                  navigate('/')
                 }}
               >
                 Use Guest Profile
@@ -1867,10 +2618,10 @@ function LoginPage({
               <p>Editable profile. You can update event title and event date.</p>
               <button
                 type="button"
-                className="primary-action"
+                className="secondary-action"
                 onClick={() => {
                   onSwitchProfile('admin')
-                  navigate('/training')
+                  navigate('/')
                 }}
               >
                 Use Admin Profile

@@ -79,7 +79,22 @@ async function runWrite(payload: Record<string, unknown>) {
   const result = await postSheetsAction<SheetsWriteResponse>(payload)
 
   if (!result.ok) {
-    throw new Error(result.error || 'Sheets write failed')
+    const rawError = result.error || 'Sheets write failed'
+    const actionName = typeof payload.action === 'string' ? payload.action : 'unknown-action'
+
+    if (/invalid token/i.test(rawError)) {
+      throw new Error(
+        'Invalid or expired Google token. Please sign in again on Login. If this persists only for Add/Update/Delete, your Apps Script likely needs those new action handlers deployed.',
+      )
+    }
+
+    if (/unknown action/i.test(rawError)) {
+      throw new Error(
+        `Unsupported Apps Script action: ${actionName}. Add this case to your Apps Script doPost action router, then redeploy the Web App.`,
+      )
+    }
+
+    throw new Error(rawError)
   }
 }
 
@@ -107,5 +122,91 @@ export async function setCountryVisited(idToken: string, countryId: string, visi
     idToken,
     country_id: countryId,
     visited,
+  })
+}
+
+export async function createPoll(idToken: string, question: string, optionA: string, optionB: string) {
+  await runWrite({
+    action: 'createPoll',
+    idToken,
+    question,
+    option_a: optionA,
+    option_b: optionB,
+  })
+}
+
+export async function updatePoll(
+  idToken: string,
+  pollId: string,
+  question: string,
+  optionA: string,
+  optionB: string,
+) {
+  await runWrite({
+    action: 'updatePoll',
+    idToken,
+    poll_id: pollId,
+    question,
+    option_a: optionA,
+    option_b: optionB,
+  })
+}
+
+export async function deletePoll(idToken: string, pollId: string) {
+  await runWrite({
+    action: 'deletePoll',
+    idToken,
+    poll_id: pollId,
+  })
+}
+
+export async function createBucketItem(idToken: string, item: string) {
+  await runWrite({
+    action: 'createBucketItem',
+    idToken,
+    item,
+  })
+}
+
+export async function updateBucketItem(idToken: string, bucketId: string, item: string) {
+  await runWrite({
+    action: 'updateBucketItem',
+    idToken,
+    bucket_id: bucketId,
+    item,
+  })
+}
+
+export async function deleteBucketItem(idToken: string, bucketId: string) {
+  await runWrite({
+    action: 'deleteBucketItem',
+    idToken,
+    bucket_id: bucketId,
+  })
+}
+
+export async function createCountry(idToken: string, countryStateName: string, visited = false) {
+  await runWrite({
+    action: 'createCountry',
+    idToken,
+    country_state_name: countryStateName,
+    visited,
+  })
+}
+
+export async function updateCountry(idToken: string, countryId: string, countryStateName: string) {
+  await runWrite({
+    action: 'updateCountry',
+    idToken,
+    country_id: countryId,
+    country_state_name: countryStateName,
+  })
+}
+
+export async function deleteCountry(idToken: string, countryId: string) {
+  await runWrite({
+    action: 'deleteCountry',
+    idToken,
+    country_id: countryId,
   })
 }

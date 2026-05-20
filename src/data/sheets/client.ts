@@ -62,7 +62,7 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
   
   // Map table names to sheet ranges (all columns, up to 10000 rows)
   const ranges: Record<string, string> = {
-    polls: 'polls!A1:F10000',
+    polls: 'polls!A1:Z10000',
     bucket_list: 'bucket_list!A1:D10000',
     countries: 'countries!A1:D10000',
   }
