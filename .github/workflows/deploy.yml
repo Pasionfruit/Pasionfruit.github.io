@@ -39,11 +39,13 @@ jobs:
           VITE_SHEETS_SPREADSHEET_ID: ${{ vars.VITE_SHEETS_SPREADSHEET_ID || secrets.VITE_SHEETS_SPREADSHEET_ID }}
           VITE_SHEETS_API_KEY: ${{ vars.VITE_SHEETS_API_KEY || secrets.VITE_SHEETS_API_KEY }}
           VITE_SHEETS_API_BASE_URL: ${{ vars.VITE_SHEETS_API_BASE_URL || secrets.VITE_SHEETS_API_BASE_URL }}
+          VITE_TODOIST_API_TOKEN: ${{ vars.VITE_TODOIST_API_TOKEN || secrets.VITE_TODOIST_API_TOKEN }}
         run: |
           test -n "$VITE_GOOGLE_CLIENT_ID" || { echo "Missing VITE_GOOGLE_CLIENT_ID"; exit 1; }
           test -n "$VITE_SHEETS_SPREADSHEET_ID" || { echo "Missing VITE_SHEETS_SPREADSHEET_ID"; exit 1; }
           test -n "$VITE_SHEETS_API_KEY" || { echo "Missing VITE_SHEETS_API_KEY"; exit 1; }
           test -n "$VITE_SHEETS_API_BASE_URL" || { echo "Missing VITE_SHEETS_API_BASE_URL"; exit 1; }
+          test -n "$VITE_TODOIST_API_TOKEN" || { echo "Missing VITE_TODOIST_API_TOKEN"; exit 1; }
 
       - name: Build
         run: npm run build
@@ -52,6 +54,7 @@ jobs:
           VITE_SHEETS_SPREADSHEET_ID: ${{ vars.VITE_SHEETS_SPREADSHEET_ID || secrets.VITE_SHEETS_SPREADSHEET_ID }}
           VITE_SHEETS_API_KEY: ${{ vars.VITE_SHEETS_API_KEY || secrets.VITE_SHEETS_API_KEY }}
           VITE_SHEETS_API_BASE_URL: ${{ vars.VITE_SHEETS_API_BASE_URL || secrets.VITE_SHEETS_API_BASE_URL }}
+          VITE_TODOIST_API_TOKEN: ${{ vars.VITE_TODOIST_API_TOKEN || secrets.VITE_TODOIST_API_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

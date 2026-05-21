@@ -576,6 +576,110 @@ describe('admin about me page', () => {
     vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
   })
 
+  it('shows Home training table and allows authorized admin to mark workout complete', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+
+    const today = new Date()
+    const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
+
+    repoMocks.getTrainingRecords.mockResolvedValueOnce([
+      {
+        training_id: 'home-training-today',
+        date: todayIso,
+        morning_workout: 'Easy Run 20 min',
+        evening_workout: 'Stretch 10 min',
+        completed_morning: false,
+        completed_evening: false,
+      },
+    ])
+
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training and Studying' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Home training/studying card not found')
+    }
+
+    const markButtons = await within(card).findAllByRole('button', { name: 'Mark Complete' })
+    await user.click(markButtons[0])
+
+    await waitFor(() => {
+      expect(repoMocks.setTrainingWorkoutCompleted).toHaveBeenCalledWith(
+        expect.stringContaining('.'),
+        'home-training-today',
+        'morning',
+        true,
+      )
+    })
+  })
+
+  it('shows Home studying table and allows authorized admin to mark lesson complete', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training and Studying' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Home training/studying card not found')
+    }
+
+    await user.click(within(card).getByRole('tab', { name: 'Studying' }))
+
+    const interestTopic = await within(card).findByText('Interest Theory')
+    const interestRow = interestTopic.closest('tr')
+    if (!interestRow) {
+      throw new Error('Home Interest Theory row not found')
+    }
+
+    await user.click(within(interestRow).getByRole('button', { name: 'Mark Complete' }))
+
+    await waitFor(() => {
+      expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith(
+        expect.stringContaining('.'),
+        'study-1',
+        true,
+      )
+    })
+  })
+
+  it('blocks Home training/studying completion editing for non-authorized account', async () => {
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
+
+    const today = new Date()
+    const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
+
+    repoMocks.getTrainingRecords.mockResolvedValueOnce([
+      {
+        training_id: 'home-training-today',
+        date: todayIso,
+        morning_workout: 'Easy Run 20 min',
+        evening_workout: 'Stretch 10 min',
+        completed_morning: false,
+        completed_evening: false,
+      },
+    ])
+
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training and Studying' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Home training/studying card not found')
+    }
+
+    expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
+    expect(
+      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+    ).toBeTruthy()
+  })
+
   it('renders Training Log card and loads records on training page', async () => {
     const user = userEvent.setup()
     renderTrainingPage()

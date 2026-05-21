@@ -1008,6 +1008,10 @@
   margin-bottom: 0.9rem;
 }
 
+.home-daily-focus-card {
+  margin-bottom: 0.9rem;
+}
+
 .todoist-create-row {
   display: grid;
   gap: 0.5rem;

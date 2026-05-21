@@ -669,6 +669,7 @@ function HomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdTo
   return (
     <div className="page home-page">
       <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+      <HomeDailyFocusCard profile={profile} googleIdToken={googleIdToken} />
       <section id="sections" className="section-block">
         <div className="section-grid">
           {navSections.map((section) => (
@@ -687,6 +688,284 @@ function HomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdTo
         </div>
       </section>
     </div>
+  )
+}
+
+function HomeDailyFocusCard({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+  const googleEmail = getGoogleTokenEmail(googleIdToken)
+  const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+  const [view, setView] = useState<'training' | 'studying'>('training')
+  const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
+  const [studyRows, setStudyRows] = useState<CurrentStudyRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+
+  async function loadDailyData() {
+    try {
+      const [trainingData, studyData] = await Promise.all([getTrainingRecords(), getCurrentStudy()])
+      setTrainingRows(trainingData)
+      setStudyRows(studyData)
+      setWriteError('')
+    } catch {
+      setTrainingRows([])
+      setStudyRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadDailyData()
+  }, [])
+
+  const todayKey = toDateOnlyKey(new Date().toISOString())
+
+  const todaysTrainingRecord = useMemo(
+    () => trainingRows.find((row) => toDateOnlyKey(row.date) === todayKey),
+    [trainingRows, todayKey],
+  )
+
+  const todaysLessons = useMemo(() => {
+    return studyRows
+      .filter((row) => {
+        if (toDateOnlyKey(row.date) !== todayKey) {
+          return false
+        }
+
+        const topic = row.topic.trim()
+        if (!topic) {
+          return false
+        }
+
+        if (topic.toLowerCase() === 'rest day') {
+          return false
+        }
+
+        if (/^take sample exam #\d+$/i.test(topic)) {
+          return false
+        }
+
+        if (/^attempt \d+ problems$/i.test(topic)) {
+          return false
+        }
+
+        return true
+      })
+      .sort((a, b) => a.topic.localeCompare(b.topic))
+  }, [studyRows, todayKey])
+
+  async function handleToggleTrainingWorkout(period: 'morning' | 'evening') {
+    if (!canWrite || !googleIdToken || !todaysTrainingRecord || isWriting) {
+      return
+    }
+
+    const isMorning = period === 'morning'
+    const nextCompleted = isMorning
+      ? !todaysTrainingRecord.completed_morning
+      : !todaysTrainingRecord.completed_evening
+    const previousRows = trainingRows
+
+    setIsWriting(true)
+    setWriteError('')
+    setTrainingRows((currentRows) =>
+      currentRows.map((row) => {
+        if (row.training_id !== todaysTrainingRecord.training_id) {
+          return row
+        }
+
+        if (isMorning) {
+          return { ...row, completed_morning: nextCompleted }
+        }
+
+        return { ...row, completed_evening: nextCompleted }
+      }),
+    )
+
+    try {
+      await setTrainingWorkoutCompleted(googleIdToken, todaysTrainingRecord.training_id, period, nextCompleted)
+      await loadDailyData()
+    } catch (error) {
+      setTrainingRows(previousRows)
+      setWriteError(error instanceof Error ? error.message : 'Unable to update workout completion state')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleToggleStudyLesson(row: CurrentStudyRecord) {
+    if (!canWrite || !googleIdToken || isWriting) {
+      return
+    }
+
+    const previousRows = studyRows
+    const nextCompleted = !row.completed
+    setIsWriting(true)
+    setWriteError('')
+    setStudyRows((currentRows) =>
+      currentRows.map((currentRow) =>
+        currentRow.study_id === row.study_id ? { ...currentRow, completed: nextCompleted } : currentRow,
+      ),
+    )
+
+    try {
+      await setCurrentStudyCompleted(googleIdToken, row.study_id, nextCompleted)
+      await loadDailyData()
+    } catch (error) {
+      setStudyRows(previousRows)
+      setWriteError(error instanceof Error ? error.message : 'Unable to update completion state')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card home-daily-focus-card sheets-card">
+      <div className="section-card-header">
+        <h3>Productive Tasks</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((value) => !value)}
+        >
+          {isCollapsed ? 'Show' : 'Hide'}
+        </button>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          <div className="experience-toggle" role="tablist" aria-label="Daily focus filter">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'training'}
+              className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
+              onClick={() => setView('training')}
+            >
+              Training
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'studying'}
+              className={`experience-toggle-btn ${view === 'studying' ? 'active' : ''}`}
+              onClick={() => setView('studying')}
+            >
+              Studying
+            </button>
+          </div>
+
+          {isLoading ? <p className="sheets-meta">Loading tasks...</p> : null}
+
+          {!isLoading && view === 'training' ? (
+            <>
+              <p className="sheets-meta">Workout(s) of the Day</p>
+              {todaysTrainingRecord ? (
+                <div className="study-today-shell">
+                  <table className="study-today-table">
+                    <thead>
+                      <tr>
+                        <th>Workout</th>
+                        <th>Completed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{todaysTrainingRecord.morning_workout || 'Morning —'}</td>
+                        <td className="study-complete-cell">
+                          {canWrite ? (
+                            <button
+                              type="button"
+                              className="secondary-action study-complete-btn"
+                              onClick={() => void handleToggleTrainingWorkout('morning')}
+                              disabled={!googleIdToken || isWriting}
+                            >
+                              {todaysTrainingRecord.completed_morning ? '✓ Completed' : 'Mark Complete'}
+                            </button>
+                          ) : (
+                            <span>{todaysTrainingRecord.completed_morning ? '✓ Yes' : 'No'}</span>
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>{todaysTrainingRecord.evening_workout || 'Evening —'}</td>
+                        <td className="study-complete-cell">
+                          {canWrite ? (
+                            <button
+                              type="button"
+                              className="secondary-action study-complete-btn"
+                              onClick={() => void handleToggleTrainingWorkout('evening')}
+                              disabled={!googleIdToken || isWriting}
+                            >
+                              {todaysTrainingRecord.completed_evening ? '✓ Completed' : 'Mark Complete'}
+                            </button>
+                          ) : (
+                            <span>{todaysTrainingRecord.completed_evening ? '✓ Yes' : 'No'}</span>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="sheets-meta">No workout scheduled for today.</p>
+              )}
+            </>
+          ) : null}
+
+          {!isLoading && view === 'studying' ? (
+            <>
+              <p className="sheets-meta">Today's Lesson</p>
+              {todaysLessons.length > 0 ? (
+                <div className="study-today-shell">
+                  <table className="study-today-table">
+                    <thead>
+                      <tr>
+                        <th>Topic</th>
+                        <th>Completed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {todaysLessons.map((row) => (
+                        <tr key={row.study_id}>
+                          <td>{row.topic}</td>
+                          <td className="study-complete-cell" aria-label={row.completed ? 'Completed' : 'Not completed'}>
+                            {canWrite ? (
+                              <button
+                                type="button"
+                                className="secondary-action study-complete-btn"
+                                onClick={() => void handleToggleStudyLesson(row)}
+                                disabled={!googleIdToken || isWriting}
+                              >
+                                {row.completed ? '✓ Completed' : 'Mark Complete'}
+                              </button>
+                            ) : row.completed ? (
+                              '✓'
+                            ) : (
+                              ''
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="sheets-meta">No lesson scheduled for today.</p>
+              )}
+            </>
+          ) : null}
+
+          {!canWrite ? (
+            <p className="sheets-meta">Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.</p>
+          ) : null}
+
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : null}
+    </article>
   )
 }
 
@@ -3786,7 +4065,6 @@ function CurrentStudyPlanCard({
               <table className="study-today-table">
                 <thead>
                   <tr>
-                    <th>Day</th>
                     <th>Topic</th>
                     <th>Completed</th>
                   </tr>
@@ -3794,7 +4072,6 @@ function CurrentStudyPlanCard({
                 <tbody>
                   {todaysLessons.map((row) => (
                     <tr key={row.study_id}>
-                      <td>{row.date ? formatSheetDate(row.date) : '—'}</td>
                       <td>{row.topic}</td>
                       <td className="study-complete-cell" aria-label={row.completed ? 'Completed' : 'Not completed'}>
                         {canWrite ? (
