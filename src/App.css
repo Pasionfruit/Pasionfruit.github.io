@@ -954,6 +954,21 @@
   flex-wrap: wrap;
 }
 
+.home-todoist-card {
+  margin-bottom: 0.9rem;
+}
+
+.todoist-create-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.todoist-input-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+}
+
 .sheets-input {
   border: 1px solid var(--border);
   border-radius: 0.55rem;
@@ -1467,6 +1482,10 @@
 
   .page-grid {
     grid-template-columns: 1fr;
+  }
+
+  .todoist-input-grid {
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
 }
 

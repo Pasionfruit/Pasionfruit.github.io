@@ -22,7 +22,15 @@ const repoMocks = vi.hoisted(() => ({
   deletePoll: vi.fn(),
 }))
 
+const todoistMocks = vi.hoisted(() => ({
+  getTasksOfTheDay: vi.fn(),
+  createTask: vi.fn(),
+  updateTask: vi.fn(),
+  closeTask: vi.fn(),
+}))
+
 vi.mock('./data/sheets/repositories', () => repoMocks)
+vi.mock('./data/todoist/repositories', () => todoistMocks)
 vi.mock('@react-oauth/google', () => ({
   GoogleLogin: () => <button type="button">Google Login</button>,
 }))
@@ -51,6 +59,8 @@ vi.mock('topojson-client', () => ({
 
 import App from './App'
 
+vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
+
 function renderAdminAboutMePage() {
   return render(
     <MemoryRouter initialEntries={['/mrpasionfruit']}>
@@ -65,6 +75,31 @@ function renderAdminStudyingPage() {
       <App />
     </MemoryRouter>,
   )
+}
+
+function renderHomePage() {
+  return render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function makeFakeGoogleIdToken(email: string) {
+  const header = { alg: 'none', typ: 'JWT' }
+  const payload = {
+    email,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+  }
+
+  const toBase64Url = (value: object) =>
+    window
+      .btoa(JSON.stringify(value))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '')
+
+  return `${toBase64Url(header)}.${toBase64Url(payload)}.signature`
 }
 
 async function openPlacesVisitedEditor() {
@@ -200,6 +235,26 @@ beforeEach(() => {
   repoMocks.deleteCountry.mockResolvedValue(undefined)
   repoMocks.createPoll.mockResolvedValue(undefined)
   repoMocks.deletePoll.mockResolvedValue(undefined)
+
+  todoistMocks.getTasksOfTheDay.mockResolvedValue([
+    {
+      id: 'todo-1',
+      content: 'Submit dashboard update',
+      priority: 2,
+      is_completed: false,
+      due: { date: '2026-05-21' },
+    },
+    {
+      id: 'todo-2',
+      content: 'Review overdue notes',
+      priority: 4,
+      is_completed: false,
+      due: { date: '2026-05-20' },
+    },
+  ])
+  todoistMocks.createTask.mockResolvedValue(undefined)
+  todoistMocks.updateTask.mockResolvedValue(undefined)
+  todoistMocks.closeTask.mockResolvedValue(undefined)
 })
 
 afterEach(() => {
@@ -348,5 +403,104 @@ describe('admin about me page', () => {
     await waitFor(() => {
       expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith('valid-token', 'study-2', false)
     })
+  })
+
+  it('shows Home Todoist tasks and supports add, edit, and complete', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Todoist card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
+
+    expect(within(card).getByText('Submit dashboard update')).toBeTruthy()
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    expect(within(card).getByDisplayValue('Submit dashboard update')).toBeTruthy()
+
+    await user.type(within(card).getByPlaceholderText('New task'), 'Plan weekend run')
+    await user.selectOptions(within(card).getAllByRole('combobox')[0], '3')
+    await user.click(within(card).getByRole('button', { name: 'Add Task' }))
+
+    await waitFor(() => {
+      expect(todoistMocks.createTask).toHaveBeenCalledWith('Plan weekend run', undefined, 3)
+    })
+
+    const firstTaskInput = within(card).getByDisplayValue('Submit dashboard update') as HTMLInputElement
+    await user.clear(firstTaskInput)
+    await user.type(firstTaskInput, 'Submit dashboard update v2')
+
+    const row = firstTaskInput.closest('tr')
+    if (!row) {
+      throw new Error('Task row not found')
+    }
+
+    const dateInput = within(row).getByDisplayValue('2026-05-21')
+    await user.clear(dateInput)
+    await user.type(dateInput, '2026-05-22')
+    await user.click(within(row).getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(todoistMocks.updateTask).toHaveBeenCalledWith('todo-1', {
+        content: 'Submit dashboard update v2',
+        dueDate: '2026-05-22',
+        priority: 2,
+      })
+    })
+
+    await user.click(within(row).getByRole('button', { name: 'Complete' }))
+
+    await waitFor(() => {
+      expect(todoistMocks.closeTask).toHaveBeenCalledWith('todo-1')
+    })
+  })
+
+  it('blocks Todoist editing for non-authorized account', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Todoist card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
+
+    expect(
+      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+    ).toBeTruthy()
+    expect(within(card).queryByRole('button', { name: 'Add Task' })).toBeNull()
+  })
+
+  it('shows missing token guidance when Todoist env token is not set', async () => {
+    const user = userEvent.setup()
+    vi.unstubAllEnvs()
+    vi.stubEnv('VITE_TODOIST_API_TOKEN', '')
+
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Todoist card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
+
+    expect(
+      await screen.findByText('Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.'),
+    ).toBeTruthy()
+
+    vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
   })
 })

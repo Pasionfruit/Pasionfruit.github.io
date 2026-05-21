@@ -51,11 +51,18 @@ import type {
   CurrentStudyRecord,
   PollRecord,
 } from './data/sheets/types'
+import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
+import type { TodoistTask } from './data/todoist/types'
 
 type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
+const TODOIST_EDITOR_EMAIL = 'pasionabe@gmail.com'
 
 const googleClientConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim())
+
+function isTodoistConfigured() {
+  return Boolean(import.meta.env.VITE_TODOIST_API_TOKEN?.trim())
+}
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
@@ -116,6 +123,12 @@ function getActiveSectionId(pathname: string): SectionId | undefined {
   )?.id
 }
 
+function getGoogleTokenEmail(token: string) {
+  const payload = decodeJwtPayload(token)
+  const email = payload?.email
+  return typeof email === 'string' ? email.toLowerCase().trim() : ''
+}
+
 function App() {
   const [profile, setProfile] = useState<UserProfile>(() => getInitialProfile())
   const [googleIdToken, setGoogleIdToken] = useState(() => getInitialGoogleToken())
@@ -136,7 +149,7 @@ function App() {
   return (
     <Routes>
       <Route element={<SiteLayout profile={profile} />}>
-        <Route index element={<HomePage />} />
+        <Route index element={<HomePage profile={profile} googleIdToken={googleIdToken} />} />
         <Route
           path="login"
           element={(
@@ -643,9 +656,10 @@ function SummaryText({ summary }: { summary: string }) {
   )
 }
 
-function HomePage() {
+function HomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   return (
     <div className="page home-page">
+      <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
       <section id="sections" className="section-block">
         <div className="section-grid">
           {navSections.map((section) => (
@@ -664,6 +678,377 @@ function HomePage() {
         </div>
       </section>
     </div>
+  )
+}
+
+function dateForInput(value?: string | null) {
+  if (!value) {
+    return ''
+  }
+
+  const datePart = value.split('T')[0]
+  if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+    return datePart
+  }
+
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return ''
+  }
+
+  return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`
+}
+
+function displayDueDate(task: TodoistTask) {
+  const raw = task.due?.date ?? task.due?.datetime
+  if (!raw) {
+    return 'No due date'
+  }
+
+  const parsed = new Date(raw)
+  if (Number.isNaN(parsed.getTime())) {
+    return raw
+  }
+
+  return parsed.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+function normalizePriority(value: number) {
+  if (!Number.isFinite(value)) {
+    return 1
+  }
+
+  return Math.min(4, Math.max(1, Math.round(value)))
+}
+
+function TodoistTasksCard({
+  title,
+  profile,
+  googleIdToken,
+}: {
+  title: string
+  profile: UserProfile
+  googleIdToken: string
+}) {
+  const todoistConfigured = isTodoistConfigured()
+  const googleEmail = getGoogleTokenEmail(googleIdToken)
+  const canEdit = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+  const [rows, setRows] = useState<TodoistTask[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [newTaskContent, setNewTaskContent] = useState('')
+  const [newTaskDueDate, setNewTaskDueDate] = useState('')
+  const [newTaskPriority, setNewTaskPriority] = useState(1)
+  const [editedRows, setEditedRows] = useState<Record<string, { content: string; dueDate: string; priority: number }>>({})
+
+  async function loadTasks() {
+    try {
+      const data = await getTasksOfTheDay()
+      setRows(data)
+      setWriteError('')
+    } catch (error) {
+      setRows([])
+      setWriteError(error instanceof Error ? error.message : 'Unable to load Todoist tasks')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!todoistConfigured) {
+      setRows([])
+      setIsLoading(false)
+      return
+    }
+
+    void loadTasks()
+  }, [])
+
+  useEffect(() => {
+    const next: Record<string, { content: string; dueDate: string; priority: number }> = {}
+    rows.forEach((row) => {
+      next[row.id] = {
+        content: row.content,
+        dueDate: dateForInput(row.due?.date ?? row.due?.datetime ?? ''),
+        priority: normalizePriority(row.priority),
+      }
+    })
+    setEditedRows(next)
+  }, [rows])
+
+  async function handleCreateTask() {
+    if (isWriting || !todoistConfigured || !canEdit) {
+      return
+    }
+
+    const content = newTaskContent.trim()
+    if (!content) {
+      setWriteError('Task content is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createTask(content, newTaskDueDate || undefined, normalizePriority(newTaskPriority))
+      setNewTaskContent('')
+      setNewTaskDueDate('')
+      setNewTaskPriority(1)
+      await loadTasks()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create task')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleSaveTask(task: TodoistTask) {
+    if (isWriting || !todoistConfigured || !canEdit) {
+      return
+    }
+
+    const draft = editedRows[task.id]
+    const content = (draft?.content ?? task.content).trim()
+    const dueDate = draft?.dueDate ?? ''
+    const priority = normalizePriority(draft?.priority ?? task.priority)
+
+    if (!content) {
+      setWriteError('Task content is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateTask(task.id, {
+        content,
+        dueDate: dueDate || undefined,
+        priority,
+      })
+      await loadTasks()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update task')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleCompleteTask(task: TodoistTask) {
+    if (isWriting || !todoistConfigured || !canEdit) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await closeTask(task.id)
+      await loadTasks()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to mark task complete')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card home-todoist-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canEdit ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p>
+
+          {!todoistConfigured ? (
+            <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
+          ) : null}
+
+          {todoistConfigured && isLoading ? <p className="sheets-meta">Loading Todoist tasks...</p> : null}
+
+          {!canEdit ? (
+            <p className="sheets-meta">
+              Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+            </p>
+          ) : null}
+
+          {todoistConfigured && rows.length > 0 ? (
+            <div className="sheets-table-shell">
+              <table className="sheets-table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Completed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={`summary-${row.id}`}>
+                      <td>{row.content}</td>
+                      <td>{row.is_completed ? 'Yes' : 'No'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {todoistConfigured && canEdit && isEditing ? (
+            <div className="sheets-editor todoist-create-row">
+              <div className="todoist-input-grid">
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="New task"
+                  value={newTaskContent}
+                  onChange={(event) => setNewTaskContent(event.target.value)}
+                  disabled={isWriting}
+                />
+                <input
+                  className="sheets-input"
+                  type="date"
+                  value={newTaskDueDate}
+                  onChange={(event) => setNewTaskDueDate(event.target.value)}
+                  disabled={isWriting}
+                />
+                <select
+                  className="sheets-input"
+                  value={String(newTaskPriority)}
+                  onChange={(event) => setNewTaskPriority(normalizePriority(Number(event.target.value)))}
+                  disabled={isWriting}
+                >
+                  <option value="1">P1</option>
+                  <option value="2">P2</option>
+                  <option value="3">P3</option>
+                  <option value="4">P4</option>
+                </select>
+              </div>
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => void handleCreateTask()}
+                disabled={isWriting}
+              >
+                Add Task
+              </button>
+            </div>
+          ) : null}
+
+          {todoistConfigured && canEdit && isEditing && rows.length > 0 ? (
+            <div className="sheets-table-shell">
+              <table className="sheets-table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Due</th>
+                    <th>Completed</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={row.id}>
+                      <td>
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[row.id]?.content ?? row.content}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.id]: {
+                                content: event.target.value,
+                                dueDate: current[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime),
+                                priority: current[row.id]?.priority ?? normalizePriority(row.priority),
+                              },
+                            }))
+                          }
+                          disabled={isWriting || !canEdit}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="date"
+                          value={editedRows[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime)}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.id]: {
+                                content: current[row.id]?.content ?? row.content,
+                                dueDate: event.target.value,
+                                priority: current[row.id]?.priority ?? normalizePriority(row.priority),
+                              },
+                            }))
+                          }
+                          disabled={isWriting || !canEdit}
+                        />
+                        <p className="sheets-meta">{displayDueDate(row)}</p>
+                      </td>
+                      <td>{row.is_completed ? 'Yes' : 'No'}</td>
+                      <td>
+                        <div className="sheets-table-actions">
+                          <button
+                            type="button"
+                            className="secondary-action"
+                            onClick={() => void handleSaveTask(row)}
+                            disabled={isWriting || !canEdit}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            className="secondary-action"
+                            onClick={() => void handleCompleteTask(row)}
+                            disabled={isWriting || !canEdit}
+                          >
+                            Complete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {todoistConfigured && !isLoading && rows.length === 0 && !writeError ? (
+            <p className="sheets-meta">No tasks due today or overdue.</p>
+          ) : null}
+
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : null}
+    </article>
   )
 }
 
