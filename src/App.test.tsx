@@ -8,7 +8,14 @@ const repoMocks = vi.hoisted(() => ({
   getBucketList: vi.fn(),
   getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
+  getEvents: vi.fn(),
   getPolls: vi.fn(),
+  getTrainingRecords: vi.fn(),
+  createEvent: vi.fn(),
+  updateEvent: vi.fn(),
+  deleteEvent: vi.fn(),
+  setActiveEvent: vi.fn(),
+  setTrainingWorkoutCompleted: vi.fn(),
   setBucketCompleted: vi.fn(),
   setCountryVisited: vi.fn(),
   setCurrentStudyCompleted: vi.fn(),
@@ -80,6 +87,14 @@ function renderAdminStudyingPage() {
 function renderHomePage() {
   return render(
     <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function renderTrainingPage() {
+  return render(
+    <MemoryRouter initialEntries={['/training']}>
       <App />
     </MemoryRouter>,
   )
@@ -187,6 +202,31 @@ beforeEach(() => {
     },
   ])
 
+  repoMocks.getEvents.mockResolvedValue([
+    {
+      event_id: 'event-1',
+      event_date: '2026-10-18T06:00:00',
+      event_name: 'Chicago Marathon',
+      type: 'Run',
+      measurement: '26.2 mi',
+      location: 'Chicago',
+      link: 'https://example.com/chicago',
+      price: 250,
+      active: true,
+    },
+    {
+      event_id: 'event-2',
+      event_date: '2026-11-01T08:00:00',
+      event_name: 'Local 10K',
+      type: 'Run',
+      measurement: '10 km',
+      location: 'Oak Park',
+      link: '',
+      price: 50,
+      active: false,
+    },
+  ])
+
   const now = new Date()
   const tomorrow = new Date(now)
   tomorrow.setDate(now.getDate() + 1)
@@ -224,9 +264,41 @@ beforeEach(() => {
     },
   ])
 
+  repoMocks.getTrainingRecords.mockResolvedValue([
+    {
+      training_id: 'training-1',
+      date: '2026-01-15',
+      morning_workout: 'Easy Run 5k',
+      evening_workout: 'Mobility',
+      completed_morning: true,
+      completed_evening: false,
+    },
+    {
+      training_id: 'training-2',
+      date: '2026-08-06',
+      morning_workout: 'Intervals',
+      evening_workout: 'Core',
+      completed_morning: true,
+      completed_evening: true,
+    },
+    {
+      training_id: 'training-3',
+      date: '2025-11-10',
+      morning_workout: 'Rest Day',
+      evening_workout: 'Stretching',
+      completed_morning: false,
+      completed_evening: false,
+    },
+  ])
+
   repoMocks.setBucketCompleted.mockResolvedValue(undefined)
   repoMocks.setCountryVisited.mockResolvedValue(undefined)
   repoMocks.setCurrentStudyCompleted.mockResolvedValue(undefined)
+  repoMocks.setTrainingWorkoutCompleted.mockResolvedValue(undefined)
+  repoMocks.createEvent.mockResolvedValue(undefined)
+  repoMocks.updateEvent.mockResolvedValue(undefined)
+  repoMocks.deleteEvent.mockResolvedValue(undefined)
+  repoMocks.setActiveEvent.mockResolvedValue(undefined)
   repoMocks.createBucketItem.mockResolvedValue(undefined)
   repoMocks.updateBucketItem.mockResolvedValue(undefined)
   repoMocks.deleteBucketItem.mockResolvedValue(undefined)
@@ -502,5 +574,287 @@ describe('admin about me page', () => {
     ).toBeTruthy()
 
     vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
+  })
+
+  it('renders Training Log card and loads records on training page', async () => {
+    const user = userEvent.setup()
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Hide' }))
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
+
+    const seasonSelect = within(card).getAllByRole('combobox')[0]
+    await user.selectOptions(seasonSelect, 'all')
+
+    const tiles = within(card).getAllByRole('listitem')
+
+    expect(tiles.length).toBe(2)
+    expect(repoMocks.getTrainingRecords).toHaveBeenCalled()
+
+    const yearSelect = within(card).getAllByRole('combobox')[1] as HTMLSelectElement
+    expect(yearSelect.value).toBe('2026')
+  })
+
+  it('filters Training Log by season and year together', async () => {
+    const user = userEvent.setup()
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    const comboboxes = within(card).getAllByRole('combobox')
+    const seasonSelect = comboboxes[0]
+    const yearSelect = comboboxes[1]
+
+    await user.selectOptions(seasonSelect, 'Q1')
+    await user.selectOptions(yearSelect, '2026')
+
+    const filteredTiles = within(card).getAllByRole('listitem')
+    expect(filteredTiles.length).toBe(1)
+
+    const onlyTile = filteredTiles[0] as HTMLElement
+    expect(onlyTile.dataset.trainingId).toBe('training-1')
+    expect(onlyTile.dataset.level).toBe('1')
+  })
+
+  it('uses light tile for rest day and dark tile for both workouts completed', async () => {
+    const user = userEvent.setup()
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    const seasonSelect = within(card).getAllByRole('combobox')[0]
+    const yearSelect = within(card).getAllByRole('combobox')[1]
+
+    await user.selectOptions(seasonSelect, 'all')
+
+    await user.selectOptions(yearSelect, '2026')
+    const darkTile = card.querySelector('[data-training-id="training-2"]') as HTMLElement | null
+
+    if (!darkTile) {
+      throw new Error('Dark completion tile not found')
+    }
+
+    expect(darkTile.dataset.trainingId).toBe('training-2')
+    expect(darkTile.dataset.level).toBe('2')
+
+    await user.selectOptions(yearSelect, '2025')
+    const restDayTile = card.querySelector('[data-training-id="training-3"]') as HTMLElement | null
+
+    if (!restDayTile) {
+      throw new Error('Rest-day tile not found')
+    }
+
+    expect(restDayTile.dataset.trainingId).toBe('training-3')
+    expect(restDayTile.dataset.level).toBe('1')
+  })
+
+  it('does not allow selecting all years', async () => {
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    const yearSelect = within(card).getAllByRole('combobox')[1]
+
+    expect(within(yearSelect).queryByRole('option', { name: 'All years' })).toBeNull()
+  })
+
+  it('renders chronological tiles left-to-right by month row', async () => {
+    const user = userEvent.setup()
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    const seasonSelect = within(card).getAllByRole('combobox')[0]
+    await user.selectOptions(seasonSelect, 'all')
+
+    await waitFor(() => {
+      const tileElements = Array.from(card.querySelectorAll('.training-log-tile')) as HTMLElement[]
+      expect(tileElements.length).toBe(2)
+      expect(tileElements[0].dataset.trainingId).toBe('training-1')
+      expect(tileElements[1].dataset.trainingId).toBe('training-2')
+    })
+  })
+
+  it('shows countdown edit fields only after pressing pencil in admin view', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Next Event Countdown card not found')
+    }
+
+    expect(within(card).queryByLabelText('Event title')).toBeNull()
+    expect(within(card).queryByLabelText('Event date')).toBeNull()
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    expect(within(card).getByLabelText('Event title')).toBeTruthy()
+    expect(within(card).getByLabelText('Event date')).toBeTruthy()
+  })
+
+  it('renders countdown from active event and location', async () => {
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Next Event Countdown card not found')
+    }
+
+    expect(within(card).getByText('Chicago Marathon')).toBeTruthy()
+    expect(within(card).getByText('Location: Chicago')).toBeTruthy()
+  })
+
+  it('allows authorized admin to create/update/delete and set active event', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Next Event Countdown card not found')
+    }
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    await user.type(within(card).getByLabelText('Event title'), 'Half Marathon')
+    await user.type(within(card).getByLabelText('Event date'), '2026-12-01T07:00')
+    await user.click(within(card).getByRole('button', { name: 'Add Event' }))
+
+    await waitFor(() => {
+      expect(repoMocks.createEvent).toHaveBeenCalledWith(
+        expect.stringContaining('.'),
+        expect.objectContaining({
+          eventName: 'Half Marathon',
+          eventDate: '2026-12-01T07:00',
+        }),
+      )
+    })
+
+    const setActiveButtons = within(card).getAllByRole('button', { name: 'Set Active' })
+    await user.click(setActiveButtons[0])
+
+    await waitFor(() => {
+      expect(repoMocks.setActiveEvent).toHaveBeenCalledWith(expect.stringContaining('.'), 'event-2')
+    })
+
+    const editButtons = within(card).getAllByRole('button', { name: 'Edit' })
+    await user.click(editButtons[0])
+    await user.click(within(card).getByRole('button', { name: 'Update Event' }))
+
+    await waitFor(() => {
+      expect(repoMocks.updateEvent).toHaveBeenCalledWith(
+        expect.stringContaining('.'),
+        'event-1',
+        expect.any(Object),
+      )
+    })
+
+    const deleteButtons = within(card).getAllByRole('button', { name: 'Delete' })
+    await user.click(deleteButtons[0])
+
+    await waitFor(() => {
+      expect(repoMocks.deleteEvent).toHaveBeenCalledWith(expect.stringContaining('.'), 'event-1')
+    })
+  })
+
+  it('allows authorized admin account to mark today workout completion', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+
+    const today = new Date()
+    const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
+
+    repoMocks.getTrainingRecords.mockResolvedValueOnce([
+      {
+        training_id: 'training-today',
+        date: todayIso,
+        morning_workout: 'Easy Run 20 min',
+        evening_workout: 'Stretch 10 min',
+        completed_morning: false,
+        completed_evening: false,
+      },
+    ])
+
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    const markButtons = await within(card).findAllByRole('button', { name: 'Mark Complete' })
+    await user.click(markButtons[0])
+
+    await waitFor(() => {
+      expect(repoMocks.setTrainingWorkoutCompleted).toHaveBeenCalledWith(
+        expect.stringContaining('.'),
+        'training-today',
+        'morning',
+        true,
+      )
+    })
+  })
+
+  it('blocks training completion editing for non-authorized account', async () => {
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
+
+    const today = new Date()
+    const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
+
+    repoMocks.getTrainingRecords.mockResolvedValueOnce([
+      {
+        training_id: 'training-today',
+        date: todayIso,
+        morning_workout: 'Easy Run 20 min',
+        evening_workout: 'Stretch 10 min',
+        completed_morning: false,
+        completed_evening: false,
+      },
+    ])
+
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+
+    expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
+    expect(
+      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+    ).toBeTruthy()
   })
 })

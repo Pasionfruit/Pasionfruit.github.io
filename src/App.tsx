@@ -30,26 +30,35 @@ import {
 import {
   createBucketItem,
   createCountry,
+  createEvent,
   createPoll,
   deleteBucketItem,
   deleteCountry,
+  deleteEvent,
   deletePoll,
   getBucketList,
   getCurrentStudy,
   getCountries,
+  getEvents,
   getPolls,
+  getTrainingRecords,
+  setActiveEvent,
   setBucketCompleted,
   setCountryVisited,
   setCurrentStudyCompleted,
+  setTrainingWorkoutCompleted,
   updateBucketItem,
   updateCountry,
+  updateEvent,
   votePoll,
 } from './data/sheets/repositories'
 import type {
   BucketListRecord,
   CountryRecord,
   CurrentStudyRecord,
+  EventRecord,
   PollRecord,
+  TrainingRecord,
 } from './data/sheets/types'
 import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
@@ -1125,7 +1134,17 @@ function SectionPage({
         }
 
         if (sectionId === 'training' && card.title === 'Next Event Countdown') {
-          return <NextEventCountdownCard key={card.title} title={card.title} canEdit={profile === 'admin'} />
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+
+          return <NextEventCountdownCard key={card.title} title={card.title} canWrite={canWrite} idToken={googleIdToken} />
+        }
+
+        if (sectionId === 'training' && card.title === 'Training Log') {
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+
+          return <TrainingLogCard key={card.title} title={card.title} canWrite={canWrite} idToken={googleIdToken} />
         }
 
         if (sectionId === 'training' && card.title === 'Workout(s) of the Day') {
@@ -2301,6 +2320,350 @@ function toLocalDateTimeInputValue(date: Date) {
   return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
+function parseTrainingDate(value?: string) {
+  if (!value) {
+    return null
+  }
+
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return null
+  }
+
+  return parsed
+}
+
+function getQuarterForDate(date: Date) {
+  return `Q${Math.floor(date.getMonth() / 3) + 1}` as 'Q1' | 'Q2' | 'Q3' | 'Q4'
+}
+
+function isRestDayWorkout(value?: string) {
+  if (!value) {
+    return false
+  }
+
+  return value.trim().toLowerCase() === 'rest day'
+}
+
+function getTrainingTileLevel(row: TrainingRecord) {
+  const completedCount = Number(row.completed_morning) + Number(row.completed_evening)
+  const isRestDay = isRestDayWorkout(row.morning_workout) || isRestDayWorkout(row.evening_workout)
+
+  if (completedCount >= 2) {
+    return 2
+  }
+
+  if (completedCount === 1 || isRestDay) {
+    return 1
+  }
+
+  return 0
+}
+
+function TrainingLogCard({
+  title,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const currentDate = new Date()
+  const currentYear = String(currentDate.getFullYear())
+  const currentSeason = getQuarterForDate(currentDate)
+
+  const [rows, setRows] = useState<TrainingRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [seasonFilter, setSeasonFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4'>(currentSeason)
+  const [yearFilter, setYearFilter] = useState(currentYear)
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadTrainingLog() {
+      try {
+        const data = await getTrainingRecords()
+        if (isMounted) {
+          setRows(data)
+        }
+      } catch {
+        if (isMounted) {
+          setRows([])
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadTrainingLog()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const availableYears = useMemo(() => {
+    const years = rows
+      .map((row) => parseTrainingDate(row.date)?.getFullYear())
+      .filter((year): year is number => typeof year === 'number')
+
+    return Array.from(new Set(years)).sort((a, b) => b - a)
+  }, [rows])
+
+  const selectableYears = useMemo(() => {
+    const years = new Set(availableYears)
+    years.add(Number(currentYear))
+    return Array.from(years).sort((a, b) => b - a)
+  }, [availableYears, currentYear])
+
+  useEffect(() => {
+    if (selectableYears.length === 0) {
+      setYearFilter(currentYear)
+      return
+    }
+
+    const hasCurrentSelection = selectableYears.some((year) => String(year) === yearFilter)
+    if (!hasCurrentSelection) {
+      setYearFilter(currentYear)
+    }
+  }, [currentYear, selectableYears, yearFilter])
+
+  const filteredRows = useMemo(() => {
+    return rows
+      .filter((row) => {
+        const parsedDate = parseTrainingDate(row.date)
+        if (!parsedDate) {
+          return false
+        }
+
+        if (!yearFilter || String(parsedDate.getFullYear()) !== yearFilter) {
+          return false
+        }
+
+        if (seasonFilter !== 'all' && getQuarterForDate(parsedDate) !== seasonFilter) {
+          return false
+        }
+
+        return true
+      })
+      .sort((a, b) => {
+        const aDate = parseTrainingDate(a.date)?.getTime() ?? 0
+        const bDate = parseTrainingDate(b.date)?.getTime() ?? 0
+        return aDate - bDate
+      })
+  }, [rows, seasonFilter, yearFilter])
+
+  const monthGroups = useMemo(() => {
+    const groups = new Map<number, TrainingRecord[]>()
+
+    for (const row of filteredRows) {
+      const parsedDate = parseTrainingDate(row.date)
+      if (!parsedDate) {
+        continue
+      }
+
+      const monthIndex = parsedDate.getMonth()
+      const current = groups.get(monthIndex) ?? []
+      current.push(row)
+      groups.set(monthIndex, current)
+    }
+
+    return Array.from(groups.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([monthIndex, monthRows]) => ({
+        monthIndex,
+        label: new Date(2026, monthIndex, 1).toLocaleDateString(undefined, { month: 'short' }),
+        rows: monthRows,
+      }))
+  }, [filteredRows])
+
+  const todayDate = new Date()
+  const todayKey = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`
+  const todaysRecord = useMemo(
+    () => rows.find((row) => toDateOnlyKey(row.date) === todayKey),
+    [rows, todayKey],
+  )
+
+  async function handleToggleWorkout(period: 'morning' | 'evening') {
+    if (!canWrite || !idToken || !todaysRecord || isWriting) {
+      return
+    }
+
+    const isMorning = period === 'morning'
+    const nextCompleted = isMorning ? !todaysRecord.completed_morning : !todaysRecord.completed_evening
+    const previousRows = rows
+
+    setWriteError('')
+    setIsWriting(true)
+    setRows((currentRows) =>
+      currentRows.map((row) => {
+        if (row.training_id !== todaysRecord.training_id) {
+          return row
+        }
+
+        if (isMorning) {
+          return { ...row, completed_morning: nextCompleted }
+        }
+
+        return { ...row, completed_evening: nextCompleted }
+      }),
+    )
+
+    try {
+      await setTrainingWorkoutCompleted(idToken, todaysRecord.training_id, period, nextCompleted)
+    } catch (error) {
+      setRows(previousRows)
+      setWriteError(error instanceof Error ? error.message : 'Unable to update workout completion state')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <CollapsibleSectionCard title={title} className="training-log-card">
+      {isLoading ? <p className="sheets-meta">Loading training log...</p> : null}
+
+      {!isLoading ? (
+        <>
+          <div className="training-log-today-panel">
+            <p className="sheets-meta">Workout(s) of the Day</p>
+            {todaysRecord ? (
+              <div className="study-today-shell">
+                <table className="study-today-table">
+                  <thead>
+                    <tr>
+                      <th>Workout</th>
+                      <th>Completed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{todaysRecord.morning_workout || 'Morning —'}</td>
+                      <td className="study-complete-cell">
+                        {canWrite ? (
+                          <button
+                            type="button"
+                            className="secondary-action study-complete-btn"
+                            onClick={() => void handleToggleWorkout('morning')}
+                            disabled={!idToken || isWriting}
+                          >
+                            {todaysRecord.completed_morning ? '✓ Completed' : 'Mark Complete'}
+                          </button>
+                        ) : (
+                          <span>{todaysRecord.completed_morning ? '✓ Yes' : 'No'}</span>
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>{todaysRecord.evening_workout || 'Evening —'}</td>
+                      <td className="study-complete-cell">
+                        {canWrite ? (
+                          <button
+                            type="button"
+                            className="secondary-action study-complete-btn"
+                            onClick={() => void handleToggleWorkout('evening')}
+                            disabled={!idToken || isWriting}
+                          >
+                            {todaysRecord.completed_evening ? '✓ Completed' : 'Mark Complete'}
+                          </button>
+                        ) : (
+                          <span>{todaysRecord.completed_evening ? '✓ Yes' : 'No'}</span>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="sheets-meta">No workout scheduled for today.</p>
+            )}
+
+            {!canWrite ? (
+              <p className="sheets-meta">
+                Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+              </p>
+            ) : null}
+
+            {writeError ? <p className="sheets-error">{writeError}</p> : null}
+          </div>
+
+          <div className="training-log-filters">
+            <label>
+              <span className="sheets-meta">Season</span>
+              <select
+                className="sheets-input"
+                value={seasonFilter}
+                onChange={(event) => setSeasonFilter(event.target.value as 'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4')}
+              >
+                <option value="all">All seasons</option>
+                <option value="Q1">Q1 (Jan-Mar)</option>
+                <option value="Q2">Q2 (Apr-Jun)</option>
+                <option value="Q3">Q3 (Jul-Sep)</option>
+                <option value="Q4">Q4 (Oct-Dec)</option>
+              </select>
+            </label>
+
+            <label>
+              <span className="sheets-meta">Year</span>
+              <select className="sheets-input" value={yearFilter} onChange={(event) => setYearFilter(event.target.value)}>
+                {selectableYears.map((year) => (
+                  <option key={year} value={String(year)}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {filteredRows.length > 0 ? (
+            <>
+              <div className="training-log-grid" aria-label="Training activity tiles by month">
+                <div className="training-log-grid-panel">
+                  {monthGroups.map((group) => (
+                    <div key={group.monthIndex} className="training-log-row">
+                      <div className="training-log-month-label" aria-label={`Month ${group.label}`}>{group.label}</div>
+                      <div
+                        className="training-log-row-tiles"
+                        role="list"
+                        aria-label={`${group.label} training activity`}
+                      >
+                        {group.rows.map((row) => {
+                          const tileLevel = getTrainingTileLevel(row)
+                          const label = `${formatSheetDate(row.date)} activity level ${tileLevel}`
+
+                          return (
+                            <div
+                              key={row.training_id}
+                              role="listitem"
+                              className={`training-log-tile level-${tileLevel}`}
+                              aria-label={label}
+                              title={label}
+                              data-training-id={row.training_id}
+                              data-level={String(tileLevel)}
+                            />
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="sheets-meta">Light: one workout completed or rest day. Dark: both workouts completed.</p>
+            </>
+          ) : (
+            <p className="sheets-meta">No training records match this season/year filter.</p>
+          )}
+        </>
+      ) : null}
+    </CollapsibleSectionCard>
+  )
+}
+
 function getCountdownParts(targetDateTime: string, nowMs: number) {
   const targetMs = new Date(targetDateTime).getTime()
   if (!targetDateTime || Number.isNaN(targetMs) || targetMs <= nowMs) {
@@ -2345,17 +2708,99 @@ function pad2(value: number) {
   return String(value).padStart(2, '0')
 }
 
+function toLocalDateTimeInputFromValue(value?: string) {
+  if (!value) {
+    return ''
+  }
+
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return ''
+  }
+
+  return toLocalDateTimeInputValue(parsed)
+}
+
+function parseOptionalNumber(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return undefined
+  }
+
+  const parsed = Number(trimmed)
+  if (!Number.isFinite(parsed)) {
+    return undefined
+  }
+
+  return parsed
+}
+
+type EventDraft = {
+  eventDate: string
+  eventName: string
+  type: string
+  measurement: string
+  location: string
+  link: string
+  price: string
+  active: boolean
+}
+
+function toEventDraft(row: EventRecord): EventDraft {
+  return {
+    eventDate: toLocalDateTimeInputFromValue(row.event_date),
+    eventName: row.event_name,
+    type: row.type ?? '',
+    measurement: row.measurement ?? '',
+    location: row.location ?? '',
+    link: row.link ?? '',
+    price: typeof row.price === 'number' ? String(row.price) : '',
+    active: row.active,
+  }
+}
+
 function NextEventCountdownCard({
   title,
-  canEdit,
+  canWrite,
+  idToken,
 }: {
   title: string
-  canEdit: boolean
+  canWrite: boolean
+  idToken: string
 }) {
-  const defaultDate = new Date('June 1, 2026 06:00:00')
-  const [eventTitle, setEventTitle] = useState('10K')
-  const [targetDateTime, setTargetDateTime] = useState(() => toLocalDateTimeInputValue(defaultDate))
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [rows, setRows] = useState<EventRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [editingEventId, setEditingEventId] = useState('')
+  const [newEvent, setNewEvent] = useState<EventDraft>({
+    eventDate: '',
+    eventName: '',
+    type: '',
+    measurement: '',
+    location: '',
+    link: '',
+    price: '',
+    active: false,
+  })
   const [nowMs, setNowMs] = useState(Date.now())
+
+  async function loadEvents() {
+    try {
+      const data = await getEvents()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadEvents()
+  }, [])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -2365,65 +2810,366 @@ function NextEventCountdownCard({
     return () => window.clearInterval(timer)
   }, [])
 
-  const parts = getCountdownParts(targetDateTime, nowMs)
+  const activeEvent = useMemo(() => rows.find((row) => row.active), [rows])
+
+  async function handleDeleteEvent(eventId: string) {
+    if (!canWrite || !idToken || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteEvent(idToken, eventId)
+      await loadEvents()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete event')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleSetActiveEvent(eventId: string) {
+    if (!canWrite || !idToken || isWriting) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await setActiveEvent(idToken, eventId)
+      await loadEvents()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to set active event')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  const parts = getCountdownParts(activeEvent?.event_date ?? '', nowMs)
   const isFinished = parts.totalMs <= 0
-  const targetLabel = targetDateTime ? new Date(targetDateTime).toLocaleString() : 'Set a date'
+  const targetLabel = activeEvent?.event_date ? new Date(activeEvent.event_date).toLocaleString() : 'Set a date'
+
+  function resetEventForm() {
+    setEditingEventId('')
+    setNewEvent({
+      eventDate: '',
+      eventName: '',
+      type: '',
+      measurement: '',
+      location: '',
+      link: '',
+      price: '',
+      active: false,
+    })
+  }
+
+  function startEditingEvent(row: EventRecord) {
+    setEditingEventId(row.event_id)
+    setNewEvent(toEventDraft(row))
+    setWriteError('')
+  }
+
+  async function handleSubmitEvent() {
+    if (!canWrite || !idToken || isWriting) {
+      return
+    }
+
+    const eventName = newEvent.eventName.trim()
+    const eventDate = newEvent.eventDate.trim()
+    if (!eventName || !eventDate) {
+      setWriteError('Event title and event date are required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+
+    try {
+      if (editingEventId) {
+        const editingRow = rows.find((row) => row.event_id === editingEventId)
+        await updateEvent(idToken, editingEventId, {
+          eventDate,
+          eventName,
+          type: newEvent.type.trim(),
+          measurement: newEvent.measurement.trim(),
+          location: newEvent.location.trim(),
+          link: newEvent.link.trim(),
+          price: parseOptionalNumber(newEvent.price),
+          active: editingRow?.active ?? false,
+        })
+      } else {
+        await createEvent(idToken, {
+          eventDate,
+          eventName,
+          type: newEvent.type.trim(),
+          measurement: newEvent.measurement.trim(),
+          location: newEvent.location.trim(),
+          link: newEvent.link.trim(),
+          price: parseOptionalNumber(newEvent.price),
+          active: false,
+        })
+      }
+
+      resetEventForm()
+      await loadEvents()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : editingEventId ? 'Unable to update event' : 'Unable to create event')
+    } finally {
+      setIsWriting(false)
+    }
+  }
 
   return (
-    <CollapsibleSectionCard title={title} className="countdown-card">
-      {canEdit ? (
-        <div className="countdown-inputs">
-          <label>
-            <span>Event title</span>
-            <input
-              type="text"
-              value={eventTitle}
-              onChange={(event) => setEventTitle(event.target.value)}
-              placeholder="Race day, meet, hike, etc."
-            />
-          </label>
-
-          <label>
-            <span>Event date</span>
-            <input
-              type="datetime-local"
-              value={targetDateTime}
-              onChange={(event) => setTargetDateTime(event.target.value)}
-            />
-          </label>
-        </div>
-      ) : null}
-
-      <p className="countdown-title">{eventTitle || 'Untitled event'}</p>
-      <p className="countdown-target">Target: {targetLabel}</p>
-
-      <div className="countdown-grid" aria-live="polite">
-        <div className="countdown-cell">
-          <strong>{pad2(parts.months)}</strong>
-          <small>MM</small>
-        </div>
-        <div className="countdown-cell">
-          <strong>{pad2(parts.days)}</strong>
-          <small>DD</small>
-        </div>
-        <div className="countdown-cell">
-          <strong>{pad2(parts.hours)}</strong>
-          <small>HH</small>
-        </div>
-        <div className="countdown-cell">
-          <strong>{pad2(parts.minutes)}</strong>
-          <small>MM</small>
-        </div>
-        <div className="countdown-cell">
-          <strong>{pad2(parts.seconds)}</strong>
-          <small>SS</small>
+    <article className="info-card section-page-card countdown-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              title="Edit values"
+              aria-label="Edit values"
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
         </div>
       </div>
 
-      {isFinished ? (
-        <p className="countdown-complete">Your event countdown is complete.</p>
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading events...</p> : null}
+
+          {!isLoading ? <p className="countdown-title">{activeEvent?.event_name || 'No active event'}</p> : null}
+          <p className="countdown-target">Target: {targetLabel}</p>
+          {activeEvent?.location ? <p className="countdown-location">Location: {activeEvent.location}</p> : null}
+
+          {!isLoading && !activeEvent ? (
+            <p className="countdown-lock-note">No active event found. Set one active event to start countdown.</p>
+          ) : null}
+
+          <div className="countdown-grid" aria-live="polite">
+            <div className="countdown-cell">
+              <strong>{pad2(parts.months)}</strong>
+              <small>MM</small>
+            </div>
+            <div className="countdown-cell">
+              <strong>{pad2(parts.days)}</strong>
+              <small>DD</small>
+            </div>
+            <div className="countdown-cell">
+              <strong>{pad2(parts.hours)}</strong>
+              <small>HH</small>
+            </div>
+            <div className="countdown-cell">
+              <strong>{pad2(parts.minutes)}</strong>
+              <small>MM</small>
+            </div>
+            <div className="countdown-cell">
+              <strong>{pad2(parts.seconds)}</strong>
+              <small>SS</small>
+            </div>
+          </div>
+
+          {isFinished ? (
+            <p className="countdown-complete">Your event countdown is complete.</p>
+          ) : null}
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          {canWrite && isEditing ? (
+            <div className="countdown-editor">
+              <p className="sheets-meta">{editingEventId ? 'Update Event' : 'Add Event'}</p>
+              <div className="countdown-inputs">
+                <label>
+                  <span>Event title</span>
+                  <input
+                    type="text"
+                    value={newEvent.eventName}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        eventName: event.target.value,
+                      }))
+                    }
+                    placeholder="Race day, meet, hike, etc."
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+
+                <label>
+                  <span>Event date</span>
+                  <input
+                    type="datetime-local"
+                    value={newEvent.eventDate}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        eventDate: event.target.value,
+                      }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+
+                <label>
+                  <span>Type</span>
+                  <input
+                    type="text"
+                    value={newEvent.type}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        type: event.target.value,
+                      }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+
+                <label>
+                  <span>Measurement</span>
+                  <input
+                    type="text"
+                    value={newEvent.measurement}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        measurement: event.target.value,
+                      }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+
+                <label>
+                  <span>Location</span>
+                  <input
+                    type="text"
+                    value={newEvent.location}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        location: event.target.value,
+                      }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+
+                <label>
+                  <span>Link</span>
+                  <input
+                    type="text"
+                    value={newEvent.link}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        link: event.target.value,
+                      }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+
+                <label>
+                  <span>Price</span>
+                  <input
+                    type="text"
+                    value={newEvent.price}
+                    onChange={(event) =>
+                      setNewEvent((current) => ({
+                        ...current,
+                        price: event.target.value,
+                      }))
+                    }
+                    disabled={!idToken || isWriting}
+                  />
+                </label>
+              </div>
+
+              <div className="sheets-actions">
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => void handleSubmitEvent()}
+                  disabled={!idToken || isWriting}
+                >
+                  {editingEventId ? 'Update Event' : 'Add Event'}
+                </button>
+                {editingEventId ? (
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={resetEventForm}
+                    disabled={!idToken || isWriting}
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </div>
+
+              {rows.length > 0 ? (
+                <ul className="countdown-event-list">
+                  {rows.map((row) => (
+                    <li key={row.event_id} className="countdown-event-item">
+                      <span className="countdown-event-name">
+                        {row.event_name}
+                        {row.active ? ' (Active)' : ''}
+                      </span>
+                      <div className="countdown-event-actions">
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => startEditingEvent(row)}
+                          disabled={!idToken || isWriting}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => void handleSetActiveEvent(row.event_id)}
+                          disabled={!idToken || isWriting || row.active}
+                        >
+                          {row.active ? 'Active' : 'Set Active'}
+                        </button>
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => void handleDeleteEvent(row.event_id)}
+                          disabled={!idToken || isWriting}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="sheets-meta">No events found.</p>
+              )}
+            </div>
+          ) : null}
+
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
       ) : null}
-    </CollapsibleSectionCard>
+    </article>
   )
 }
 

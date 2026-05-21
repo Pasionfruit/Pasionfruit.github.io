@@ -27,6 +27,9 @@ function doPost(e) {
       case 'setCurrentStudyCompleted':
         return jsonResponse_(setCurrentStudyCompleted_(payload))
 
+      case 'setTrainingWorkoutCompleted':
+        return jsonResponse_(setTrainingWorkoutCompleted_(payload))
+
       case 'createPoll':
         return jsonResponse_(createPoll_(payload))
 
@@ -53,6 +56,18 @@ function doPost(e) {
 
       case 'deleteCountry':
         return jsonResponse_(deleteCountry_(payload))
+
+      case 'createEvent':
+        return jsonResponse_(createEvent_(payload))
+
+      case 'updateEvent':
+        return jsonResponse_(updateEvent_(payload))
+
+      case 'deleteEvent':
+        return jsonResponse_(deleteEvent_(payload))
+
+      case 'setActiveEvent':
+        return jsonResponse_(setActiveEvent_(payload))
 
       default:
         return jsonResponse_({ ok: false, error: 'Unknown action: ' + action })
@@ -376,6 +391,27 @@ function setCurrentStudyCompleted_(payload) {
   return { ok: true }
 }
 
+function setTrainingWorkoutCompleted_(payload) {
+  var trainingId = String(payload.training_id || '').trim()
+  var workoutPeriod = String(payload.workout_period || '').trim().toLowerCase()
+
+  if (!trainingId) return { ok: false, error: 'training_id is required' }
+  if (workoutPeriod !== 'morning' && workoutPeriod !== 'evening') {
+    return { ok: false, error: 'workout_period must be morning or evening' }
+  }
+
+  var completed = toBoolean_(payload.completed)
+  var sheet = getSheet_('training_records')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'training_id'), trainingId)
+  if (row < 0) return { ok: false, error: 'Training row not found' }
+
+  var completedColName = workoutPeriod === 'morning' ? 'completed_morning' : 'completed_evening'
+  sheet.getRange(row, requireHeader_(h, completedColName)).setValue(completed)
+
+  return { ok: true }
+}
+
 function createCountry_(payload) {
   var name = String(payload.country_state_name || '').trim()
   if (!name) return { ok: false, error: 'country_state_name is required' }
@@ -419,4 +455,111 @@ function deleteCountry_(payload) {
 
   sheet.deleteRow(row)
   return { ok: true }
+}
+
+function createEvent_(payload) {
+  var eventDate = String(payload.event_date || '').trim()
+  var eventName = String(payload.event_name || '').trim()
+  if (!eventDate || !eventName) {
+    return { ok: false, error: 'event_date and event_name are required' }
+  }
+
+  var sheet = getSheet_('events')
+  var h = headerMap_(sheet)
+  var active = toBoolean_(payload.active)
+
+  appendByHeaders_(sheet, h, {
+    event_id: Utilities.getUuid(),
+    event_date: eventDate,
+    event_name: eventName,
+    type: String(payload.type || '').trim(),
+    measurement: String(payload.measurement || '').trim(),
+    location: String(payload.location || '').trim(),
+    link: String(payload.link || '').trim(),
+    price: String(payload.price || '').trim(),
+    active: active,
+  })
+
+  if (active) {
+    var idCol = requireHeader_(h, 'event_id')
+    var activeCol = requireHeader_(h, 'active')
+    var lastRow = sheet.getLastRow()
+    var createdId = String(sheet.getRange(lastRow, idCol).getValue())
+    setActiveEventById_(sheet, h, createdId)
+  }
+
+  return { ok: true }
+}
+
+function updateEvent_(payload) {
+  var eventId = String(payload.event_id || '').trim()
+  var eventDate = String(payload.event_date || '').trim()
+  var eventName = String(payload.event_name || '').trim()
+  if (!eventId || !eventDate || !eventName) {
+    return { ok: false, error: 'event_id, event_date, and event_name are required' }
+  }
+
+  var sheet = getSheet_('events')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'event_id'), eventId)
+  if (row < 0) return { ok: false, error: 'Event not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'event_date')).setValue(eventDate)
+  sheet.getRange(row, requireHeader_(h, 'event_name')).setValue(eventName)
+  sheet.getRange(row, requireHeader_(h, 'type')).setValue(String(payload.type || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'measurement')).setValue(String(payload.measurement || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'location')).setValue(String(payload.location || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'link')).setValue(String(payload.link || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'price')).setValue(String(payload.price || '').trim())
+
+  var active = toBoolean_(payload.active)
+  if (active) {
+    setActiveEventById_(sheet, h, eventId)
+  } else {
+    sheet.getRange(row, requireHeader_(h, 'active')).setValue(false)
+  }
+
+  return { ok: true }
+}
+
+function deleteEvent_(payload) {
+  var eventId = String(payload.event_id || '').trim()
+  if (!eventId) return { ok: false, error: 'event_id is required' }
+
+  var sheet = getSheet_('events')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'event_id'), eventId)
+  if (row < 0) return { ok: false, error: 'Event not found' }
+
+  sheet.deleteRow(row)
+  return { ok: true }
+}
+
+function setActiveEvent_(payload) {
+  var eventId = String(payload.event_id || '').trim()
+  if (!eventId) return { ok: false, error: 'event_id is required' }
+
+  var sheet = getSheet_('events')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'event_id'), eventId)
+  if (row < 0) return { ok: false, error: 'Event not found' }
+
+  setActiveEventById_(sheet, h, eventId)
+  return { ok: true }
+}
+
+function setActiveEventById_(sheet, headerCols, eventId) {
+  var idCol = requireHeader_(headerCols, 'event_id')
+  var activeCol = requireHeader_(headerCols, 'active')
+  var lastRow = sheet.getLastRow()
+  if (lastRow < 2) return
+
+  var ids = sheet.getRange(2, idCol, lastRow - 1, 1).getValues()
+  var activeValues = new Array(lastRow - 1)
+
+  for (var i = 0; i < ids.length; i += 1) {
+    activeValues[i] = [String(ids[i][0]) === String(eventId)]
+  }
+
+  sheet.getRange(2, activeCol, lastRow - 1, 1).setValues(activeValues)
 }

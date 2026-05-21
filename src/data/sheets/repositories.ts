@@ -1,5 +1,5 @@
 import { fetchSheetTable, postSheetsAction, type SheetsWriteResponse } from './client'
-import type { BucketListRecord, CountryRecord, CurrentStudyRecord, PollRecord } from './types'
+import type { BucketListRecord, CountryRecord, CurrentStudyRecord, EventRecord, PollRecord, TrainingRecord } from './types'
 
 function parseBoolean(value: unknown) {
   if (typeof value === 'boolean') {
@@ -92,6 +92,39 @@ export async function getCurrentStudy(): Promise<CurrentStudyRecord[]> {
     .filter((row) => row.study_id && row.topic)
 }
 
+export async function getTrainingRecords(): Promise<TrainingRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('training_records')
+
+  return rows
+    .map((row) => ({
+      training_id: String(row.training_id ?? ''),
+      date: row.date ? String(row.date) : undefined,
+      morning_workout: row.morning_workout ? String(row.morning_workout) : undefined,
+      evening_workout: row.evening_workout ? String(row.evening_workout) : undefined,
+      completed_morning: parseBoolean(row.completed_morning),
+      completed_evening: parseBoolean(row.completed_evening),
+    }))
+    .filter((row) => row.training_id)
+}
+
+export async function getEvents(): Promise<EventRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('events')
+
+  return rows
+    .map((row) => ({
+      event_id: String(row.event_id ?? ''),
+      event_date: row.event_date ? String(row.event_date) : undefined,
+      event_name: String(row.event_name ?? ''),
+      type: row.type ? String(row.type) : undefined,
+      measurement: row.measurement ? String(row.measurement) : undefined,
+      location: row.location ? String(row.location) : undefined,
+      link: row.link ? String(row.link) : undefined,
+      price: parseNumber(row.price),
+      active: parseBoolean(row.active),
+    }))
+    .filter((row) => row.event_id && row.event_name)
+}
+
 async function runWrite(payload: Record<string, unknown>) {
   const result = await postSheetsAction<SheetsWriteResponse>(payload)
 
@@ -148,6 +181,93 @@ export async function setCurrentStudyCompleted(idToken: string, studyId: string,
     idToken,
     study_id: studyId,
     completed,
+  })
+}
+
+export async function setTrainingWorkoutCompleted(
+  idToken: string,
+  trainingId: string,
+  workoutPeriod: 'morning' | 'evening',
+  completed: boolean,
+) {
+  await runWrite({
+    action: 'setTrainingWorkoutCompleted',
+    idToken,
+    training_id: trainingId,
+    workout_period: workoutPeriod,
+    completed,
+  })
+}
+
+export async function createEvent(
+  idToken: string,
+  payload: {
+    eventDate: string
+    eventName: string
+    type?: string
+    measurement?: string
+    location?: string
+    link?: string
+    price?: number
+    active?: boolean
+  },
+) {
+  await runWrite({
+    action: 'createEvent',
+    idToken,
+    event_date: payload.eventDate,
+    event_name: payload.eventName,
+    type: payload.type ?? '',
+    measurement: payload.measurement ?? '',
+    location: payload.location ?? '',
+    link: payload.link ?? '',
+    price: payload.price ?? '',
+    active: payload.active ?? false,
+  })
+}
+
+export async function updateEvent(
+  idToken: string,
+  eventId: string,
+  payload: {
+    eventDate: string
+    eventName: string
+    type?: string
+    measurement?: string
+    location?: string
+    link?: string
+    price?: number
+    active?: boolean
+  },
+) {
+  await runWrite({
+    action: 'updateEvent',
+    idToken,
+    event_id: eventId,
+    event_date: payload.eventDate,
+    event_name: payload.eventName,
+    type: payload.type ?? '',
+    measurement: payload.measurement ?? '',
+    location: payload.location ?? '',
+    link: payload.link ?? '',
+    price: payload.price ?? '',
+    active: payload.active ?? false,
+  })
+}
+
+export async function deleteEvent(idToken: string, eventId: string) {
+  await runWrite({
+    action: 'deleteEvent',
+    idToken,
+    event_id: eventId,
+  })
+}
+
+export async function setActiveEvent(idToken: string, eventId: string) {
+  await runWrite({
+    action: 'setActiveEvent',
+    idToken,
+    event_id: eventId,
   })
 }
 

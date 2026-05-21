@@ -35,6 +35,27 @@ export type CurrentStudyRecord = {
   completed: boolean
 }
 
+export type TrainingRecord = {
+  training_id: string
+  date?: string
+  morning_workout?: string
+  evening_workout?: string
+  completed_morning: boolean
+  completed_evening: boolean
+}
+
+export type EventRecord = {
+  event_id: string
+  event_date?: string
+  event_name: string
+  type?: string
+  measurement?: string
+  location?: string
+  link?: string
+  price?: number
+  active: boolean
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

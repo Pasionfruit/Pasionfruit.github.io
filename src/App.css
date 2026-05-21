@@ -704,6 +704,11 @@
   gap: 0.75rem;
 }
 
+.countdown-edit-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .countdown-inputs {
   display: grid;
   gap: 0.6rem;
@@ -732,6 +737,12 @@
 }
 
 .countdown-target {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.countdown-location {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.82rem;
@@ -771,6 +782,45 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.82rem;
+}
+
+.countdown-editor {
+  display: grid;
+  gap: 0.6rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+}
+
+.countdown-event-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.countdown-event-item {
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  background: var(--surface);
+  padding: 0.45rem 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.countdown-event-name {
+  color: var(--text-strong);
+  font-size: 0.86rem;
+}
+
+.countdown-event-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
 }
 
 .countdown-lock-note {
@@ -1068,6 +1118,132 @@
   min-width: 7.5rem;
   padding: 0.25rem 0.45rem;
   font-size: 0.74rem;
+}
+
+.training-log-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.45rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.55rem;
+}
+
+.training-log-filters label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.training-log-today-panel {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.training-log-grid {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.training-log-grid-panel {
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  padding: 0.45rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.training-log-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.training-log-month-label {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.training-log-row-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-height: 14px;
+}
+
+.training-log-tile {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  flex: 0 0 auto;
+}
+
+.training-log-tile.level-1 {
+  background: #9edbb7;
+  border-color: #8ccca6;
+}
+
+.training-log-tile.level-2 {
+  background: #248a4b;
+  border-color: #1f7b42;
+}
+
+:root[data-theme='dark'] .training-log-tile.level-1 {
+  background: #2f6f4a;
+  border-color: #3d8559;
+}
+
+:root[data-theme='dark'] .training-log-tile.level-2 {
+  background: #49ad70;
+  border-color: #3f9662;
+}
+
+@media (max-width: 640px) {
+  .training-log-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .training-log-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .training-log-month-label {
+    font-size: 0.72rem;
+  }
+
+  .training-log-row-tiles {
+    gap: 0.2rem;
+    min-height: 12px;
+  }
+
+  .training-log-tile {
+    width: 12px;
+    height: 12px;
+  }
+
+  .study-complete-cell {
+    min-width: 0;
+  }
+
+  .study-complete-btn {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .study-today-table th,
+  .study-today-table td {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.45rem;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }
 
 .sheets-row {

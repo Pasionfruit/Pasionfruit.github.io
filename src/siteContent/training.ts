@@ -33,12 +33,12 @@ export const trainingSectionPage: PageContent = {
   accent: '#2c9c8f',
   cards: [
     {
-      title: 'Next Event Countdown',
-      body: '',
+      title: 'Training Log',
+      body: 'Filterable by season and year',
     },
     {
-      title: 'Workout(s) of the Day',
-      body: 'pull data and link to sheet with training plan | Crossed out, completed?',
+      title: 'Next Event Countdown',
+      body: '',
     },
   ],
   callout: '',
