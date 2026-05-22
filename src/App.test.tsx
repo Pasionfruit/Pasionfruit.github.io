@@ -587,7 +587,7 @@ describe('admin about me page', () => {
     expect(within(card).getByText('Salmon rice bowl')).toBeTruthy()
     expect(within(card).getByText('Protein bar')).toBeTruthy()
     expect(within(card).queryByText('Overnight oats')).toBeNull()
-    expect(within(card).queryByRole('button', { name: 'Show Weekly Plan' })).toBeNull()
+    expect(within(card).queryByRole('button', { name: 'Show' })).toBeNull()
     expect(within(card).queryByTitle('Edit values')).toBeNull()
   })
 
@@ -603,8 +603,6 @@ describe('admin about me page', () => {
     }
 
     expect(within(card).getByTitle('Edit values')).toBeTruthy()
-
-    await user.click(within(card).getByRole('button', { name: 'Show Weekly Plan' }))
 
     expect(within(card).getByText('Greek yogurt bowl')).toBeTruthy()
     expect(within(card).getByText('Overnight oats')).toBeTruthy()
@@ -636,7 +634,6 @@ describe('admin about me page', () => {
   })
 
   it('blocks weekly meal plan editing for non-authorized account', async () => {
-    const user = userEvent.setup()
     localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
     renderCookingPlanPage()
 
@@ -645,8 +642,6 @@ describe('admin about me page', () => {
     if (!card) {
       throw new Error('Meal Plan for the Week card not found')
     }
-
-    await user.click(within(card).getByRole('button', { name: 'Show Weekly Plan' }))
 
     expect(within(card).queryByTitle('Edit values')).toBeNull()
     expect(

@@ -2983,7 +2983,7 @@ function MealPlanCard({
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
-  const [isWeeklyExpanded, setIsWeeklyExpanded] = useState(false)
+  const [isWeeklyExpanded, setIsWeeklyExpanded] = useState(!showTodaySummary)
   const [isEditing, setIsEditing] = useState(false)
   const [editedRows, setEditedRows] = useState<Record<string, MealPlanRecord>>({})
 
@@ -3085,7 +3085,7 @@ function MealPlanCard({
               aria-expanded={isWeeklyExpanded}
               onClick={() => setIsWeeklyExpanded((value) => !value)}
             >
-              {isWeeklyExpanded ? 'Hide Weekly Plan' : 'Show Weekly Plan'}
+              {isWeeklyExpanded ? 'Hide' : 'Show'}
             </button>
           ) : null}
         </div>
