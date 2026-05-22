@@ -36,10 +36,12 @@ import {
   deleteCountry,
   deleteEvent,
   deletePoll,
+  getBackpackItems,
   getBucketList,
   getCurrentStudy,
   getCountries,
   getEvents,
+  getMealPlan,
   getPolls,
   getTrainingRecords,
   setActiveEvent,
@@ -50,13 +52,17 @@ import {
   updateBucketItem,
   updateCountry,
   updateEvent,
+  updateBackpackItem,
+  updateMealPlan,
   votePoll,
 } from './data/sheets/repositories'
 import type {
+  BackpackRecord,
   BucketListRecord,
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
+  MealPlanRecord,
   PollRecord,
   TrainingRecord,
 } from './data/sheets/types'
@@ -196,10 +202,22 @@ function App() {
           path="cooking"
           element={<SectionPage sectionId="cooking" profile={profile} googleIdToken={googleIdToken} />}
         />
-        <Route path="cooking/recipes" element={<DetailPage path="/cooking/recipes" />} />
-        <Route path="cooking/plan" element={<DetailPage path="/cooking/plan" />} />
-        <Route path="cooking/learn" element={<DetailPage path="/cooking/learn" />} />
-        <Route path="cooking/deals" element={<DetailPage path="/cooking/deals" />} />
+        <Route
+          path="cooking/recipes"
+          element={<DetailPage path="/cooking/recipes" profile={profile} googleIdToken={googleIdToken} />}
+        />
+        <Route
+          path="cooking/plan"
+          element={<DetailPage path="/cooking/plan" profile={profile} googleIdToken={googleIdToken} />}
+        />
+        <Route
+          path="cooking/learn"
+          element={<DetailPage path="/cooking/learn" profile={profile} googleIdToken={googleIdToken} />}
+        />
+        <Route
+          path="cooking/deals"
+          element={<DetailPage path="/cooking/deals" profile={profile} googleIdToken={googleIdToken} />}
+        />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>
     </Routes>
@@ -1034,7 +1052,7 @@ function TodoistTasksCard({
   const [newTaskContent, setNewTaskContent] = useState('')
   const [newTaskDueDate, setNewTaskDueDate] = useState('')
   const [newTaskPriority, setNewTaskPriority] = useState(1)
-  const [editedRows, setEditedRows] = useState<Record<string, { content: string; dueDate: string; priority: number }>>({})
+  const [editedRows, setEditedRows] = useState<Record<string, { content: string; description: string; dueDate: string; priority: number }>>({})
 
   async function loadTasks() {
     try {
@@ -1060,10 +1078,11 @@ function TodoistTasksCard({
   }, [])
 
   useEffect(() => {
-    const next: Record<string, { content: string; dueDate: string; priority: number }> = {}
+    const next: Record<string, { content: string; description: string; dueDate: string; priority: number }> = {}
     rows.forEach((row) => {
       next[row.id] = {
         content: row.content,
+        description: row.description ?? '',
         dueDate: dateForInput(row.due?.date ?? row.due?.datetime ?? ''),
         priority: normalizePriority(row.priority),
       }
@@ -1104,6 +1123,7 @@ function TodoistTasksCard({
 
     const draft = editedRows[task.id]
     const content = (draft?.content ?? task.content).trim()
+    const description = (draft?.description ?? task.description ?? '').trim()
     const dueDate = draft?.dueDate ?? ''
     const priority = normalizePriority(draft?.priority ?? task.priority)
 
@@ -1117,6 +1137,7 @@ function TodoistTasksCard({
     try {
       await updateTask(task.id, {
         content,
+        description,
         dueDate: dueDate || undefined,
         priority,
       })
@@ -1200,7 +1221,10 @@ function TodoistTasksCard({
                 <tbody>
                   {rows.map((row) => (
                     <tr key={`summary-${row.id}`}>
-                      <td>{row.content}</td>
+                      <td>
+                        <p>{row.content}</p>
+                        {row.description ? <p className="sheets-meta">{row.description}</p> : null}
+                      </td>
                       <td>{row.is_completed ? 'Yes' : 'No'}</td>
                     </tr>
                   ))}
@@ -1265,22 +1289,43 @@ function TodoistTasksCard({
                   {rows.map((row) => (
                     <tr key={row.id}>
                       <td>
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={editedRows[row.id]?.content ?? row.content}
-                          onChange={(event) =>
-                            setEditedRows((current) => ({
-                              ...current,
-                              [row.id]: {
-                                content: event.target.value,
-                                dueDate: current[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime),
-                                priority: current[row.id]?.priority ?? normalizePriority(row.priority),
-                              },
-                            }))
-                          }
-                          disabled={isWriting || !canEdit}
-                        />
+                        <div className="todoist-row-fields">
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={editedRows[row.id]?.content ?? row.content}
+                            onChange={(event) =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [row.id]: {
+                                  content: event.target.value,
+                                  description: current[row.id]?.description ?? row.description ?? '',
+                                  dueDate: current[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime),
+                                  priority: current[row.id]?.priority ?? normalizePriority(row.priority),
+                                },
+                              }))
+                            }
+                            disabled={isWriting || !canEdit}
+                          />
+                          <textarea
+                            className="sheets-input sheets-table-input"
+                            value={editedRows[row.id]?.description ?? row.description ?? ''}
+                            onChange={(event) =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [row.id]: {
+                                  content: current[row.id]?.content ?? row.content,
+                                  description: event.target.value,
+                                  dueDate: current[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime),
+                                  priority: current[row.id]?.priority ?? normalizePriority(row.priority),
+                                },
+                              }))
+                            }
+                            disabled={isWriting || !canEdit}
+                            rows={3}
+                            placeholder="Task description"
+                          />
+                        </div>
                       </td>
                       <td>
                         <input
@@ -1292,6 +1337,7 @@ function TodoistTasksCard({
                               ...current,
                               [row.id]: {
                                 content: current[row.id]?.content ?? row.content,
+                                description: current[row.id]?.description ?? row.description ?? '',
                                 dueDate: event.target.value,
                                 priority: current[row.id]?.priority ?? normalizePriority(row.priority),
                               },
@@ -1408,6 +1454,37 @@ function SectionPage({
               fallbackBody={card.body}
               canWrite={profile === 'admin'}
               idToken={googleIdToken}
+            />
+          )
+        }
+
+        if (sectionId === 'mrpasionfruit' && card.title === 'Backpack') {
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+
+          return (
+            <BackpackCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={canWrite}
+              idToken={googleIdToken}
+            />
+          )
+        }
+
+        if (sectionId === 'cooking' && card.title === 'Meal Plan for the Day') {
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+
+          return (
+            <MealPlanCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={canWrite}
+              idToken={googleIdToken}
+              showTodaySummary
             />
           )
         }
@@ -2586,6 +2663,616 @@ function CountriesCard({
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
         </>
       ) : null}
+    </article>
+  )
+}
+
+function BackpackCard({
+  title,
+  fallbackBody,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  fallbackBody: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [rows, setRows] = useState<BackpackRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [storageFilter, setStorageFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [editedRows, setEditedRows] = useState<Record<number, { storage: string; type: string; quantity: string }>>({})
+
+  async function loadBackpack() {
+    try {
+      const data = await getBackpackItems()
+      setRows(data)
+      setWriteError('')
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadBackpack()
+  }, [])
+
+  useEffect(() => {
+    const next: Record<number, { storage: string; type: string; quantity: string }> = {}
+    rows.forEach((row, index) => {
+      next[index] = {
+        storage: row.storage,
+        type: row.type,
+        quantity: row.quantity,
+      }
+    })
+    setEditedRows(next)
+  }, [rows])
+
+  const storageOptions = useMemo(() => {
+    return Array.from(new Set(rows.map((row) => row.storage).filter((value) => value))).sort((a, b) =>
+      a.localeCompare(b),
+    )
+  }, [rows])
+
+  const typeOptions = useMemo(() => {
+    return Array.from(new Set(rows.map((row) => row.type).filter((value) => value))).sort((a, b) =>
+      a.localeCompare(b),
+    )
+  }, [rows])
+
+  const filteredRows = useMemo(() => {
+    return rows
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) => {
+        const storageMatches = storageFilter === 'all' || row.storage === storageFilter
+        const typeMatches = typeFilter === 'all' || row.type === typeFilter
+        return storageMatches && typeMatches
+      })
+      .sort((a, b) => {
+        const typeCompare = a.row.type.localeCompare(b.row.type)
+        if (typeCompare !== 0) {
+          return typeCompare
+        }
+
+        return a.row.item.localeCompare(b.row.item)
+      })
+  }, [rows, storageFilter, typeFilter])
+
+  async function handleSave(index: number, row: BackpackRecord) {
+    if (!idToken || isWriting || !canWrite) {
+      return
+    }
+
+    const draft = editedRows[index]
+    const nextStorage = (draft?.storage ?? row.storage).trim()
+    const nextType = (draft?.type ?? row.type).trim()
+    const nextQuantity = (draft?.quantity ?? row.quantity).trim()
+
+    if (!nextStorage || !nextType) {
+      setWriteError('Storage and type are required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateBackpackItem(idToken, {
+        originalStorage: row.storage,
+        originalType: row.type,
+        originalItem: row.item,
+        storage: nextStorage,
+        type: nextType,
+        quantity: nextQuantity,
+      })
+      await loadBackpack()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update backpack item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading backpack...</p> : null}
+
+          {!isLoading ? <p className="sheets-meta">{rows.length > 0 ? `${rows.length} backpack item${rows.length === 1 ? '' : 's'}` : fallbackBody}</p> : null}
+
+          {!canWrite ? (
+            <p className="sheets-meta">
+              Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+            </p>
+          ) : null}
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          <div className="backpack-filter-row">
+            <select
+              className="sheets-input"
+              value={storageFilter}
+              onChange={(event) => setStorageFilter(event.target.value)}
+              aria-label="Filter by storage"
+            >
+              <option value="all">All storage</option>
+              {storageOptions.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+            <select
+              className="sheets-input"
+              value={typeFilter}
+              onChange={(event) => setTypeFilter(event.target.value)}
+              aria-label="Filter by type"
+            >
+              <option value="all">All types</option>
+              {typeOptions.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="sheets-table-shell">
+            <table className="sheets-table">
+              <thead>
+                <tr>
+                  {isEditing && canWrite ? <th>Storage</th> : null}
+                  <th>Type</th>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  {isEditing && canWrite ? <th>Actions</th> : null}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRows.map(({ row, index }) => (
+                  <tr key={`${row.item}-${index}`}>
+                    {isEditing && canWrite ? (
+                      <td>
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[index]?.storage ?? row.storage}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [index]: {
+                                storage: event.target.value,
+                                type: current[index]?.type ?? row.type,
+                                quantity: current[index]?.quantity ?? row.quantity,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      </td>
+                    ) : null}
+                    <td>
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[index]?.type ?? row.type}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [index]: {
+                                storage: current[index]?.storage ?? row.storage,
+                                type: event.target.value,
+                                quantity: current[index]?.quantity ?? row.quantity,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.type
+                      )}
+                    </td>
+                    <td>{row.item}</td>
+                    <td>
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[index]?.quantity ?? row.quantity}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [index]: {
+                                storage: current[index]?.storage ?? row.storage,
+                                type: current[index]?.type ?? row.type,
+                                quantity: event.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.quantity
+                      )}
+                    </td>
+                    {isEditing && canWrite ? (
+                      <td>
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => void handleSave(index, row)}
+                          disabled={!idToken || isWriting || !canWrite}
+                        >
+                          Save
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredRows.length === 0 ? <p className="sheets-meta">No backpack items match these filters.</p> : null}
+
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : null}
+    </article>
+  )
+}
+
+function normalizeWeekday(value: string) {
+  return value.trim().toLowerCase()
+}
+
+function getTodayWeekdayName() {
+  return new Date().toLocaleDateString('en-US', { weekday: 'long' })
+}
+
+function MealPlanCard({
+  title,
+  fallbackBody,
+  canWrite,
+  idToken,
+  showTodaySummary,
+}: {
+  title: string
+  fallbackBody: string
+  canWrite: boolean
+  idToken: string
+  showTodaySummary: boolean
+}) {
+  const [rows, setRows] = useState<MealPlanRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [isWeeklyExpanded, setIsWeeklyExpanded] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedRows, setEditedRows] = useState<Record<string, MealPlanRecord>>({})
+
+  async function loadMealPlan() {
+    try {
+      const data = await getMealPlan()
+      setRows(data)
+      setWriteError('')
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadMealPlan()
+  }, [])
+
+  useEffect(() => {
+    const next: Record<string, MealPlanRecord> = {}
+    rows.forEach((row) => {
+      next[row.day_of_the_week] = { ...row }
+    })
+    setEditedRows(next)
+  }, [rows])
+
+  const sortedRows = useMemo(() => {
+    const weekdayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    return [...rows].sort((a, b) => {
+      const dayDiff = weekdayOrder.indexOf(normalizeWeekday(a.day_of_the_week)) - weekdayOrder.indexOf(normalizeWeekday(b.day_of_the_week))
+      if (dayDiff !== 0) {
+        return dayDiff
+      }
+
+      return a.day_of_the_week.localeCompare(b.day_of_the_week)
+    })
+  }, [rows])
+
+  const todayRow = useMemo(() => {
+    const today = normalizeWeekday(getTodayWeekdayName())
+    return rows.find((row) => {
+      const weekday = normalizeWeekday(row.day_of_the_week)
+      return weekday === today || weekday.slice(0, 3) === today.slice(0, 3)
+    })
+  }, [rows])
+
+  async function handleSave(row: MealPlanRecord) {
+    if (!idToken || isWriting || !canWrite) {
+      return
+    }
+
+    const draft = editedRows[row.day_of_the_week] ?? row
+    const dayOfTheWeek = draft.day_of_the_week.trim()
+    if (!dayOfTheWeek) {
+      setWriteError('Day of the week is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateMealPlan(idToken, {
+        originalDayOfTheWeek: row.day_of_the_week,
+        dayOfTheWeek,
+        breakfast: draft.breakfast.trim(),
+        lunch: draft.lunch.trim(),
+        dinner: draft.dinner.trim(),
+        snack: draft.snack.trim(),
+      })
+      await loadMealPlan()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update meal plan')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card meal-plan-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {!showTodaySummary && canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          {!showTodaySummary ? (
+            <button
+              type="button"
+              className="section-collapse-btn"
+              aria-expanded={isWeeklyExpanded}
+              onClick={() => setIsWeeklyExpanded((value) => !value)}
+            >
+              {isWeeklyExpanded ? 'Hide Weekly Plan' : 'Show Weekly Plan'}
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      {isLoading ? <p className="sheets-meta">Loading meal plan...</p> : null}
+
+      {showTodaySummary && !isLoading ? (
+        todayRow ? (
+          <div className="meal-plan-day-grid">
+            <div className="meal-plan-day-item">
+              <p className="meal-plan-label">Breakfast</p>
+              <p>{todayRow.breakfast || 'Not planned'}</p>
+            </div>
+            <div className="meal-plan-day-item">
+              <p className="meal-plan-label">Lunch</p>
+              <p>{todayRow.lunch || 'Not planned'}</p>
+            </div>
+            <div className="meal-plan-day-item">
+              <p className="meal-plan-label">Dinner</p>
+              <p>{todayRow.dinner || 'Not planned'}</p>
+            </div>
+            <div className="meal-plan-day-item">
+              <p className="meal-plan-label">Snack</p>
+              <p>{todayRow.snack || 'Not planned'}</p>
+            </div>
+          </div>
+        ) : (
+          <p className="sheets-meta">{fallbackBody || 'No meal plan found for today.'}</p>
+        )
+      ) : null}
+
+      {!canWrite ? (
+        <p className="sheets-meta">
+          Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+        </p>
+      ) : null}
+
+      {canWrite && !idToken ? (
+        <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+      ) : null}
+
+      {isWeeklyExpanded ? (
+        <div className="meal-plan-weekly-section">
+          <div className="sheets-table-shell meal-plan-table-shell">
+            <table className="sheets-table meal-plan-table">
+              <thead>
+                <tr>
+                  <th>Day of week</th>
+                  <th>Breakfast</th>
+                  <th>Lunch</th>
+                  <th>Dinner</th>
+                  <th>Snack</th>
+                  {isEditing && canWrite ? <th>Actions</th> : null}
+                </tr>
+              </thead>
+              <tbody>
+                {sortedRows.map((row) => (
+                  <tr key={row.day_of_the_week}>
+                    <td data-label="Day of week">
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[row.day_of_the_week]?.day_of_the_week ?? row.day_of_the_week}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.day_of_the_week]: {
+                                ...(current[row.day_of_the_week] ?? row),
+                                day_of_the_week: event.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.day_of_the_week
+                      )}
+                    </td>
+                    <td data-label="Breakfast">
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[row.day_of_the_week]?.breakfast ?? row.breakfast}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.day_of_the_week]: {
+                                ...(current[row.day_of_the_week] ?? row),
+                                breakfast: event.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.breakfast
+                      )}
+                    </td>
+                    <td data-label="Lunch">
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[row.day_of_the_week]?.lunch ?? row.lunch}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.day_of_the_week]: {
+                                ...(current[row.day_of_the_week] ?? row),
+                                lunch: event.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.lunch
+                      )}
+                    </td>
+                    <td data-label="Dinner">
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[row.day_of_the_week]?.dinner ?? row.dinner}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.day_of_the_week]: {
+                                ...(current[row.day_of_the_week] ?? row),
+                                dinner: event.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.dinner
+                      )}
+                    </td>
+                    <td data-label="Snack">
+                      {isEditing && canWrite ? (
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={editedRows[row.day_of_the_week]?.snack ?? row.snack}
+                          onChange={(event) =>
+                            setEditedRows((current) => ({
+                              ...current,
+                              [row.day_of_the_week]: {
+                                ...(current[row.day_of_the_week] ?? row),
+                                snack: event.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!idToken || isWriting || !canWrite}
+                        />
+                      ) : (
+                        row.snack
+                      )}
+                    </td>
+                    {isEditing && canWrite ? (
+                      <td data-label="Actions">
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => void handleSave(row)}
+                          disabled={!idToken || isWriting || !canWrite}
+                        >
+                          Save
+                        </button>
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {sortedRows.length === 0 ? <p className="sheets-meta">No meal plan rows found.</p> : null}
+        </div>
+      ) : null}
+
+      {writeError ? <p className="sheets-error">{writeError}</p> : null}
     </article>
   )
 }
@@ -4208,6 +4895,22 @@ function DetailPage({
 
         if (path === '/training/records' && card.title === 'Milestones') {
           return <MilestonesCard key={card.title} title={card.title} canEdit={false} />
+        }
+
+        if (path === '/cooking/plan' && card.title === 'Meal Plan for the Week') {
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+
+          return (
+            <MealPlanCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={canWrite}
+              idToken={googleIdToken}
+              showTodaySummary={false}
+            />
+          )
         }
 
         // Add Google Drive Study Notes link with icon for Study Materials card

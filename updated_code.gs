@@ -57,6 +57,12 @@ function doPost(e) {
       case 'deleteCountry':
         return jsonResponse_(deleteCountry_(payload))
 
+      case 'updateBackpackItem':
+        return jsonResponse_(updateBackpackItem_(payload))
+
+      case 'updateMealPlan':
+        return jsonResponse_(updateMealPlan_(payload))
+
       case 'createEvent':
         return jsonResponse_(createEvent_(payload))
 
@@ -454,6 +460,82 @@ function deleteCountry_(payload) {
   if (row < 0) return { ok: false, error: 'Country not found' }
 
   sheet.deleteRow(row)
+  return { ok: true }
+}
+
+function updateBackpackItem_(payload) {
+  var originalStorage = String(payload.original_storage || '').trim()
+  var originalType = String(payload.original_type || '').trim()
+  var originalItem = String(payload.original_item || '').trim()
+  var storage = String(payload.storage || '').trim()
+  var type = String(payload.type || '').trim()
+  var quantity = String(payload.quantity || '').trim()
+
+  if (!originalItem || !storage || !type) {
+    return { ok: false, error: 'original_item, storage, and type are required' }
+  }
+
+  var sheet = getSheet_('traveling')
+  var h = headerMap_(sheet)
+  var storageCol = requireHeader_(h, 'storage')
+  var typeCol = requireHeader_(h, 'type')
+  var itemCol = requireHeader_(h, 'item')
+  var quantityCol = requireHeader_(h, 'quantity')
+  var lastRow = sheet.getLastRow()
+
+  if (lastRow < 2) {
+    return { ok: false, error: 'Backpack item not found' }
+  }
+
+  var values = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues()
+  var row = -1
+
+  for (var i = 0; i < values.length; i += 1) {
+    var currentStorage = String(values[i][storageCol - 1] || '').trim()
+    var currentType = String(values[i][typeCol - 1] || '').trim()
+    var currentItem = String(values[i][itemCol - 1] || '').trim()
+
+    if (currentItem === originalItem && currentStorage === originalStorage && currentType === originalType) {
+      row = i + 2
+      break
+    }
+  }
+
+  if (row < 0) {
+    return { ok: false, error: 'Backpack item not found' }
+  }
+
+  sheet.getRange(row, storageCol).setValue(storage)
+  sheet.getRange(row, typeCol).setValue(type)
+  sheet.getRange(row, quantityCol).setValue(quantity)
+
+  return { ok: true }
+}
+
+function updateMealPlan_(payload) {
+  var originalDay = String(payload.original_day_of_the_week || '').trim()
+  var day = String(payload.day_of_the_week || '').trim()
+  var breakfast = String(payload.breakfast || '').trim()
+  var lunch = String(payload.lunch || '').trim()
+  var dinner = String(payload.dinner || '').trim()
+  var snack = String(payload.snack || '').trim()
+
+  if (!originalDay || !day) {
+    return { ok: false, error: 'original_day_of_the_week and day_of_the_week are required' }
+  }
+
+  var sheet = getSheet_('meal_plan')
+  var h = headerMap_(sheet)
+  var dayCol = requireHeader_(h, 'day_of_the_week')
+  var row = findRowById_(sheet, dayCol, originalDay)
+  if (row < 0) return { ok: false, error: 'Meal plan row not found' }
+
+  sheet.getRange(row, dayCol).setValue(day)
+  sheet.getRange(row, requireHeader_(h, 'breakfast')).setValue(breakfast)
+  sheet.getRange(row, requireHeader_(h, 'lunch')).setValue(lunch)
+  sheet.getRange(row, requireHeader_(h, 'dinner')).setValue(dinner)
+  sheet.getRange(row, requireHeader_(h, 'snack')).setValue(snack)
+
   return { ok: true }
 }
 

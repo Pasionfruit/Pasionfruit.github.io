@@ -43,6 +43,10 @@ export const aboutMeSectionPage: PageContent = {
       title: 'Places visited',
       body: 'Color of the world, with countries/states visited highlighted.',
     },
+    {
+      title: 'Backpack',
+      body: 'Traveling inventory grouped by storage and type.',
+    },
   ],
   callout:
     "Hi, I'm Abe, you could probably tell I have a lot of interests. I come from a rather diverse background, but throughly enjoy adapting, learning, and understanding conceptual matters. I like to go on adventures, mainly a doer on trips, most fun with friends/family. As long as you're openminded and chill, we'll get along just fine :)",

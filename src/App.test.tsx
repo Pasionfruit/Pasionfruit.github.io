@@ -8,7 +8,9 @@ const repoMocks = vi.hoisted(() => ({
   getBucketList: vi.fn(),
   getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
+  getBackpackItems: vi.fn(),
   getEvents: vi.fn(),
+  getMealPlan: vi.fn(),
   getPolls: vi.fn(),
   getTrainingRecords: vi.fn(),
   createEvent: vi.fn(),
@@ -25,6 +27,8 @@ const repoMocks = vi.hoisted(() => ({
   createCountry: vi.fn(),
   updateCountry: vi.fn(),
   deleteCountry: vi.fn(),
+  updateBackpackItem: vi.fn(),
+  updateMealPlan: vi.fn(),
   createPoll: vi.fn(),
   deletePoll: vi.fn(),
 }))
@@ -95,6 +99,22 @@ function renderHomePage() {
 function renderTrainingPage() {
   return render(
     <MemoryRouter initialEntries={['/training']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function renderCookingPage() {
+  return render(
+    <MemoryRouter initialEntries={['/cooking']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function renderCookingPlanPage() {
+  return render(
+    <MemoryRouter initialEntries={['/cooking/plan']}>
       <App />
     </MemoryRouter>,
   )
@@ -188,6 +208,57 @@ beforeEach(() => {
     },
   ])
 
+  repoMocks.getBackpackItems.mockResolvedValue([
+    {
+      storage: 'Carry-on',
+      type: 'Clothing',
+      item: 'Socks',
+      quantity: '4',
+    },
+    {
+      storage: 'Checked bag',
+      type: 'Toiletries',
+      item: 'Toothbrush',
+      quantity: '1',
+    },
+    {
+      storage: 'Carry-on',
+      type: 'Tech',
+      item: 'Charger',
+      quantity: '2',
+    },
+  ])
+
+  const today = new Date()
+  const tomorrow = new Date(today)
+  tomorrow.setDate(today.getDate() + 1)
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+
+  repoMocks.getMealPlan.mockResolvedValue([
+    {
+      day_of_the_week: today.toLocaleDateString('en-US', { weekday: 'long' }),
+      breakfast: 'Greek yogurt bowl',
+      lunch: 'Chicken wrap',
+      dinner: 'Salmon rice bowl',
+      snack: 'Protein bar',
+    },
+    {
+      day_of_the_week: tomorrow.toLocaleDateString('en-US', { weekday: 'long' }),
+      breakfast: 'Overnight oats',
+      lunch: 'Turkey sandwich',
+      dinner: 'Pasta night',
+      snack: 'Trail mix',
+    },
+    {
+      day_of_the_week: yesterday.toLocaleDateString('en-US', { weekday: 'long' }),
+      breakfast: 'Egg tacos',
+      lunch: 'Burrito bowl',
+      dinner: 'Soup and toast',
+      snack: 'Fruit cup',
+    },
+  ])
+
   repoMocks.getPolls.mockResolvedValue([
     {
       poll_id: 'poll-1',
@@ -228,8 +299,8 @@ beforeEach(() => {
   ])
 
   const now = new Date()
-  const tomorrow = new Date(now)
-  tomorrow.setDate(now.getDate() + 1)
+  const studyTomorrow = new Date(now)
+  studyTomorrow.setDate(now.getDate() + 1)
 
   repoMocks.getCurrentStudy.mockResolvedValue([
     {
@@ -256,7 +327,7 @@ beforeEach(() => {
       study_id: 'study-3',
       related_exam: 'Exam FM',
       topic: 'Annuities',
-      date: tomorrow.toISOString(),
+      date: studyTomorrow.toISOString(),
       own_terms: 'Present value',
       problems_solved: 8,
       problems_worked: 10,
@@ -305,6 +376,8 @@ beforeEach(() => {
   repoMocks.createCountry.mockResolvedValue(undefined)
   repoMocks.updateCountry.mockResolvedValue(undefined)
   repoMocks.deleteCountry.mockResolvedValue(undefined)
+  repoMocks.updateBackpackItem.mockResolvedValue(undefined)
+  repoMocks.updateMealPlan.mockResolvedValue(undefined)
   repoMocks.createPoll.mockResolvedValue(undefined)
   repoMocks.deletePoll.mockResolvedValue(undefined)
 
@@ -312,6 +385,7 @@ beforeEach(() => {
     {
       id: 'todo-1',
       content: 'Submit dashboard update',
+      description: 'Include KPI updates and rollout notes',
       priority: 2,
       is_completed: false,
       due: { date: '2026-05-21' },
@@ -319,6 +393,7 @@ beforeEach(() => {
     {
       id: 'todo-2',
       content: 'Review overdue notes',
+      description: '',
       priority: 4,
       is_completed: false,
       due: { date: '2026-05-20' },
@@ -384,6 +459,87 @@ describe('admin about me page', () => {
     })
   })
 
+  it('shows Backpack table and filters by storage and type', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+    renderAdminAboutMePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Backpack' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Backpack card not found')
+    }
+
+    expect(within(card).getByText('Socks')).toBeTruthy()
+    expect(within(card).getByText('Toothbrush')).toBeTruthy()
+
+    await user.selectOptions(within(card).getByLabelText('Filter by storage'), 'Carry-on')
+    await user.selectOptions(within(card).getByLabelText('Filter by type'), 'Tech')
+
+    expect(within(card).getByText('Charger')).toBeTruthy()
+    expect(within(card).queryByText('Socks')).toBeNull()
+    expect(within(card).queryByText('Toothbrush')).toBeNull()
+  })
+
+  it('allows authorized admin to edit Backpack fields except item', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+    renderAdminAboutMePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Backpack' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Backpack card not found')
+    }
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    const socksCell = within(card).getByText('Socks')
+    const socksRow = socksCell.closest('tr')
+    if (!socksRow) {
+      throw new Error('Socks row not found')
+    }
+
+    const storageInput = within(socksRow).getByDisplayValue('Carry-on') as HTMLInputElement
+    const typeInput = within(socksRow).getByDisplayValue('Clothing') as HTMLInputElement
+    const quantityInput = within(socksRow).getByDisplayValue('4') as HTMLInputElement
+
+    await user.clear(storageInput)
+    await user.type(storageInput, 'Weekender')
+    await user.clear(typeInput)
+    await user.type(typeInput, 'Essentials')
+    await user.clear(quantityInput)
+    await user.type(quantityInput, '5')
+    await user.click(within(socksRow).getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(repoMocks.updateBackpackItem).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        originalStorage: 'Carry-on',
+        originalType: 'Clothing',
+        originalItem: 'Socks',
+        storage: 'Weekender',
+        type: 'Essentials',
+        quantity: '5',
+      })
+    })
+  })
+
+  it('blocks Backpack edit mode for non-authorized account', async () => {
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
+    renderAdminAboutMePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Backpack' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Backpack card not found')
+    }
+
+    expect(within(card).queryByTitle('Edit values')).toBeNull()
+    expect(
+      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+    ).toBeTruthy()
+  })
+
   it('uses Add New Poll and creates a poll from the admin edit form', async () => {
     const user = userEvent.setup()
     renderAdminAboutMePage()
@@ -415,6 +571,87 @@ describe('admin about me page', () => {
         'NAS',
       )
     })
+  })
+
+  it('shows today meal plan on the cooking section and not another day by default', async () => {
+    renderCookingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Meal Plan for the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Meal Plan for the Day card not found')
+    }
+
+    expect(within(card).getByText('Greek yogurt bowl')).toBeTruthy()
+    expect(within(card).getByText('Chicken wrap')).toBeTruthy()
+    expect(within(card).getByText('Salmon rice bowl')).toBeTruthy()
+    expect(within(card).getByText('Protein bar')).toBeTruthy()
+    expect(within(card).queryByText('Overnight oats')).toBeNull()
+    expect(within(card).queryByRole('button', { name: 'Show Weekly Plan' })).toBeNull()
+    expect(within(card).queryByTitle('Edit values')).toBeNull()
+  })
+
+  it('shows expandable weekly meal plan table and allows authorized admin edits', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
+    renderCookingPlanPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Meal Plan for the Week' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Meal Plan for the Week card not found')
+    }
+
+    expect(within(card).getByTitle('Edit values')).toBeTruthy()
+
+    await user.click(within(card).getByRole('button', { name: 'Show Weekly Plan' }))
+
+    expect(within(card).getByText('Greek yogurt bowl')).toBeTruthy()
+    expect(within(card).getByText('Overnight oats')).toBeTruthy()
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    const breakfastInput = within(card).getByDisplayValue('Greek yogurt bowl') as HTMLInputElement
+    const row = breakfastInput.closest('tr')
+    if (!row) {
+      throw new Error('Meal plan row not found')
+    }
+
+    await user.clear(breakfastInput)
+    await user.type(breakfastInput, 'Protein pancakes')
+    await user.click(within(row).getByRole('button', { name: 'Save' }))
+
+    const todayDay = new Date().toLocaleDateString('en-US', { weekday: 'long' })
+
+    await waitFor(() => {
+      expect(repoMocks.updateMealPlan).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        originalDayOfTheWeek: todayDay,
+        dayOfTheWeek: todayDay,
+        breakfast: 'Protein pancakes',
+        lunch: 'Chicken wrap',
+        dinner: 'Salmon rice bowl',
+        snack: 'Protein bar',
+      })
+    })
+  })
+
+  it('blocks weekly meal plan editing for non-authorized account', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
+    renderCookingPlanPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Meal Plan for the Week' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Meal Plan for the Week card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Show Weekly Plan' }))
+
+    expect(within(card).queryByTitle('Edit values')).toBeNull()
+    expect(
+      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+    ).toBeTruthy()
   })
 
   it('filters Current Study Plan rows by related exam', async () => {
@@ -492,6 +729,7 @@ describe('admin about me page', () => {
     await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     expect(within(card).getByText('Submit dashboard update')).toBeTruthy()
+    expect(within(card).getByText('Include KPI updates and rollout notes')).toBeTruthy()
 
     await user.click(within(card).getByTitle('Edit values'))
 
@@ -509,6 +747,10 @@ describe('admin about me page', () => {
     await user.clear(firstTaskInput)
     await user.type(firstTaskInput, 'Submit dashboard update v2')
 
+    const descriptionInput = within(card).getByDisplayValue('Include KPI updates and rollout notes') as HTMLTextAreaElement
+    await user.clear(descriptionInput)
+    await user.type(descriptionInput, 'Include KPI updates, rollout notes, and blockers')
+
     const row = firstTaskInput.closest('tr')
     if (!row) {
       throw new Error('Task row not found')
@@ -522,6 +764,7 @@ describe('admin about me page', () => {
     await waitFor(() => {
       expect(todoistMocks.updateTask).toHaveBeenCalledWith('todo-1', {
         content: 'Submit dashboard update v2',
+        description: 'Include KPI updates, rollout notes, and blockers',
         dueDate: '2026-05-22',
         priority: 2,
       })

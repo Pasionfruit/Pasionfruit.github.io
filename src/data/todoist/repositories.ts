@@ -4,6 +4,7 @@ import type { TodoistTask, TodoistTaskUpdate } from './types'
 type TodoistTaskApi = {
   id: string | number
   content: string
+  description?: string
   priority?: number
   is_completed?: boolean
   due?: {
@@ -41,6 +42,7 @@ function normalizeTask(task: TodoistTaskApi): TodoistTask {
   return {
     id: String(task.id),
     content: task.content,
+    description: task.description ?? '',
     priority: mapPriorityFromApi(task.priority),
     is_completed: Boolean(task.is_completed),
     due: task.due ?? null,
@@ -114,6 +116,7 @@ export async function updateTask(taskId: string, update: TodoistTaskUpdate) {
     method: 'POST',
     body: JSON.stringify({
       content: update.content,
+      description: update.description ?? '',
       due_date: update.dueDate || null,
       priority: mapPriorityToApi(update.priority),
     }),

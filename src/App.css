@@ -1073,10 +1073,55 @@
   min-width: 0;
 }
 
+.todoist-row-fields {
+  display: grid;
+  gap: 0.35rem;
+}
+
 .sheets-table-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+}
+
+.backpack-filter-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.meal-plan-day-grid {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.meal-plan-day-item {
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  background: var(--surface);
+  padding: 0.7rem 0.8rem;
+}
+
+.meal-plan-day-item p {
+  margin: 0;
+}
+
+.meal-plan-label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.28rem;
+}
+
+.meal-plan-weekly-section {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.meal-plan-table td::before {
+  display: none;
 }
 
 .study-today-shell {
@@ -1247,6 +1292,64 @@
     padding: 0.4rem 0.45rem;
     overflow-wrap: anywhere;
     word-break: break-word;
+  }
+
+  .meal-plan-table-shell {
+    max-height: none;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .meal-plan-table,
+  .meal-plan-table thead,
+  .meal-plan-table tbody,
+  .meal-plan-table tr,
+  .meal-plan-table th,
+  .meal-plan-table td {
+    display: block;
+  }
+
+  .meal-plan-table thead {
+    display: none;
+  }
+
+  .meal-plan-table tbody {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .meal-plan-table tr {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    padding: 0.25rem;
+  }
+
+  .meal-plan-table td {
+    border-bottom: 1px solid var(--border);
+    padding: 0.55rem 0.6rem;
+    font-size: 0.82rem;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .meal-plan-table tr td:last-child {
+    border-bottom: 0;
+  }
+
+  .meal-plan-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.22rem;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .meal-plan-table td[data-label='Actions']::before {
+    margin-bottom: 0.4rem;
   }
 }
 

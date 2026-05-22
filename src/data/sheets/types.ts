@@ -56,6 +56,21 @@ export type EventRecord = {
   active: boolean
 }
 
+export type BackpackRecord = {
+  storage: string
+  type: string
+  item: string
+  quantity: string
+}
+
+export type MealPlanRecord = {
+  day_of_the_week: string
+  breakfast: string
+  lunch: string
+  dinner: string
+  snack: string
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

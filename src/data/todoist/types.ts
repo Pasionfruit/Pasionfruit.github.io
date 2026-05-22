@@ -8,6 +8,7 @@ export type TodoistDue = {
 export type TodoistTask = {
   id: string
   content: string
+  description?: string
   priority: number
   is_completed: boolean
   due?: TodoistDue | null
@@ -15,6 +16,7 @@ export type TodoistTask = {
 
 export type TodoistTaskUpdate = {
   content: string
+  description?: string
   dueDate?: string
   priority: number
 }

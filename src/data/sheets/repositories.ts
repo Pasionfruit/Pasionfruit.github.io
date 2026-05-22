@@ -1,5 +1,14 @@
 import { fetchSheetTable, postSheetsAction, type SheetsWriteResponse } from './client'
-import type { BucketListRecord, CountryRecord, CurrentStudyRecord, EventRecord, PollRecord, TrainingRecord } from './types'
+import type {
+  BackpackRecord,
+  BucketListRecord,
+  CountryRecord,
+  CurrentStudyRecord,
+  EventRecord,
+  MealPlanRecord,
+  PollRecord,
+  TrainingRecord,
+} from './types'
 
 function parseBoolean(value: unknown) {
   if (typeof value === 'boolean') {
@@ -123,6 +132,33 @@ export async function getEvents(): Promise<EventRecord[]> {
       active: parseBoolean(row.active),
     }))
     .filter((row) => row.event_id && row.event_name)
+}
+
+export async function getBackpackItems(): Promise<BackpackRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('traveling')
+
+  return rows
+    .map((row) => ({
+      storage: String(row.storage ?? ''),
+      type: String(row.type ?? ''),
+      item: String(row.item ?? ''),
+      quantity: String(row.quantity ?? ''),
+    }))
+    .filter((row) => row.item)
+}
+
+export async function getMealPlan(): Promise<MealPlanRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('meal_plan')
+
+  return rows
+    .map((row) => ({
+      day_of_the_week: String(row.day_of_the_week ?? ''),
+      breakfast: String(row.breakfast ?? ''),
+      lunch: String(row.lunch ?? ''),
+      dinner: String(row.dinner ?? ''),
+      snack: String(row.snack ?? ''),
+    }))
+    .filter((row) => row.day_of_the_week)
 }
 
 async function runWrite(payload: Record<string, unknown>) {
@@ -354,5 +390,51 @@ export async function deleteCountry(idToken: string, countryId: string) {
     action: 'deleteCountry',
     idToken,
     country_id: countryId,
+  })
+}
+
+export async function updateBackpackItem(
+  idToken: string,
+  payload: {
+    originalStorage: string
+    originalType: string
+    originalItem: string
+    storage: string
+    type: string
+    quantity: string
+  },
+) {
+  await runWrite({
+    action: 'updateBackpackItem',
+    idToken,
+    original_storage: payload.originalStorage,
+    original_type: payload.originalType,
+    original_item: payload.originalItem,
+    storage: payload.storage,
+    type: payload.type,
+    quantity: payload.quantity,
+  })
+}
+
+export async function updateMealPlan(
+  idToken: string,
+  payload: {
+    originalDayOfTheWeek: string
+    dayOfTheWeek: string
+    breakfast: string
+    lunch: string
+    dinner: string
+    snack: string
+  },
+) {
+  await runWrite({
+    action: 'updateMealPlan',
+    idToken,
+    original_day_of_the_week: payload.originalDayOfTheWeek,
+    day_of_the_week: payload.dayOfTheWeek,
+    breakfast: payload.breakfast,
+    lunch: payload.lunch,
+    dinner: payload.dinner,
+    snack: payload.snack,
   })
 }
