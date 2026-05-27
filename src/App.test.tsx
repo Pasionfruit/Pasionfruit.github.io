@@ -850,11 +850,13 @@ describe('admin about me page', () => {
 
     renderHomePage()
 
-    const heading = await screen.findByRole('heading', { name: 'Training and Studying' })
+    const heading = await screen.findByRole('heading', { name: 'Productive Tasks' })
     const card = heading.closest('article')
     if (!card) {
       throw new Error('Home training/studying card not found')
     }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     const markButtons = await within(card).findAllByRole('button', { name: 'Mark Complete' })
     await user.click(markButtons[0])
@@ -876,11 +878,13 @@ describe('admin about me page', () => {
 
     renderHomePage()
 
-    const heading = await screen.findByRole('heading', { name: 'Training and Studying' })
+    const heading = await screen.findByRole('heading', { name: 'Productive Tasks' })
     const card = heading.closest('article')
     if (!card) {
       throw new Error('Home training/studying card not found')
     }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     await user.click(within(card).getByRole('tab', { name: 'Studying' }))
 
@@ -902,6 +906,7 @@ describe('admin about me page', () => {
   })
 
   it('blocks Home training/studying completion editing for non-authorized account', async () => {
+    const user = userEvent.setup()
     localStorage.setItem('demo-profile', 'admin')
     localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
 
@@ -921,11 +926,13 @@ describe('admin about me page', () => {
 
     renderHomePage()
 
-    const heading = await screen.findByRole('heading', { name: 'Training and Studying' })
+    const heading = await screen.findByRole('heading', { name: 'Productive Tasks' })
     const card = heading.closest('article')
     if (!card) {
       throw new Error('Home training/studying card not found')
     }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
     expect(

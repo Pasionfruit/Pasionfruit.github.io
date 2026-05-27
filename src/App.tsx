@@ -715,7 +715,7 @@ function HomeDailyFocusCard({ profile, googleIdToken }: { profile: UserProfile; 
   const [view, setView] = useState<'training' | 'studying'>('training')
   const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
   const [studyRows, setStudyRows] = useState<CurrentStudyRecord[]>([])
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
