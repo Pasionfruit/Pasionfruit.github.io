@@ -726,6 +726,13 @@ describe('admin about me page', () => {
     expect(within(card).getByText('Submit dashboard update')).toBeTruthy()
     expect(within(card).getByText('Include KPI updates and rollout notes')).toBeTruthy()
 
+    const summaryCompleteButton = within(card).getAllByRole('button', { name: 'Complete' })[0]
+    await user.click(summaryCompleteButton)
+
+    await waitFor(() => {
+      expect(todoistMocks.closeTask).toHaveBeenCalledWith('todo-1')
+    })
+
     await user.click(within(card).getByTitle('Edit values'))
 
     expect(within(card).getByDisplayValue('Submit dashboard update')).toBeTruthy()
@@ -734,8 +741,16 @@ describe('admin about me page', () => {
     await user.selectOptions(within(card).getAllByRole('combobox')[0], '3')
     await user.click(within(card).getByRole('button', { name: 'Add Task' }))
 
+    const todayDate = (() => {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const day = String(now.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    })()
+
     await waitFor(() => {
-      expect(todoistMocks.createTask).toHaveBeenCalledWith('Plan weekend run', undefined, 3)
+      expect(todoistMocks.createTask).toHaveBeenCalledWith('Plan weekend run', todayDate, 3)
     })
 
     const firstTaskInput = within(card).getByDisplayValue('Submit dashboard update') as HTMLInputElement
@@ -768,7 +783,7 @@ describe('admin about me page', () => {
     await user.click(within(row).getByRole('button', { name: 'Complete' }))
 
     await waitFor(() => {
-      expect(todoistMocks.closeTask).toHaveBeenCalledWith('todo-1')
+      expect(todoistMocks.closeTask).toHaveBeenCalledTimes(2)
     })
   })
 

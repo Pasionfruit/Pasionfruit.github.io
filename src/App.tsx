@@ -1031,6 +1031,14 @@ function normalizePriority(value: number) {
   return Math.min(4, Math.max(1, Math.round(value)))
 }
 
+function getTodayDateInputValue() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 function TodoistTasksCard({
   title,
   profile,
@@ -1050,7 +1058,7 @@ function TodoistTasksCard({
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
   const [newTaskContent, setNewTaskContent] = useState('')
-  const [newTaskDueDate, setNewTaskDueDate] = useState('')
+  const [newTaskDueDate, setNewTaskDueDate] = useState(() => getTodayDateInputValue())
   const [newTaskPriority, setNewTaskPriority] = useState(1)
   const [editedRows, setEditedRows] = useState<Record<string, { content: string; description: string; dueDate: string; priority: number }>>({})
 
@@ -1106,7 +1114,7 @@ function TodoistTasksCard({
     try {
       await createTask(content, newTaskDueDate || undefined, normalizePriority(newTaskPriority))
       setNewTaskContent('')
-      setNewTaskDueDate('')
+      setNewTaskDueDate(getTodayDateInputValue())
       setNewTaskPriority(1)
       await loadTasks()
     } catch (error) {
@@ -1216,6 +1224,7 @@ function TodoistTasksCard({
                   <tr>
                     <th>Task</th>
                     <th>Completed</th>
+                    {canEdit ? <th>Actions</th> : null}
                   </tr>
                 </thead>
                 <tbody>
@@ -1226,6 +1235,22 @@ function TodoistTasksCard({
                         {row.description ? <p className="sheets-meta">{row.description}</p> : null}
                       </td>
                       <td>{row.is_completed ? 'Yes' : 'No'}</td>
+                      {canEdit ? (
+                        <td>
+                          {!row.is_completed ? (
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleCompleteTask(row)}
+                              disabled={isWriting}
+                            >
+                              Complete
+                            </button>
+                          ) : (
+                            <span className="sheets-meta">Completed</span>
+                          )}
+                        </td>
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>
