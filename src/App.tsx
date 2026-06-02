@@ -196,7 +196,7 @@ function App() {
 
   return (
     <Routes>
-      <Route element={<SiteLayout profile={profile} canViewFinances={canViewPrivateFinances} />}>
+      <Route element={<SiteLayout canViewFinances={canViewPrivateFinances} />}>
         <Route
           index
           element={(
@@ -278,7 +278,7 @@ function App() {
   )
 }
 
-function SiteLayout({ profile, canViewFinances }: { profile: UserProfile; canViewFinances: boolean }) {
+function SiteLayout({ canViewFinances }: { canViewFinances: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<ThemeMode>(() => getInitialTheme())
   const [isOnline, setIsOnline] = useState(() =>
@@ -350,9 +350,6 @@ function SiteLayout({ profile, canViewFinances }: { profile: UserProfile; canVie
         </Link>
 
         <div className="topbar-actions">
-          <span className="profile-pill" aria-label="Current profile">
-            {profile.toUpperCase()}
-          </span>
           <button
             type="button"
             className="theme-toggle"
@@ -361,8 +358,7 @@ function SiteLayout({ profile, canViewFinances }: { profile: UserProfile; canVie
             title={theme === 'light' ? 'Enable dark mode' : 'Enable light mode'}
             onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))}
           >
-            <SunIcon active={theme === 'light'} />
-            <MoonIcon active={theme === 'dark'} />
+            {theme === 'light' ? <MoonIcon active /> : <SunIcon active />}
           </button>
           <NavLink to="/login" className="login-link">
             Login
