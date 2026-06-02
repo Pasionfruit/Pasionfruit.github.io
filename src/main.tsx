@@ -7,6 +7,12 @@ import App from './App.tsx'
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim()
 
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`)
+  })
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {googleClientId ? (

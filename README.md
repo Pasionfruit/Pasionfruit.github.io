@@ -32,6 +32,37 @@ npm run dev
 npm run build
 ```
 
+## PWA (iPhone + Desktop Install)
+
+This app is now configured as a Progressive Web App with:
+
+- A web app manifest at `/manifest.webmanifest`
+- Service worker generated from `src/sw.ts` via `vite-plugin-pwa`
+- iOS home screen support via Apple meta tags in `index.html`
+
+### Cache behavior
+
+- Static app assets: cached for fast startup and offline shell access.
+- Google Sheets read requests (`https://sheets.googleapis.com`): stale-while-revalidate cache.
+- Public CDN world atlas file (`https://cdn.jsdelivr.net`): cached.
+- Todoist API and auth-sensitive write flows: network-only.
+
+When offline, the app displays a banner and users should expect read-only cached experiences for supported routes.
+
+### iPhone install steps
+
+1. Deploy the latest `main` to GitHub Pages and open `https://pasionfruit.github.io` in Safari.
+2. Tap Share -> Add to Home Screen.
+3. Confirm the app icon/title, then launch it from the home screen.
+4. Turn on Airplane Mode and re-open to confirm cached shell pages still load.
+5. Turn network back on and refresh to sync live data.
+
+### Validation checklist
+
+1. Run `npm run build` and verify `dist/sw.js` and `dist/manifest.webmanifest` exist.
+2. In browser DevTools (Application tab), verify Service Worker is activated.
+3. Verify no installability warnings for manifest icons and start URL.
+
 ## Google Sheets API Setup (Apps Script)
 
 This app expects REST-style read endpoints for these tables:

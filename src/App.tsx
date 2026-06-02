@@ -227,6 +227,9 @@ function App() {
 function SiteLayout({ profile }: { profile: UserProfile }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<ThemeMode>(() => getInitialTheme())
+  const [isOnline, setIsOnline] = useState(() =>
+    typeof navigator === 'undefined' ? true : navigator.onLine,
+  )
   const location = useLocation()
   const activeSectionId = getActiveSectionId(location.pathname)
   const [expandedSectionIds, setExpandedSectionIds] = useState<SectionId[]>(() =>
@@ -248,6 +251,19 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
     document.documentElement.style.colorScheme = theme
     window.localStorage.setItem('theme-mode', theme)
   }, [theme])
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   function toggleSection(sectionId: SectionId) {
     setExpandedSectionIds((previous) =>
@@ -300,6 +316,12 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
           </button>
         </div>
       </header>
+
+      {!isOnline ? (
+        <p className="connectivity-banner" role="status" aria-live="polite">
+          You are offline. Cached pages may still work, but live updates and saves are unavailable.
+        </p>
+      ) : null}
 
       <div className={`menu-backdrop ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
 

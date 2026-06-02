@@ -16,6 +16,15 @@
   backdrop-filter: blur(8px);
 }
 
+.connectivity-banner {
+  margin: 0;
+  padding: 0.62rem 1rem;
+  border-bottom: 1px solid var(--border-strong);
+  background: color-mix(in srgb, #e06f18 18%, var(--surface));
+  color: var(--text-strong);
+  font-size: 0.88rem;
+}
+
 .brand {
   display: flex;
   align-items: center;
