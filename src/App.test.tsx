@@ -96,6 +96,16 @@ function renderHomePage() {
   )
 }
 
+function renderHomePageWithEmail(email: string) {
+  localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
+
+  return render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
 function renderTrainingPage() {
   return render(
     <MemoryRouter initialEntries={['/training']}>
@@ -115,6 +125,26 @@ function renderCookingPage() {
 function renderCookingPlanPage() {
   return render(
     <MemoryRouter initialEntries={['/cooking/plan']}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function renderAboutMePageWithEmail(email: string, path = '/mrpasionfruit') {
+  localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
+
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+function renderFinancesPageWithEmail(email: string, path = '/finances') {
+  localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
+
+  return render(
+    <MemoryRouter initialEntries={[path]}>
       <App />
     </MemoryRouter>,
   )
@@ -540,6 +570,37 @@ describe('admin about me page', () => {
     ).toBeTruthy()
   })
 
+  it('does not show the private Finances section inside About Me', async () => {
+    renderAboutMePageWithEmail('pixielee1000@gmail.com')
+
+    expect(screen.queryByRole('link', { name: 'Open private finances' })).toBeNull()
+  })
+
+  it('shows the private Finances page only for approved Google accounts', async () => {
+    renderFinancesPageWithEmail('pixielee1000@gmail.com')
+
+    expect(await screen.findByRole('tab', { name: 'Dashboard view' })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'Calendar view' })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'Purchases tab' })).toBeTruthy()
+  })
+
+  it('shows an access denied popup when an unauthorized user clicks the home finances Open button', async () => {
+    const user = userEvent.setup()
+    renderHomePageWithEmail('someoneelse@gmail.com')
+
+    const financesTitle = (await screen.findAllByText('Finances')).find((element) => element.closest('article'))
+    const financesCard = financesTitle?.closest('article')
+
+    if (!financesCard) {
+      throw new Error('Finances card not found')
+    }
+
+    await user.click(within(financesCard).getByRole('button', { name: 'Open' }))
+
+    expect(await screen.findByRole('dialog', { name: 'Access denied' })).toBeTruthy()
+    expect(screen.getByText("You don't have access to Finances.")).toBeTruthy()
+  })
+
   it('uses Add New Poll and creates a poll from the admin edit form', async () => {
     const user = userEvent.setup()
     renderAdminAboutMePage()
@@ -788,23 +849,12 @@ describe('admin about me page', () => {
   })
 
   it('blocks Todoist editing for non-authorized account', async () => {
-    const user = userEvent.setup()
     localStorage.setItem('demo-profile', 'admin')
     localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
     renderHomePage()
 
-    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Todoist card not found')
-    }
-
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
-
-    expect(
-      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
-    ).toBeTruthy()
-    expect(within(card).queryByRole('button', { name: 'Add Task' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
+    expect(screen.queryByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.')).toBeNull()
   })
 
   it('shows missing token guidance when Todoist env token is not set', async () => {

@@ -6,18 +6,7 @@ export const aboutMeNavSection: NavSection = {
   path: '/mrpasionfruit',
   summary: 'Personal identity, interests, and the Oreo gang corner',
   accent: '#00CCCC',
-  children: [
-    //   {
-    //     label: 'Oreo Gang',
-    //     path: '/mrpasionfruit/oreo-gang',
-    //     summary: 'A playful home for the crew, lore, and memories.',
-    //   },
-    //   {
-    //     label: 'Interests',
-    //     path: '/mrpasionfruit/interests',
-    //     summary: 'The things I’m reading, building, and chasing next.',
-    //   },
-  ],
+  children: [],
 }
 
 export const aboutMeSectionPage: PageContent = {

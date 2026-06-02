@@ -1,5 +1,6 @@
 import { aboutMeDetailPages, aboutMeSectionPage } from './siteContent/aboutMe'
 import { cookingDetailPages, cookingSectionPage } from './siteContent/cooking'
+import { financesSectionPage } from './siteContent/finances'
 import {
   actuaryExamEntries,
   educationEntries,
@@ -37,6 +38,7 @@ export const sectionPages: Record<SectionId, PageContent> = {
   training: trainingSectionPage,
   experiences: experiencesSectionPage,
   cooking: cookingSectionPage,
+  finances: financesSectionPage,
 }
 
 export const detailPages: Record<string, SubpageContent> = {

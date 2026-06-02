@@ -610,6 +610,33 @@
   color: var(--text-strong);
 }
 
+.tile-links button,
+.tile-links button.tile-link-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.78rem 0.85rem;
+  text-align: center;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.tile-links button:hover {
+  background: var(--surface);
+  color: var(--text-strong);
+}
+
+.tile-links button:active {
+  background: color-mix(in srgb, var(--surface) 92%, #000000 8%);
+}
+
 .split-block {
   padding-top: 0.3rem;
 }
@@ -621,6 +648,161 @@
 .info-card p {
   margin: 0.45rem 0 0;
   white-space: pre-wrap;
+}
+
+.finance-hub-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.finance-tabbar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.25rem;
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, #1f8f3a 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, #1f8f3a 24%, var(--border));
+}
+
+.finance-tab {
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+}
+
+.finance-tab.active {
+  background: #1f8f3a;
+  color: #ffffff;
+  border-color: #1f8f3a;
+}
+
+.finance-panel {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.finance-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+}
+
+.finance-stat,
+.finance-calendar-item {
+  border: 1px solid color-mix(in srgb, #1f8f3a 18%, var(--border));
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, #1f8f3a 8%, var(--surface));
+  padding: 0.8rem;
+}
+
+.finance-stat span,
+.finance-calendar-item span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.finance-stat strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.3rem;
+  color: var(--text-strong);
+}
+
+.finance-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+
+.finance-calendar-item strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #1f8f3a;
+}
+
+.finance-purchase-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.finance-purchase-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid color-mix(in srgb, #1f8f3a 18%, var(--border));
+  border-radius: 0.8rem;
+  padding: 0.78rem 0.85rem;
+  background: color-mix(in srgb, #1f8f3a 8%, var(--surface));
+}
+
+.finance-access-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(8, 16, 12, 0.62);
+  backdrop-filter: blur(0.35rem);
+}
+
+.finance-access-dialog {
+  width: min(100%, 26rem);
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.15rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, #1f8f3a 22%, var(--border));
+  background: var(--surface);
+  box-shadow: 0 1.3rem 3rem rgba(0, 0, 0, 0.24);
+}
+
+.finance-access-dialog h2 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.finance-access-dialog p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.finance-dialog-close {
+  min-width: 7.5rem;
+  justify-self: start;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.6rem;
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, transform 130ms ease, box-shadow 130ms ease;
+}
+
+.finance-dialog-close:hover {
+  background: var(--surface);
+  color: var(--text-strong);
+}
+
+:root[data-theme='dark'] .finance-dialog-close {
+  background: color-mix(in srgb, var(--surface-muted) 68%, #ffffff 32%);
+  color: #111111;
+  border-color: color-mix(in srgb, #ffffff 38%, var(--border-strong));
+}
+
+:root[data-theme='dark'] .finance-dialog-close:hover {
+  background: color-mix(in srgb, var(--surface-muted) 55%, #ffffff 45%);
+  color: #111111;
 }
 
 .section-page-card h3 {
@@ -1783,29 +1965,6 @@
   display: grid;
   gap: 0.8rem;
   padding: 0.95rem;
-}
-
-.profile-switch-grid {
-  display: grid;
-  gap: 0.7rem;
-}
-
-.profile-option {
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--surface-muted);
-  padding: 0.75rem;
-  display: grid;
-  gap: 0.55rem;
-}
-
-.profile-option.active {
-  border-color: var(--border-strong);
-}
-
-.profile-option h3,
-.profile-option p {
-  margin: 0;
 }
 
 .login-card label {

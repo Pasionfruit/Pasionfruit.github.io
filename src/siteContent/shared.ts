@@ -1,4 +1,4 @@
-export type SectionId = 'mrpasionfruit' | 'training' | 'experiences' | 'cooking'
+export type SectionId = 'mrpasionfruit' | 'training' | 'experiences' | 'cooking' | 'finances'
 
 export type PageCard = {
   title: string

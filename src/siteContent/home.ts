@@ -1,5 +1,6 @@
 import type { NavSection, PageCard } from './shared'
 import { aboutMeNavSection } from './aboutMe'
+import { financesNavSection } from './finances'
 import { cookingNavSection } from './cooking'
 import { experiencesNavSection } from './experiences'
 import { trainingNavSection } from './training'
@@ -24,4 +25,5 @@ export const navSections: NavSection[] = [
   trainingNavSection,
   cookingNavSection,
   aboutMeNavSection,
+  financesNavSection,
 ]

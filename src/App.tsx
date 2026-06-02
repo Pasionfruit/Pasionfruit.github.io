@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
@@ -72,6 +72,8 @@ import type { TodoistTask } from './data/todoist/types'
 type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
 const TODOIST_EDITOR_EMAIL = 'pasionabe@gmail.com'
+const ADMIN_GOOGLE_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
+const FINANCES_ACCESS_EMAILS = ADMIN_GOOGLE_EMAILS
 
 const googleClientConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim())
 
@@ -144,9 +146,24 @@ function getGoogleTokenEmail(token: string) {
   return typeof email === 'string' ? email.toLowerCase().trim() : ''
 }
 
+function canViewFinances(googleEmail: string) {
+  return FINANCES_ACCESS_EMAILS.includes(googleEmail)
+}
+
+function shouldUseAdminProfile(googleEmail: string) {
+  return ADMIN_GOOGLE_EMAILS.includes(googleEmail)
+}
+
+function canViewHomeTasks(profile: UserProfile, googleEmail: string) {
+  return profile === 'admin' && (!googleEmail || shouldUseAdminProfile(googleEmail))
+}
+
 function App() {
   const [profile, setProfile] = useState<UserProfile>(() => getInitialProfile())
   const [googleIdToken, setGoogleIdToken] = useState(() => getInitialGoogleToken())
+  const previousGoogleTokenRef = useRef<string | null>(null)
+  const googleEmail = getGoogleTokenEmail(googleIdToken)
+  const canViewPrivateFinances = canViewFinances(googleEmail)
 
   useEffect(() => {
     window.localStorage.setItem('demo-profile', profile)
@@ -161,10 +178,35 @@ function App() {
     window.localStorage.setItem('google-id-token', googleIdToken)
   }, [googleIdToken])
 
+  useEffect(() => {
+    const hadPreviousGoogleToken = Boolean(previousGoogleTokenRef.current)
+
+    if (googleIdToken && googleEmail) {
+      const nextProfile = shouldUseAdminProfile(googleEmail) ? 'admin' : 'guest'
+
+      if (profile !== nextProfile) {
+        setProfile(nextProfile)
+      }
+    } else if (hadPreviousGoogleToken && profile !== 'guest') {
+      setProfile('guest')
+    }
+
+    previousGoogleTokenRef.current = googleIdToken || null
+  }, [googleEmail, googleIdToken, profile])
+
   return (
     <Routes>
-      <Route element={<SiteLayout profile={profile} />}>
-        <Route index element={<HomePage profile={profile} googleIdToken={googleIdToken} />} />
+      <Route element={<SiteLayout profile={profile} canViewFinances={canViewPrivateFinances} />}>
+        <Route
+          index
+          element={(
+            <HomePage
+              profile={profile}
+              googleIdToken={googleIdToken}
+              canViewFinances={canViewPrivateFinances}
+            />
+          )}
+        />
         <Route
           path="login"
           element={(
@@ -179,6 +221,18 @@ function App() {
         <Route
           path="mrpasionfruit"
           element={<SectionPage sectionId="mrpasionfruit" profile={profile} googleIdToken={googleIdToken} />}
+        />
+        <Route path="mrpasionfruit/finances" element={<Navigate replace to="/finances" />} />
+        <Route
+          path="finances"
+          element={(
+            <SectionPage
+              sectionId="finances"
+              profile={profile}
+              googleIdToken={googleIdToken}
+              canViewFinances={canViewPrivateFinances}
+            />
+          )}
         />
         <Route path="mrpasionfruit/oreo-gang" element={<DetailPage path="/mrpasionfruit/oreo-gang" />} />
         <Route path="mrpasionfruit/interests" element={<DetailPage path="/mrpasionfruit/interests" />} />
@@ -224,12 +278,13 @@ function App() {
   )
 }
 
-function SiteLayout({ profile }: { profile: UserProfile }) {
+function SiteLayout({ profile, canViewFinances }: { profile: UserProfile; canViewFinances: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<ThemeMode>(() => getInitialTheme())
   const [isOnline, setIsOnline] = useState(() =>
     typeof navigator === 'undefined' ? true : navigator.onLine,
   )
+  const [financeAccessDeniedOpen, setFinanceAccessDeniedOpen] = useState(false)
   const location = useLocation()
   const activeSectionId = getActiveSectionId(location.pathname)
   const [expandedSectionIds, setExpandedSectionIds] = useState<SectionId[]>(() =>
@@ -271,6 +326,16 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
         ? previous.filter((id) => id !== sectionId)
         : [...previous, sectionId],
     )
+  }
+
+  function handleFinanceLinkClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (canViewFinances) {
+      return
+    }
+
+    event.preventDefault()
+    setFinanceAccessDeniedOpen(true)
+    setMenuOpen(false)
   }
 
   return (
@@ -335,7 +400,9 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
 
         <nav className="menu-root" aria-label="Primary">
           {navSections.map((section) => {
-            const hasChildren = section.children.length > 0
+            const visibleChildren =
+              section.id === 'finances' && !canViewFinances ? [] : section.children
+            const hasChildren = visibleChildren.length > 0
             const isExpanded = hasChildren && expandedSectionIds.includes(section.id)
 
             return (
@@ -358,6 +425,11 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
                     className={({ isActive }) =>
                       `menu-main-link ${isActive ? 'active' : ''}`
                     }
+                    onClick={
+                      section.id === 'finances'
+                        ? handleFinanceLinkClick
+                        : undefined
+                    }
                   >
                     {section.title}
                   </NavLink>
@@ -367,7 +439,7 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
 
                 {hasChildren && isExpanded ? (
                   <div className="menu-children">
-                    {section.children.map((child) => (
+                    {visibleChildren.map((child) => (
                       <NavLink
                         key={child.path}
                         to={child.path}
@@ -390,6 +462,27 @@ function SiteLayout({ profile }: { profile: UserProfile }) {
       <main className="page-shell">
         <Outlet />
       </main>
+
+      {financeAccessDeniedOpen ? (
+        <div className="finance-access-dialog-backdrop" role="presentation" onClick={() => setFinanceAccessDeniedOpen(false)}>
+          <div
+            className="finance-access-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="finance-access-dialog-title"
+            aria-describedby="finance-access-dialog-body"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="finance-access-dialog-title">Access denied</h2>
+            <p id="finance-access-dialog-body">
+              You don&apos;t have access to Finances.
+            </p>
+            <button type="button" className="finance-dialog-close" onClick={() => setFinanceAccessDeniedOpen(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -705,10 +798,24 @@ function SummaryText({ summary }: { summary: string }) {
   )
 }
 
-function HomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+function HomePage({
+  profile,
+  googleIdToken,
+  canViewFinances,
+}: {
+  profile: UserProfile
+  googleIdToken: string
+  canViewFinances: boolean
+}) {
+  const [financeAccessDeniedOpen, setFinanceAccessDeniedOpen] = useState(false)
+  const googleEmail = getGoogleTokenEmail(googleIdToken)
+  const canViewTasksOfTheDay = canViewHomeTasks(profile, googleEmail)
+
   return (
     <div className="page home-page">
-      <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+      {canViewTasksOfTheDay ? (
+        <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+      ) : null}
       <HomeDailyFocusCard profile={profile} googleIdToken={googleIdToken} />
       <section id="sections" className="section-block">
         <div className="section-grid">
@@ -721,12 +828,45 @@ function HomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdTo
               <p>{section.title}</p>
               <h3>{section.summary}</h3>
               <div className="tile-links">
-                <Link to={section.path}>Open</Link>
+                {section.id === 'finances' && !canViewFinances ? (
+                  <button
+                    type="button"
+                    className="tile-link-button"
+                    onClick={() => setFinanceAccessDeniedOpen(true)}
+                  >
+                    Open
+                  </button>
+                ) : (
+                  <Link to={section.path} className="tile-link-button">
+                    Open
+                  </Link>
+                )}
               </div>
             </article>
           ))}
         </div>
       </section>
+
+      {financeAccessDeniedOpen ? (
+        <div className="finance-access-dialog-backdrop" role="presentation" onClick={() => setFinanceAccessDeniedOpen(false)}>
+          <div
+            className="finance-access-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="home-finance-access-dialog-title"
+            aria-describedby="home-finance-access-dialog-body"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="home-finance-access-dialog-title">Access denied</h2>
+            <p id="home-finance-access-dialog-body">
+              You don&apos;t have access to Finances.
+            </p>
+            <button type="button" className="finance-dialog-close" onClick={() => setFinanceAccessDeniedOpen(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -1437,10 +1577,12 @@ function SectionPage({
   sectionId,
   profile,
   googleIdToken,
+  canViewFinances = false,
 }: {
   sectionId: SectionId
   profile: UserProfile
   googleIdToken: string
+  canViewFinances?: boolean
 }) {
   const section = sectionPages[sectionId]
   const navSection = navSections.find((item) => item.id === sectionId)
@@ -1464,7 +1606,11 @@ function SectionPage({
       downloadPdfHref={experienceDownloads?.pdfHref}
       downloadWordHref={experienceDownloads?.wordHref}
     >
-      {section.cards.map((card) => {
+      {sectionId === 'finances' ? (
+        canViewFinances ? <FinancesHubCard /> : <Navigate replace to="/" />
+      ) : null}
+
+      {sectionId === 'finances' ? null : section.cards.map((card) => {
         if (sectionId === 'mrpasionfruit' && card.title === 'Meet the Oreo Gang') {
           return <CollapsibleTextCard key={card.title} title={card.title} body={card.body} />
         }
@@ -1586,6 +1732,106 @@ function SectionPage({
         </Link>
       ))}
     </PageFrame>
+  )
+}
+
+function FinancesHubCard() {
+  type FinancesTab = 'dashboard' | 'calendar' | 'purchases'
+  const [activeTab, setActiveTab] = useState<FinancesTab>('dashboard')
+
+  return (
+    <article className="finance-hub-card info-card">
+      <div className="finance-tabbar" role="tablist" aria-label="Finances views">
+        <button
+          type="button"
+          className={`finance-tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+          role="tab"
+          aria-selected={activeTab === 'dashboard'}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          Dashboard view
+        </button>
+        <button
+          type="button"
+          className={`finance-tab ${activeTab === 'calendar' ? 'active' : ''}`}
+          role="tab"
+          aria-selected={activeTab === 'calendar'}
+          onClick={() => setActiveTab('calendar')}
+        >
+          Calendar view
+        </button>
+        <button
+          type="button"
+          className={`finance-tab ${activeTab === 'purchases' ? 'active' : ''}`}
+          role="tab"
+          aria-selected={activeTab === 'purchases'}
+          onClick={() => setActiveTab('purchases')}
+        >
+          Purchases tab
+        </button>
+      </div>
+
+      {activeTab === 'dashboard' ? (
+        <div className="finance-panel">
+          <div className="finance-stats">
+            <div className="finance-stat">
+              <span>Cash on hand</span>
+              <strong>$8,420</strong>
+            </div>
+            <div className="finance-stat">
+              <span>Monthly savings rate</span>
+              <strong>27%</strong>
+            </div>
+            <div className="finance-stat">
+              <span>Goal progress</span>
+              <strong>62%</strong>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === 'calendar' ? (
+        <div className="finance-panel">
+          <div className="finance-calendar-grid" aria-label="Financial calendar view">
+            <div className="finance-calendar-item">
+              <strong>1st</strong>
+              <span>Rent due</span>
+            </div>
+            <div className="finance-calendar-item">
+              <strong>8th</strong>
+              <span>Payday</span>
+            </div>
+            <div className="finance-calendar-item">
+              <strong>15th</strong>
+              <span>Credit card autopay</span>
+            </div>
+            <div className="finance-calendar-item">
+              <strong>22nd</strong>
+              <span>Investments contribution</span>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === 'purchases' ? (
+        <div className="finance-panel">
+          <ul className="finance-purchase-list">
+            <li>
+              <strong>Groceries</strong>
+              <span>$84.32</span>
+            </li>
+            <li>
+              <strong>Fuel</strong>
+              <span>$42.10</span>
+            </li>
+            <li>
+              <strong>Subscription</strong>
+              <span>$14.99</span>
+            </li>
+          </ul>
+        </div>
+      ) : null}
+    </article>
   )
 }
 
@@ -4908,6 +5154,11 @@ function DetailPage({
   const page = detailPages[path]
   const parentPath = path.split('/').slice(0, 2).join('/')
   const parentSection = navSections.find((section) => section.path === parentPath)
+  const googleEmail = getGoogleTokenEmail(googleIdToken)
+
+  if (path === '/mrpasionfruit/finances' && !canViewFinances(googleEmail)) {
+    return <Navigate replace to="/mrpasionfruit" />
+  }
 
   if (!page || !parentSection) {
     return <Navigate replace to="/" />
@@ -5009,7 +5260,10 @@ function LoginPage({
   function handleGoogleSuccess(response: CredentialResponse) {
     const token = response.credential ?? ''
     if (token) {
+      const googleEmail = getGoogleTokenEmail(token)
+      onSwitchProfile(shouldUseAdminProfile(googleEmail) ? 'admin' : 'guest')
       onGoogleTokenChange(token)
+      navigate('/')
     }
   }
 
@@ -5042,37 +5296,6 @@ function LoginPage({
                 Sign Out Google Session
               </button>
             ) : null}
-          </div>
-          <div className="profile-switch-grid">
-            <article className={`profile-option ${profile === 'guest' ? 'active' : ''}`}>
-              <h3>Guest</h3>
-              <p>View-only profile. Countdown title and date are locked.</p>
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => {
-                  onSwitchProfile('guest')
-                  navigate('/')
-                }}
-              >
-                Use Guest Profile
-              </button>
-            </article>
-
-            <article className={`profile-option ${profile === 'admin' ? 'active' : ''}`}>
-              <h3>Admin</h3>
-              <p>Editable profile. You can update event title and event date.</p>
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => {
-                  onSwitchProfile('admin')
-                  navigate('/')
-                }}
-              >
-                Use Admin Profile
-              </button>
-            </article>
           </div>
         </div>
       </PageFrame>
