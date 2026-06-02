@@ -71,6 +71,12 @@ export type MealPlanRecord = {
   snack: string
 }
 
+export type GroceryListRecord = {
+  item: string
+  description: string
+  completed: boolean
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

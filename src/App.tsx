@@ -29,10 +29,12 @@ import {
 } from './siteContent'
 import {
   createBucketItem,
+  createGroceryListItem,
   createCountry,
   createEvent,
   createPoll,
   deleteBucketItem,
+  deleteGroceryListItem,
   deleteCountry,
   deleteEvent,
   deletePoll,
@@ -41,6 +43,7 @@ import {
   getCurrentStudy,
   getCountries,
   getEvents,
+  getGroceryList,
   getMealPlan,
   getPolls,
   getTrainingRecords,
@@ -53,6 +56,7 @@ import {
   updateCountry,
   updateEvent,
   updateBackpackItem,
+  updateGroceryListItem,
   updateMealPlan,
   votePoll,
 } from './data/sheets/repositories'
@@ -62,6 +66,7 @@ import type {
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
+  GroceryListRecord,
   MealPlanRecord,
   PollRecord,
   TrainingRecord,
@@ -1208,17 +1213,25 @@ function TodoistTasksCard({
 }) {
   const todoistConfigured = isTodoistConfigured()
   const googleEmail = getGoogleTokenEmail(googleIdToken)
-  const canEdit = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+  const canEditTodoist = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
+  const canEditGrocery = profile === 'admin' && shouldUseAdminProfile(googleEmail)
+  const canEditAny = canEditTodoist || canEditGrocery
+  const [view, setView] = useState<'todoist' | 'grocery'>('todoist')
   const [rows, setRows] = useState<TodoistTask[]>([])
+  const [groceryRows, setGroceryRows] = useState<GroceryListRecord[]>([])
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isGroceryLoading, setIsGroceryLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
   const [newTaskContent, setNewTaskContent] = useState('')
   const [newTaskDueDate, setNewTaskDueDate] = useState(() => getTodayDateInputValue())
   const [newTaskPriority, setNewTaskPriority] = useState(1)
+  const [newGroceryItem, setNewGroceryItem] = useState('')
+  const [newGroceryDescription, setNewGroceryDescription] = useState('')
   const [editedRows, setEditedRows] = useState<Record<string, { content: string; description: string; dueDate: string; priority: number }>>({})
+  const [editedGroceryRows, setEditedGroceryRows] = useState<Record<number, GroceryListRecord>>({})
 
   async function loadTasks() {
     try {
@@ -1233,7 +1246,20 @@ function TodoistTasksCard({
     }
   }
 
+  async function loadGroceryListForHome() {
+    try {
+      const data = await getGroceryList()
+      setGroceryRows(data)
+    } catch {
+      setGroceryRows([])
+    } finally {
+      setIsGroceryLoading(false)
+    }
+  }
+
   useEffect(() => {
+    void loadGroceryListForHome()
+
     if (!todoistConfigured) {
       setRows([])
       setIsLoading(false)
@@ -1256,8 +1282,16 @@ function TodoistTasksCard({
     setEditedRows(next)
   }, [rows])
 
+  useEffect(() => {
+    const next: Record<number, GroceryListRecord> = {}
+    groceryRows.forEach((row, index) => {
+      next[index] = { ...row }
+    })
+    setEditedGroceryRows(next)
+  }, [groceryRows])
+
   async function handleCreateTask() {
-    if (isWriting || !todoistConfigured || !canEdit) {
+    if (isWriting || !todoistConfigured || !canEditTodoist) {
       return
     }
 
@@ -1283,7 +1317,7 @@ function TodoistTasksCard({
   }
 
   async function handleSaveTask(task: TodoistTask) {
-    if (isWriting || !todoistConfigured || !canEdit) {
+    if (isWriting || !todoistConfigured || !canEditTodoist) {
       return
     }
 
@@ -1316,7 +1350,7 @@ function TodoistTasksCard({
   }
 
   async function handleCompleteTask(task: TodoistTask) {
-    if (isWriting || !todoistConfigured || !canEdit) {
+    if (isWriting || !todoistConfigured || !canEditTodoist) {
       return
     }
 
@@ -1332,12 +1366,112 @@ function TodoistTasksCard({
     }
   }
 
+  async function handleCreateGroceryItem() {
+    if (isWriting || !canEditGrocery || !googleIdToken) {
+      return
+    }
+
+    const item = newGroceryItem.trim()
+    const description = newGroceryDescription.trim()
+    if (!item) {
+      setWriteError('Item is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createGroceryListItem(googleIdToken, item, description, false)
+      setNewGroceryItem('')
+      setNewGroceryDescription('')
+      await loadGroceryListForHome()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleSaveGroceryItem(index: number, row: GroceryListRecord) {
+    if (isWriting || !canEditGrocery || !googleIdToken) {
+      return
+    }
+
+    const draft = editedGroceryRows[index] ?? row
+    const item = draft.item.trim()
+    const description = draft.description.trim()
+    if (!item) {
+      setWriteError('Item is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateGroceryListItem(googleIdToken, {
+        originalItem: row.item,
+        originalDescription: row.description,
+        item,
+        description,
+        completed: draft.completed,
+      })
+      await loadGroceryListForHome()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDeleteGroceryItem(row: GroceryListRecord) {
+    if (isWriting || !canEditGrocery || !googleIdToken) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteGroceryListItem(googleIdToken, {
+        item: row.item,
+        description: row.description,
+      })
+      await loadGroceryListForHome()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleToggleGroceryCompleted(row: GroceryListRecord) {
+    if (isWriting || !canEditGrocery || !googleIdToken) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateGroceryListItem(googleIdToken, {
+        originalItem: row.item,
+        originalDescription: row.description,
+        item: row.item,
+        description: row.description,
+        completed: !row.completed,
+      })
+      await loadGroceryListForHome()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   return (
     <article className="info-card section-page-card sheets-card home-todoist-card">
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
-          {canEdit ? (
+          {canEditAny ? (
             <button
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
@@ -1361,28 +1495,57 @@ function TodoistTasksCard({
 
       {!isCollapsed ? (
         <>
-          <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p>
+          <div className="experience-toggle" role="tablist" aria-label="Tasks of the Day filter">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'todoist'}
+              className={`experience-toggle-btn ${view === 'todoist' ? 'active' : ''}`}
+              onClick={() => setView('todoist')}
+            >
+              Todoist
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'grocery'}
+              className={`experience-toggle-btn ${view === 'grocery' ? 'active' : ''}`}
+              onClick={() => setView('grocery')}
+            >
+              Grocery List
+            </button>
+          </div>
 
-          {!todoistConfigured ? (
+          {view === 'todoist' ? <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p> : null}
+
+          {view === 'grocery' ? <p className="sheets-meta">Quick view of your grocery list.</p> : null}
+
+          {view === 'todoist' && !todoistConfigured ? (
             <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
           ) : null}
 
-          {todoistConfigured && isLoading ? <p className="sheets-meta">Loading Todoist tasks...</p> : null}
+          {view === 'todoist' && todoistConfigured && isLoading ? <p className="sheets-meta">Loading Todoist tasks...</p> : null}
 
-          {!canEdit ? (
+          {view === 'grocery' && isGroceryLoading ? <p className="sheets-meta">Loading grocery list...</p> : null}
+
+          {view === 'todoist' && !canEditTodoist ? (
             <p className="sheets-meta">
               Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
             </p>
           ) : null}
 
-          {todoistConfigured && rows.length > 0 ? (
+          {view === 'grocery' && !canEditGrocery ? (
+            <p className="sheets-meta">Edit access restricted to approved admin Google accounts.</p>
+          ) : null}
+
+          {view === 'todoist' && todoistConfigured && rows.length > 0 ? (
             <div className="sheets-table-shell">
               <table className="sheets-table">
                 <thead>
                   <tr>
                     <th>Task</th>
                     <th>Completed</th>
-                    {canEdit ? <th>Actions</th> : null}
+                    {canEditTodoist ? <th>Actions</th> : null}
                   </tr>
                 </thead>
                 <tbody>
@@ -1393,7 +1556,7 @@ function TodoistTasksCard({
                         {row.description ? <p className="sheets-meta">{row.description}</p> : null}
                       </td>
                       <td>{row.is_completed ? 'Yes' : 'No'}</td>
-                      {canEdit ? (
+                      {canEditTodoist ? (
                         <td>
                           {!row.is_completed ? (
                             <button
@@ -1416,7 +1579,152 @@ function TodoistTasksCard({
             </div>
           ) : null}
 
-          {todoistConfigured && canEdit && isEditing ? (
+          {view === 'grocery' && groceryRows.length > 0 ? (
+            <div className="sheets-table-shell">
+              <table className="sheets-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Completed</th>
+                    {isEditing && canEditGrocery ? <th>Actions</th> : null}
+                  </tr>
+                </thead>
+                <tbody>
+                  {groceryRows.map((row, index) => (
+                    <tr key={`home-grocery-${row.item}-${index}`}>
+                      <td>
+                        {isEditing && canEditGrocery ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={editedGroceryRows[index]?.item ?? row.item}
+                            onChange={(event) =>
+                              setEditedGroceryRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  ...(current[index] ?? row),
+                                  item: event.target.value,
+                                },
+                              }))
+                            }
+                            disabled={isWriting}
+                          />
+                        ) : (
+                          <span style={{ textDecoration: row.completed ? 'line-through' : 'none' }}>{row.item}</span>
+                        )}
+                      </td>
+                      <td>
+                        {isEditing && canEditGrocery ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={editedGroceryRows[index]?.description ?? row.description}
+                            onChange={(event) =>
+                              setEditedGroceryRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  ...(current[index] ?? row),
+                                  description: event.target.value,
+                                },
+                              }))
+                            }
+                            disabled={isWriting}
+                          />
+                        ) : (
+                          <span style={{ textDecoration: row.completed ? 'line-through' : 'none' }}>
+                            {row.description || '—'}
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        {isEditing && canEditGrocery ? (
+                          <input
+                            type="checkbox"
+                            checked={Boolean(editedGroceryRows[index]?.completed)}
+                            onChange={(event) =>
+                              setEditedGroceryRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  ...(current[index] ?? row),
+                                  completed: event.target.checked,
+                                },
+                              }))
+                            }
+                            disabled={isWriting}
+                          />
+                        ) : (
+                          <input
+                            type="checkbox"
+                            checked={Boolean(row.completed)}
+                            onChange={() => {
+                              void handleToggleGroceryCompleted(row)
+                            }}
+                            disabled={!canEditGrocery || !googleIdToken || isWriting}
+                          />
+                        )}
+                      </td>
+                      {isEditing && canEditGrocery ? (
+                        <td>
+                          <div className="sheets-table-actions">
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleSaveGroceryItem(index, row)}
+                              disabled={isWriting}
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleDeleteGroceryItem(row)}
+                              disabled={isWriting}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      ) : null}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {view === 'grocery' && isEditing && canEditGrocery ? (
+            <div className="sheets-editor">
+              <div className="sheets-editor-row">
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="Item"
+                  value={newGroceryItem}
+                  onChange={(event) => setNewGroceryItem(event.target.value)}
+                  disabled={isWriting}
+                />
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="Description"
+                  value={newGroceryDescription}
+                  onChange={(event) => setNewGroceryDescription(event.target.value)}
+                  disabled={isWriting}
+                />
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => void handleCreateGroceryItem()}
+                  disabled={isWriting}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {view === 'todoist' && todoistConfigured && canEditTodoist && isEditing ? (
             <div className="sheets-editor todoist-create-row">
               <div className="todoist-input-grid">
                 <input
@@ -1457,7 +1765,7 @@ function TodoistTasksCard({
             </div>
           ) : null}
 
-          {todoistConfigured && canEdit && isEditing && rows.length > 0 ? (
+          {view === 'todoist' && todoistConfigured && canEditTodoist && isEditing && rows.length > 0 ? (
             <div className="sheets-table-shell">
               <table className="sheets-table">
                 <thead>
@@ -1488,7 +1796,7 @@ function TodoistTasksCard({
                                 },
                               }))
                             }
-                            disabled={isWriting || !canEdit}
+                            disabled={isWriting || !canEditTodoist}
                           />
                           <textarea
                             className="sheets-input sheets-table-input"
@@ -1504,7 +1812,7 @@ function TodoistTasksCard({
                                 },
                               }))
                             }
-                            disabled={isWriting || !canEdit}
+                            disabled={isWriting || !canEditTodoist}
                             rows={3}
                             placeholder="Task description"
                           />
@@ -1526,7 +1834,7 @@ function TodoistTasksCard({
                               },
                             }))
                           }
-                          disabled={isWriting || !canEdit}
+                          disabled={isWriting || !canEditTodoist}
                         />
                         <p className="sheets-meta">{displayDueDate(row)}</p>
                       </td>
@@ -1537,7 +1845,7 @@ function TodoistTasksCard({
                             type="button"
                             className="secondary-action"
                             onClick={() => void handleSaveTask(row)}
-                            disabled={isWriting || !canEdit}
+                            disabled={isWriting || !canEditTodoist}
                           >
                             Save
                           </button>
@@ -1545,7 +1853,7 @@ function TodoistTasksCard({
                             type="button"
                             className="secondary-action"
                             onClick={() => void handleCompleteTask(row)}
-                            disabled={isWriting || !canEdit}
+                            disabled={isWriting || !canEditTodoist}
                           >
                             Complete
                           </button>
@@ -1558,8 +1866,12 @@ function TodoistTasksCard({
             </div>
           ) : null}
 
-          {todoistConfigured && !isLoading && rows.length === 0 && !writeError ? (
+          {view === 'todoist' && todoistConfigured && !isLoading && rows.length === 0 && !writeError ? (
             <p className="sheets-meta">No tasks due today or overdue.</p>
+          ) : null}
+
+          {view === 'grocery' && !isGroceryLoading && groceryRows.length === 0 ? (
+            <p className="sheets-meta">No grocery items found.</p>
           ) : null}
 
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
@@ -3566,6 +3878,349 @@ function MealPlanCard({
   )
 }
 
+function GroceryListCard({
+  title,
+  fallbackBody,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  fallbackBody: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [rows, setRows] = useState<GroceryListRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [newItem, setNewItem] = useState('')
+  const [newDescription, setNewDescription] = useState('')
+  const [editedRows, setEditedRows] = useState<Record<number, GroceryListRecord>>({})
+
+  async function loadGroceryList() {
+    try {
+      const data = await getGroceryList()
+      setRows(data)
+      setWriteError('')
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadGroceryList()
+  }, [])
+
+  useEffect(() => {
+    const next: Record<number, GroceryListRecord> = {}
+    rows.forEach((row, index) => {
+      next[index] = { ...row }
+    })
+    setEditedRows(next)
+  }, [rows])
+
+  const sortedRows = useMemo(() => {
+    return rows
+      .map((row, index) => ({ row, index }))
+      .sort((a, b) => a.row.item.localeCompare(b.row.item))
+  }, [rows])
+
+  async function handleCreate() {
+    if (!idToken || isWriting || !canWrite) {
+      return
+    }
+
+    const item = newItem.trim()
+    const description = newDescription.trim()
+    if (!item) {
+      setWriteError('Item is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createGroceryListItem(idToken, item, description, false)
+      setNewItem('')
+      setNewDescription('')
+      await loadGroceryList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleSave(index: number, row: GroceryListRecord) {
+    if (!idToken || isWriting || !canWrite) {
+      return
+    }
+
+    const draft = editedRows[index] ?? row
+    const item = draft.item.trim()
+    const description = draft.description.trim()
+    if (!item) {
+      setWriteError('Item is required.')
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateGroceryListItem(idToken, {
+        originalItem: row.item,
+        originalDescription: row.description,
+        item,
+        description,
+        completed: draft.completed,
+      })
+      await loadGroceryList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDelete(row: GroceryListRecord) {
+    if (!idToken || isWriting || !canWrite) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteGroceryListItem(idToken, {
+        item: row.item,
+        description: row.description,
+      })
+      await loadGroceryList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleToggleCompleted(row: GroceryListRecord) {
+    if (!idToken || isWriting || !canWrite) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateGroceryListItem(idToken, {
+        originalItem: row.item,
+        originalDescription: row.description,
+        item: row.item,
+        description: row.description,
+        completed: !row.completed,
+      })
+      await loadGroceryList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => setIsEditing((value) => !value)}
+              title="Edit values"
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? 'Show' : 'Hide'}
+          </button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading grocery list...</p> : null}
+
+          {!isLoading && rows.length === 0 ? <p className="sheets-meta">{fallbackBody || 'No grocery items yet.'}</p> : null}
+
+          {!canWrite ? (
+            <p className="sheets-meta">Edit access restricted to approved admin Google accounts.</p>
+          ) : null}
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+
+          {canWrite && isEditing ? (
+            <div className="sheets-editor">
+              <p className="sheets-meta">Manage grocery items</p>
+              <div className="sheets-editor-row">
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="Item"
+                  value={newItem}
+                  onChange={(event) => setNewItem(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
+                <input
+                  className="sheets-input"
+                  type="text"
+                  placeholder="Description"
+                  value={newDescription}
+                  onChange={(event) => setNewDescription(event.target.value)}
+                  disabled={!idToken || isWriting}
+                />
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => void handleCreate()}
+                  disabled={!idToken || isWriting}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {rows.length > 0 ? (
+            <div className="sheets-table-shell">
+              <table className="sheets-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Completed</th>
+                    {isEditing && canWrite ? <th>Actions</th> : null}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedRows.map(({ row, index }) => (
+                    <tr key={`${row.item}-${index}`}>
+                      <td>
+                        {isEditing && canWrite ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={editedRows[index]?.item ?? row.item}
+                            onChange={(event) =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  ...(current[index] ?? row),
+                                  item: event.target.value,
+                                },
+                              }))
+                            }
+                            disabled={!idToken || isWriting}
+                          />
+                        ) : (
+                          <span style={{ textDecoration: row.completed ? 'line-through' : 'none' }}>{row.item}</span>
+                        )}
+                      </td>
+                      <td>
+                        {isEditing && canWrite ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={editedRows[index]?.description ?? row.description}
+                            onChange={(event) =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  ...(current[index] ?? row),
+                                  description: event.target.value,
+                                },
+                              }))
+                            }
+                            disabled={!idToken || isWriting}
+                          />
+                        ) : (
+                          <span style={{ textDecoration: row.completed ? 'line-through' : 'none' }}>{row.description}</span>
+                        )}
+                      </td>
+                      <td>
+                        {isEditing && canWrite ? (
+                          <input
+                            type="checkbox"
+                            checked={Boolean(editedRows[index]?.completed)}
+                            onChange={(event) =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  ...(current[index] ?? row),
+                                  completed: event.target.checked,
+                                },
+                              }))
+                            }
+                            disabled={!idToken || isWriting}
+                          />
+                        ) : (
+                          <input
+                            type="checkbox"
+                            checked={Boolean(row.completed)}
+                            onChange={() => {
+                              void handleToggleCompleted(row)
+                            }}
+                            disabled={!canWrite || !idToken || isWriting}
+                          />
+                        )}
+                      </td>
+                      {isEditing && canWrite ? (
+                        <td>
+                          <div className="sheets-table-actions">
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleSave(index, row)}
+                              disabled={!idToken || isWriting}
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              className="secondary-action"
+                              onClick={() => void handleDelete(row)}
+                              disabled={!idToken || isWriting}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      ) : null}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : null}
+    </article>
+  )
+}
+
 function toLocalDateTimeInputValue(date: Date) {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -5203,6 +5858,21 @@ function DetailPage({
               canWrite={canWrite}
               idToken={googleIdToken}
               showTodaySummary={false}
+            />
+          )
+        }
+
+        if (path === '/cooking/plan' && card.title === 'Grocery list') {
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && shouldUseAdminProfile(googleEmail)
+
+          return (
+            <GroceryListCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+              canWrite={canWrite}
+              idToken={googleIdToken}
             />
           )
         }

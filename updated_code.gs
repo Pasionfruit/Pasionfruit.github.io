@@ -1,4 +1,4 @@
-var ALLOWED_EMAILS = ['pasionabe@gmail.com']
+var ALLOWED_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
 
 function doPost(e) {
   try {
@@ -62,6 +62,15 @@ function doPost(e) {
 
       case 'updateMealPlan':
         return jsonResponse_(updateMealPlan_(payload))
+
+      case 'createGroceryListItem':
+        return jsonResponse_(createGroceryListItem_(payload))
+
+      case 'updateGroceryListItem':
+        return jsonResponse_(updateGroceryListItem_(payload))
+
+      case 'deleteGroceryListItem':
+        return jsonResponse_(deleteGroceryListItem_(payload))
 
       case 'createEvent':
         return jsonResponse_(createEvent_(payload))
@@ -536,6 +545,114 @@ function updateMealPlan_(payload) {
   sheet.getRange(row, requireHeader_(h, 'dinner')).setValue(dinner)
   sheet.getRange(row, requireHeader_(h, 'snack')).setValue(snack)
 
+  return { ok: true }
+}
+
+function createGroceryListItem_(payload) {
+  var item = String(payload.item || '').trim()
+  var description = String(payload.description || '').trim()
+  var completed = toBoolean_(payload.completed)
+
+  if (!item) {
+    return { ok: false, error: 'item is required' }
+  }
+
+  var sheet = getSheet_('grocery_list')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    item: item,
+    description: description,
+    completed: completed,
+  })
+
+  return { ok: true }
+}
+
+function updateGroceryListItem_(payload) {
+  var originalItem = String(payload.original_item || '').trim()
+  var originalDescription = String(payload.original_description || '').trim()
+  var item = String(payload.item || '').trim()
+  var description = String(payload.description || '').trim()
+  var completed = toBoolean_(payload.completed)
+
+  if (!originalItem || !item) {
+    return { ok: false, error: 'original_item and item are required' }
+  }
+
+  var sheet = getSheet_('grocery_list')
+  var h = headerMap_(sheet)
+  var itemCol = requireHeader_(h, 'item')
+  var descriptionCol = requireHeader_(h, 'description')
+  var lastRow = sheet.getLastRow()
+
+  if (lastRow < 2) {
+    return { ok: false, error: 'Grocery item not found' }
+  }
+
+  var values = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues()
+  var row = -1
+
+  for (var i = 0; i < values.length; i += 1) {
+    var currentItem = String(values[i][itemCol - 1] || '').trim()
+    var currentDescription = String(values[i][descriptionCol - 1] || '').trim()
+
+    if (currentItem === originalItem && currentDescription === originalDescription) {
+      row = i + 2
+      break
+    }
+  }
+
+  if (row < 0) {
+    return { ok: false, error: 'Grocery item not found' }
+  }
+
+  sheet.getRange(row, itemCol).setValue(item)
+  sheet.getRange(row, descriptionCol).setValue(description)
+  var completedCol = h.completed
+  if (completedCol) {
+    sheet.getRange(row, completedCol).setValue(completed)
+  }
+
+  return { ok: true }
+}
+
+function deleteGroceryListItem_(payload) {
+  var item = String(payload.item || '').trim()
+  var description = String(payload.description || '').trim()
+
+  if (!item) {
+    return { ok: false, error: 'item is required' }
+  }
+
+  var sheet = getSheet_('grocery_list')
+  var h = headerMap_(sheet)
+  var itemCol = requireHeader_(h, 'item')
+  var descriptionCol = requireHeader_(h, 'description')
+  var lastRow = sheet.getLastRow()
+
+  if (lastRow < 2) {
+    return { ok: false, error: 'Grocery item not found' }
+  }
+
+  var values = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues()
+  var row = -1
+
+  for (var i = 0; i < values.length; i += 1) {
+    var currentItem = String(values[i][itemCol - 1] || '').trim()
+    var currentDescription = String(values[i][descriptionCol - 1] || '').trim()
+
+    if (currentItem === item && currentDescription === description) {
+      row = i + 2
+      break
+    }
+  }
+
+  if (row < 0) {
+    return { ok: false, error: 'Grocery item not found' }
+  }
+
+  sheet.deleteRow(row)
   return { ok: true }
 }
 

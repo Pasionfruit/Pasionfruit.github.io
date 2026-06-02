@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event'
 
 const repoMocks = vi.hoisted(() => ({
   getBucketList: vi.fn(),
+  getGroceryList: vi.fn(),
   getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
   getBackpackItems: vi.fn(),
@@ -22,8 +23,11 @@ const repoMocks = vi.hoisted(() => ({
   setCountryVisited: vi.fn(),
   setCurrentStudyCompleted: vi.fn(),
   createBucketItem: vi.fn(),
+  createGroceryListItem: vi.fn(),
   updateBucketItem: vi.fn(),
+  updateGroceryListItem: vi.fn(),
   deleteBucketItem: vi.fn(),
+  deleteGroceryListItem: vi.fn(),
   createCountry: vi.fn(),
   updateCountry: vi.fn(),
   deleteCountry: vi.fn(),
@@ -393,6 +397,18 @@ beforeEach(() => {
   ])
 
   repoMocks.setBucketCompleted.mockResolvedValue(undefined)
+  repoMocks.getGroceryList.mockResolvedValue([
+    {
+      item: 'Chicken breast',
+      description: '2 lb',
+      completed: true,
+    },
+    {
+      item: 'Greek yogurt',
+      description: '1 tub',
+      completed: false,
+    },
+  ])
   repoMocks.setCountryVisited.mockResolvedValue(undefined)
   repoMocks.setCurrentStudyCompleted.mockResolvedValue(undefined)
   repoMocks.setTrainingWorkoutCompleted.mockResolvedValue(undefined)
@@ -401,8 +417,11 @@ beforeEach(() => {
   repoMocks.deleteEvent.mockResolvedValue(undefined)
   repoMocks.setActiveEvent.mockResolvedValue(undefined)
   repoMocks.createBucketItem.mockResolvedValue(undefined)
+  repoMocks.createGroceryListItem.mockResolvedValue(undefined)
   repoMocks.updateBucketItem.mockResolvedValue(undefined)
+  repoMocks.updateGroceryListItem.mockResolvedValue(undefined)
   repoMocks.deleteBucketItem.mockResolvedValue(undefined)
+  repoMocks.deleteGroceryListItem.mockResolvedValue(undefined)
   repoMocks.createCountry.mockResolvedValue(undefined)
   repoMocks.updateCountry.mockResolvedValue(undefined)
   repoMocks.deleteCountry.mockResolvedValue(undefined)
@@ -694,6 +713,82 @@ describe('admin about me page', () => {
     })
   })
 
+  it('shows Grocery list in cooking plan and allows authorized admin CRUD', async () => {
+    const user = userEvent.setup()
+    const idToken = makeFakeGoogleIdToken('pasionabe@gmail.com')
+    localStorage.setItem('google-id-token', idToken)
+    renderCookingPlanPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Grocery list' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Grocery list card not found')
+    }
+
+    const initialChickenRowText = await within(card).findByText('Chicken breast')
+    const initialChickenRow = initialChickenRowText.closest('tr')
+    if (!initialChickenRow) {
+      throw new Error('Chicken row not found')
+    }
+
+    await user.click(within(initialChickenRow).getByRole('checkbox'))
+
+    await waitFor(() => {
+      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
+        originalItem: 'Chicken breast',
+        originalDescription: '2 lb',
+        item: 'Chicken breast',
+        description: '2 lb',
+        completed: false,
+      })
+    })
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    const itemInput = within(card).getByPlaceholderText('Item')
+    const descriptionInput = within(card).getByPlaceholderText('Description')
+
+    await user.type(itemInput, 'Bananas')
+    await user.type(descriptionInput, '6')
+    await user.click(within(card).getByRole('button', { name: 'Add' }))
+
+    await waitFor(() => {
+      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'Bananas', '6', false)
+    })
+
+    const chickenInput = within(card).getByDisplayValue('Chicken breast') as HTMLInputElement
+    const chickenRow = chickenInput.closest('tr')
+    if (!chickenRow) {
+      throw new Error('Chicken row not found')
+    }
+
+    await user.clear(chickenInput)
+    await user.type(chickenInput, 'Chicken thighs')
+    const chickenDescriptionInput = within(chickenRow).getByDisplayValue('2 lb') as HTMLInputElement
+    await user.clear(chickenDescriptionInput)
+    await user.type(chickenDescriptionInput, '3 lb')
+    await user.click(within(chickenRow).getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
+        originalItem: 'Chicken breast',
+        originalDescription: '2 lb',
+        item: 'Chicken thighs',
+        description: '3 lb',
+        completed: true,
+      })
+    })
+
+    await user.click(within(chickenRow).getByRole('button', { name: 'Delete' }))
+
+    await waitFor(() => {
+      expect(repoMocks.deleteGroceryListItem).toHaveBeenCalledWith(idToken, {
+        item: 'Chicken breast',
+        description: '2 lb',
+      })
+    })
+  })
+
   it('blocks weekly meal plan editing for non-authorized account', async () => {
     localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
     renderCookingPlanPage()
@@ -845,6 +940,88 @@ describe('admin about me page', () => {
 
     await waitFor(() => {
       expect(todoistMocks.closeTask).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  it('shows grocery list inside Tasks of the Day when Grocery List tab is selected', async () => {
+    const user = userEvent.setup()
+    const idToken = makeFakeGoogleIdToken('pasionabe@gmail.com')
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', idToken)
+    renderHomePage()
+
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Todoist card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Show' }))
+    await user.click(within(card).getByRole('tab', { name: 'Grocery List' }))
+
+    const chickenText = await within(card).findByText('Chicken breast')
+    expect(chickenText.getAttribute('style')).toContain('line-through')
+    expect(within(card).getByText('2 lb')).toBeTruthy()
+    expect(within(card).getByText('Greek yogurt')).toBeTruthy()
+
+    const initialChickenRow = chickenText.closest('tr')
+    if (!initialChickenRow) {
+      throw new Error('Chicken row not found')
+    }
+
+    await user.click(within(initialChickenRow).getByRole('checkbox'))
+
+    await waitFor(() => {
+      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
+        originalItem: 'Chicken breast',
+        originalDescription: '2 lb',
+        item: 'Chicken breast',
+        description: '2 lb',
+        completed: false,
+      })
+    })
+
+    await user.click(within(card).getByTitle('Edit values'))
+
+    await user.type(within(card).getByPlaceholderText('Item'), 'Bananas')
+    await user.type(within(card).getByPlaceholderText('Description'), '6')
+    await user.click(within(card).getByRole('button', { name: 'Add' }))
+
+    await waitFor(() => {
+      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'Bananas', '6', false)
+    })
+
+    const chickenInput = within(card).getByDisplayValue('Chicken breast') as HTMLInputElement
+    const chickenRow = chickenInput.closest('tr')
+    if (!chickenRow) {
+      throw new Error('Chicken row not found')
+    }
+
+    await user.clear(chickenInput)
+    await user.type(chickenInput, 'Chicken thighs')
+    const chickenDescriptionInput = within(chickenRow).getByDisplayValue('2 lb') as HTMLInputElement
+    await user.clear(chickenDescriptionInput)
+    await user.type(chickenDescriptionInput, '3 lb')
+    await user.click(within(chickenRow).getByRole('checkbox'))
+    await user.click(within(chickenRow).getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
+        originalItem: 'Chicken breast',
+        originalDescription: '2 lb',
+        item: 'Chicken thighs',
+        description: '3 lb',
+        completed: false,
+      })
+    })
+
+    await user.click(within(chickenRow).getByRole('button', { name: 'Delete' }))
+
+    await waitFor(() => {
+      expect(repoMocks.deleteGroceryListItem).toHaveBeenCalledWith(idToken, {
+        item: 'Chicken breast',
+        description: '2 lb',
+      })
     })
   })
 

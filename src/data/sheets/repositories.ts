@@ -5,6 +5,7 @@ import type {
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
+  GroceryListRecord,
   MealPlanRecord,
   PollRecord,
   TrainingRecord,
@@ -159,6 +160,18 @@ export async function getMealPlan(): Promise<MealPlanRecord[]> {
       snack: String(row.snack ?? ''),
     }))
     .filter((row) => row.day_of_the_week)
+}
+
+export async function getGroceryList(): Promise<GroceryListRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('grocery_list')
+
+  return rows
+    .map((row) => ({
+      item: String(row.item ?? ''),
+      description: String(row.description ?? ''),
+      completed: parseBoolean(row.completed),
+    }))
+    .filter((row) => row.item || row.description)
 }
 
 async function runWrite(payload: Record<string, unknown>) {
@@ -436,5 +449,51 @@ export async function updateMealPlan(
     lunch: payload.lunch,
     dinner: payload.dinner,
     snack: payload.snack,
+  })
+}
+
+export async function createGroceryListItem(idToken: string, item: string, description: string, completed = false) {
+  await runWrite({
+    action: 'createGroceryListItem',
+    idToken,
+    item,
+    description,
+    completed,
+  })
+}
+
+export async function updateGroceryListItem(
+  idToken: string,
+  payload: {
+    originalItem: string
+    originalDescription: string
+    item: string
+    description: string
+    completed?: boolean
+  },
+) {
+  await runWrite({
+    action: 'updateGroceryListItem',
+    idToken,
+    original_item: payload.originalItem,
+    original_description: payload.originalDescription,
+    item: payload.item,
+    description: payload.description,
+    completed: payload.completed ?? false,
+  })
+}
+
+export async function deleteGroceryListItem(
+  idToken: string,
+  payload: {
+    item: string
+    description: string
+  },
+) {
+  await runWrite({
+    action: 'deleteGroceryListItem',
+    idToken,
+    item: payload.item,
+    description: payload.description,
   })
 }
