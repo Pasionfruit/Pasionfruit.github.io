@@ -72,9 +72,10 @@ export type MealPlanRecord = {
 }
 
 export type GroceryListRecord = {
+  type: string
   item: string
-  description: string
   completed: boolean
+  include: boolean
 }
 
 export type FinanceTransactionRecord = {

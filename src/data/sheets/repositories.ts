@@ -168,11 +168,12 @@ export async function getGroceryList(): Promise<GroceryListRecord[]> {
 
   return rows
     .map((row) => ({
+      type: String(row.type ?? '').trim() || 'ETC',
       item: String(row.item ?? ''),
-      description: String(row.description ?? ''),
       completed: parseBoolean(row.completed),
+      include: parseBoolean(row.include),
     }))
-    .filter((row) => row.item || row.description)
+    .filter((row) => row.item)
 }
 
 function mapFinanceTransactions(rows: Record<string, unknown>[]): FinanceTransactionRecord[] {
@@ -475,13 +476,14 @@ export async function updateMealPlan(
   })
 }
 
-export async function createGroceryListItem(idToken: string, item: string, description: string, completed = false) {
+export async function createGroceryListItem(idToken: string, type: string, item: string, completed = false, include = false) {
   await runWrite({
     action: 'createGroceryListItem',
     idToken,
+    type,
     item,
-    description,
     completed,
+    include,
   })
 }
 
@@ -489,20 +491,20 @@ export async function updateGroceryListItem(
   idToken: string,
   payload: {
     originalItem: string
-    originalDescription: string
     item: string
-    description: string
+    type: string
     completed?: boolean
+    include?: boolean
   },
 ) {
   await runWrite({
     action: 'updateGroceryListItem',
     idToken,
     original_item: payload.originalItem,
-    original_description: payload.originalDescription,
     item: payload.item,
-    description: payload.description,
+    type: payload.type,
     completed: payload.completed ?? false,
+    include: payload.include ?? false,
   })
 }
 
@@ -510,13 +512,11 @@ export async function deleteGroceryListItem(
   idToken: string,
   payload: {
     item: string
-    description: string
   },
 ) {
   await runWrite({
     action: 'deleteGroceryListItem',
     idToken,
     item: payload.item,
-    description: payload.description,
   })
 }

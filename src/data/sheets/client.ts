@@ -70,7 +70,7 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     events: 'events!A1:I10000',
     traveling: 'traveling!A1:D10000',
     meal_plan: 'meal_plan!A1:E10000',
-    grocery_list: 'grocery_list!A1:C10000',
+    grocery_list: 'grocery_list!A1:D10000',
     abe_transactions: 'abe_transactions!A1:E10000',
     ciara_transactions: 'ciara_transactions!A1:E10000',
   }

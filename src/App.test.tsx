@@ -419,14 +419,16 @@ beforeEach(() => {
   ])
   repoMocks.getGroceryList.mockResolvedValue([
     {
+      type: 'MEAT',
       item: 'Chicken breast',
-      description: '2 lb',
       completed: true,
+      include: true,
     },
     {
+      type: 'DAIRY',
       item: 'Greek yogurt',
-      description: '1 tub',
       completed: false,
+      include: false,
     },
   ])
   repoMocks.setCountryVisited.mockResolvedValue(undefined)
@@ -772,7 +774,7 @@ describe('admin about me page', () => {
     })
   })
 
-  it('shows Grocery list in cooking plan and allows authorized admin CRUD', async () => {
+  it('shows Grocery list in cooking plan and allows authorized admin catalog edits', async () => {
     const user = userEvent.setup()
     const idToken = makeFakeGoogleIdToken('pasionabe@gmail.com')
     localStorage.setItem('google-id-token', idToken)
@@ -784,8 +786,12 @@ describe('admin about me page', () => {
       throw new Error('Grocery list card not found')
     }
 
-    const initialChickenRowText = await within(card).findByText('Chicken breast')
-    const initialChickenRow = initialChickenRowText.closest('tr')
+    expect(await within(card).findByText('MEAT')).toBeTruthy()
+    expect(within(card).queryByText('DAIRY')).toBeNull()
+
+    const initialChickenRowText = within(card).getByText('Chicken breast')
+    expect(initialChickenRowText.getAttribute('style')).toContain('line-through')
+    const initialChickenRow = initialChickenRowText.closest('.grocery-catalog-row') as HTMLElement | null
     if (!initialChickenRow) {
       throw new Error('Chicken row not found')
     }
@@ -795,56 +801,46 @@ describe('admin about me page', () => {
     await waitFor(() => {
       expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
         originalItem: 'Chicken breast',
-        originalDescription: '2 lb',
         item: 'Chicken breast',
-        description: '2 lb',
+        type: 'MEAT',
         completed: false,
+        include: true,
       })
     })
 
-    await user.click(within(card).getByTitle('Edit values'))
+    await user.click(within(card).getByTitle('Edit grocery list'))
 
-    const itemInput = within(card).getByPlaceholderText('Item')
-    const descriptionInput = within(card).getByPlaceholderText('Description')
+    expect(within(card).getByText('DAIRY')).toBeTruthy()
 
-    await user.type(itemInput, 'Bananas')
-    await user.type(descriptionInput, '6')
-    await user.click(within(card).getByRole('button', { name: 'Add' }))
+    await user.click(within(card).getByRole('button', { name: 'Add Greek yogurt' }))
 
     await waitFor(() => {
-      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'Bananas', '6', false)
+      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
+        originalItem: 'Greek yogurt',
+        item: 'Greek yogurt',
+        type: 'DAIRY',
+        completed: false,
+        include: true,
+      })
     })
 
-    const chickenInput = within(card).getByDisplayValue('Chicken breast') as HTMLInputElement
-    const chickenRow = chickenInput.closest('tr')
-    if (!chickenRow) {
-      throw new Error('Chicken row not found')
-    }
-
-    await user.clear(chickenInput)
-    await user.type(chickenInput, 'Chicken thighs')
-    const chickenDescriptionInput = within(chickenRow).getByDisplayValue('2 lb') as HTMLInputElement
-    await user.clear(chickenDescriptionInput)
-    await user.type(chickenDescriptionInput, '3 lb')
-    await user.click(within(chickenRow).getByRole('button', { name: 'Save' }))
+    await user.click(within(card).getByRole('button', { name: 'Remove Chicken breast' }))
 
     await waitFor(() => {
       expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
         originalItem: 'Chicken breast',
-        originalDescription: '2 lb',
-        item: 'Chicken thighs',
-        description: '3 lb',
+        item: 'Chicken breast',
+        type: 'MEAT',
         completed: true,
+        include: false,
       })
     })
 
-    await user.click(within(chickenRow).getByRole('button', { name: 'Delete' }))
+    await user.type(within(card).getByPlaceholderText('Item name'), 'Bananas')
+    await user.click(within(card).getByRole('button', { name: 'Add custom grocery item' }))
 
     await waitFor(() => {
-      expect(repoMocks.deleteGroceryListItem).toHaveBeenCalledWith(idToken, {
-        item: 'Chicken breast',
-        description: '2 lb',
-      })
+      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'ETC', 'Bananas', false, true)
     })
   })
 
@@ -1020,10 +1016,10 @@ describe('admin about me page', () => {
 
     const chickenText = await within(card).findByText('Chicken breast')
     expect(chickenText.getAttribute('style')).toContain('line-through')
-    expect(within(card).getByText('2 lb')).toBeTruthy()
-    expect(within(card).getByText('Greek yogurt')).toBeTruthy()
+    expect(within(card).getByText('MEAT')).toBeTruthy()
+    expect(within(card).queryByText('Greek yogurt')).toBeNull()
 
-    const initialChickenRow = chickenText.closest('tr')
+    const initialChickenRow = chickenText.closest('.grocery-catalog-row') as HTMLElement | null
     if (!initialChickenRow) {
       throw new Error('Chicken row not found')
     }
@@ -1033,54 +1029,46 @@ describe('admin about me page', () => {
     await waitFor(() => {
       expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
         originalItem: 'Chicken breast',
-        originalDescription: '2 lb',
         item: 'Chicken breast',
-        description: '2 lb',
+        type: 'MEAT',
         completed: false,
+        include: true,
       })
     })
 
     await user.click(within(card).getByTitle('Edit values'))
 
-    await user.type(within(card).getByPlaceholderText('Item'), 'Bananas')
-    await user.type(within(card).getByPlaceholderText('Description'), '6')
-    await user.click(within(card).getByRole('button', { name: 'Add' }))
+    expect(within(card).getByText('DAIRY')).toBeTruthy()
+
+    await user.click(within(card).getByRole('button', { name: 'Add Greek yogurt' }))
 
     await waitFor(() => {
-      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'Bananas', '6', false)
+      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
+        originalItem: 'Greek yogurt',
+        item: 'Greek yogurt',
+        type: 'DAIRY',
+        completed: false,
+        include: true,
+      })
     })
 
-    const chickenInput = within(card).getByDisplayValue('Chicken breast') as HTMLInputElement
-    const chickenRow = chickenInput.closest('tr')
-    if (!chickenRow) {
-      throw new Error('Chicken row not found')
-    }
-
-    await user.clear(chickenInput)
-    await user.type(chickenInput, 'Chicken thighs')
-    const chickenDescriptionInput = within(chickenRow).getByDisplayValue('2 lb') as HTMLInputElement
-    await user.clear(chickenDescriptionInput)
-    await user.type(chickenDescriptionInput, '3 lb')
-    await user.click(within(chickenRow).getByRole('checkbox'))
-    await user.click(within(chickenRow).getByRole('button', { name: 'Save' }))
+    await user.click(within(card).getByRole('button', { name: 'Remove Chicken breast' }))
 
     await waitFor(() => {
       expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
         originalItem: 'Chicken breast',
-        originalDescription: '2 lb',
-        item: 'Chicken thighs',
-        description: '3 lb',
-        completed: false,
+        item: 'Chicken breast',
+        type: 'MEAT',
+        completed: true,
+        include: false,
       })
     })
 
-    await user.click(within(chickenRow).getByRole('button', { name: 'Delete' }))
+    await user.type(within(card).getByPlaceholderText('Item name'), 'Bananas')
+    await user.click(within(card).getByRole('button', { name: 'Add custom grocery item' }))
 
     await waitFor(() => {
-      expect(repoMocks.deleteGroceryListItem).toHaveBeenCalledWith(idToken, {
-        item: 'Chicken breast',
-        description: '2 lb',
-      })
+      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'ETC', 'Bananas', false, true)
     })
   })
 

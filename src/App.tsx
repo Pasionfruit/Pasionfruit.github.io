@@ -36,7 +36,6 @@ import {
   createEvent,
   createPoll,
   deleteBucketItem,
-  deleteGroceryListItem,
   deleteCountry,
   deleteEvent,
   deletePoll,
@@ -1231,10 +1230,8 @@ function TodoistTasksCard({
   const [newTaskContent, setNewTaskContent] = useState('')
   const [newTaskDueDate, setNewTaskDueDate] = useState(() => getTodayDateInputValue())
   const [newTaskPriority, setNewTaskPriority] = useState(1)
-  const [newGroceryItem, setNewGroceryItem] = useState('')
-  const [newGroceryDescription, setNewGroceryDescription] = useState('')
   const [editedRows, setEditedRows] = useState<Record<string, { content: string; description: string; dueDate: string; priority: number }>>({})
-  const [editedGroceryRows, setEditedGroceryRows] = useState<Record<number, GroceryListRecord>>({})
+  const [newCustomGroceryItem, setNewCustomGroceryItem] = useState('')
 
   async function loadTasks() {
     try {
@@ -1284,14 +1281,6 @@ function TodoistTasksCard({
     })
     setEditedRows(next)
   }, [rows])
-
-  useEffect(() => {
-    const next: Record<number, GroceryListRecord> = {}
-    groceryRows.forEach((row, index) => {
-      next[index] = { ...row }
-    })
-    setEditedGroceryRows(next)
-  }, [groceryRows])
 
   async function handleCreateTask() {
     if (isWriting || !todoistConfigured || !canEditTodoist) {
@@ -1369,108 +1358,92 @@ function TodoistTasksCard({
     }
   }
 
-  async function handleCreateGroceryItem() {
-    if (isWriting || !canEditGrocery || !googleIdToken) {
-      return
+  const groceryGroups = useMemo(() => {
+    const order: string[] = []
+    const map: Record<string, GroceryListRecord[]> = {}
+    for (const row of groceryRows) {
+      const type = row.type.trim().toUpperCase() || 'ETC'
+      if (!map[type]) {
+        order.push(type)
+        map[type] = []
+      }
+      map[type].push(row)
     }
+    return order.map((type) => ({ type, items: map[type] }))
+  }, [groceryRows])
 
-    const item = newGroceryItem.trim()
-    const description = newGroceryDescription.trim()
-    if (!item) {
-      setWriteError('Item is required.')
-      return
-    }
+  const includedGroceryGroups = useMemo(
+    () =>
+      groceryGroups
+        .map(({ type, items }) => ({ type, items: items.filter((row) => row.include) }))
+        .filter(({ items }) => items.length > 0),
+    [groceryGroups],
+  )
 
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await createGroceryListItem(googleIdToken, item, description, false)
-      setNewGroceryItem('')
-      setNewGroceryDescription('')
-      await loadGroceryListForHome()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to create grocery list item')
-    } finally {
-      setIsWriting(false)
-    }
-  }
+  const includedGroceryCount = useMemo(() => groceryRows.filter((row) => row.include).length, [groceryRows])
 
-  async function handleSaveGroceryItem(index: number, row: GroceryListRecord) {
-    if (isWriting || !canEditGrocery || !googleIdToken) {
-      return
-    }
-
-    const draft = editedGroceryRows[index] ?? row
-    const item = draft.item.trim()
-    const description = draft.description.trim()
-    if (!item) {
-      setWriteError('Item is required.')
-      return
-    }
-
+  async function handleToggleGroceryInclude(row: GroceryListRecord) {
+    if (isWriting || !canEditGrocery || !googleIdToken) return
     setIsWriting(true)
     setWriteError('')
     try {
       await updateGroceryListItem(googleIdToken, {
         originalItem: row.item,
-        originalDescription: row.description,
-        item,
-        description,
-        completed: draft.completed,
-      })
-      await loadGroceryListForHome()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  async function handleDeleteGroceryItem(row: GroceryListRecord) {
-    if (isWriting || !canEditGrocery || !googleIdToken) {
-      return
-    }
-
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await deleteGroceryListItem(googleIdToken, {
         item: row.item,
-        description: row.description,
+        type: row.type,
+        completed: row.completed,
+        include: !row.include,
       })
       await loadGroceryListForHome()
     } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to delete grocery list item')
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
     } finally {
       setIsWriting(false)
     }
   }
 
   async function handleToggleGroceryCompleted(row: GroceryListRecord) {
-    if (isWriting || !canEditGrocery || !googleIdToken) {
-      return
-    }
-
+    if (isWriting || !canEditGrocery || !googleIdToken) return
     setIsWriting(true)
     setWriteError('')
     try {
       await updateGroceryListItem(googleIdToken, {
         originalItem: row.item,
-        originalDescription: row.description,
         item: row.item,
-        description: row.description,
+        type: row.type,
         completed: !row.completed,
+        include: row.include,
       })
       await loadGroceryListForHome()
     } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleAddCustomGroceryItem() {
+    if (isWriting || !canEditGrocery || !googleIdToken) return
+    const item = newCustomGroceryItem.trim()
+    if (!item) {
+      setWriteError('Item name is required.')
+      return
+    }
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createGroceryListItem(googleIdToken, 'ETC', item, false, true)
+      setNewCustomGroceryItem('')
+      await loadGroceryListForHome()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to add grocery item')
     } finally {
       setIsWriting(false)
     }
   }
 
   return (
-    <article className="info-card section-page-card sheets-card home-todoist-card">
+    <article className="info-card home-todoist-card sheets-card">
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
@@ -1482,7 +1455,7 @@ function TodoistTasksCard({
               onClick={() => setIsEditing((value) => !value)}
               title="Edit values"
             >
-              ✎
+              Edit
             </button>
           ) : null}
           <button
@@ -1582,6 +1555,7 @@ function TodoistTasksCard({
             </div>
           ) : null}
 
+          {/*
           {view === 'grocery' && groceryRows.length > 0 ? (
             <div className="sheets-table-shell">
               <table className="sheets-table">
@@ -1724,6 +1698,87 @@ function TodoistTasksCard({
                   Add
                 </button>
               </div>
+            </div>
+          ) : null}
+
+          */}
+
+          {view === 'grocery' && isEditing && canEditGrocery ? (
+            <div className="grocery-catalog" aria-label="Grocery catalog">
+              {groceryGroups.map(({ type, items }) => (
+                <div key={type} className="grocery-catalog-group">
+                  <div className="grocery-catalog-type-header">{type}</div>
+                  {items.map((row) => (
+                    <div key={`${type}-${row.item}`} className="grocery-catalog-row">
+                      <span className="grocery-catalog-item-name">{row.item}</span>
+                      <button
+                        type="button"
+                        className={`grocery-catalog-toggle ${row.include ? 'included' : ''}`}
+                        onClick={() => void handleToggleGroceryInclude(row)}
+                        disabled={!googleIdToken || isWriting}
+                        title={row.include ? 'Remove from list' : 'Add to list'}
+                        aria-label={`${row.include ? 'Remove' : 'Add'} ${row.item}`}
+                      >
+                        {row.include ? '-' : '+'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div className="grocery-catalog-group">
+                <div className="grocery-catalog-type-header">ETC</div>
+                <div className="grocery-catalog-row">
+                  <input
+                    className="sheets-input grocery-catalog-custom-input"
+                    type="text"
+                    placeholder="Item name"
+                    value={newCustomGroceryItem}
+                    onChange={(event) => setNewCustomGroceryItem(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') void handleAddCustomGroceryItem()
+                    }}
+                    disabled={!googleIdToken || isWriting}
+                  />
+                  <button
+                    type="button"
+                    className="grocery-catalog-toggle"
+                    onClick={() => void handleAddCustomGroceryItem()}
+                    disabled={!googleIdToken || isWriting || !newCustomGroceryItem.trim()}
+                    aria-label="Add custom grocery item"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {view === 'grocery' && !isEditing && includedGroceryGroups.length > 0 ? (
+            <div className="grocery-list-view" aria-label="Active grocery list">
+              {includedGroceryGroups.map(({ type, items }) => (
+                <div key={type} className="grocery-catalog-group">
+                  <div className="grocery-catalog-type-header">{type}</div>
+                  {items.map((row) => (
+                    <div key={`${type}-${row.item}`} className="grocery-catalog-row">
+                      <span
+                        className="grocery-catalog-item-name"
+                        style={{ textDecoration: row.completed ? 'line-through' : 'none' }}
+                      >
+                        {row.item}
+                      </span>
+                      {canEditGrocery ? (
+                        <input
+                          type="checkbox"
+                          checked={row.completed}
+                          onChange={() => void handleToggleGroceryCompleted(row)}
+                          disabled={!googleIdToken || isWriting}
+                          title="Mark completed"
+                        />
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           ) : null}
 
@@ -1871,6 +1926,10 @@ function TodoistTasksCard({
 
           {view === 'todoist' && todoistConfigured && !isLoading && rows.length === 0 && !writeError ? (
             <p className="sheets-meta">No tasks due today or overdue.</p>
+          ) : null}
+
+          {view === 'grocery' && !isEditing && !isGroceryLoading && groceryRows.length > 0 && includedGroceryCount === 0 ? (
+            <p className="sheets-meta">No items added to this week&apos;s list. Tap Edit to add items.</p>
           ) : null}
 
           {view === 'grocery' && !isGroceryLoading && groceryRows.length === 0 ? (
@@ -4287,9 +4346,7 @@ function GroceryListCard({
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
-  const [newItem, setNewItem] = useState('')
-  const [newDescription, setNewDescription] = useState('')
-  const [editedRows, setEditedRows] = useState<Record<number, GroceryListRecord>>({})
+  const [newCustomItem, setNewCustomItem] = useState('')
 
   async function loadGroceryList() {
     try {
@@ -4307,115 +4364,79 @@ function GroceryListCard({
     void loadGroceryList()
   }, [])
 
-  useEffect(() => {
-    const next: Record<number, GroceryListRecord> = {}
-    rows.forEach((row, index) => {
-      next[index] = { ...row }
-    })
-    setEditedRows(next)
+  // Group rows by type, preserving sheet order within each type
+  const groupedRows = useMemo(() => {
+    const order: string[] = []
+    const map: Record<string, GroceryListRecord[]> = {}
+    for (const row of rows) {
+      const t = row.type.trim().toUpperCase() || 'ETC'
+      if (!map[t]) {
+        order.push(t)
+        map[t] = []
+      }
+      map[t].push(row)
+    }
+    return order.map((t) => ({ type: t, items: map[t] }))
   }, [rows])
 
-  const sortedRows = useMemo(() => {
-    return rows
-      .map((row, index) => ({ row, index }))
-      .sort((a, b) => a.row.item.localeCompare(b.row.item))
-  }, [rows])
+  // Items on the active grocery list (include=true)
+  const includedRows = useMemo(() => rows.filter((r) => r.include), [rows])
 
-  async function handleCreate() {
-    if (!idToken || isWriting || !canWrite) {
-      return
-    }
-
-    const item = newItem.trim()
-    const description = newDescription.trim()
-    if (!item) {
-      setWriteError('Item is required.')
-      return
-    }
-
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await createGroceryListItem(idToken, item, description, false)
-      setNewItem('')
-      setNewDescription('')
-      await loadGroceryList()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to create grocery list item')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  async function handleSave(index: number, row: GroceryListRecord) {
-    if (!idToken || isWriting || !canWrite) {
-      return
-    }
-
-    const draft = editedRows[index] ?? row
-    const item = draft.item.trim()
-    const description = draft.description.trim()
-    if (!item) {
-      setWriteError('Item is required.')
-      return
-    }
-
+  async function handleToggleInclude(row: GroceryListRecord) {
+    if (!idToken || isWriting || !canWrite) return
     setIsWriting(true)
     setWriteError('')
     try {
       await updateGroceryListItem(idToken, {
         originalItem: row.item,
-        originalDescription: row.description,
-        item,
-        description,
-        completed: draft.completed,
-      })
-      await loadGroceryList()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  async function handleDelete(row: GroceryListRecord) {
-    if (!idToken || isWriting || !canWrite) {
-      return
-    }
-
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await deleteGroceryListItem(idToken, {
         item: row.item,
-        description: row.description,
+        type: row.type,
+        completed: row.completed,
+        include: !row.include,
       })
       await loadGroceryList()
     } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to delete grocery list item')
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
     } finally {
       setIsWriting(false)
     }
   }
 
   async function handleToggleCompleted(row: GroceryListRecord) {
-    if (!idToken || isWriting || !canWrite) {
-      return
-    }
-
+    if (!idToken || isWriting || !canWrite) return
     setIsWriting(true)
     setWriteError('')
     try {
       await updateGroceryListItem(idToken, {
         originalItem: row.item,
-        originalDescription: row.description,
         item: row.item,
-        description: row.description,
+        type: row.type,
         completed: !row.completed,
+        include: row.include,
       })
       await loadGroceryList()
     } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery list item')
+      setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleAddCustomItem() {
+    if (!idToken || isWriting || !canWrite) return
+    const item = newCustomItem.trim()
+    if (!item) {
+      setWriteError('Item name is required.')
+      return
+    }
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createGroceryListItem(idToken, 'ETC', item, false, true)
+      setNewCustomItem('')
+      await loadGroceryList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to add grocery item')
     } finally {
       setIsWriting(false)
     }
@@ -4432,7 +4453,7 @@ function GroceryListCard({
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
               onClick={() => setIsEditing((value) => !value)}
-              title="Edit values"
+              title="Edit grocery list"
             >
               ✎
             </button>
@@ -4452,7 +4473,9 @@ function GroceryListCard({
         <>
           {isLoading ? <p className="sheets-meta">Loading grocery list...</p> : null}
 
-          {!isLoading && rows.length === 0 ? <p className="sheets-meta">{fallbackBody || 'No grocery items yet.'}</p> : null}
+          {!isLoading && rows.length === 0 && !isEditing ? (
+            <p className="sheets-meta">{fallbackBody || 'No grocery items yet.'}</p>
+          ) : null}
 
           {!canWrite ? (
             <p className="sheets-meta">Edit access restricted to approved admin Google accounts.</p>
@@ -4462,148 +4485,93 @@ function GroceryListCard({
             <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
           ) : null}
 
-          {canWrite && isEditing ? (
-            <div className="sheets-editor">
-              <p className="sheets-meta">Manage grocery items</p>
-              <div className="sheets-editor-row">
-                <input
-                  className="sheets-input"
-                  type="text"
-                  placeholder="Item"
-                  value={newItem}
-                  onChange={(event) => setNewItem(event.target.value)}
-                  disabled={!idToken || isWriting}
-                />
-                <input
-                  className="sheets-input"
-                  type="text"
-                  placeholder="Description"
-                  value={newDescription}
-                  onChange={(event) => setNewDescription(event.target.value)}
-                  disabled={!idToken || isWriting}
-                />
-                <button
-                  type="button"
-                  className="secondary-action"
-                  onClick={() => void handleCreate()}
-                  disabled={!idToken || isWriting}
-                >
-                  Add
-                </button>
+          {/* Edit/catalog mode: browse all items grouped by type, toggle include */}
+          {isEditing && canWrite ? (
+            <div className="grocery-catalog">
+              {groupedRows.map(({ type, items }) => (
+                <div key={type} className="grocery-catalog-group">
+                  <div className="grocery-catalog-type-header">{type}</div>
+                  {items.map((row) => (
+                    <div key={row.item} className="grocery-catalog-row">
+                      <span className="grocery-catalog-item-name">{row.item}</span>
+                      <button
+                        type="button"
+                        className={`grocery-catalog-toggle ${row.include ? 'included' : ''}`}
+                        onClick={() => void handleToggleInclude(row)}
+                        disabled={!idToken || isWriting}
+                        title={row.include ? 'Remove from list' : 'Add to list'}
+                        aria-label={`${row.include ? 'Remove' : 'Add'} ${row.item}`}
+                      >
+                        {row.include ? '−' : '+'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              {/* Add a custom item not in the catalog */}
+              <div className="grocery-catalog-group">
+                <div className="grocery-catalog-type-header">Add custom item</div>
+                <div className="grocery-catalog-row">
+                  <input
+                    className="sheets-input grocery-catalog-custom-input"
+                    type="text"
+                    placeholder="Item name"
+                    value={newCustomItem}
+                    onChange={(event) => setNewCustomItem(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') void handleAddCustomItem()
+                    }}
+                    disabled={!idToken || isWriting}
+                  />
+                  <button
+                    type="button"
+                    className="grocery-catalog-toggle"
+                    onClick={() => void handleAddCustomItem()}
+                    disabled={!idToken || isWriting || !newCustomItem.trim()}
+                    aria-label="Add custom grocery item"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
           ) : null}
 
-          {rows.length > 0 ? (
-            <div className="sheets-table-shell">
-              <table className="sheets-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Description</th>
-                    <th>Completed</th>
-                    {isEditing && canWrite ? <th>Actions</th> : null}
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedRows.map(({ row, index }) => (
-                    <tr key={`${row.item}-${index}`}>
-                      <td>
-                        {isEditing && canWrite ? (
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
-                            value={editedRows[index]?.item ?? row.item}
-                            onChange={(event) =>
-                              setEditedRows((current) => ({
-                                ...current,
-                                [index]: {
-                                  ...(current[index] ?? row),
-                                  item: event.target.value,
-                                },
-                              }))
-                            }
-                            disabled={!idToken || isWriting}
-                          />
-                        ) : (
-                          <span style={{ textDecoration: row.completed ? 'line-through' : 'none' }}>{row.item}</span>
-                        )}
-                      </td>
-                      <td>
-                        {isEditing && canWrite ? (
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
-                            value={editedRows[index]?.description ?? row.description}
-                            onChange={(event) =>
-                              setEditedRows((current) => ({
-                                ...current,
-                                [index]: {
-                                  ...(current[index] ?? row),
-                                  description: event.target.value,
-                                },
-                              }))
-                            }
-                            disabled={!idToken || isWriting}
-                          />
-                        ) : (
-                          <span style={{ textDecoration: row.completed ? 'line-through' : 'none' }}>{row.description}</span>
-                        )}
-                      </td>
-                      <td>
-                        {isEditing && canWrite ? (
+          {/* Normal view: show included items grouped by type */}
+          {!isEditing && includedRows.length > 0 ? (
+            <div className="grocery-list-view">
+              {groupedRows
+                .map(({ type, items }) => ({ type, items: items.filter((r) => r.include) }))
+                .filter(({ items }) => items.length > 0)
+                .map(({ type, items }) => (
+                  <div key={type} className="grocery-catalog-group">
+                    <div className="grocery-catalog-type-header">{type}</div>
+                    {items.map((row) => (
+                      <div key={row.item} className="grocery-catalog-row">
+                        <span
+                          className="grocery-catalog-item-name"
+                          style={{ textDecoration: row.completed ? 'line-through' : 'none' }}
+                        >
+                          {row.item}
+                        </span>
+                        {canWrite ? (
                           <input
                             type="checkbox"
-                            checked={Boolean(editedRows[index]?.completed)}
-                            onChange={(event) =>
-                              setEditedRows((current) => ({
-                                ...current,
-                                [index]: {
-                                  ...(current[index] ?? row),
-                                  completed: event.target.checked,
-                                },
-                              }))
-                            }
+                            checked={row.completed}
+                            onChange={() => void handleToggleCompleted(row)}
                             disabled={!idToken || isWriting}
+                            title="Mark completed"
                           />
-                        ) : (
-                          <input
-                            type="checkbox"
-                            checked={Boolean(row.completed)}
-                            onChange={() => {
-                              void handleToggleCompleted(row)
-                            }}
-                            disabled={!canWrite || !idToken || isWriting}
-                          />
-                        )}
-                      </td>
-                      {isEditing && canWrite ? (
-                        <td>
-                          <div className="sheets-table-actions">
-                            <button
-                              type="button"
-                              className="secondary-action"
-                              onClick={() => void handleSave(index, row)}
-                              disabled={!idToken || isWriting}
-                            >
-                              Save
-                            </button>
-                            <button
-                              type="button"
-                              className="secondary-action"
-                              onClick={() => void handleDelete(row)}
-                              disabled={!idToken || isWriting}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      ) : null}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                ))}
             </div>
+          ) : null}
+
+          {!isEditing && !isLoading && includedRows.length === 0 && rows.length > 0 ? (
+            <p className="sheets-meta">No items added to this week&apos;s list. Tap ✎ to add items.</p>
           ) : null}
 
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
