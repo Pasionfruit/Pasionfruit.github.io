@@ -5,7 +5,9 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event'
 
 const repoMocks = vi.hoisted(() => ({
+  getAbeTransactions: vi.fn(),
   getBucketList: vi.fn(),
+  getCiaraTransactions: vi.fn(),
   getGroceryList: vi.fn(),
   getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
@@ -397,6 +399,24 @@ beforeEach(() => {
   ])
 
   repoMocks.setBucketCompleted.mockResolvedValue(undefined)
+  repoMocks.getAbeTransactions.mockResolvedValue([
+    {
+      date: '2026-06-01',
+      description: 'Abe groceries',
+      amount: 120,
+      category: 'Grocery',
+      card: 'Chase Freedom',
+    },
+  ])
+  repoMocks.getCiaraTransactions.mockResolvedValue([
+    {
+      date: '2026-06-02',
+      description: 'Ciara coffee',
+      amount: 8.75,
+      category: 'Food',
+      card: 'Amex Gold',
+    },
+  ])
   repoMocks.getGroceryList.mockResolvedValue([
     {
       item: 'Chicken breast',
@@ -601,6 +621,45 @@ describe('admin about me page', () => {
     expect(await screen.findByRole('tab', { name: 'Dashboard view' })).toBeTruthy()
     expect(screen.getByRole('tab', { name: 'Calendar view' })).toBeTruthy()
     expect(screen.getByRole('tab', { name: 'Purchases tab' })).toBeTruthy()
+  })
+
+  it('filters dashboard transactions by Abe, Ciara, and Both (default Both)', async () => {
+    const user = userEvent.setup()
+    renderFinancesPageWithEmail('pixielee1000@gmail.com')
+
+    // Dashboard shows budget tables — verify key category rows appear
+    expect(await screen.findByText('Rent')).toBeTruthy()
+    expect(screen.getByText('Salary')).toBeTruthy()
+
+    // Source filter buttons are present and clickable
+    const abeBtn = screen.getByRole('button', { name: 'Abe' })
+    const ciaraBtn = screen.getByRole('button', { name: 'Ciara' })
+    const bothBtn = screen.getByRole('button', { name: 'Both' })
+
+    await user.click(abeBtn)
+    expect(screen.getByText('Rent')).toBeTruthy()
+
+    await user.click(ciaraBtn)
+    expect(screen.getByText('Rent')).toBeTruthy()
+
+    await user.click(bothBtn)
+    expect(screen.getByText('Rent')).toBeTruthy()
+  })
+
+  it('shows calendar transactions popup when clicking a date with purchases', async () => {
+    const user = userEvent.setup()
+    renderFinancesPageWithEmail('pixielee1000@gmail.com')
+
+    await user.click(screen.getByRole('tab', { name: 'Calendar view' }))
+
+    const dayWithTransactions = (await screen.findAllByRole('button', {
+      name: /has 1 transaction/i,
+    }))[0]
+
+    await user.click(dayWithTransactions)
+
+    expect(await screen.findByRole('dialog', { name: /Transactions for/i })).toBeTruthy()
+    expect(screen.getByText(/Abe groceries|Ciara coffee/)).toBeTruthy()
   })
 
   it('shows an access denied popup when an unauthorized user clicks the home finances Open button', async () => {

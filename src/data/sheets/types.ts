@@ -77,6 +77,14 @@ export type GroceryListRecord = {
   completed: boolean
 }
 
+export type FinanceTransactionRecord = {
+  date?: string
+  description: string
+  amount: number
+  category: string
+  card: string
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

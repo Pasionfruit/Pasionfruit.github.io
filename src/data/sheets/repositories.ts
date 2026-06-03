@@ -5,6 +5,7 @@ import type {
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
+  FinanceTransactionRecord,
   GroceryListRecord,
   MealPlanRecord,
   PollRecord,
@@ -172,6 +173,28 @@ export async function getGroceryList(): Promise<GroceryListRecord[]> {
       completed: parseBoolean(row.completed),
     }))
     .filter((row) => row.item || row.description)
+}
+
+function mapFinanceTransactions(rows: Record<string, unknown>[]): FinanceTransactionRecord[] {
+  return rows
+    .map((row) => ({
+      date: row.date ? String(row.date) : undefined,
+      description: String(row.description ?? ''),
+      amount: parseNumber(row.amount) ?? 0,
+      category: String(row.category ?? ''),
+      card: String(row.card ?? ''),
+    }))
+    .filter((row) => row.description)
+}
+
+export async function getAbeTransactions(): Promise<FinanceTransactionRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('abe_transactions')
+  return mapFinanceTransactions(rows)
+}
+
+export async function getCiaraTransactions(): Promise<FinanceTransactionRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('ciara_transactions')
+  return mapFinanceTransactions(rows)
 }
 
 async function runWrite(payload: Record<string, unknown>) {

@@ -655,6 +655,10 @@
   border: 1px solid color-mix(in srgb, #1f8f3a 24%, var(--border));
 }
 
+.finance-tabbar--wrap {
+  display: flex;
+}
+
 .finance-tab {
   border: 1px solid transparent;
   border-radius: 0.65rem;
@@ -709,6 +713,84 @@
   gap: 0.75rem;
 }
 
+.finance-calendar-shell {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.finance-calendar-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.finance-calendar-month {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.finance-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.finance-calendar-weekdays span {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.finance-calendar-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.finance-calendar-empty {
+  height: 2.6rem;
+}
+
+.finance-calendar-day {
+  position: relative;
+  min-height: 2.6rem;
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  cursor: default;
+  padding: 0.35rem;
+  display: grid;
+  place-items: center;
+}
+
+.finance-calendar-day.has-transactions {
+  cursor: pointer;
+  border-color: color-mix(in srgb, #c91919 45%, var(--border));
+}
+
+.finance-calendar-day.is-today {
+  background: color-mix(in srgb, #1f8f3a 14%, var(--surface));
+  border-color: #1f8f3a;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.finance-calendar-day.is-today.has-transactions {
+  border-color: color-mix(in srgb, #c91919 55%, #1f8f3a);
+}
+
+.finance-transaction-dot {
+  position: absolute;
+  bottom: 0.35rem;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: #c91919;
+}
+
 .finance-calendar-item strong {
   display: block;
   margin-bottom: 0.25rem;
@@ -745,7 +827,7 @@
 }
 
 .finance-access-dialog {
-  width: min(100%, 26rem);
+  width: min(100%, 44rem);
   display: grid;
   gap: 0.85rem;
   padding: 1.15rem;
@@ -763,6 +845,60 @@
 .finance-access-dialog p {
   margin: 0;
   color: var(--text-muted);
+}
+
+.finance-popup-table {
+  font-size: 0.84rem;
+}
+
+.finance-budget-group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.finance-budget-group-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.finance-budget-group-label {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.finance-budget-group-total {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.finance-budget-table {
+  font-size: 0.88rem;
+}
+
+.finance-purchases-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.finance-purchases-filter-label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.finance-purchases-select {
+  flex: 1;
+  max-width: 16rem;
 }
 
 .finance-dialog-close {

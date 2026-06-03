@@ -28,5 +28,5 @@ export const financesSectionPage: PageContent = {
       body: 'Recent spending and categorized purchases for review.',
     },
   ],
-  callout: 'Use the tabs below to switch between dashboard, calendar, and purchases views.',
+  callout: '',
 }

@@ -29,7 +29,9 @@ import {
 } from './siteContent'
 import {
   createBucketItem,
+  getAbeTransactions,
   createGroceryListItem,
+  getCiaraTransactions,
   createCountry,
   createEvent,
   createPoll,
@@ -66,6 +68,7 @@ import type {
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
+  FinanceTransactionRecord,
   GroceryListRecord,
   MealPlanRecord,
   PollRecord,
@@ -2045,14 +2048,153 @@ function SectionPage({
 
 function FinancesHubCard() {
   type FinancesTab = 'dashboard' | 'calendar' | 'purchases'
+  type FinancesSource = 'both' | 'abe' | 'ciara'
   const [activeTab, setActiveTab] = useState<FinancesTab>('dashboard')
+  const [dashboardSource, setDashboardSource] = useState<FinancesSource>('both')
+  const [abeTransactions, setAbeTransactions] = useState<FinanceTransactionRecord[]>([])
+  const [ciaraTransactions, setCiaraTransactions] = useState<FinanceTransactionRecord[]>([])
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true)
+  const [transactionError, setTransactionError] = useState('')
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), 1)
+  })
+  const [dashboardMonth, setDashboardMonth] = useState(() => {
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), 1)
+  })
+  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
+  const [purchasesCategoryFilter, setPurchasesCategoryFilter] = useState('all')
+
+  useEffect(() => {
+    async function loadTransactions() {
+      try {
+        const [abeData, ciaraData] = await Promise.all([getAbeTransactions(), getCiaraTransactions()])
+        setAbeTransactions(abeData)
+        setCiaraTransactions(ciaraData)
+        setTransactionError('')
+      } catch (error) {
+        setAbeTransactions([])
+        setCiaraTransactions([])
+        setTransactionError(error instanceof Error ? error.message : 'Unable to load transactions')
+      } finally {
+        setIsLoadingTransactions(false)
+      }
+    }
+
+    void loadTransactions()
+  }, [])
+
+  const dashboardRows = useMemo(() => {
+    const withOwner = [
+      ...abeTransactions.map((row) => ({ ...row, owner: 'Abe' as const })),
+      ...ciaraTransactions.map((row) => ({ ...row, owner: 'Ciara' as const })),
+    ]
+
+    const filteredRows = withOwner.filter((row) => {
+      if (dashboardSource === 'both') {
+        return true
+      }
+
+      return dashboardSource === 'abe' ? row.owner === 'Abe' : row.owner === 'Ciara'
+    })
+
+    return filteredRows.sort((a, b) => {
+      const aTime = a.date ? new Date(a.date).getTime() : 0
+      const bTime = b.date ? new Date(b.date).getTime() : 0
+      return bTime - aTime
+    })
+  }, [abeTransactions, ciaraTransactions, dashboardSource])
+
+  const BILL_CATEGORIES = ['rent', 'utilities', 'internet', 'insurance', 'groceries', 'gas', 'car', 'car insurance/maintenance', 'phone', 'subscriptions']
+  const EXPENSE_CATEGORIES = ['hygiene', 'education', 'presents', 'restaurants', 'clothing', 'recreation', 'flights', 'hotels', 'excursions', 'miscellaneous']
+  const INCOME_CATEGORIES = ['salary', 'cash', 'transfers', 'side hustles']
+
+  // Budget totals always draw from BOTH sheets, regardless of the Abe/Ciara filter
+  const allMonthRows = useMemo(() => {
+    const year = dashboardMonth.getFullYear()
+    const month = dashboardMonth.getMonth()
+    const all = [
+      ...abeTransactions.map((row) => ({ ...row, owner: 'Abe' as const })),
+      ...ciaraTransactions.map((row) => ({ ...row, owner: 'Ciara' as const })),
+    ]
+    return all.filter((row) => {
+      if (!row.date) return false
+      const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
+      if (literalMatch) {
+        return Number(literalMatch[1]) === year && Number(literalMatch[2]) === month + 1
+      }
+      const parsed = new Date(row.date)
+      return !Number.isNaN(parsed.getTime()) && parsed.getFullYear() === year && parsed.getMonth() === month
+    })
+  }, [abeTransactions, ciaraTransactions, dashboardMonth])
+
+  const budgetTotals = useMemo(() => {
+    const totals: Record<string, number> = {}
+    const allCategories = [...BILL_CATEGORIES, ...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES]
+    allCategories.forEach((cat) => {
+      totals[cat] = 0
+    })
+    allMonthRows.forEach((row) => {
+      const key = row.category?.toLowerCase().trim() ?? ''
+      if (key in totals) {
+        totals[key] += row.amount
+      }
+    })
+    return totals
+  }, [allMonthRows])
+
+  const dashboardMonthLabel = dashboardMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+
+  const transactionsByDate = useMemo(() => {
+    const next: Record<string, Array<FinanceTransactionRecord & { owner: 'Abe' | 'Ciara' }>> = {}
+
+    dashboardRows.forEach((row) => {
+      const literalDateMatch = row.date?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+      const key = literalDateMatch ? literalDateMatch[0] : toDateOnlyKey(row.date)
+      if (!key) {
+        return
+      }
+
+      if (!next[key]) {
+        next[key] = []
+      }
+
+      next[key].push(row)
+    })
+
+    return next
+  }, [dashboardRows])
+
+  const calendarYear = calendarMonth.getFullYear()
+  const calendarMonthIndex = calendarMonth.getMonth()
+  const monthStart = new Date(calendarYear, calendarMonthIndex, 1)
+  const monthEnd = new Date(calendarYear, calendarMonthIndex + 1, 0)
+  const dayOffset = monthStart.getDay()
+  const daysInMonth = monthEnd.getDate()
+  const calendarCells: Array<number | null> = [
+    ...Array.from({ length: dayOffset }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+  ]
+
+  const calendarMonthLabel = calendarMonth.toLocaleDateString(undefined, {
+    month: 'long',
+    year: 'numeric',
+  })
+
+  const todayKey = (() => {
+    const now = new Date()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  })()
+
+  const selectedDateTransactions = selectedDateKey ? (transactionsByDate[selectedDateKey] ?? []) : []
 
   return (
     <article className="finance-hub-card info-card">
-      <div className="finance-tabbar" role="tablist" aria-label="Finances views">
+      <div className="experience-toggle" role="tablist" aria-label="Finances views">
         <button
           type="button"
-          className={`finance-tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+          className={`experience-toggle-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
           role="tab"
           aria-selected={activeTab === 'dashboard'}
           onClick={() => setActiveTab('dashboard')}
@@ -2061,7 +2203,7 @@ function FinancesHubCard() {
         </button>
         <button
           type="button"
-          className={`finance-tab ${activeTab === 'calendar' ? 'active' : ''}`}
+          className={`experience-toggle-btn ${activeTab === 'calendar' ? 'active' : ''}`}
           role="tab"
           aria-selected={activeTab === 'calendar'}
           onClick={() => setActiveTab('calendar')}
@@ -2070,7 +2212,7 @@ function FinancesHubCard() {
         </button>
         <button
           type="button"
-          className={`finance-tab ${activeTab === 'purchases' ? 'active' : ''}`}
+          className={`experience-toggle-btn ${activeTab === 'purchases' ? 'active' : ''}`}
           role="tab"
           aria-selected={activeTab === 'purchases'}
           onClick={() => setActiveTab('purchases')}
@@ -2079,64 +2221,300 @@ function FinancesHubCard() {
         </button>
       </div>
 
+      <div className="finance-tabbar" role="group" aria-label="Dashboard source filter">
+        <button
+          type="button"
+          className={`finance-tab ${dashboardSource === 'both' ? 'active' : ''}`}
+          onClick={() => setDashboardSource('both')}
+        >
+          Both
+        </button>
+        <button
+          type="button"
+          className={`finance-tab ${dashboardSource === 'abe' ? 'active' : ''}`}
+          onClick={() => setDashboardSource('abe')}
+        >
+          Abe
+        </button>
+        <button
+          type="button"
+          className={`finance-tab ${dashboardSource === 'ciara' ? 'active' : ''}`}
+          onClick={() => setDashboardSource('ciara')}
+        >
+          Ciara
+        </button>
+      </div>
+
       {activeTab === 'dashboard' ? (
         <div className="finance-panel">
-          <div className="finance-stats">
-            <div className="finance-stat">
-              <span>Cash on hand</span>
-              <strong>$8,420</strong>
-            </div>
-            <div className="finance-stat">
-              <span>Monthly savings rate</span>
-              <strong>27%</strong>
-            </div>
-            <div className="finance-stat">
-              <span>Goal progress</span>
-              <strong>62%</strong>
-            </div>
+          <div className="finance-calendar-header">
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={() =>
+                setDashboardMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))
+              }
+            >
+              Prev
+            </button>
+            <p className="finance-calendar-month">{dashboardMonthLabel}</p>
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={() =>
+                setDashboardMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))
+              }
+            >
+              Next
+            </button>
           </div>
+
+          {isLoadingTransactions ? <p className="sheets-meta">Loading dashboard transactions...</p> : null}
+          {transactionError ? <p className="sheets-error">{transactionError}</p> : null}
+
+          {!isLoadingTransactions && !transactionError ? (
+            <>
+              {(['Bills', 'Expenses', 'Income'] as const).map((group) => {
+                const cats =
+                  group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
+                const groupTotal = cats.reduce((sum, cat) => sum + (budgetTotals[cat] ?? 0), 0)
+                return (
+                  <div key={group} className="finance-budget-group">
+                    <div className="finance-budget-group-header">
+                      <p className="finance-budget-group-label">{group}</p>
+                      <p className="finance-budget-group-total">
+                        {groupTotal.toLocaleString(undefined, {
+                          style: 'currency',
+                          currency: 'USD',
+                          maximumFractionDigits: 2,
+                        })}
+                      </p>
+                    </div>
+                    <div className="sheets-table-shell">
+                      <table className="sheets-table finance-budget-table">
+                        <thead>
+                          <tr>
+                            <th>Category</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cats.map((cat) => (
+                            <tr key={cat}>
+                              <td>{cat.charAt(0).toUpperCase() + cat.slice(1)}</td>
+                              <td>
+                                {(budgetTotals[cat] ?? 0).toLocaleString(undefined, {
+                                  style: 'currency',
+                                  currency: 'USD',
+                                  maximumFractionDigits: 2,
+                                })}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )
+              })}
+            </>
+          ) : null}
         </div>
       ) : null}
 
       {activeTab === 'calendar' ? (
         <div className="finance-panel">
-          <div className="finance-calendar-grid" aria-label="Financial calendar view">
-            <div className="finance-calendar-item">
-              <strong>1st</strong>
-              <span>Rent due</span>
+          <div className="finance-calendar-shell">
+            <div className="finance-calendar-header">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => {
+                  setCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
+                }}
+              >
+                Prev
+              </button>
+              <p className="finance-calendar-month">{calendarMonthLabel}</p>
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => {
+                  setCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
+                }}
+              >
+                Next
+              </button>
             </div>
-            <div className="finance-calendar-item">
-              <strong>8th</strong>
-              <span>Payday</span>
+
+            <div className="finance-calendar-weekdays" aria-hidden="true">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <span key={day}>{day}</span>
+              ))}
             </div>
-            <div className="finance-calendar-item">
-              <strong>15th</strong>
-              <span>Credit card autopay</span>
-            </div>
-            <div className="finance-calendar-item">
-              <strong>22nd</strong>
-              <span>Investments contribution</span>
+
+            <div className="finance-calendar-grid" aria-label="Financial calendar view">
+              {calendarCells.map((day, index) => {
+                if (!day) {
+                  return <span key={`blank-${index}`} className="finance-calendar-empty" />
+                }
+
+                const dateKey = `${calendarYear}-${String(calendarMonthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                const transactions = transactionsByDate[dateKey] ?? []
+                const hasTransactions = transactions.length > 0
+
+                return (
+                  <button
+                    key={dateKey}
+                    type="button"
+                    className={`finance-calendar-day ${hasTransactions ? 'has-transactions' : ''} ${dateKey === todayKey ? 'is-today' : ''}`}
+                    onClick={() => {
+                      if (hasTransactions) {
+                        setSelectedDateKey(dateKey)
+                      }
+                    }}
+                    aria-label={
+                      hasTransactions
+                        ? `${dateKey} has ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`
+                        : `${dateKey} has no transactions`
+                    }
+                  >
+                    <span>{day}</span>
+                    {hasTransactions ? <span className="finance-transaction-dot" aria-hidden="true" /> : null}
+                  </button>
+                )
+              })}
             </div>
           </div>
+
+          {selectedDateKey && selectedDateTransactions.length > 0 ? (
+            <div
+              className="finance-access-dialog-backdrop"
+              role="presentation"
+              onClick={() => setSelectedDateKey(null)}
+            >
+              <div
+                className="finance-access-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="finance-calendar-popup-title"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <h2 id="finance-calendar-popup-title">Transactions for {formatSheetDate(selectedDateKey)}</h2>
+                <div className="sheets-table-shell">
+                  <table className="sheets-table finance-popup-table">
+                    <thead>
+                      <tr>
+                        <th>Description</th>
+                        <th>Owner</th>
+                        <th>Category</th>
+                        <th>Card</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedDateTransactions.map((row, index) => (
+                        <tr key={`${row.owner}-${row.description}-${index}`}>
+                          <td data-label="Description">{row.description}</td>
+                          <td data-label="Owner">{row.owner}</td>
+                          <td data-label="Category">{row.category || '—'}</td>
+                          <td data-label="Card">{row.card || '—'}</td>
+                          <td data-label="Amount">
+                            {row.amount.toLocaleString(undefined, {
+                              style: 'currency',
+                              currency: 'USD',
+                              maximumFractionDigits: 2,
+                            })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button type="button" className="finance-dialog-close" onClick={() => setSelectedDateKey(null)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
       {activeTab === 'purchases' ? (
         <div className="finance-panel">
-          <ul className="finance-purchase-list">
-            <li>
-              <strong>Groceries</strong>
-              <span>$84.32</span>
-            </li>
-            <li>
-              <strong>Fuel</strong>
-              <span>$42.10</span>
-            </li>
-            <li>
-              <strong>Subscription</strong>
-              <span>$14.99</span>
-            </li>
-          </ul>
+          {isLoadingTransactions ? <p className="sheets-meta">Loading purchases...</p> : null}
+          {transactionError ? <p className="sheets-error">{transactionError}</p> : null}
+
+          {!isLoadingTransactions && !transactionError ? (() => {
+            const allCategories = Array.from(
+              new Set(dashboardRows.map((r) => r.category?.trim()).filter(Boolean))
+            ).sort() as string[]
+
+            const filtered =
+              purchasesCategoryFilter === 'all'
+                ? dashboardRows
+                : dashboardRows.filter(
+                    (r) => (r.category?.trim() ?? '') === purchasesCategoryFilter
+                  )
+
+            return (
+              <>
+                <div className="finance-purchases-filter">
+                  <label htmlFor="purchases-category-select" className="finance-purchases-filter-label">
+                    Category
+                  </label>
+                  <select
+                    id="purchases-category-select"
+                    className="sheets-table-input finance-purchases-select"
+                    value={purchasesCategoryFilter}
+                    onChange={(e) => setPurchasesCategoryFilter(e.target.value)}
+                  >
+                    <option value="all">All</option>
+                    {allCategories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {filtered.length > 0 ? (
+                  <div className="sheets-table-shell finance-purchases-table-shell">
+                    <table className="sheets-table finance-purchases-table" aria-label="Purchases transactions">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Owner</th>
+                          <th>Description</th>
+                          <th>Category</th>
+                          <th>Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filtered.map((row, index) => (
+                          <tr key={`${row.owner}-${row.date ?? 'nodate'}-${row.description}-${index}`}>
+                            <td data-label="Date">{row.date ? formatShortDate(row.date) : 'Pending'}</td>
+                            <td data-label="Owner">{row.owner}</td>
+                            <td data-label="Description">{row.description}</td>
+                            <td data-label="Category">{row.category || '—'}</td>
+                            <td data-label="Amount">
+                              {row.amount.toLocaleString(undefined, {
+                                style: 'currency',
+                                currency: 'USD',
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="sheets-meta">No purchases found for the selected category.</p>
+                )}
+              </>
+            )
+          })() : null}
         </div>
       ) : null}
     </article>
@@ -2217,6 +2595,20 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
       </ul>
     </CollapsibleSectionCard>
   )
+}
+
+function formatShortDate(value?: string) {
+  if (!value) return 'Pending'
+  const literalMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (literalMatch) {
+    return `${literalMatch[2]}/${literalMatch[3]}/${literalMatch[1].slice(2)}`
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return value
+  const m = String(parsed.getMonth() + 1).padStart(2, '0')
+  const d = String(parsed.getDate()).padStart(2, '0')
+  const y = String(parsed.getFullYear()).slice(2)
+  return `${m}/${d}/${y}`
 }
 
 function formatSheetDate(value?: string) {
