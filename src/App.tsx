@@ -4195,7 +4195,7 @@ function MealPlanCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
+              onClick={() => setIsEditing((value) => { if (!value) setIsWeeklyExpanded(true); return !value })}
               title="Edit values"
             >
               ✎
