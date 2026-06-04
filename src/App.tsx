@@ -1478,7 +1478,7 @@ function TodoistTasksCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
               ✎
@@ -2211,15 +2211,10 @@ function FinancesHubCard() {
   const EXPENSE_CATEGORIES = ['hygiene', 'education', 'presents', 'restaurants', 'clothing', 'recreation', 'flights', 'hotels', 'excursions', 'miscellaneous']
   const INCOME_CATEGORIES = ['salary', 'cash', 'transfers', 'side hustles']
 
-  // Budget totals always draw from BOTH sheets, regardless of the Abe/Ciara filter
   const allMonthRows = useMemo(() => {
     const year = dashboardMonth.getFullYear()
     const month = dashboardMonth.getMonth()
-    const all = [
-      ...abeTransactions.map((row) => ({ ...row, owner: 'Abe' as const })),
-      ...ciaraTransactions.map((row) => ({ ...row, owner: 'Ciara' as const })),
-    ]
-    return all.filter((row) => {
+    return dashboardRows.filter((row) => {
       if (!row.date) return false
       const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
       if (literalMatch) {
@@ -2228,7 +2223,7 @@ function FinancesHubCard() {
       const parsed = new Date(row.date)
       return !Number.isNaN(parsed.getTime()) && parsed.getFullYear() === year && parsed.getMonth() === month
     })
-  }, [abeTransactions, ciaraTransactions, dashboardMonth])
+  }, [dashboardRows, dashboardMonth])
 
   const budgetTotals = useMemo(() => {
     const totals: Record<string, number> = {}
@@ -2923,7 +2918,7 @@ function PollCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
               ✎
@@ -3223,7 +3218,7 @@ function BucketListCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
               ✎
@@ -3654,7 +3649,7 @@ function CountriesCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
               ✎
@@ -3918,7 +3913,7 @@ function BackpackCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
               ✎
@@ -4200,7 +4195,7 @@ function MealPlanCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
               ✎
@@ -4554,7 +4549,7 @@ function GroceryListCard({
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit grocery list"
             >
               ✎
@@ -5316,7 +5311,7 @@ function NextEventCountdownCard({
               title="Edit values"
               aria-label="Edit values"
               aria-pressed={isEditing}
-              onClick={() => setIsEditing((value) => !value)}
+              onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
             >
               ✎
             </button>
