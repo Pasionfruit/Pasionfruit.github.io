@@ -1500,6 +1500,11 @@
   padding: 0.65rem;
 }
 
+.grocery-catalog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .grocery-catalog-group {
   display: grid;
   gap: 0.28rem;

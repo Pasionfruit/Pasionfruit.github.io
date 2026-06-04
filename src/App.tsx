@@ -1442,6 +1442,32 @@ function TodoistTasksCard({
     }
   }
 
+  async function handleDeselectAllGrocery() {
+    if (isWriting || !canEditGrocery || !googleIdToken) return
+    const included = groceryRows.filter((r) => r.include)
+    if (included.length === 0) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await Promise.all(
+        included.map((row) =>
+          updateGroceryListItem(googleIdToken, {
+            originalItem: row.item,
+            item: row.item,
+            type: row.type,
+            completed: row.completed,
+            include: false,
+          }),
+        ),
+      )
+      await loadGroceryListForHome()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to deselect items')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   return (
     <article className="info-card home-todoist-card sheets-card">
       <div className="section-card-header">
@@ -1455,7 +1481,7 @@ function TodoistTasksCard({
               onClick={() => setIsEditing((value) => !value)}
               title="Edit values"
             >
-              Edit
+              ✎
             </button>
           ) : null}
           <button
@@ -1705,6 +1731,18 @@ function TodoistTasksCard({
 
           {view === 'grocery' && isEditing && canEditGrocery ? (
             <div className="grocery-catalog" aria-label="Grocery catalog">
+              {includedGroceryCount > 0 ? (
+                <div className="grocery-catalog-actions">
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleDeselectAllGrocery()}
+                    disabled={!googleIdToken || isWriting}
+                  >
+                    Deselect all
+                  </button>
+                </div>
+              ) : null}
               {groceryGroups.map(({ type, items }) => (
                 <div key={type} className="grocery-catalog-group">
                   <div className="grocery-catalog-type-header">{type}</div>
@@ -2124,6 +2162,10 @@ function FinancesHubCard() {
   })
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
   const [purchasesCategoryFilter, setPurchasesCategoryFilter] = useState('all')
+  const [purchasesMonth, setPurchasesMonth] = useState(() => {
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), 1)
+  })
 
   useEffect(() => {
     async function loadTransactions() {
@@ -2204,6 +2246,22 @@ function FinancesHubCard() {
   }, [allMonthRows])
 
   const dashboardMonthLabel = dashboardMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+
+  const purchasesMonthLabel = purchasesMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+
+  const purchasesMonthRows = useMemo(() => {
+    const year = purchasesMonth.getFullYear()
+    const month = purchasesMonth.getMonth()
+    return dashboardRows.filter((row) => {
+      if (!row.date) return false
+      const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
+      if (literalMatch) {
+        return Number(literalMatch[1]) === year && Number(literalMatch[2]) === month + 1
+      }
+      const parsed = new Date(row.date)
+      return !Number.isNaN(parsed.getTime()) && parsed.getFullYear() === year && parsed.getMonth() === month
+    })
+  }, [dashboardRows, purchasesMonth])
 
   const transactionsByDate = useMemo(() => {
     const next: Record<string, Array<FinanceTransactionRecord & { owner: 'Abe' | 'Ciara' }>> = {}
@@ -2501,18 +2559,36 @@ function FinancesHubCard() {
 
       {activeTab === 'purchases' ? (
         <div className="finance-panel">
+          <div className="finance-calendar-header">
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={() => setPurchasesMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
+            >
+              Prev
+            </button>
+            <p className="finance-calendar-month">{purchasesMonthLabel}</p>
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={() => setPurchasesMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
+            >
+              Next
+            </button>
+          </div>
+
           {isLoadingTransactions ? <p className="sheets-meta">Loading purchases...</p> : null}
           {transactionError ? <p className="sheets-error">{transactionError}</p> : null}
 
           {!isLoadingTransactions && !transactionError ? (() => {
             const allCategories = Array.from(
-              new Set(dashboardRows.map((r) => r.category?.trim()).filter(Boolean))
+              new Set(purchasesMonthRows.map((r) => r.category?.trim()).filter(Boolean))
             ).sort() as string[]
 
             const filtered =
               purchasesCategoryFilter === 'all'
-                ? dashboardRows
-                : dashboardRows.filter(
+                ? purchasesMonthRows
+                : purchasesMonthRows.filter(
                     (r) => (r.category?.trim() ?? '') === purchasesCategoryFilter
                   )
 
@@ -2569,7 +2645,7 @@ function FinancesHubCard() {
                     </table>
                   </div>
                 ) : (
-                  <p className="sheets-meta">No purchases found for the selected category.</p>
+                  <p className="sheets-meta">No purchases found for the selected month and category.</p>
                 )}
               </>
             )
@@ -4442,6 +4518,32 @@ function GroceryListCard({
     }
   }
 
+  async function handleDeselectAll() {
+    if (!idToken || isWriting || !canWrite) return
+    const included = rows.filter((r) => r.include)
+    if (included.length === 0) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await Promise.all(
+        included.map((row) =>
+          updateGroceryListItem(idToken, {
+            originalItem: row.item,
+            item: row.item,
+            type: row.type,
+            completed: row.completed,
+            include: false,
+          }),
+        ),
+      )
+      await loadGroceryList()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to deselect items')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   return (
     <article className="info-card section-page-card sheets-card">
       <div className="section-card-header">
@@ -4488,6 +4590,18 @@ function GroceryListCard({
           {/* Edit/catalog mode: browse all items grouped by type, toggle include */}
           {isEditing && canWrite ? (
             <div className="grocery-catalog">
+              {includedRows.length > 0 ? (
+                <div className="grocery-catalog-actions">
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleDeselectAll()}
+                    disabled={!idToken || isWriting}
+                  >
+                    Deselect all
+                  </button>
+                </div>
+              ) : null}
               {groupedRows.map(({ type, items }) => (
                 <div key={type} className="grocery-catalog-group">
                   <div className="grocery-catalog-type-header">{type}</div>
