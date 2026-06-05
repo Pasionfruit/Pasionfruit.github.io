@@ -198,6 +198,38 @@ function mapFinanceTransactions(rows: Record<string, unknown>[]): FinanceTransac
   return mapped
 }
 
+export type BudgetTargetRecord = {
+  user: string
+  category: string
+  budget_amount: number
+}
+
+export async function getBudgetTargets(): Promise<BudgetTargetRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('budget_targets')
+  return rows
+    .map((row) => ({
+      user: String(row.user ?? '').toLowerCase().trim(),
+      category: String(row.category ?? '').toLowerCase().trim(),
+      budget_amount: parseNumber(row.budget_amount) ?? 0,
+    }))
+    .filter((row) => row.user && row.category && row.budget_amount > 0)
+}
+
+export async function saveBudgetTarget(
+  idToken: string,
+  category: string,
+  budgetAmount: number | null,
+  user: string,
+) {
+  await runWrite({
+    action: 'setBudgetTarget',
+    idToken,
+    category: category.toLowerCase().trim(),
+    budget_amount: budgetAmount ?? 0,
+    user: user.toLowerCase().trim(),
+  })
+}
+
 export async function getAbeTransactions(): Promise<FinanceTransactionRecord[]> {
   const rows = await fetchSheetTable<Record<string, unknown>>('abe_transactions')
   return mapFinanceTransactions(rows)

@@ -60,6 +60,9 @@ import {
   updateGroceryListItem,
   updateMealPlan,
   votePoll,
+  getBudgetTargets,
+  saveBudgetTarget,
+  type BudgetTargetRecord,
 } from './data/sheets/repositories'
 import type {
   BackpackRecord,
@@ -2029,7 +2032,7 @@ function SectionPage({
       downloadWordHref={experienceDownloads?.wordHref}
     >
       {sectionId === 'finances' ? (
-        canViewFinances ? <FinancesHubCard /> : <Navigate replace to="/" />
+        canViewFinances ? <FinancesHubCard idToken={googleIdToken} /> : <Navigate replace to="/" />
       ) : null}
 
       {sectionId === 'finances' ? null : section.cards.map((card) => {
@@ -2274,7 +2277,7 @@ function FinanceBarChart({
   )
 }
 
-function FinancesHubCard() {
+function FinancesHubCard({ idToken }: { idToken: string }) {
   type FinancesTab = 'dashboard' | 'calendar' | 'purchases'
   type FinancesSource = 'both' | 'abe' | 'ciara'
   const [activeTab, setActiveTab] = useState<FinancesTab>('dashboard')
@@ -2297,25 +2300,35 @@ function FinancesHubCard() {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1)
   })
-  const [budgetTargets, setBudgetTargets] = useState<Record<string, number>>(() => {
-    try {
-      const stored = window.localStorage.getItem('finance-budget-targets')
-      return stored ? (JSON.parse(stored) as Record<string, number>) : {}
-    } catch {
-      return {}
-    }
-  })
-  const [budgetDrafts, setBudgetDrafts] = useState<Record<string, string>>(() => {
-    try {
-      const stored = window.localStorage.getItem('finance-budget-targets')
-      if (stored) {
-        const targets = JSON.parse(stored) as Record<string, number>
-        return Object.fromEntries(Object.entries(targets).map(([k, v]) => [k, String(v)]))
-      }
-    } catch {}
-    return {}
-  })
+  const [allBudgetRecords, setAllBudgetRecords] = useState<BudgetTargetRecord[]>([])
+  const [budgetDrafts, setBudgetDrafts] = useState<Record<string, string>>({})
   const [selectedTableMonth, setSelectedTableMonth] = useState<number | null>(() => new Date().getMonth())
+
+  const budgetUser = dashboardSource === 'both' ? null : dashboardSource
+
+  const budgetTargets = useMemo<Record<string, number>>(() => {
+    const targets: Record<string, number> = {}
+    const rows = budgetUser ? allBudgetRecords.filter((r) => r.user === budgetUser) : allBudgetRecords
+    rows.forEach((r) => { targets[r.category] = (targets[r.category] ?? 0) + r.budget_amount })
+    return targets
+  }, [allBudgetRecords, budgetUser])
+
+  useEffect(() => {
+    async function loadBudgets() {
+      try {
+        const records = await getBudgetTargets()
+        setAllBudgetRecords(records)
+      } catch {}
+    }
+    void loadBudgets()
+  }, [])
+
+  useEffect(() => {
+    const totals: Record<string, number> = {}
+    const rows = budgetUser ? allBudgetRecords.filter((r) => r.user === budgetUser) : allBudgetRecords
+    rows.forEach((r) => { totals[r.category] = (totals[r.category] ?? 0) + r.budget_amount })
+    setBudgetDrafts(Object.fromEntries(Object.entries(totals).map(([k, v]) => [k, String(v)])))
+  }, [allBudgetRecords, budgetUser])
 
   useEffect(() => {
     async function loadTransactions() {
@@ -2398,21 +2411,22 @@ function FinancesHubCard() {
   }, [allMonthRows])
 
   function updateBudgetTarget(cat: string, raw: string) {
+    if (!budgetUser) return
     const num = parseFloat(raw.replace(/[$,\s]/g, ''))
-    const nextTargets = { ...budgetTargets }
-    const nextDrafts = { ...budgetDrafts }
-    if (Number.isFinite(num) && num > 0) {
-      nextTargets[cat] = num
-      nextDrafts[cat] = String(num)
-    } else {
-      delete nextTargets[cat]
-      delete nextDrafts[cat]
+    const valid = Number.isFinite(num) && num > 0
+    setBudgetDrafts((prev) => {
+      const next = { ...prev }
+      if (valid) next[cat] = String(num)
+      else delete next[cat]
+      return next
+    })
+    setAllBudgetRecords((prev) => {
+      const filtered = prev.filter((r) => !(r.user === budgetUser && r.category === cat))
+      return valid ? [...filtered, { user: budgetUser, category: cat, budget_amount: num }] : filtered
+    })
+    if (idToken) {
+      void saveBudgetTarget(idToken, cat, valid ? num : null, budgetUser).catch(() => {})
     }
-    setBudgetTargets(nextTargets)
-    setBudgetDrafts(nextDrafts)
-    try {
-      window.localStorage.setItem('finance-budget-targets', JSON.stringify(nextTargets))
-    } catch {}
   }
 
   const monthlyTotals = useMemo<BarChartMonth[]>(() => {
@@ -2614,6 +2628,11 @@ function FinancesHubCard() {
                   </button>
                 )}
               </div>
+              {!budgetUser && (
+                <p className="finance-budget-both-note">
+                  Budget reflects the combined total for Abe and Ciara. Select a person to edit.
+                </p>
+              )}
               {(['Bills', 'Expenses', 'Income'] as const).map((group) => {
                 const cats =
                   group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
@@ -2671,7 +2690,8 @@ function FinancesHubCard() {
                                     min="0"
                                     step="1"
                                     value={budgetDrafts[cat] ?? ''}
-                                    placeholder="—"
+                                    placeholder={budgetUser ? '—' : ''}
+                                    disabled={!budgetUser}
                                     onChange={(e) =>
                                       setBudgetDrafts((prev) => ({ ...prev, [cat]: e.target.value }))
                                     }

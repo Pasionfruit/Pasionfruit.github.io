@@ -949,6 +949,13 @@
   color: var(--text-strong);
 }
 
+.finance-budget-both-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .finance-budget-input {
   width: 5.5rem;
   padding: 0.2rem 0.35rem;

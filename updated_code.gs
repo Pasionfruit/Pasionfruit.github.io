@@ -89,7 +89,7 @@ function doPost(e) {
         return jsonResponse_(setActiveEvent_(payload))
 
       case 'setBudgetTarget':
-        return jsonResponse_(setBudgetTarget_(payload))
+        return jsonResponse_(setBudgetTarget_(payload, auth))
 
       default:
         return jsonResponse_({ ok: false, error: 'Unknown action: ' + action })
@@ -763,24 +763,36 @@ function setActiveEventById_(sheet, headerCols, eventId) {
   sheet.getRange(2, activeCol, lastRow - 1, 1).setValues(activeValues)
 }
 
-function setBudgetTarget_(payload) {
+function emailToUser_(email) {
+  if (email === 'pasionabe@gmail.com') return 'abe'
+  if (email === 'pixielee1000@gmail.com') return 'ciara'
+  return String(email || '').split('@')[0].toLowerCase()
+}
+
+function setBudgetTarget_(payload, auth) {
+  var userVal = String(payload.user || '').toLowerCase().trim()
+  if (!userVal) userVal = emailToUser_(auth && auth.email ? auth.email : '')
   var category = String(payload.category || '').toLowerCase().trim()
   var rawAmount = payload.budget_amount
   var amount = (rawAmount === null || rawAmount === '' || rawAmount === undefined)
     ? NaN : Number(rawAmount)
 
+  if (!userVal) return { ok: false, error: 'Could not determine user' }
   if (!category) return { ok: false, error: 'category is required' }
 
   var sheet = getSheet_('budget_targets')
   var h = headerMap_(sheet)
+  var userCol = requireHeader_(h, 'user')
   var catCol = requireHeader_(h, 'category')
   var amtCol = requireHeader_(h, 'budget_amount')
 
   var lastRow = sheet.getLastRow()
   if (lastRow > 1) {
-    var catData = sheet.getRange(2, catCol, lastRow - 1, 1).getValues()
-    for (var i = 0; i < catData.length; i++) {
-      if (String(catData[i][0]).toLowerCase().trim() === category) {
+    var data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues()
+    for (var i = 0; i < data.length; i++) {
+      var rowUser = String(data[i][userCol - 1] || '').toLowerCase().trim()
+      var rowCat = String(data[i][catCol - 1] || '').toLowerCase().trim()
+      if (rowUser === userVal && rowCat === category) {
         var rowNum = i + 2
         if (isNaN(amount) || amount <= 0) {
           sheet.deleteRow(rowNum)
@@ -793,7 +805,7 @@ function setBudgetTarget_(payload) {
   }
 
   if (!isNaN(amount) && amount > 0) {
-    appendByHeaders_(sheet, h, { category: category, budget_amount: amount })
+    appendByHeaders_(sheet, h, { user: userVal, category: category, budget_amount: amount })
   }
   return { ok: true }
 }
