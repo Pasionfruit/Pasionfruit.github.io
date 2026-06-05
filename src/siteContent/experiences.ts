@@ -38,14 +38,7 @@ export const experiencesSectionPage: PageContent = {
     },
     {
       title: 'Technical Skills',
-      body: `• Programming & Querying
-    - - Python, SQL, JavaScript, TypeScript, C++
-• Data & Analytics
-    - - Excel, ETL/ELT pipelines, data validation, BI data modeling, PostgreSQL, Delta Lake
-• Tools & Platforms
-    - - Azure Data Factory, Azure DevOps, Linux (Ubuntu), Jira
-• Testing & Automation
-    - - Regression testing, Selenium, Playwright, Pytest`,
+      body: `• Programming & Tools\n    - Python, SQL, TypeScript, C++, JavaScript, Jupyter, Git, Selenium, Playwright, Pytest\n• Data Engineering & Cloud\n    - Excel, ETL/ELT pipelines, data validation, BI data modeling, PostgreSQL, Delta Lake\n• Actuarial & Analytics\n    - Excel/Google Sheets (pivot tables, VLOOKUP, scenario modeling), SQL (PostgreSQL, MySQL), Python (pandas, numpy, scipy, statsmodels)`,
     },
     {
       title: 'Professional Experience',
@@ -71,7 +64,7 @@ export const experiencesDetailPages: Record<string, SubpageContent> = {
       { title: 'Pomodoro Timer', body: "Let's study!" },
       {
         title: 'Study Materials',
-        body: 'Google Drive links to all my notes and previous studying trackers',
+        body: 'Google Drive links to all my notes and previous studying trackers (updated weekly/as notebook fills up)',
       },
     ],
     note: '',
@@ -106,45 +99,45 @@ export const educationEntries: EducationEntry[] = [
 
 export const professionalExperienceEntries: ProfessionalExperienceEntry[] = [
   {
-    position: 'BI Developer II',
+    position: 'BI Developer / Data Analyst II',
     company: 'HNTB / FDOT',
     date: 'April 2025 - Present',
     category: 'technical',
-    note: 'TBD',
+    note: '- Designed and executed data validation and reconciliation frameworks across Azure ingestion pipelines (ADF → ADLS → Databricks), surfacing 1,000+ data inconsistencies across Bronze and Silver layers — contributing to a ~40% reduction in downstream reporting defects post-release\n - Built Python and SQL automation scripts for daily data reconciliation between source systems and reporting layers, eliminating ~60% of manual validation effort and establishing a single source of truth \n - Leveraged Azure OpenAI (Foundry models) and self-hosted Ollama LLMs to generate templated test cases and Jira tickets, accelerating test development velocity by 40%+\n - Supported ingestion of 20+ enterprise datasets into Azure Data Lake Storage and validated Databricks Spark transformation workflows to ensure SLA-driven reporting accuracy\n - Partnered with BI teams to publish curated data marts powering operational and client-facing dashboards for internal and external stakeholders\n - Spearheaded automated regression testing using Selenium and Playwright, reducing manual testing time by 10–20% and expanding test coverage across statewide software\n',
   },
   {
     position: 'Software Developer Intern',
     company: 'Shop Online New York',
     date: 'February 2025 - April 2025',
     category: 'technical',
-    note: 'TBD',
+    note: '- Built a cross-platform Flutter application supporting 4 distinct user roles (user, admin, seller, buyer) with role-based access controls, reducing authorization defects and improving navigation clarity\n - Integrated Firebase for real-time data management, authentication, and cloud storage; managed end-to-end Jira ticket lifecycle for this workstream',
   },
   {
     position: 'Cybersecurity Analyst Intern',
     company: 'Florida State University',
     date: 'September 2023 - May 2024',
     category: 'technical',
-    note: 'TBD',
+    note: '- Standardized security procedures and compliance controls for FSU Health Research teams, aligning operations to NIST 800-53 and FedRAMP Moderate baselines — reducing audit preparation effort and compliance ambiguity\n - Conducted security assessments and risk analysis of Azure and Alert Logic integrations for the Health Data Science Initiative, identifying control gaps across identity, logging, and data protection layers',
   },
   {
     position: 'Information Technology Support Assistant',
     company: 'Escambia County School District',
     date: 'August 2022 - May 2021',
     category: 'technical',
-    note: 'TBD',
+    note: '- Provided technical support, installed, tested, and troubleshot approximately 200 various computer systems\n- Resolved hardware and software issues for various devices including printers, projectors, and computers, enhancing the institution\'s technological efficiency',
   },
   {
     position: 'Mathematics Tutor',
     company: 'Mathnasium',
     date: 'September 2022 - August 2023',
     category: 'other',
-    note: 'TBD',
+    note: '- Delivered individualized math instruction across arithmetic through pre-calculus, improving students grades by an average of one letter grade through tailored problem-solving strategies\n - Prepared students for college admission standardized tests, achieving 20%+ average improvement on math sections — demonstrating ability to translate quantitative concepts into accessible, structured explanations',
   },
   {
     position: 'Lifeguard',
     company: 'Splash City Adventures and City of Tallahassee',
     date: '3 seasons, May 2021 - December 2022',
     category: 'other',
-    note: 'TBD',
+    note: '- Experienced and certified lifeguard with two summer seasons of experience ensuring the safety of swimmers at public pools. \n- Skilled in performing rescue operations, administering first aid, and enforcing pool rules and regulations. \n- Demonstrated ability to remain calm and in quickly in emergency situations. Proficient in maintaining clean and safe pool environments, including regular testing and balancing of pool chemicals. ',
   },
 ]

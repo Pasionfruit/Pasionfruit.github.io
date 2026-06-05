@@ -3359,13 +3359,14 @@ function BucketListCard({
   idToken: string
 }) {
   const [rows, setRows] = useState<BucketListRecord[]>([])
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
   const [newItem, setNewItem] = useState('')
   const [editedItems, setEditedItems] = useState<Record<string, string>>({})
+  const [page, setPage] = useState(0)
 
   async function loadBucketList() {
     try {
@@ -3391,6 +3392,11 @@ function BucketListCard({
   }, [rows])
 
   const visibleRows = rows.length > 0 ? rows : parseBucketFallback(fallbackBody)
+  const PAGE_SIZE = 10
+  const totalPages = Math.ceil(visibleRows.length / PAGE_SIZE)
+  const pagedRows = visibleRows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+
+  useEffect(() => { setPage(0) }, [rows])
 
   async function handleToggle(row: BucketListRecord) {
     if (!idToken || row.bucket_id.startsWith('fallback-') || isWriting) {
@@ -3517,8 +3523,13 @@ function BucketListCard({
         <>
           {isLoading ? <p className="sheets-meta">Loading list...</p> : null}
 
-          <ol className="bucket-guest-list">
-            {visibleRows.map((row) => (
+          {!isLoading && visibleRows.length > 0 ? (
+            <p className="sheets-meta">
+              {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, visibleRows.length)} of {visibleRows.length} items
+            </p>
+          ) : null}
+          <ol className="bucket-guest-list" start={page * PAGE_SIZE + 1}>
+            {pagedRows.map((row) => (
               <li key={row.bucket_id} className={`bucket-guest-item ${row.completed ? 'completed' : ''}`}>
                 <div className="bucket-guest-row">
                   <span>{row.item}</span>
@@ -3527,6 +3538,29 @@ function BucketListCard({
               </li>
             ))}
           </ol>
+          {totalPages > 1 ? (
+            <div className="bucket-page-nav">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+              >
+                Prev
+              </button>
+              <span className="bucket-page-label">
+                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, visibleRows.length)} of {visibleRows.length}
+              </span>
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={page === totalPages - 1}
+              >
+                Next
+              </button>
+            </div>
+          ) : null}
 
           {canWrite && isEditing ? (
             <div className="sheets-editor">
@@ -4087,6 +4121,7 @@ function BackpackCard({
   const [writeError, setWriteError] = useState('')
   const [storageFilter, setStorageFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
+  const [hasQuantityFilter, setHasQuantityFilter] = useState(true)
   const [editedRows, setEditedRows] = useState<Record<number, { storage: string; type: string; quantity: string }>>({})
 
   async function loadBackpack() {
@@ -4135,7 +4170,8 @@ function BackpackCard({
       .filter(({ row }) => {
         const storageMatches = storageFilter === 'all' || row.storage === storageFilter
         const typeMatches = typeFilter === 'all' || row.type === typeFilter
-        return storageMatches && typeMatches
+        const quantityMatches = !hasQuantityFilter || row.quantity.trim() !== ''
+        return storageMatches && typeMatches && quantityMatches
       })
       .sort((a, b) => {
         const typeCompare = a.row.type.localeCompare(b.row.type)
@@ -4145,37 +4181,45 @@ function BackpackCard({
 
         return a.row.item.localeCompare(b.row.item)
       })
-  }, [rows, storageFilter, typeFilter])
+  }, [rows, storageFilter, typeFilter, hasQuantityFilter])
 
-  async function handleSave(index: number, row: BackpackRecord) {
-    if (!idToken || isWriting || !canWrite) {
-      return
-    }
+  function handleClearAll() {
+    const next: Record<number, { storage: string; type: string; quantity: string }> = {}
+    rows.forEach((row, index) => {
+      next[index] = { storage: row.storage, type: row.type, quantity: row.quantity }
+    })
+    setEditedRows(next)
+  }
 
-    const draft = editedRows[index]
-    const nextStorage = (draft?.storage ?? row.storage).trim()
-    const nextType = (draft?.type ?? row.type).trim()
-    const nextQuantity = (draft?.quantity ?? row.quantity).trim()
-
-    if (!nextStorage || !nextType) {
-      setWriteError('Storage and type are required.')
-      return
-    }
-
+  async function handleSaveAll() {
+    if (!idToken || isWriting || !canWrite) return
     setIsWriting(true)
     setWriteError('')
     try {
-      await updateBackpackItem(idToken, {
-        originalStorage: row.storage,
-        originalType: row.type,
-        originalItem: row.item,
-        storage: nextStorage,
-        type: nextType,
-        quantity: nextQuantity,
-      })
+      await Promise.all(
+        rows.map((row, index) => {
+          const draft = editedRows[index]
+          if (!draft) return Promise.resolve()
+          const nextStorage = draft.storage.trim()
+          const nextType = draft.type.trim()
+          const nextQuantity = draft.quantity.trim()
+          if (nextStorage === row.storage && nextType === row.type && nextQuantity === row.quantity) {
+            return Promise.resolve()
+          }
+          if (!nextStorage || !nextType) return Promise.resolve()
+          return updateBackpackItem(idToken, {
+            originalStorage: row.storage,
+            originalType: row.type,
+            originalItem: row.item,
+            storage: nextStorage,
+            type: nextType,
+            quantity: nextQuantity,
+          })
+        }),
+      )
       await loadBackpack()
     } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update backpack item')
+      setWriteError(error instanceof Error ? error.message : 'Unable to update backpack items')
     } finally {
       setIsWriting(false)
     }
@@ -4251,6 +4295,14 @@ function BackpackCard({
                 </option>
               ))}
             </select>
+            <label className="backpack-quantity-filter">
+              <input
+                type="checkbox"
+                checked={hasQuantityFilter}
+                onChange={(e) => setHasQuantityFilter(e.target.checked)}
+              />
+              Has quantity
+            </label>
           </div>
 
           <div className="sheets-table-shell">
@@ -4261,7 +4313,6 @@ function BackpackCard({
                   <th>Type</th>
                   <th>Item</th>
                   <th>Quantity</th>
-                  {isEditing && canWrite ? <th>Actions</th> : null}
                 </tr>
               </thead>
               <tbody>
@@ -4332,18 +4383,6 @@ function BackpackCard({
                         row.quantity
                       )}
                     </td>
-                    {isEditing && canWrite ? (
-                      <td>
-                        <button
-                          type="button"
-                          className="secondary-action"
-                          onClick={() => void handleSave(index, row)}
-                          disabled={!idToken || isWriting || !canWrite}
-                        >
-                          Save
-                        </button>
-                      </td>
-                    ) : null}
                   </tr>
                 ))}
               </tbody>
@@ -4351,6 +4390,27 @@ function BackpackCard({
           </div>
 
           {filteredRows.length === 0 ? <p className="sheets-meta">No backpack items match these filters.</p> : null}
+
+          {isEditing && canWrite ? (
+            <div className="backpack-edit-actions">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={handleClearAll}
+                disabled={isWriting}
+              >
+                Clear all
+              </button>
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => void handleSaveAll()}
+                disabled={!idToken || isWriting}
+              >
+                {isWriting ? 'Saving...' : 'Save all'}
+              </button>
+            </div>
+          ) : null}
 
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
         </>

@@ -19,6 +19,7 @@ registerRoute(
   new NavigationRoute(appShellHandler, {
     denylist: [
       /^\/api\/todoist/,
+      /^\/files\//,
       /^https:\/\/api\.todoist\.com\//,
       /^https:\/\/script\.google\.com\//,
       /^https:\/\/accounts\.google\.com\//,

@@ -22,7 +22,7 @@ export const aboutMeSectionPage: PageContent = {
     },
     {
       title: 'Question of the Day',
-      body: "Who are you? Add ability for a weekly vote, must sign in to vote, once voted, changes reflected \n\nCurrent media: Sophie's World - Jostein Gaarder",
+      body: "Feature currently disabled due to figuring out a good way to keep it updated and preventing a DOS",
     },
     {
       title: 'Bucket List',
@@ -38,7 +38,7 @@ export const aboutMeSectionPage: PageContent = {
     },
   ],
   callout:
-    "Hi, I'm Abe, you could probably tell I have a lot of interests. I come from a rather diverse background, but throughly enjoy adapting, learning, and understanding conceptual matters. I like to go on adventures, mainly a doer on trips, most fun with friends/family. As long as you're openminded and chill, we'll get along just fine :)",
+    "Hi, I'm Abe! You could probably tell I have a lot of interests, and that I come from a rather diverse background. I like torturing myself with training and studying, but when I'm free, I like to go on adventures. I'm a doer on trips and like to travel with friends/family. As long as you're openminded, we'll get along just fine :)",
 }
 
 export const aboutMeDetailPages: Record<string, SubpageContent> = {

@@ -1390,6 +1390,20 @@
   text-decoration: line-through;
 }
 
+.bucket-page-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.bucket-page-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  min-width: 3rem;
+  text-align: center;
+}
+
 .bucket-guest-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1667,8 +1681,25 @@
 
 .backpack-filter-row {
   display: flex;
+  align-items: center;
   gap: 0.4rem;
   flex-wrap: wrap;
+}
+
+.backpack-quantity-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.backpack-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .meal-plan-day-grid {
