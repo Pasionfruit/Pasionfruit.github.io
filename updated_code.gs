@@ -9,6 +9,10 @@ function doPost(e) {
       return jsonResponse_({ ok: false, error: 'Missing action' })
     }
 
+    if (action === 'ping') {
+      return jsonResponse_({ ok: true })
+    }
+
     var auth = requireAuthorizedUser_(payload)
     if (!auth.ok) {
       return jsonResponse_({ ok: false, error: auth.error })
@@ -83,6 +87,9 @@ function doPost(e) {
 
       case 'setActiveEvent':
         return jsonResponse_(setActiveEvent_(payload))
+
+      case 'setBudgetTarget':
+        return jsonResponse_(setBudgetTarget_(payload))
 
       default:
         return jsonResponse_({ ok: false, error: 'Unknown action: ' + action })
@@ -754,4 +761,46 @@ function setActiveEventById_(sheet, headerCols, eventId) {
   }
 
   sheet.getRange(2, activeCol, lastRow - 1, 1).setValues(activeValues)
+}
+
+function setBudgetTarget_(payload) {
+  var category = String(payload.category || '').toLowerCase().trim()
+  var rawAmount = payload.budget_amount
+  var amount = (rawAmount === null || rawAmount === '' || rawAmount === undefined)
+    ? NaN : Number(rawAmount)
+
+  if (!category) return { ok: false, error: 'category is required' }
+
+  var sheet = getSheet_('budget_targets')
+  var h = headerMap_(sheet)
+  var catCol = requireHeader_(h, 'category')
+  var amtCol = requireHeader_(h, 'budget_amount')
+
+  var lastRow = sheet.getLastRow()
+  if (lastRow > 1) {
+    var catData = sheet.getRange(2, catCol, lastRow - 1, 1).getValues()
+    for (var i = 0; i < catData.length; i++) {
+      if (String(catData[i][0]).toLowerCase().trim() === category) {
+        var rowNum = i + 2
+        if (isNaN(amount) || amount <= 0) {
+          sheet.deleteRow(rowNum)
+        } else {
+          sheet.getRange(rowNum, amtCol).setValue(amount)
+        }
+        return { ok: true }
+      }
+    }
+  }
+
+  if (!isNaN(amount) && amount > 0) {
+    appendByHeaders_(sheet, h, { category: category, budget_amount: amount })
+  }
+  return { ok: true }
+}
+
+// Keep the Apps Script runtime warm so writes don't hit a cold start.
+// To activate: In Apps Script editor open Triggers (clock icon), add a
+// time-driven trigger for keepAlive_ running every 10 minutes.
+function keepAlive_() {
+  // intentionally empty — calling this function is enough to keep the runtime warm
 }

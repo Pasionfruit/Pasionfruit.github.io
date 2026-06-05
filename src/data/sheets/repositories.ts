@@ -35,7 +35,10 @@ function parseNumber(value: unknown) {
   }
 
   if (typeof value === 'string') {
-    const parsed = Number(value)
+    // Strip currency symbols, thousands separators, and whitespace that the
+    // Sheets API includes when returning FORMATTED_VALUE (e.g. "$1,234.56")
+    const cleaned = value.replace(/[$,\s]/g, '')
+    const parsed = Number(cleaned)
     return Number.isFinite(parsed) ? parsed : undefined
   }
 
@@ -177,7 +180,7 @@ export async function getGroceryList(): Promise<GroceryListRecord[]> {
 }
 
 function mapFinanceTransactions(rows: Record<string, unknown>[]): FinanceTransactionRecord[] {
-  return rows
+  const mapped = rows
     .map((row) => ({
       date: row.date ? String(row.date) : undefined,
       description: String(row.description ?? ''),
@@ -186,6 +189,13 @@ function mapFinanceTransactions(rows: Record<string, unknown>[]): FinanceTransac
       card: String(row.card ?? ''),
     }))
     .filter((row) => row.description)
+
+  if (import.meta.env.DEV) {
+    const uniqueCategories = [...new Set(mapped.map((r) => r.category).filter(Boolean))]
+    console.log('[finance] raw categories from sheet:', uniqueCategories)
+  }
+
+  return mapped
 }
 
 export async function getAbeTransactions(): Promise<FinanceTransactionRecord[]> {

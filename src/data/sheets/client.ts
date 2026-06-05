@@ -105,6 +105,25 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
 }
 
 /**
+ * Fire a no-op ping to the Apps Script endpoint so the runtime is warm before
+ * the user's first real write. Call once on app mount; errors are silently ignored.
+ */
+export function warmupAppsScript() {
+  let url: string
+  try {
+    url = getAppsScriptUrl()
+  } catch {
+    return
+  }
+  if (!url) return
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'ping' }),
+  }).catch(() => {})
+}
+
+/**
  * Post data to Apps Script for authenticated admin operations.
  * This is used for write operations (votes, updates) that require token validation.
  */

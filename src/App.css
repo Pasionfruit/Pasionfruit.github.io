@@ -851,6 +851,34 @@
   font-size: 0.84rem;
 }
 
+.finance-bar-chart-shell {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.finance-bar-chart-legend {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 0.4rem 0 0.1rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.finance-bar-chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.finance-bar-chart-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .finance-budget-group {
   display: grid;
   gap: 0.55rem;
@@ -879,8 +907,63 @@
   color: var(--text-strong);
 }
 
+.finance-budget-table-shell {
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.finance-budget-table-shell .sheets-table th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+
 .finance-budget-table {
   font-size: 0.88rem;
+}
+
+.finance-table-month-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.finance-table-month-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.finance-table-month-clear {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.finance-table-month-clear:hover {
+  color: var(--text-strong);
+}
+
+.finance-budget-input {
+  width: 5.5rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.finance-budget-input:focus {
+  outline: none;
+  border-color: var(--accent, #6366f1);
 }
 
 .finance-purchases-filter {

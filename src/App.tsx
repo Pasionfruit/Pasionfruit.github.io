@@ -73,6 +73,7 @@ import type {
   PollRecord,
   TrainingRecord,
 } from './data/sheets/types'
+import { warmupAppsScript } from './data/sheets/client'
 import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 
@@ -171,6 +172,10 @@ function App() {
   const previousGoogleTokenRef = useRef<string | null>(null)
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const canViewPrivateFinances = canViewFinances(googleEmail)
+
+  useEffect(() => {
+    warmupAppsScript()
+  }, [])
 
   useEffect(() => {
     window.localStorage.setItem('demo-profile', profile)
@@ -1384,6 +1389,7 @@ function TodoistTasksCard({
 
   async function handleToggleGroceryInclude(row: GroceryListRecord) {
     if (isWriting || !canEditGrocery || !googleIdToken) return
+    setGroceryRows((prev) => prev.map((r) => r.item === row.item ? { ...r, include: !row.include } : r))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -1394,8 +1400,8 @@ function TodoistTasksCard({
         completed: row.completed,
         include: !row.include,
       })
-      await loadGroceryListForHome()
     } catch (error) {
+      setGroceryRows((prev) => prev.map((r) => r.item === row.item ? { ...r, include: row.include } : r))
       setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
     } finally {
       setIsWriting(false)
@@ -1404,6 +1410,7 @@ function TodoistTasksCard({
 
   async function handleToggleGroceryCompleted(row: GroceryListRecord) {
     if (isWriting || !canEditGrocery || !googleIdToken) return
+    setGroceryRows((prev) => prev.map((r) => r.item === row.item ? { ...r, completed: !row.completed } : r))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -1414,8 +1421,8 @@ function TodoistTasksCard({
         completed: !row.completed,
         include: row.include,
       })
-      await loadGroceryListForHome()
     } catch (error) {
+      setGroceryRows((prev) => prev.map((r) => r.item === row.item ? { ...r, completed: row.completed } : r))
       setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
     } finally {
       setIsWriting(false)
@@ -1429,13 +1436,16 @@ function TodoistTasksCard({
       setWriteError('Item name is required.')
       return
     }
+    setGroceryRows((prev) => [...prev, { type: 'ETC', item, completed: false, include: true }])
+    setNewCustomGroceryItem('')
+    playItemAddedSound()
     setIsWriting(true)
     setWriteError('')
     try {
       await createGroceryListItem(googleIdToken, 'ETC', item, false, true)
-      setNewCustomGroceryItem('')
-      await loadGroceryListForHome()
     } catch (error) {
+      setGroceryRows((prev) => prev.filter((r) => r.item !== item))
+      setNewCustomGroceryItem(item)
       setWriteError(error instanceof Error ? error.message : 'Unable to add grocery item')
     } finally {
       setIsWriting(false)
@@ -1446,6 +1456,7 @@ function TodoistTasksCard({
     if (isWriting || !canEditGrocery || !googleIdToken) return
     const included = groceryRows.filter((r) => r.include)
     if (included.length === 0) return
+    setGroceryRows((prev) => prev.map((r) => ({ ...r, include: false })))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -1460,8 +1471,11 @@ function TodoistTasksCard({
           }),
         ),
       )
-      await loadGroceryListForHome()
     } catch (error) {
+      setGroceryRows((prev) => prev.map((r) => {
+        const wasIncluded = included.find((ir) => ir.item === r.item)
+        return wasIncluded ? { ...r, include: true } : r
+      }))
       setWriteError(error instanceof Error ? error.message : 'Unable to deselect items')
     } finally {
       setIsWriting(false)
@@ -2143,6 +2157,123 @@ function SectionPage({
   )
 }
 
+type BarChartMonth = { key: string; label: string; bills: number; expenses: number; income: number }
+
+function FinanceBarChart({
+  data,
+  selectedMonthIndex,
+  onMonthClick,
+}: {
+  data: BarChartMonth[]
+  selectedMonthIndex: number | null
+  onMonthClick: (index: number) => void
+}) {
+  if (data.length === 0) return null
+
+  const BAR_W = 12
+  const BAR_GAP = 3
+  const GROUP_PAD = 9
+  const GROUP_W = GROUP_PAD * 2 + BAR_W * 3 + BAR_GAP * 2
+  const TOP_PAD = 10
+  const CHART_H = 150
+  const LABEL_H = 22
+  const SVG_H = TOP_PAD + CHART_H + LABEL_H
+  const LEFT_PAD = 52
+  const RIGHT_PAD = 8
+  const svgW = LEFT_PAD + data.length * GROUP_W + RIGHT_PAD
+
+  const maxVal = Math.max(...data.map((d) => Math.max(d.bills, d.expenses, d.income)), 1)
+
+  function bh(val: number) {
+    return val > 0 ? Math.max(2, (val / maxVal) * CHART_H) : 0
+  }
+
+  function fmtY(val: number) {
+    if (val >= 1000) return `$${(val / 1000 % 1 === 0 ? (val / 1000).toFixed(0) : (val / 1000).toFixed(1))}k`
+    return `$${Math.round(val)}`
+  }
+
+  return (
+    <div className="finance-bar-chart-shell">
+      <svg
+        viewBox={`0 0 ${svgW} ${SVG_H}`}
+        height={SVG_H}
+        style={{ display: 'block', width: `max(100%, ${svgW}px)` }}
+        aria-label="Monthly finances bar chart"
+      >
+        {[0.25, 0.5, 0.75, 1].map((pct) => {
+          const y = TOP_PAD + CHART_H - pct * CHART_H
+          return (
+            <g key={pct}>
+              <line x1={LEFT_PAD} y1={y} x2={svgW - RIGHT_PAD} y2={y} stroke="var(--border)" strokeDasharray="4 3" strokeWidth={1} />
+              <text x={LEFT_PAD - 5} y={y + 4} textAnchor="end" fontSize={9} fill="var(--text-muted)">{fmtY(pct * maxVal)}</text>
+            </g>
+          )
+        })}
+        <line x1={LEFT_PAD} y1={TOP_PAD + CHART_H} x2={svgW - RIGHT_PAD} y2={TOP_PAD + CHART_H} stroke="var(--border)" strokeWidth={1} />
+        {data.map((month, i) => {
+          const gx = LEFT_PAD + i * GROUP_W + GROUP_PAD
+          const isSelected = selectedMonthIndex === i
+          const isDimmed = selectedMonthIndex !== null && !isSelected
+          const bars: Array<{ val: number; fill: string }> = [
+            { val: month.bills, fill: '#eab308' },
+            { val: month.expenses, fill: '#ef4444' },
+            { val: month.income, fill: '#22c55e' },
+          ]
+          return (
+            <g key={month.key} onClick={() => onMonthClick(i)} style={{ cursor: 'pointer' }}>
+              {isSelected && (
+                <rect
+                  x={gx - GROUP_PAD + 1}
+                  y={TOP_PAD}
+                  width={GROUP_W - 2}
+                  height={CHART_H + LABEL_H - 4}
+                  fill="var(--accent, #6366f1)"
+                  opacity={0.08}
+                  rx={3}
+                />
+              )}
+              {bars.map((bar, j) => {
+                const h = bh(bar.val)
+                return (
+                  <rect
+                    key={j}
+                    x={gx + j * (BAR_W + BAR_GAP)}
+                    y={TOP_PAD + CHART_H - h}
+                    width={BAR_W}
+                    height={h}
+                    fill={bar.fill}
+                    rx={2}
+                    opacity={isDimmed ? 0.28 : 0.9}
+                  />
+                )
+              })}
+              <text
+                x={gx + (BAR_W * 3 + BAR_GAP * 2) / 2}
+                y={TOP_PAD + CHART_H + 15}
+                textAnchor="middle"
+                fontSize={9}
+                fontWeight={isSelected ? 700 : undefined}
+                fill={isSelected ? 'var(--text-strong)' : 'var(--text-muted)'}
+              >
+                {month.label}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+      <div className="finance-bar-chart-legend">
+        {([['#eab308', 'Bills'], ['#ef4444', 'Expenses'], ['#22c55e', 'Income']] as const).map(([color, label]) => (
+          <span key={label} className="finance-bar-chart-legend-item">
+            <span className="finance-bar-chart-dot" style={{ background: color }} />
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function FinancesHubCard() {
   type FinancesTab = 'dashboard' | 'calendar' | 'purchases'
   type FinancesSource = 'both' | 'abe' | 'ciara'
@@ -2166,6 +2297,25 @@ function FinancesHubCard() {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1)
   })
+  const [budgetTargets, setBudgetTargets] = useState<Record<string, number>>(() => {
+    try {
+      const stored = window.localStorage.getItem('finance-budget-targets')
+      return stored ? (JSON.parse(stored) as Record<string, number>) : {}
+    } catch {
+      return {}
+    }
+  })
+  const [budgetDrafts, setBudgetDrafts] = useState<Record<string, string>>(() => {
+    try {
+      const stored = window.localStorage.getItem('finance-budget-targets')
+      if (stored) {
+        const targets = JSON.parse(stored) as Record<string, number>
+        return Object.fromEntries(Object.entries(targets).map(([k, v]) => [k, String(v)]))
+      }
+    } catch {}
+    return {}
+  })
+  const [selectedTableMonth, setSelectedTableMonth] = useState<number | null>(() => new Date().getMonth())
 
   useEffect(() => {
     async function loadTransactions() {
@@ -2207,23 +2357,30 @@ function FinancesHubCard() {
     })
   }, [abeTransactions, ciaraTransactions, dashboardSource])
 
-  const BILL_CATEGORIES = ['rent', 'utilities', 'internet', 'insurance', 'groceries', 'gas', 'car', 'car insurance/maintenance', 'phone', 'subscriptions']
+  const BILL_CATEGORIES = ['rent', 'utilities', 'internet', 'insurance', 'student loans', 'groceries', 'gas', 'car', 'car insurance/maintenance', 'phone', 'subscriptions']
   const EXPENSE_CATEGORIES = ['hygiene', 'education', 'presents', 'restaurants', 'clothing', 'recreation', 'flights', 'hotels', 'excursions', 'miscellaneous']
   const INCOME_CATEGORIES = ['salary', 'cash', 'transfers', 'side hustles']
 
   const allMonthRows = useMemo(() => {
     const year = dashboardMonth.getFullYear()
-    const month = dashboardMonth.getMonth()
     return dashboardRows.filter((row) => {
       if (!row.date) return false
+      let rowYear: number, rowMonth: number
       const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
       if (literalMatch) {
-        return Number(literalMatch[1]) === year && Number(literalMatch[2]) === month + 1
+        rowYear = Number(literalMatch[1])
+        rowMonth = Number(literalMatch[2]) - 1
+      } else {
+        const parsed = new Date(row.date)
+        if (Number.isNaN(parsed.getTime())) return false
+        rowYear = parsed.getFullYear()
+        rowMonth = parsed.getMonth()
       }
-      const parsed = new Date(row.date)
-      return !Number.isNaN(parsed.getTime()) && parsed.getFullYear() === year && parsed.getMonth() === month
+      if (rowYear !== year) return false
+      if (selectedTableMonth !== null && rowMonth !== selectedTableMonth) return false
+      return true
     })
-  }, [dashboardRows, dashboardMonth])
+  }, [dashboardRows, dashboardMonth, selectedTableMonth])
 
   const budgetTotals = useMemo(() => {
     const totals: Record<string, number> = {}
@@ -2240,7 +2397,58 @@ function FinancesHubCard() {
     return totals
   }, [allMonthRows])
 
-  const dashboardMonthLabel = dashboardMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+  function updateBudgetTarget(cat: string, raw: string) {
+    const num = parseFloat(raw.replace(/[$,\s]/g, ''))
+    const nextTargets = { ...budgetTargets }
+    const nextDrafts = { ...budgetDrafts }
+    if (Number.isFinite(num) && num > 0) {
+      nextTargets[cat] = num
+      nextDrafts[cat] = String(num)
+    } else {
+      delete nextTargets[cat]
+      delete nextDrafts[cat]
+    }
+    setBudgetTargets(nextTargets)
+    setBudgetDrafts(nextDrafts)
+    try {
+      window.localStorage.setItem('finance-budget-targets', JSON.stringify(nextTargets))
+    } catch {}
+  }
+
+  const monthlyTotals = useMemo<BarChartMonth[]>(() => {
+    const year = dashboardMonth.getFullYear()
+    const monthMap: Array<{ bills: number; expenses: number; income: number }> = Array.from(
+      { length: 12 },
+      () => ({ bills: 0, expenses: 0, income: 0 }),
+    )
+    const billSet = new Set(BILL_CATEGORIES)
+    const expenseSet = new Set(EXPENSE_CATEGORIES)
+    const incomeSet = new Set(INCOME_CATEGORIES)
+    dashboardRows.forEach((row) => {
+      if (!row.date) return
+      let rowYear: number, rowMonth: number
+      const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
+      if (literalMatch) {
+        rowYear = Number(literalMatch[1])
+        rowMonth = Number(literalMatch[2]) - 1
+      } else {
+        const parsed = new Date(row.date)
+        if (Number.isNaN(parsed.getTime())) return
+        rowYear = parsed.getFullYear()
+        rowMonth = parsed.getMonth()
+      }
+      if (rowYear !== year) return
+      const cat = row.category?.toLowerCase().trim() ?? ''
+      if (billSet.has(cat)) monthMap[rowMonth].bills += row.amount
+      else if (expenseSet.has(cat)) monthMap[rowMonth].expenses += row.amount
+      else if (incomeSet.has(cat)) monthMap[rowMonth].income += row.amount
+    })
+    return monthMap.map((totals, m) => ({
+      key: `${year}-${String(m + 1).padStart(2, '0')}`,
+      label: new Date(year, m, 1).toLocaleDateString(undefined, { month: 'short' }),
+      ...totals,
+    }))
+  }, [dashboardRows, dashboardMonth])
 
   const purchasesMonthLabel = purchasesMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
 
@@ -2363,19 +2571,15 @@ function FinancesHubCard() {
             <button
               type="button"
               className="secondary-action"
-              onClick={() =>
-                setDashboardMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))
-              }
+              onClick={() => setDashboardMonth((m) => new Date(m.getFullYear() - 1, m.getMonth(), 1))}
             >
               Prev
             </button>
-            <p className="finance-calendar-month">{dashboardMonthLabel}</p>
+            <p className="finance-calendar-month">{dashboardMonth.getFullYear()}</p>
             <button
               type="button"
               className="secondary-action"
-              onClick={() =>
-                setDashboardMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))
-              }
+              onClick={() => setDashboardMonth((m) => new Date(m.getFullYear() + 1, m.getMonth(), 1))}
             >
               Next
             </button>
@@ -2386,6 +2590,30 @@ function FinancesHubCard() {
 
           {!isLoadingTransactions && !transactionError ? (
             <>
+              <FinanceBarChart
+                data={monthlyTotals}
+                selectedMonthIndex={selectedTableMonth}
+                onMonthClick={(i) => setSelectedTableMonth((prev) => (prev === i ? null : i))}
+              />
+              <div className="finance-table-month-filter">
+                <span className="finance-table-month-label">
+                  {selectedTableMonth !== null
+                    ? new Date(dashboardMonth.getFullYear(), selectedTableMonth, 1).toLocaleDateString(undefined, {
+                        month: 'long',
+                        year: 'numeric',
+                      })
+                    : `All of ${dashboardMonth.getFullYear()}`}
+                </span>
+                {selectedTableMonth !== null && (
+                  <button
+                    type="button"
+                    className="finance-table-month-clear"
+                    onClick={() => setSelectedTableMonth(null)}
+                  >
+                    Show all
+                  </button>
+                )}
+              </div>
               {(['Bills', 'Expenses', 'Income'] as const).map((group) => {
                 const cats =
                   group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
@@ -2402,27 +2630,57 @@ function FinancesHubCard() {
                         })}
                       </p>
                     </div>
-                    <div className="sheets-table-shell">
+                    <div className="sheets-table-shell finance-budget-table-shell">
                       <table className="sheets-table finance-budget-table">
                         <thead>
                           <tr>
                             <th>Category</th>
                             <th>Total</th>
+                            <th>Budget</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {cats.map((cat) => (
-                            <tr key={cat}>
-                              <td>{cat.charAt(0).toUpperCase() + cat.slice(1)}</td>
-                              <td>
-                                {(budgetTotals[cat] ?? 0).toLocaleString(undefined, {
-                                  style: 'currency',
-                                  currency: 'USD',
-                                  maximumFractionDigits: 2,
-                                })}
-                              </td>
-                            </tr>
-                          ))}
+                          {cats.map((cat) => {
+                            const spent = budgetTotals[cat] ?? 0
+                            const target = budgetTargets[cat]
+                            const overBudget = target !== undefined && spent > target
+                            const underBudget = target !== undefined && spent <= target
+                            return (
+                              <tr key={cat}>
+                                <td>{cat.charAt(0).toUpperCase() + cat.slice(1)}</td>
+                                <td
+                                  style={{
+                                    color: overBudget
+                                      ? 'var(--error, #ef4444)'
+                                      : underBudget
+                                        ? 'var(--success, #22c55e)'
+                                        : undefined,
+                                    fontWeight: overBudget || underBudget ? 600 : undefined,
+                                  }}
+                                >
+                                  {spent.toLocaleString(undefined, {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    maximumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  <input
+                                    type="number"
+                                    className="finance-budget-input"
+                                    min="0"
+                                    step="1"
+                                    value={budgetDrafts[cat] ?? ''}
+                                    placeholder="—"
+                                    onChange={(e) =>
+                                      setBudgetDrafts((prev) => ({ ...prev, [cat]: e.target.value }))
+                                    }
+                                    onBlur={(e) => updateBudgetTarget(cat, e.target.value)}
+                                  />
+                                </td>
+                              </tr>
+                            )
+                          })}
                         </tbody>
                       </table>
                     </div>
@@ -4455,6 +4713,7 @@ function GroceryListCard({
 
   async function handleToggleInclude(row: GroceryListRecord) {
     if (!idToken || isWriting || !canWrite) return
+    setRows((prev) => prev.map((r) => r.item === row.item ? { ...r, include: !row.include } : r))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -4465,8 +4724,8 @@ function GroceryListCard({
         completed: row.completed,
         include: !row.include,
       })
-      await loadGroceryList()
     } catch (error) {
+      setRows((prev) => prev.map((r) => r.item === row.item ? { ...r, include: row.include } : r))
       setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
     } finally {
       setIsWriting(false)
@@ -4475,6 +4734,7 @@ function GroceryListCard({
 
   async function handleToggleCompleted(row: GroceryListRecord) {
     if (!idToken || isWriting || !canWrite) return
+    setRows((prev) => prev.map((r) => r.item === row.item ? { ...r, completed: !row.completed } : r))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -4485,8 +4745,8 @@ function GroceryListCard({
         completed: !row.completed,
         include: row.include,
       })
-      await loadGroceryList()
     } catch (error) {
+      setRows((prev) => prev.map((r) => r.item === row.item ? { ...r, completed: row.completed } : r))
       setWriteError(error instanceof Error ? error.message : 'Unable to update grocery item')
     } finally {
       setIsWriting(false)
@@ -4500,13 +4760,16 @@ function GroceryListCard({
       setWriteError('Item name is required.')
       return
     }
+    setRows((prev) => [...prev, { type: 'ETC', item, completed: false, include: true }])
+    setNewCustomItem('')
+    playItemAddedSound()
     setIsWriting(true)
     setWriteError('')
     try {
       await createGroceryListItem(idToken, 'ETC', item, false, true)
-      setNewCustomItem('')
-      await loadGroceryList()
     } catch (error) {
+      setRows((prev) => prev.filter((r) => r.item !== item))
+      setNewCustomItem(item)
       setWriteError(error instanceof Error ? error.message : 'Unable to add grocery item')
     } finally {
       setIsWriting(false)
@@ -4517,6 +4780,7 @@ function GroceryListCard({
     if (!idToken || isWriting || !canWrite) return
     const included = rows.filter((r) => r.include)
     if (included.length === 0) return
+    setRows((prev) => prev.map((r) => ({ ...r, include: false })))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -4531,8 +4795,11 @@ function GroceryListCard({
           }),
         ),
       )
-      await loadGroceryList()
     } catch (error) {
+      setRows((prev) => prev.map((r) => {
+        const wasIncluded = included.find((ir) => ir.item === r.item)
+        return wasIncluded ? { ...r, include: true } : r
+      }))
       setWriteError(error instanceof Error ? error.message : 'Unable to deselect items')
     } finally {
       setIsWriting(false)
@@ -6052,6 +6319,30 @@ function PomodoroTimerCard({ title, body }: { title: string; body: string }) {
       )}
     </article>
   )
+}
+
+function playItemAddedSound() {
+  try {
+    const ctx = new AudioContext()
+    const t = ctx.currentTime
+    function tone(freq: number, start: number) {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      gain.gain.setValueAtTime(0, start)
+      gain.gain.linearRampToValueAtTime(0.18, start + 0.01)
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22)
+      osc.start(start)
+      osc.stop(start + 0.22)
+    }
+    tone(880, t)
+    tone(1320, t + 0.11)
+  } catch {
+    // audio unavailable
+  }
 }
 
 function toDateOnlyKey(value?: string) {
