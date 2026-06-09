@@ -4275,7 +4275,7 @@ function BackpackCard({
       .filter(({ row }) => {
         const storageMatches = storageFilter === 'all' || row.storage === storageFilter
         const typeMatches = typeFilter === 'all' || row.type === typeFilter
-        const quantityMatches = !hasQuantityFilter || row.quantity.trim() !== ''
+        const quantityMatches = !hasQuantityFilter || Number(row.quantity.trim()) > 0
         return storageMatches && typeMatches && quantityMatches
       })
       .sort((a, b) => {
@@ -4291,7 +4291,7 @@ function BackpackCard({
   function handleClearAll() {
     const next: Record<number, { storage: string; type: string; quantity: string }> = {}
     rows.forEach((row, index) => {
-      next[index] = { storage: row.storage, type: row.type, quantity: row.quantity }
+      next[index] = { storage: row.storage, type: row.type, quantity: '0' }
     })
     setEditedRows(next)
   }
