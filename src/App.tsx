@@ -1,5 +1,5 @@
-import { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
+import React, { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
   NavLink,
@@ -209,8 +209,18 @@ function App() {
     previousGoogleTokenRef.current = googleIdToken || null
   }, [googleEmail, googleIdToken, profile])
 
+  function handleAutoSignInToken(token: string) {
+    const email = getGoogleTokenEmail(token)
+    setProfile(shouldUseAdminProfile(email) ? 'admin' : 'guest')
+    setGoogleIdToken(token)
+  }
+
   return (
-    <Routes>
+    <>
+      {googleClientConfigured && !googleIdToken && (
+        <GoogleAutoSignIn onToken={handleAutoSignInToken} />
+      )}
+      <Routes>
       <Route element={<SiteLayout canViewFinances={canViewPrivateFinances} />}>
         <Route
           index
@@ -290,6 +300,7 @@ function App() {
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>
     </Routes>
+    </>
   )
 }
 
@@ -888,7 +899,7 @@ function HomeDailyFocusCard({ profile, googleIdToken }: { profile: UserProfile; 
   const [view, setView] = useState<'training' | 'studying'>('training')
   const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
   const [studyRows, setStudyRows] = useState<CurrentStudyRecord[]>([])
-  const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
@@ -1226,13 +1237,15 @@ function TodoistTasksCard({
   const canEditTodoist = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
   const canEditGrocery = profile === 'admin' && shouldUseAdminProfile(googleEmail)
   const canEditAny = canEditTodoist || canEditGrocery
-  const [view, setView] = useState<'todoist' | 'grocery'>('todoist')
+  const [view, setView] = useState<'todoist' | 'grocery' | 'meals'>('todoist')
   const [rows, setRows] = useState<TodoistTask[]>([])
   const [groceryRows, setGroceryRows] = useState<GroceryListRecord[]>([])
-  const [isCollapsed, setIsCollapsed] = useState(true)
+  const [mealPlanRows, setMealPlanRows] = useState<MealPlanRecord[]>([])
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isGroceryLoading, setIsGroceryLoading] = useState(true)
+  const [isMealPlanLoading, setIsMealPlanLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
   const [newTaskContent, setNewTaskContent] = useState('')
@@ -1240,6 +1253,37 @@ function TodoistTasksCard({
   const [newTaskPriority, setNewTaskPriority] = useState(1)
   const [editedRows, setEditedRows] = useState<Record<string, { content: string; description: string; dueDate: string; priority: number }>>({})
   const [newCustomGroceryItem, setNewCustomGroceryItem] = useState('')
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
+  const [dropInsertIndex, setDropInsertIndex] = useState<number | null>(null)
+
+  function handleTaskDragStart(index: number) {
+    setDraggingIndex(index)
+  }
+
+  function handleTaskDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault()
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    const insertAfter = e.clientY > rect.top + rect.height / 2
+    setDropInsertIndex(insertAfter ? index + 1 : index)
+  }
+
+  function handleTaskDrop() {
+    setRows((prev) => {
+      if (draggingIndex === null || dropInsertIndex === null) return prev
+      const next = [...prev]
+      const [moved] = next.splice(draggingIndex, 1)
+      const adjusted = dropInsertIndex > draggingIndex ? dropInsertIndex - 1 : dropInsertIndex
+      next.splice(adjusted, 0, moved)
+      return next
+    })
+    setDraggingIndex(null)
+    setDropInsertIndex(null)
+  }
+
+  function handleTaskDragEnd() {
+    setDraggingIndex(null)
+    setDropInsertIndex(null)
+  }
 
   async function loadTasks() {
     try {
@@ -1265,8 +1309,20 @@ function TodoistTasksCard({
     }
   }
 
+  async function loadMealPlanForHome() {
+    try {
+      const data = await getMealPlan()
+      setMealPlanRows(data)
+    } catch {
+      setMealPlanRows([])
+    } finally {
+      setIsMealPlanLoading(false)
+    }
+  }
+
   useEffect(() => {
     void loadGroceryListForHome()
+    void loadMealPlanForHome()
 
     if (!todoistConfigured) {
       setRows([])
@@ -1533,11 +1589,22 @@ function TodoistTasksCard({
             >
               Grocery List
             </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'meals'}
+              className={`experience-toggle-btn ${view === 'meals' ? 'active' : ''}`}
+              onClick={() => setView('meals')}
+            >
+              Meals
+            </button>
           </div>
 
           {view === 'todoist' ? <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p> : null}
 
           {view === 'grocery' ? <p className="sheets-meta">Quick view of your grocery list.</p> : null}
+
+          {view === 'meals' ? <p className="sheets-meta">Today's meal plan.</p> : null}
 
           {view === 'todoist' && !todoistConfigured ? (
             <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
@@ -1546,6 +1613,8 @@ function TodoistTasksCard({
           {view === 'todoist' && todoistConfigured && isLoading ? <p className="sheets-meta">Loading Todoist tasks...</p> : null}
 
           {view === 'grocery' && isGroceryLoading ? <p className="sheets-meta">Loading grocery list...</p> : null}
+
+          {view === 'meals' && isMealPlanLoading ? <p className="sheets-meta">Loading meal plan...</p> : null}
 
           {view === 'todoist' && !canEditTodoist ? (
             <p className="sheets-meta">
@@ -1558,43 +1627,49 @@ function TodoistTasksCard({
           ) : null}
 
           {view === 'todoist' && todoistConfigured && rows.length > 0 ? (
-            <div className="sheets-table-shell">
-              <table className="sheets-table">
-                <thead>
-                  <tr>
-                    <th>Task</th>
-                    <th>Completed</th>
-                    {canEditTodoist ? <th>Actions</th> : null}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row) => (
-                    <tr key={`summary-${row.id}`}>
-                      <td>
-                        <p>{row.content}</p>
-                        {row.description ? <p className="sheets-meta">{row.description}</p> : null}
-                      </td>
-                      <td>{row.is_completed ? 'Yes' : 'No'}</td>
-                      {canEditTodoist ? (
-                        <td>
-                          {!row.is_completed ? (
-                            <button
-                              type="button"
-                              className="secondary-action"
-                              onClick={() => void handleCompleteTask(row)}
-                              disabled={isWriting}
-                            >
-                              Complete
-                            </button>
-                          ) : (
-                            <span className="sheets-meta">Completed</span>
-                          )}
-                        </td>
-                      ) : null}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="todoist-task-list">
+              {rows.map((row, index) => (
+                <React.Fragment key={`summary-${row.id}`}>
+                  {draggingIndex !== null && dropInsertIndex === index && draggingIndex !== index && draggingIndex !== index - 1 ? (
+                    <div className="todoist-drop-indicator" />
+                  ) : null}
+                  <div
+                    className={[
+                      'todoist-task-row',
+                      row.is_completed ? 'is-completed' : '',
+                      draggingIndex === index ? 'is-dragging' : '',
+                    ].filter(Boolean).join(' ')}
+                    draggable
+                    onDragStart={() => handleTaskDragStart(index)}
+                    onDragOver={(e) => handleTaskDragOver(e, index)}
+                    onDrop={handleTaskDrop}
+                    onDragEnd={handleTaskDragEnd}
+                  >
+                    <span className="todoist-drag-handle" aria-hidden="true">⠿</span>
+                    <button
+                      type="button"
+                      className="todoist-complete-btn"
+                      data-priority={normalizePriority(row.priority)}
+                      onClick={() => void handleCompleteTask(row)}
+                      disabled={isWriting || row.is_completed || !canEditTodoist}
+                      title={canEditTodoist ? 'Mark complete' : undefined}
+                      aria-label={`Complete: ${row.content}`}
+                    />
+                    <div className="todoist-task-content">
+                      <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
+                      {row.description ? <p className="sheets-meta">{row.description}</p> : null}
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+              {draggingIndex !== null && dropInsertIndex === rows.length && draggingIndex !== rows.length - 1 ? (
+                <div className="todoist-drop-indicator" />
+              ) : null}
+              <div
+                className="todoist-drop-tail"
+                onDragOver={(e) => { e.preventDefault(); setDropInsertIndex(rows.length) }}
+                onDrop={handleTaskDrop}
+              />
             </div>
           ) : null}
 
@@ -1807,6 +1882,36 @@ function TodoistTasksCard({
               </div>
             </div>
           ) : null}
+
+          {view === 'meals' && !isMealPlanLoading ? (() => {
+            const today = normalizeWeekday(getTodayWeekdayName())
+            const todayMeals = mealPlanRows.find((row) => {
+              const weekday = normalizeWeekday(row.day_of_the_week)
+              return weekday === today || weekday.slice(0, 3) === today.slice(0, 3)
+            })
+            return todayMeals ? (
+              <div className="meal-plan-day-grid">
+                <div className="meal-plan-day-item">
+                  <p className="meal-plan-label">Breakfast</p>
+                  <p>{todayMeals.breakfast || 'Not planned'}</p>
+                </div>
+                <div className="meal-plan-day-item">
+                  <p className="meal-plan-label">Lunch</p>
+                  <p>{todayMeals.lunch || 'Not planned'}</p>
+                </div>
+                <div className="meal-plan-day-item">
+                  <p className="meal-plan-label">Dinner</p>
+                  <p>{todayMeals.dinner || 'Not planned'}</p>
+                </div>
+                <div className="meal-plan-day-item">
+                  <p className="meal-plan-label">Snack</p>
+                  <p>{todayMeals.snack || 'Not planned'}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="sheets-meta">No meal plan found for today.</p>
+            )
+          })() : null}
 
           {view === 'grocery' && !isEditing && includedGroceryGroups.length > 0 ? (
             <div className="grocery-list-view" aria-label="Active grocery list">
@@ -6748,6 +6853,19 @@ function DetailPage({
       })}
     </PageFrame>
   )
+}
+
+function GoogleAutoSignIn({ onToken }: { onToken: (token: string) => void }) {
+  useGoogleOneTapLogin({
+    onSuccess: (credentialResponse) => {
+      const token = credentialResponse.credential ?? ''
+      if (token) onToken(token)
+    },
+    onError: () => {},
+    auto_select: true,
+    cancel_on_tap_outside: false,
+  })
+  return null
 }
 
 function LoginPage({
