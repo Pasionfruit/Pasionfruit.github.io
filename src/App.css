@@ -161,20 +161,25 @@
   filter: none;
 }
 
-.login-link,
-.theme-toggle,
 .secondary-action,
 .back-link,
 .primary-action {
   padding: 0.62rem 0.9rem;
 }
 
-.theme-toggle {
+.login-link,
+.theme-toggle,
+.menu-toggle {
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.theme-toggle {
   gap: 0.35rem;
-  min-width: 3.65rem;
 }
 
 .theme-icon {
@@ -202,13 +207,13 @@
   color: #ffffff;
 }
 
+:root[data-theme='dark'] .primary-action,
+:root[data-theme='dark'] .menu-section-link--accent {
+  color: #1a1a1a;
+}
+
 .menu-toggle {
-  width: 2.65rem;
-  height: 2.65rem;
-  display: inline-flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 0.22rem;
 }
 
