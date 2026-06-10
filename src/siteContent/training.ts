@@ -66,9 +66,9 @@ export const trainingDetailPages: Record<string, SubpageContent> = {
     summary: 'Charts and metrics that make the overall trend easy to understand at a glance.',
     accent: '#2c9c8f',
     cards: [
+      { title: 'Health Data', body: 'Ingested data from Garmin, Ringconn, and Apple Health' },
       { title: 'Health Data Terms', body: 'Filterable list of health data terms and their definitions' },
       { title: 'Tools', body: 'Tools on calculating and visualizing training data' },
-      { title: 'Equipment', body: 'Links to training equipment and gear' },
       { title: 'Learning', body: 'Gemini Notebook with resources and top recommended videos' },
     ],
     note: 'Keep this page readable first and analytical second.',

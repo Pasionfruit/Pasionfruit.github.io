@@ -1,15 +1,18 @@
 import { fetchSheetTable, postSheetsAction, type SheetsWriteResponse } from './client'
 import type {
+  AppleHealthRecord,
   BackpackRecord,
   BucketListRecord,
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
   FinanceTransactionRecord,
+  GarminHealthRecord,
   GroceryListRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
+  RingconnHealthRecord,
   TrainingRecord,
 } from './types'
 
@@ -151,6 +154,63 @@ export async function getPersonalTraining(): Promise<PersonalTrainingRecord[]> {
       value: String(row.value ?? '').trim(),
     }))
     .filter((row) => row.type && row.name)
+}
+
+export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('garmin_health')
+
+  return rows
+    .map((row) => ({
+      date:          String(row.date ?? '').trim(),
+      activity_type: String(row.activity_type ?? '').trim(),
+      title:         String(row.title ?? '').trim(),
+      distance_km:   String(row.distance_km ?? '').trim(),
+      duration_min:  String(row.duration_min ?? '').trim(),
+      avg_hr:        String(row.avg_hr ?? '').trim(),
+      max_hr:        String(row.max_hr ?? '').trim(),
+      calories:      String(row.calories ?? '').trim(),
+      tss:           String(row.tss ?? '').trim(),
+    }))
+    .filter((row) => row.date)
+}
+
+export async function getRingconnHealth(): Promise<RingconnHealthRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('ringconn_health')
+
+  return rows
+    .map((row) => ({
+      date:             String(row.date ?? '').trim(),
+      sleep_score:      String(row.sleep_score ?? '').trim(),
+      sleep_duration_h: String(row.sleep_duration_h ?? '').trim(),
+      deep_sleep_h:     String(row.deep_sleep_h ?? '').trim(),
+      rem_sleep_h:      String(row.rem_sleep_h ?? '').trim(),
+      light_sleep_h:    String(row.light_sleep_h ?? '').trim(),
+      resting_hr:       String(row.resting_hr ?? '').trim(),
+      hrv:              String(row.hrv ?? '').trim(),
+      spo2:             String(row.spo2 ?? '').trim(),
+      skin_temp_c:      String(row.skin_temp_c ?? '').trim(),
+      steps:            String(row.steps ?? '').trim(),
+      calories:         String(row.calories ?? '').trim(),
+    }))
+    .filter((row) => row.date)
+}
+
+export async function getAppleHealth(): Promise<AppleHealthRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('apple_health')
+
+  return rows
+    .map((row) => ({
+      date:            String(row.date ?? '').trim(),
+      steps:           String(row.steps ?? '').trim(),
+      resting_hr:      String(row.resting_hr ?? '').trim(),
+      hrv_sdnn:        String(row.hrv_sdnn ?? '').trim(),
+      active_calories: String(row.active_calories ?? '').trim(),
+      basal_calories:  String(row.basal_calories ?? '').trim(),
+      sleep_h:         String(row.sleep_h ?? '').trim(),
+      spo2_avg:        String(row.spo2_avg ?? '').trim(),
+      weight_kg:       String(row.weight_kg ?? '').trim(),
+    }))
+    .filter((row) => row.date)
 }
 
 export async function getBackpackItems(): Promise<BackpackRecord[]> {

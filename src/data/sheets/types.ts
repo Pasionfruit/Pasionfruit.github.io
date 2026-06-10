@@ -93,6 +93,45 @@ export type PersonalTrainingRecord = {
   value: string
 }
 
+export type GarminHealthRecord = {
+  date: string
+  activity_type: string
+  title: string
+  distance_km: string
+  duration_min: string
+  avg_hr: string
+  max_hr: string
+  calories: string
+  tss: string
+}
+
+export type RingconnHealthRecord = {
+  date: string
+  sleep_score: string
+  sleep_duration_h: string
+  deep_sleep_h: string
+  rem_sleep_h: string
+  light_sleep_h: string
+  resting_hr: string
+  hrv: string
+  spo2: string
+  skin_temp_c: string
+  steps: string
+  calories: string
+}
+
+export type AppleHealthRecord = {
+  date: string
+  steps: string
+  resting_hr: string
+  hrv_sdnn: string
+  active_calories: string
+  basal_calories: string
+  sleep_h: string
+  spo2_avg: string
+  weight_kg: string
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

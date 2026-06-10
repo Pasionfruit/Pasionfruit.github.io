@@ -46,6 +46,9 @@ import {
   getMealPlan,
   getPolls,
   getPersonalTraining,
+  getGarminHealth,
+  getRingconnHealth,
+  getAppleHealth,
   getTrainingRecords,
   setActiveEvent,
   setBucketCompleted,
@@ -64,16 +67,19 @@ import {
   type BudgetTargetRecord,
 } from './data/sheets/repositories'
 import type {
+  AppleHealthRecord,
   BackpackRecord,
   BucketListRecord,
   CountryRecord,
   CurrentStudyRecord,
   EventRecord,
   FinanceTransactionRecord,
+  GarminHealthRecord,
   GroceryListRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
+  RingconnHealthRecord,
   TrainingRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
@@ -371,7 +377,7 @@ function SiteLayout({ canViewFinances }: { canViewFinances: boolean }) {
           <span className="brand-mark">PF</span>
           <span className="brand-copy">
             <strong>Pasionfruit</strong>
-            <small>Enjoying life</small>
+            <small>Another Vibe Coded Site</small>
           </span>
         </Link>
 
@@ -1735,6 +1741,7 @@ function TodoistTasksCard({
                       draggingIndex === index ? 'is-dragging' : '',
                     ].filter(Boolean).join(' ')}
                     data-task-index={index}
+                    data-priority={normalizePriority(row.priority)}
                     draggable
                     onDragStart={() => handleTaskDragStart(index)}
                     onDragOver={(e) => handleTaskDragOver(e, index)}
@@ -1753,6 +1760,10 @@ function TodoistTasksCard({
                       onTouchEnd={handleTouchDrop}
                       onTouchCancel={handleTaskDragEnd}
                     >⠿</span>
+                    <div className="todoist-task-content">
+                      <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
+                      {row.description ? <p className="sheets-meta">{row.description}</p> : null}
+                    </div>
                     <button
                       type="button"
                       className="todoist-complete-btn"
@@ -1762,10 +1773,6 @@ function TodoistTasksCard({
                       title={canEditTodoist ? 'Mark complete' : undefined}
                       aria-label={`Complete: ${row.content}`}
                     />
-                    <div className="todoist-task-content">
-                      <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
-                      {row.description ? <p className="sheets-meta">{row.description}</p> : null}
-                    </div>
                   </div>
                 </React.Fragment>
               ))}
@@ -2249,7 +2256,7 @@ function SectionPage({
 
       {sectionId === 'finances' ? null : section.cards.map((card) => {
         if (sectionId === 'mrpasionfruit' && card.title === 'Meet the Oreo Gang') {
-          return <CollapsibleTextCard key={card.title} title={card.title} body={card.body} />
+          return <OreoGangCard key={card.title} title={card.title} />
         }
 
         if (sectionId === 'mrpasionfruit' && card.title === 'Question of the Day') {
@@ -3137,6 +3144,61 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
           })() : null}
         </div>
       ) : null}
+    </article>
+  )
+}
+
+const OREO_GANG_MEMBERS = ['Midnight', 'Pirouette', 'Inky'] as const
+type OreoMember = typeof OREO_GANG_MEMBERS[number]
+
+function OreoGangCard({ title }: { title: string }) {
+  const [active, setActive] = useState<OreoMember>(OREO_GANG_MEMBERS[0])
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  return (
+    <article className="info-card section-page-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((v) => !v)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
+      </div>
+
+      {!isCollapsed && (
+        <>
+          <div className="experience-toggle" role="tablist" aria-label="Oreo Gang members">
+            {OREO_GANG_MEMBERS.map((member) => (
+              <button
+                key={member}
+                type="button"
+                role="tab"
+                aria-selected={active === member}
+                className={`experience-toggle-btn ${active === member ? 'active' : ''}`}
+                onClick={() => setActive(member)}
+              >
+                {member}
+              </button>
+            ))}
+          </div>
+
+          <div className="oreo-gang-member">
+            <div className="oreo-gang-photo" aria-label={`Photo placeholder for ${active}`}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <circle cx="12" cy="12" r="3.5" />
+                <path d="M16.5 5.5l1.5-1.5" />
+              </svg>
+              <span>Add photo</span>
+            </div>
+            <p className="oreo-gang-description">Description for {active} goes here.</p>
+          </div>
+        </>
+      )}
     </article>
   )
 }
@@ -4575,22 +4637,45 @@ function BackpackCard({
                     <td>{row.item}</td>
                     <td>
                       {isEditing && canWrite ? (
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={editedRows[index]?.quantity ?? row.quantity}
-                          onChange={(event) =>
-                            setEditedRows((current) => ({
-                              ...current,
-                              [index]: {
-                                storage: current[index]?.storage ?? row.storage,
-                                type: current[index]?.type ?? row.type,
-                                quantity: event.target.value,
-                              },
-                            }))
-                          }
-                          disabled={!idToken || isWriting || !canWrite}
-                        />
+                        <div className="backpack-quantity-stepper">
+                          <button
+                            type="button"
+                            className="backpack-quantity-btn"
+                            disabled={!idToken || isWriting || Number(editedRows[index]?.quantity ?? row.quantity) <= 0}
+                            onClick={() =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  storage: current[index]?.storage ?? row.storage,
+                                  type: current[index]?.type ?? row.type,
+                                  quantity: String(Math.max(0, Number(current[index]?.quantity ?? row.quantity) - 1)),
+                                },
+                              }))
+                            }
+                          >
+                            −
+                          </button>
+                          <span className="backpack-quantity-value">
+                            {editedRows[index]?.quantity ?? row.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            className="backpack-quantity-btn"
+                            disabled={!idToken || isWriting}
+                            onClick={() =>
+                              setEditedRows((current) => ({
+                                ...current,
+                                [index]: {
+                                  storage: current[index]?.storage ?? row.storage,
+                                  type: current[index]?.type ?? row.type,
+                                  quantity: String(Number(current[index]?.quantity ?? row.quantity) + 1),
+                                },
+                              }))
+                            }
+                          >
+                            +
+                          </button>
+                        </div>
                       ) : (
                         row.quantity
                       )}
@@ -4637,6 +4722,131 @@ function normalizeWeekday(value: string) {
 
 function getTodayWeekdayName() {
   return new Date().toLocaleDateString('en-US', { weekday: 'long' })
+}
+
+const SLOT_ITEMS = {
+  meat: [
+    'Chicken Breast', 'Chicken Thighs', 'Ground Beef', 'Ribeye Steak', 'Salmon',
+    'Shrimp', 'Pork Tenderloin', 'Ground Turkey', 'Lamb Chops', 'Tilapia',
+    'Tuna Steak', 'Cod', 'Italian Sausage', 'Duck Breast', 'Pork Chops',
+    'Beef Short Ribs', 'Scallops', 'Mahi Mahi',
+  ],
+  sauce: [
+    'Garlic Butter', 'Teriyaki', 'Marinara', 'Pesto', 'Alfredo', 'BBQ',
+    'Chimichurri', 'Honey Mustard', 'Soy Ginger', 'Lemon Herb', 'Buffalo',
+    'Tahini', 'Miso Glaze', 'Tikka Masala', 'Salsa Verde', 'Coconut Curry',
+    'Béarnaise', 'Brown Butter', 'Orange Glaze', 'Romesco',
+  ],
+  carb: [
+    'White Rice', 'Brown Rice', 'Pasta', 'Quinoa', 'Mashed Potatoes',
+    'Sweet Potato', 'Roasted Potatoes', 'Rice Noodles', 'Couscous',
+    'Risotto', 'Polenta', 'Farro', 'Gnocchi', 'Fried Rice',
+    'Flour Tortillas', 'Sourdough Bread', 'Udon Noodles', 'Orzo',
+  ],
+  veg: [
+    'Broccoli', 'Spinach', 'Asparagus', 'Brussels Sprouts', 'Bell Peppers',
+    'Zucchini', 'Green Beans', 'Kale', 'Carrots', 'Cauliflower',
+    'Mushrooms', 'Eggplant', 'Snow Peas', 'Bok Choy', 'Corn',
+    'Edamame', 'Roasted Tomatoes', 'Beets', 'Artichoke', 'Sugar Snap Peas',
+  ],
+} as const
+
+type SlotCategory = keyof typeof SLOT_ITEMS
+const SLOT_CATEGORIES: SlotCategory[] = ['meat', 'sauce', 'carb', 'veg']
+const SLOT_LABELS: Record<SlotCategory, string> = { meat: 'Meat', sauce: 'Sauce', carb: 'Carb', veg: 'Veg' }
+const SLOT_STOP_DELAYS: Record<SlotCategory, number> = { meat: 1800, sauce: 2300, carb: 2800, veg: 3300 }
+
+function MealRandomizerCard({ title }: { title: string }) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [spinning, setSpinning] = useState(false)
+  const [display, setDisplay] = useState<Record<SlotCategory, string>>({
+    meat: SLOT_ITEMS.meat[0], sauce: SLOT_ITEMS.sauce[0],
+    carb: SLOT_ITEMS.carb[0], veg: SLOT_ITEMS.veg[0],
+  })
+  const [tickKey, setTickKey] = useState<Record<SlotCategory, number>>({ meat: 0, sauce: 0, carb: 0, veg: 0 })
+  const [reelSpinning, setReelSpinning] = useState<Record<SlotCategory, boolean>>({ meat: false, sauce: false, carb: false, veg: false })
+
+  const intervalsRef = useRef<Partial<Record<SlotCategory, ReturnType<typeof setInterval>>>>({})
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  useEffect(() => {
+    return () => {
+      for (const id of Object.values(intervalsRef.current)) if (id) clearInterval(id)
+      for (const id of timeoutsRef.current) clearTimeout(id)
+    }
+  }, [])
+
+  function randomItem(cat: SlotCategory) {
+    const arr = SLOT_ITEMS[cat] as readonly string[]
+    return arr[Math.floor(Math.random() * arr.length)]
+  }
+
+  function spin() {
+    if (spinning) return
+    setSpinning(true)
+    setReelSpinning({ meat: true, sauce: true, carb: true, veg: true })
+
+    for (const cat of SLOT_CATEGORIES) {
+      intervalsRef.current[cat] = setInterval(() => {
+        const item = randomItem(cat)
+        setDisplay((prev) => ({ ...prev, [cat]: item }))
+        setTickKey((prev) => ({ ...prev, [cat]: prev[cat] + 1 }))
+      }, 80)
+
+      const t = setTimeout(() => {
+        clearInterval(intervalsRef.current[cat])
+        const final = randomItem(cat)
+        setDisplay((prev) => ({ ...prev, [cat]: final }))
+        setTickKey((prev) => ({ ...prev, [cat]: prev[cat] + 1 }))
+        setReelSpinning((prev) => ({ ...prev, [cat]: false }))
+        if (cat === 'veg') setSpinning(false)
+      }, SLOT_STOP_DELAYS[cat])
+      timeoutsRef.current.push(t)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card meal-randomizer-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((v) => !v)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
+      </div>
+
+      {!isCollapsed && (
+        <>
+          <div className="meal-randomizer-reels">
+            {SLOT_CATEGORIES.map((cat) => (
+              <div key={cat} className="meal-randomizer-reel">
+                <span className="meal-randomizer-reel-label">{SLOT_LABELS[cat]}</span>
+                <div className={`meal-randomizer-window${reelSpinning[cat] ? ' spinning' : ''}`}>
+                  <div className="meal-randomizer-shine" />
+                  <span key={tickKey[cat]} className="meal-randomizer-item">
+                    {display[cat]}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="meal-randomizer-spin-btn"
+            disabled={spinning}
+            onClick={spin}
+          >
+            {spinning ? 'Spinning…' : 'Randomize'}
+          </button>
+        </>
+      )}
+    </article>
+  )
 }
 
 function MealPlanCard({
@@ -7110,6 +7320,123 @@ function CurrentStudyPlanCard({
   )
 }
 
+type HealthSource = 'garmin' | 'ringconn' | 'apple'
+
+const HEALTH_SOURCE_LABELS: Record<HealthSource, string> = {
+  garmin:   'Garmin',
+  ringconn: 'Ringconn',
+  apple:    'Apple Health',
+}
+
+const GARMIN_COLS:   (keyof GarminHealthRecord)[]   = ['date', 'activity_type', 'title', 'distance_km', 'duration_min', 'avg_hr', 'max_hr', 'calories', 'tss']
+const RINGCONN_COLS: (keyof RingconnHealthRecord)[] = ['date', 'sleep_score', 'sleep_duration_h', 'deep_sleep_h', 'rem_sleep_h', 'resting_hr', 'hrv', 'spo2', 'steps', 'calories']
+const APPLE_COLS:    (keyof AppleHealthRecord)[]    = ['date', 'steps', 'resting_hr', 'hrv_sdnn', 'active_calories', 'sleep_h', 'spo2_avg', 'weight_kg']
+
+function HealthDataCard({ title }: { title: string }) {
+  const [source, setSource] = useState<HealthSource>('garmin')
+
+  const [garminRows,   setGarminRows]   = useState<GarminHealthRecord[]>([])
+  const [ringconnRows, setRingconnRows] = useState<RingconnHealthRecord[]>([])
+  const [appleRows,    setAppleRows]    = useState<AppleHealthRecord[]>([])
+
+  const [garminLoading,   setGarminLoading]   = useState(true)
+  const [ringconnLoading, setRingconnLoading] = useState(true)
+  const [appleLoading,    setAppleLoading]    = useState(true)
+
+  const [garminError,   setGarminError]   = useState(false)
+  const [ringconnError, setRingconnError] = useState(false)
+  const [appleError,    setAppleError]    = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+    getGarminHealth()
+      .then((d) => { if (mounted) setGarminRows(d) })
+      .catch(() => { if (mounted) setGarminError(true) })
+      .finally(() => { if (mounted) setGarminLoading(false) })
+    return () => { mounted = false }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+    getRingconnHealth()
+      .then((d) => { if (mounted) setRingconnRows(d) })
+      .catch(() => { if (mounted) setRingconnError(true) })
+      .finally(() => { if (mounted) setRingconnLoading(false) })
+    return () => { mounted = false }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+    getAppleHealth()
+      .then((d) => { if (mounted) setAppleRows(d) })
+      .catch(() => { if (mounted) setAppleError(true) })
+      .finally(() => { if (mounted) setAppleLoading(false) })
+    return () => { mounted = false }
+  }, [])
+
+  const isLoading  = source === 'garmin' ? garminLoading  : source === 'ringconn' ? ringconnLoading  : appleLoading
+  const hasError   = source === 'garmin' ? garminError    : source === 'ringconn' ? ringconnError    : appleError
+  const allRows    = source === 'garmin' ? garminRows     : source === 'ringconn' ? ringconnRows     : appleRows
+  const cols       = source === 'garmin' ? GARMIN_COLS    : source === 'ringconn' ? RINGCONN_COLS    : APPLE_COLS
+  const recentRows = [...allRows].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10)
+  const lastSync   = allRows.length > 0 ? [...allRows].sort((a, b) => b.date.localeCompare(a.date))[0].date : null
+
+  return (
+    <article className="info-card section-page-card health-data-card">
+      <h3>{title}</h3>
+
+      <div className="experience-toggle" role="tablist" aria-label="Health data source">
+        {(Object.keys(HEALTH_SOURCE_LABELS) as HealthSource[]).map((s) => (
+          <button
+            key={s}
+            type="button"
+            role="tab"
+            aria-selected={source === s}
+            className={`experience-toggle-btn ${source === s ? 'active' : ''}`}
+            onClick={() => setSource(s)}
+          >
+            {HEALTH_SOURCE_LABELS[s]}
+          </button>
+        ))}
+      </div>
+
+      {isLoading ? (
+        <p className="sheets-meta">Loading {HEALTH_SOURCE_LABELS[source]} data…</p>
+      ) : hasError ? (
+        <p className="sheets-meta">Could not load {HEALTH_SOURCE_LABELS[source]} data. Check that the sheet tab exists and the API key is configured.</p>
+      ) : allRows.length === 0 ? (
+        <p className="sheets-meta">No {HEALTH_SOURCE_LABELS[source]} data found. Run the ingestion script and check the sheet tab name matches exactly.</p>
+      ) : (
+        <>
+          <p className="sheets-meta">
+            {allRows.length} records · last synced {lastSync}
+          </p>
+          <div className="health-data-table-scroll">
+            <table className="health-data-table">
+              <thead>
+                <tr>
+                  {cols.map((col) => (
+                    <th key={col}>{col.replace(/_/g, ' ')}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {recentRows.map((row, i) => (
+                  <tr key={i}>
+                    {cols.map((col) => (
+                      <td key={col}>{(row as Record<string, string>)[col] || '—'}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </article>
+  )
+}
+
 function DetailPage({
   path,
   profile = 'guest',
@@ -7159,12 +7486,20 @@ function DetailPage({
           return <PomodoroTimerCard key={card.title} title={card.title} body={card.body} />
         }
 
+        if (path === '/training/data' && card.title === 'Health Data') {
+          return <HealthDataCard key={card.title} title={card.title} />
+        }
+
         if (path === '/training/records' && card.title === 'Milestones') {
           return <MilestonesCard key={card.title} title={card.title} />
         }
 
         if (path === '/training/records' && card.title === 'Equipment') {
           return <EquipmentCard key={card.title} title={card.title} />
+        }
+
+        if (path === '/cooking/plan' && card.title === 'Meal Randomizer') {
+          return <MealRandomizerCard key={card.title} title={card.title} />
         }
 
         if (path === '/cooking/plan' && card.title === 'Meal Plan for the Week') {

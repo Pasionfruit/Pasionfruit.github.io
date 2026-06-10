@@ -68,6 +68,7 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
     cards: [
       { title: 'Receipt', body: 'Cost and nutrition for the week' },
       { title: 'Grocery list', body: 'Admin' },
+      { title: 'Meal Randomizer', body: '' },
       { title: 'Meal Plan for the Week', body: '' },
     ],
     note: 'This page should help decide what happens this week, not just look pretty.',

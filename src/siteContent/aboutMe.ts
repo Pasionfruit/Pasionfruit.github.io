@@ -18,7 +18,7 @@ export const aboutMeSectionPage: PageContent = {
   cards: [
     {
       title: 'Meet the Oreo Gang',
-      body: '(Mr) Midnight, (Madam) Pirouette, (Stinky) Inky',
+      body: '',
     },
     {
       title: 'Question of the Day',
