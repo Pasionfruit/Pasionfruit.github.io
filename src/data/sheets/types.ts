@@ -86,6 +86,13 @@ export type FinanceTransactionRecord = {
   card: string
 }
 
+export type PersonalTrainingRecord = {
+  type: 'milestone' | 'equipment' | string
+  category: string
+  name: string
+  value: string
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

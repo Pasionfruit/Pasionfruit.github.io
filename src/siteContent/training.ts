@@ -1,4 +1,4 @@
-import type { MilestoneEntry, NavSection, PageContent, SubpageContent } from './shared'
+import type { NavSection, PageContent, SubpageContent } from './shared'
 
 export const trainingNavSection: NavSection = {
   id: 'training',
@@ -33,13 +33,14 @@ export const trainingSectionPage: PageContent = {
   accent: '#2c9c8f',
   cards: [
     {
-      title: 'Training Log',
-      body: 'Filterable by season and year',
-    },
-    {
       title: 'Next Event Countdown',
       body: '',
     },
+    {
+      title: 'Training Log',
+      body: 'Filterable by season and year',
+    },
+
   ],
   callout: '',
 }
@@ -53,6 +54,7 @@ export const trainingDetailPages: Record<string, SubpageContent> = {
     cards: [
       { title: 'Consistency', body: 'Github chart of training over time' },
       { title: 'Milestones', body: 'Track the lifts or benchmarks that matter most over time.' },
+      { title: 'Equipment', body: 'Gear, shoes, and nutrition used in training.' },
       { title: 'Week Plans', body: 'Chart of Mon - Sun Morning and Evening sessions, completed?' },
       { title: 'Previous Events', body: 'Scrolling filterable list of previous Events' },
     ],
@@ -84,24 +86,3 @@ export const trainingDetailPages: Record<string, SubpageContent> = {
   //     note: 'This page is ideal for small notes that accumulate into a training philosophy.',
   //   },
 }
-
-export const milestoneEntries: MilestoneEntry[] = [
-  // Lifting
-  { name: 'Total Weight', value: '770 lbs', category: 'lifting' },
-  { name: 'Bench', value: '230 lbs', category: 'lifting' },
-  { name: 'Squat', value: '245 lbs', category: 'lifting' },
-  { name: 'Deadlift', value: '295 lbs', category: 'lifting' },
-  // Running
-  { name: '5K', value: '35:50', category: 'running' },
-  { name: '10K', value: 'TBD', category: 'running' },
-  { name: 'Half Marathon', value: 'TBD', category: 'running' },
-  { name: 'Full Marathon', value: 'TBD', category: 'running' },
-  // Ironman
-  { name: 'Sprint', value: 'TBD', category: 'ironman' },
-  { name: 'Olympic', value: 'TBD', category: 'ironman' },
-  { name: '70.3', value: 'TBD', category: 'ironman' },
-  { name: 'Full Ironman', value: 'TBD', category: 'ironman' },
-  // Etc
-  { name: 'Hyrox', value: 'TBD', category: 'etc' },
-  { name: 'Pole Vault', value: '14\'6"', category: 'etc' },
-]

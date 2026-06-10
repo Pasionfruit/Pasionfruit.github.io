@@ -9,13 +9,12 @@ import {
   professionalExperienceEntries,
 } from './siteContent/experiences'
 import { homeHighlights, navSections } from './siteContent/home'
-import { milestoneEntries, trainingDetailPages, trainingSectionPage } from './siteContent/training'
+import { trainingDetailPages, trainingSectionPage } from './siteContent/training'
 import type { PageContent, SectionId, SubpageContent } from './siteContent/shared'
 
 export type {
   ActuaryExamEntry,
   EducationEntry,
-  MilestoneEntry,
   NavSection,
   PageCard,
   PageContent,
@@ -28,7 +27,6 @@ export {
   actuaryExamEntries,
   educationEntries,
   homeHighlights,
-  milestoneEntries,
   navSections,
   professionalExperienceEntries,
 }

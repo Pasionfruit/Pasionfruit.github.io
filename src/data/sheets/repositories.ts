@@ -8,6 +8,7 @@ import type {
   FinanceTransactionRecord,
   GroceryListRecord,
   MealPlanRecord,
+  PersonalTrainingRecord,
   PollRecord,
   TrainingRecord,
 } from './types'
@@ -137,6 +138,19 @@ export async function getEvents(): Promise<EventRecord[]> {
       active: parseBoolean(row.active),
     }))
     .filter((row) => row.event_id && row.event_name)
+}
+
+export async function getPersonalTraining(): Promise<PersonalTrainingRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('personal_training')
+
+  return rows
+    .map((row) => ({
+      type: String(row.type ?? '').toLowerCase().trim(),
+      category: String(row.category ?? '').trim(),
+      name: String(row.name ?? '').trim(),
+      value: String(row.value ?? '').trim(),
+    }))
+    .filter((row) => row.type && row.name)
 }
 
 export async function getBackpackItems(): Promise<BackpackRecord[]> {

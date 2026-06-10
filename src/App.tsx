@@ -17,13 +17,11 @@ import {
   actuaryExamEntries,
   detailPages,
   educationEntries,
-  milestoneEntries,
   navSections,
   professionalExperienceEntries,
   sectionPages,
   type ActuaryExamEntry,
   type EducationEntry,
-  type MilestoneEntry,
   type ProfessionalExperienceEntry,
   type SectionId,
 } from './siteContent'
@@ -47,6 +45,7 @@ import {
   getGroceryList,
   getMealPlan,
   getPolls,
+  getPersonalTraining,
   getTrainingRecords,
   setActiveEvent,
   setBucketCompleted,
@@ -73,6 +72,7 @@ import type {
   FinanceTransactionRecord,
   GroceryListRecord,
   MealPlanRecord,
+  PersonalTrainingRecord,
   PollRecord,
   TrainingRecord,
 } from './data/sheets/types'
@@ -1035,7 +1035,7 @@ function HomeDailyFocusCard({ profile, googleIdToken }: { profile: UserProfile; 
           aria-expanded={!isCollapsed}
           onClick={() => setIsCollapsed((value) => !value)}
         >
-          {isCollapsed ? 'Show' : 'Hide'}
+          {isCollapsed ? '▸' : '▾'}
         </button>
       </div>
 
@@ -1641,7 +1641,7 @@ function TodoistTasksCard({
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
-          {canEditAny ? (
+          {canEditAny && view !== 'meals' ? (
             <button
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
@@ -1658,7 +1658,7 @@ function TodoistTasksCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -3154,7 +3154,7 @@ function CollapsibleTextCard({ title, body }: { title: string; body: string }) {
           aria-expanded={!isCollapsed}
           onClick={() => setIsCollapsed((value) => !value)}
         >
-          {isCollapsed ? 'Show' : 'Hide'}
+          {isCollapsed ? '▸' : '▾'}
         </button>
       </div>
 
@@ -3184,7 +3184,7 @@ function CollapsibleSectionCard({
           aria-expanded={!isCollapsed}
           onClick={() => setIsCollapsed((value) => !value)}
         >
-          {isCollapsed ? 'Show' : 'Hide'}
+          {isCollapsed ? '▸' : '▾'}
         </button>
       </div>
 
@@ -3420,7 +3420,7 @@ function PollCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -3726,7 +3726,7 @@ function BucketListCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -4185,7 +4185,7 @@ function CountriesCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -4459,7 +4459,7 @@ function BackpackCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -5120,7 +5120,7 @@ function GroceryListCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -5271,10 +5271,6 @@ function parseTrainingDate(value?: string) {
   return parsed
 }
 
-function getQuarterForDate(date: Date) {
-  return `Q${Math.floor(date.getMonth() / 3) + 1}` as 'Q1' | 'Q2' | 'Q3' | 'Q4'
-}
-
 function isRestDayWorkout(value?: string) {
   if (!value) {
     return false
@@ -5309,14 +5305,14 @@ function TrainingLogCard({
 }) {
   const currentDate = new Date()
   const currentYear = String(currentDate.getFullYear())
-  const currentSeason = getQuarterForDate(currentDate)
 
   const [rows, setRows] = useState<TrainingRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
-  const [seasonFilter, setSeasonFilter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4'>(currentSeason)
   const [yearFilter, setYearFilter] = useState(currentYear)
+  const [mobilePage, setMobilePage] = useState(() => Math.floor(currentDate.getMonth() / 3))
+  const [desktopPage, setDesktopPage] = useState(() => currentDate.getMonth() >= 6 ? 1 : 0)
 
   useEffect(() => {
     let isMounted = true
@@ -5383,10 +5379,6 @@ function TrainingLogCard({
           return false
         }
 
-        if (seasonFilter !== 'all' && getQuarterForDate(parsedDate) !== seasonFilter) {
-          return false
-        }
-
         return true
       })
       .sort((a, b) => {
@@ -5394,31 +5386,26 @@ function TrainingLogCard({
         const bDate = parseTrainingDate(b.date)?.getTime() ?? 0
         return aDate - bDate
       })
-  }, [rows, seasonFilter, yearFilter])
+  }, [rows, yearFilter])
+
+  const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   const monthGroups = useMemo(() => {
-    const groups = new Map<number, TrainingRecord[]>()
-
+    const grouped = new Map<number, TrainingRecord[]>()
     for (const row of filteredRows) {
       const parsedDate = parseTrainingDate(row.date)
-      if (!parsedDate) {
-        continue
-      }
-
-      const monthIndex = parsedDate.getMonth()
-      const current = groups.get(monthIndex) ?? []
-      current.push(row)
-      groups.set(monthIndex, current)
+      if (!parsedDate) continue
+      const m = parsedDate.getMonth()
+      const curr = grouped.get(m) ?? []
+      curr.push(row)
+      grouped.set(m, curr)
     }
-
-    return Array.from(groups.entries())
-      .sort(([a], [b]) => a - b)
-      .map(([monthIndex, monthRows]) => ({
-        monthIndex,
-        label: new Date(2026, monthIndex, 1).toLocaleDateString(undefined, { month: 'short' }),
-        rows: monthRows,
-      }))
-  }, [filteredRows])
+    return MONTH_LABELS.map((label, monthIndex) => {
+      // How many empty Mon-anchored cells precede day 1 (Mon=0 … Sun=6)
+      const firstDayOffset = (new Date(Number(yearFilter), monthIndex, 1).getDay() + 6) % 7
+      return { monthIndex, label, rows: grouped.get(monthIndex) ?? [], firstDayOffset }
+    })
+  }, [filteredRows, yearFilter])
 
   const todayDate = new Date()
   const todayKey = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`
@@ -5468,6 +5455,116 @@ function TrainingLogCard({
 
       {!isLoading ? (
         <>
+          <div className="training-log-main">
+            <div className="training-log-grid" aria-label="Training activity tiles by month">
+              <div className="training-log-desktop-page-nav">
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => setDesktopPage(0)}
+                  disabled={desktopPage === 0}
+                >
+                  ‹
+                </button>
+                <span className="sheets-meta">{desktopPage === 0 ? 'Jan – Jun' : 'Jul – Dec'}</span>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => setDesktopPage(1)}
+                  disabled={desktopPage === 1}
+                >
+                  ›
+                </button>
+              </div>
+
+              <div className="training-log-page-nav">
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => setMobilePage((p) => Math.max(0, p - 1))}
+                  disabled={mobilePage === 0}
+                >
+                  ‹
+                </button>
+                <span className="sheets-meta">{['Jan – Mar', 'Apr – Jun', 'Jul – Sep', 'Oct – Dec'][mobilePage]}</span>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => setMobilePage((p) => Math.min(3, p + 1))}
+                  disabled={mobilePage === 3}
+                >
+                  ›
+                </button>
+              </div>
+
+              <div className="training-log-tiles-row">
+                <div className="training-log-grid-panel">
+                  {monthGroups.map((group) => {
+                    const mobilePg = Math.floor(group.monthIndex / 3)
+                    const desktopPg = Math.floor(group.monthIndex / 6)
+                    return (
+                      <div
+                        key={group.monthIndex}
+                        className={[
+                          'training-log-month-col',
+                          mobilePg !== mobilePage ? 'training-log-month-col--hidden' : '',
+                          desktopPg !== desktopPage ? 'training-log-month-col--desktop-hidden' : '',
+                        ].filter(Boolean).join(' ')}
+                      >
+                        <div className="training-log-month-label" aria-label={`Month ${group.label}`}>{group.label}</div>
+                        <div
+                          className="training-log-row-tiles"
+                          role="list"
+                          aria-label={`${group.label} training activity`}
+                        >
+                          {group.rows.map((row) => {
+                            const tileLevel = getTrainingTileLevel(row)
+                            const label = `${formatSheetDate(row.date)} activity level ${tileLevel}`
+                            const parsedDate = parseTrainingDate(row.date)
+                            const gridColumn = parsedDate ? (parsedDate.getDay() + 6) % 7 + 1 : undefined
+                            const gridRow = parsedDate
+                              ? Math.floor((parsedDate.getDate() - 1 + group.firstDayOffset) / 7) + 1
+                              : undefined
+
+                            return (
+                              <div
+                                key={row.training_id}
+                                role="listitem"
+                                className={`training-log-tile level-${tileLevel}`}
+                                style={{ gridColumn, gridRow }}
+                                aria-label={label}
+                                title={label}
+                                data-training-id={row.training_id}
+                                data-level={String(tileLevel)}
+                              />
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div className="training-log-year-picker" role="listbox" aria-label="Select year">
+                  {selectableYears.map((year) => (
+                    <button
+                      key={year}
+                      type="button"
+                      role="option"
+                      aria-selected={yearFilter === String(year)}
+                      className={`training-log-year-btn${yearFilter === String(year) ? ' active' : ''}`}
+                      onClick={() => setYearFilter(String(year))}
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p className="sheets-meta">Light: one workout completed or rest day. Dark: both workouts completed.</p>
+            </div>
+          </div>
+
           <div className="training-log-today-panel">
             <p className="sheets-meta">Workout(s) of the Day</p>
             {todaysRecord ? (
@@ -5529,73 +5626,6 @@ function TrainingLogCard({
 
             {writeError ? <p className="sheets-error">{writeError}</p> : null}
           </div>
-
-          <div className="training-log-filters">
-            <label>
-              <span className="sheets-meta">Season</span>
-              <select
-                className="sheets-input"
-                value={seasonFilter}
-                onChange={(event) => setSeasonFilter(event.target.value as 'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4')}
-              >
-                <option value="all">All seasons</option>
-                <option value="Q1">Q1 (Jan-Mar)</option>
-                <option value="Q2">Q2 (Apr-Jun)</option>
-                <option value="Q3">Q3 (Jul-Sep)</option>
-                <option value="Q4">Q4 (Oct-Dec)</option>
-              </select>
-            </label>
-
-            <label>
-              <span className="sheets-meta">Year</span>
-              <select className="sheets-input" value={yearFilter} onChange={(event) => setYearFilter(event.target.value)}>
-                {selectableYears.map((year) => (
-                  <option key={year} value={String(year)}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          {filteredRows.length > 0 ? (
-            <>
-              <div className="training-log-grid" aria-label="Training activity tiles by month">
-                <div className="training-log-grid-panel">
-                  {monthGroups.map((group) => (
-                    <div key={group.monthIndex} className="training-log-row">
-                      <div className="training-log-month-label" aria-label={`Month ${group.label}`}>{group.label}</div>
-                      <div
-                        className="training-log-row-tiles"
-                        role="list"
-                        aria-label={`${group.label} training activity`}
-                      >
-                        {group.rows.map((row) => {
-                          const tileLevel = getTrainingTileLevel(row)
-                          const label = `${formatSheetDate(row.date)} activity level ${tileLevel}`
-
-                          return (
-                            <div
-                              key={row.training_id}
-                              role="listitem"
-                              className={`training-log-tile level-${tileLevel}`}
-                              aria-label={label}
-                              title={label}
-                              data-training-id={row.training_id}
-                              data-level={String(tileLevel)}
-                            />
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="sheets-meta">Light: one workout completed or rest day. Dark: both workouts completed.</p>
-            </>
-          ) : (
-            <p className="sheets-meta">No training records match this season/year filter.</p>
-          )}
         </>
       ) : null}
     </CollapsibleSectionCard>
@@ -5881,7 +5911,7 @@ function NextEventCountdownCard({
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? 'Show' : 'Hide'}
+            {isCollapsed ? '▸' : '▾'}
           </button>
         </div>
       </div>
@@ -6153,8 +6183,14 @@ function EducationCard({ title }: { title: string }) {
 }
 
 function EducationRow({ entry }: { entry: EducationEntry }) {
+  const isFSU = entry.institution.toLowerCase().includes('florida state')
   return (
     <li className="experience-item">
+      {isFSU && (
+        <span className="experience-icon education-fsu-badge" aria-label="Florida State University">
+          FSU
+        </span>
+      )}
       <div className="experience-body">
         <div className="experience-header">
           <p className="experience-role">{entry.institution}</p>
@@ -6407,77 +6443,199 @@ function ExperienceRow({
   )
 }
 
-function MilestonesCard({ title, canEdit }: { title: string; canEdit: boolean }) {
-  const [category, setCategory] = useState<'lifting' | 'running' | 'ironman' | 'etc'>('lifting')
+function MilestonesCard({ title }: { title: string }) {
+  const [records, setRecords] = useState<PersonalTrainingRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [category, setCategory] = useState<string>('all')
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
-  const visibleEntries = milestoneEntries.filter((entry) => entry.category === category)
+  useEffect(() => {
+    let isMounted = true
+    getPersonalTraining()
+      .then((data) => {
+        if (isMounted) setRecords(data.filter((r) => r.type === 'milestone'))
+      })
+      .catch(() => {
+        if (isMounted) setRecords([])
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+    return () => { isMounted = false }
+  }, [])
 
-  const categoryLabels: Record<'lifting' | 'running' | 'ironman' | 'etc', string> = {
-    lifting: 'Lifting',
-    running: 'Running',
-    ironman: 'Ironman',
-    etc: 'Etc',
-  }
+  const categories = useMemo(() => {
+    const seen = new Set<string>()
+    for (const r of records) {
+      if (r.category) seen.add(r.category)
+    }
+    return Array.from(seen)
+  }, [records])
+
+  const visible = useMemo(
+    () => (category === 'all' ? records : records.filter((r) => r.category === category)),
+    [records, category],
+  )
 
   return (
     <article className="info-card section-page-card milestones-card">
-      <h3>{title}</h3>
-
-      <div className="milestones-toggle" role="tablist" aria-label="Milestones category filter">
-        {Object.entries(categoryLabels).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            role="tab"
-            aria-selected={category === key}
-            className={`milestones-toggle-btn ${category === key ? 'active' : ''}`}
-            onClick={() => setCategory(key as typeof category)}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((c) => !c)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
       </div>
 
-      <ul className="milestones-list">
-        {visibleEntries.map((entry) => (
-          <MilestoneRow key={`${entry.name}-${entry.category}`} entry={entry} canEdit={canEdit} />
-        ))}
-      </ul>
+      {!isCollapsed && (
+        isLoading ? (
+          <p className="sheets-meta">Loading milestones...</p>
+        ) : records.length === 0 ? (
+          <p className="sheets-meta">No milestone data found.</p>
+        ) : (
+          <>
+            <div className="milestones-toggle" role="tablist" aria-label="Milestones category filter">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={category === 'all'}
+                className={`milestones-toggle-btn ${category === 'all' ? 'active' : ''}`}
+                onClick={() => setCategory('all')}
+              >
+                All
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  role="tab"
+                  aria-selected={category === cat}
+                  className={`milestones-toggle-btn ${category === cat ? 'active' : ''}`}
+                  onClick={() => setCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="milestones-list-scroll">
+              <ul className="milestones-list">
+                {visible.map((entry) => (
+                  <li key={`${entry.category}-${entry.name}`} className="milestone-item">
+                    <div className="milestone-content">
+                      <p className="milestone-name">{entry.name}</p>
+                      <p className="milestone-value">{entry.value || '—'}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )
+      )}
     </article>
   )
 }
 
-function MilestoneRow({
-  entry,
-  canEdit,
-}: {
-  entry: MilestoneEntry
-  canEdit: boolean
-}) {
+function EquipmentCard({ title }: { title: string }) {
+  const [records, setRecords] = useState<PersonalTrainingRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [category, setCategory] = useState<string>('all')
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  useEffect(() => {
+    let isMounted = true
+    getPersonalTraining()
+      .then((data) => {
+        if (isMounted) setRecords(data.filter((r) => r.type === 'equipment'))
+      })
+      .catch(() => {
+        if (isMounted) setRecords([])
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+    return () => { isMounted = false }
+  }, [])
+
+  const categories = useMemo(() => {
+    const seen = new Set<string>()
+    for (const r of records) {
+      if (r.category) seen.add(r.category)
+    }
+    return Array.from(seen).sort()
+  }, [records])
+
+  const visible = useMemo(
+    () => (category === 'all' ? records : records.filter((r) => r.category === category)),
+    [records, category],
+  )
+
   return (
-    <li className="milestone-item">
-      <div className="milestone-content">
-        <p className="milestone-name">{entry.name}</p>
-        {canEdit ? (
-          <input
-            type="text"
-            className="milestone-value-input"
-            value={entry.value}
-            placeholder="Enter value..."
-            onChange={(e) => {
-              const index = milestoneEntries.findIndex(
-                (m) => m.name === entry.name && m.category === entry.category,
-              )
-              if (index !== -1) {
-                milestoneEntries[index].value = e.target.value
-              }
-            }}
-          />
-        ) : (
-          <p className="milestone-value">{entry.value || '—'}</p>
-        )}
+    <article className="info-card section-page-card milestones-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((c) => !c)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
       </div>
-    </li>
+
+      {!isCollapsed && (
+        isLoading ? (
+          <p className="sheets-meta">Loading equipment...</p>
+        ) : records.length === 0 ? (
+          <p className="sheets-meta">No equipment data found.</p>
+        ) : (
+          <>
+            <div className="milestones-toggle" role="tablist" aria-label="Equipment category filter">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={category === 'all'}
+                className={`milestones-toggle-btn ${category === 'all' ? 'active' : ''}`}
+                onClick={() => setCategory('all')}
+              >
+                All
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  role="tab"
+                  aria-selected={category === cat}
+                  className={`milestones-toggle-btn ${category === cat ? 'active' : ''}`}
+                  onClick={() => setCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="milestones-list-scroll">
+              <ul className="milestones-list">
+                {visible.map((item) => (
+                  <li key={`${item.category}-${item.name}`} className="milestone-item">
+                    <div className="milestone-content">
+                      <p className="milestone-name">{item.name}</p>
+                      <p className="milestone-value">{item.value || '—'}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )
+      )}
+    </article>
   )
 }
 
@@ -7002,7 +7160,11 @@ function DetailPage({
         }
 
         if (path === '/training/records' && card.title === 'Milestones') {
-          return <MilestonesCard key={card.title} title={card.title} canEdit={false} />
+          return <MilestonesCard key={card.title} title={card.title} />
+        }
+
+        if (path === '/training/records' && card.title === 'Equipment') {
+          return <EquipmentCard key={card.title} title={card.title} />
         }
 
         if (path === '/cooking/plan' && card.title === 'Meal Plan for the Week') {

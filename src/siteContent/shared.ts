@@ -53,9 +53,3 @@ export type EducationEntry = {
   gpa?: string
   coursework?: string
 }
-
-export type MilestoneEntry = {
-  name: string
-  value: string
-  category: 'lifting' | 'running' | 'ironman' | 'etc'
-}
