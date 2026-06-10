@@ -50,6 +50,8 @@ export type EducationEntry = {
   degree: string
   institution: string
   date: string
+  gpa?: string
+  coursework?: string
 }
 
 export type MilestoneEntry = {

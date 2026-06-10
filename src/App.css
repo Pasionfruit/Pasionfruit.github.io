@@ -1074,25 +1074,81 @@
 .experience-item {
   border-top: 1px solid var(--border);
   padding-top: 0.55rem;
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.experience-icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  display: flex;
+}
+
+.experience-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.experience-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .experience-role {
   margin: 0;
   color: var(--text-strong);
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .experience-date {
-  margin: 0.2rem 0 0;
+  margin: 0;
   color: var(--text-muted);
   font-size: 0.82rem;
   font-style: italic;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-align: right;
 }
 
 .experience-note {
-  margin: 0.28rem 0 0;
+  margin: 0.75rem 0 0;
   color: var(--text-muted);
   font-size: 0.82rem;
+}
+
+.experience-sub {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.education-degree {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.education-gpa {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .experience-header {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .experience-date {
+    text-align: left;
+    white-space: normal;
+  }
 }
 
 .technical-skills-list {
@@ -1602,8 +1658,10 @@
   flex-direction: column;
   border: 1px solid var(--border);
   border-radius: 0.75rem;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: var(--surface);
+  max-height: calc(5 * 2.85rem);
 }
 
 .todoist-task-row {
@@ -1650,10 +1708,18 @@
   opacity: 0;
   transition: opacity 0.1s;
   user-select: none;
+  touch-action: none;
+  cursor: grab;
 }
 
 .todoist-task-row:hover .todoist-drag-handle {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .todoist-drag-handle {
+    opacity: 0.4;
+  }
 }
 
 .todoist-complete-btn {

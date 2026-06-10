@@ -1226,6 +1226,29 @@ function getTodayDateInputValue() {
   return `${year}-${month}-${day}`
 }
 
+const TASK_ORDER_KEY = 'todoist-task-order'
+
+function getSavedTaskOrder(): string[] {
+  try {
+    const raw = window.localStorage.getItem(TASK_ORDER_KEY)
+    return raw ? (JSON.parse(raw) as string[]) : []
+  } catch {
+    return []
+  }
+}
+
+function saveTaskOrder(ids: string[]) {
+  window.localStorage.setItem(TASK_ORDER_KEY, JSON.stringify(ids))
+}
+
+function applyTaskOrder(tasks: TodoistTask[], savedIds: string[]): TodoistTask[] {
+  if (!savedIds.length) return tasks
+  const byId = new Map(tasks.map((t) => [t.id, t]))
+  const ordered = savedIds.flatMap((id) => { const t = byId.get(id); return t ? [t] : [] })
+  const seen = new Set(savedIds)
+  return [...ordered, ...tasks.filter((t) => !seen.has(t.id))]
+}
+
 function TodoistTasksCard({
   title,
   profile,
@@ -1258,8 +1281,28 @@ function TodoistTasksCard({
   const [newCustomGroceryItem, setNewCustomGroceryItem] = useState('')
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const [dropInsertIndex, setDropInsertIndex] = useState<number | null>(null)
+  const draggingIndexRef = useRef<number | null>(null)
+  const touchDropInsertRef = useRef<number | null>(null)
+  const draggingElRef = useRef<HTMLDivElement | null>(null)
+  const taskListRef = useRef<HTMLDivElement>(null)
+
+  function performDrop(from: number, to: number) {
+    setRows((prev) => {
+      const next = [...prev]
+      const [moved] = next.splice(from, 1)
+      next.splice(to > from ? to - 1 : to, 0, moved)
+      saveTaskOrder(next.map((t) => t.id))
+      return next
+    })
+    draggingIndexRef.current = null
+    touchDropInsertRef.current = null
+    draggingElRef.current = null
+    setDraggingIndex(null)
+    setDropInsertIndex(null)
+  }
 
   function handleTaskDragStart(index: number) {
+    draggingIndexRef.current = index
     setDraggingIndex(index)
   }
 
@@ -1271,27 +1314,76 @@ function TodoistTasksCard({
   }
 
   function handleTaskDrop() {
-    setRows((prev) => {
-      if (draggingIndex === null || dropInsertIndex === null) return prev
-      const next = [...prev]
-      const [moved] = next.splice(draggingIndex, 1)
-      const adjusted = dropInsertIndex > draggingIndex ? dropInsertIndex - 1 : dropInsertIndex
-      next.splice(adjusted, 0, moved)
-      return next
-    })
+    if (draggingIndex !== null && dropInsertIndex !== null) {
+      performDrop(draggingIndex, dropInsertIndex)
+    } else {
+      setDraggingIndex(null)
+      setDropInsertIndex(null)
+    }
+  }
+
+  function handleTouchDrop() {
+    const from = draggingIndexRef.current
+    const to = touchDropInsertRef.current
+    if (from !== null && to !== null) {
+      performDrop(from, to)
+    } else {
+      draggingIndexRef.current = null
+      touchDropInsertRef.current = null
+      draggingElRef.current = null
+      setDraggingIndex(null)
+      setDropInsertIndex(null)
+    }
+  }
+
+  function handleTaskDragEnd() {
+    draggingIndexRef.current = null
+    touchDropInsertRef.current = null
+    draggingElRef.current = null
     setDraggingIndex(null)
     setDropInsertIndex(null)
   }
 
-  function handleTaskDragEnd() {
-    setDraggingIndex(null)
-    setDropInsertIndex(null)
-  }
+  useEffect(() => {
+    const container = taskListRef.current
+    if (!container) return
+    const onTouchMove = (e: TouchEvent) => {
+      if (draggingIndexRef.current === null) return
+      e.preventDefault()
+      const touch = e.touches[0]
+      const el = draggingElRef.current
+      if (el) el.style.pointerEvents = 'none'
+      const target = document.elementFromPoint(touch.clientX, touch.clientY)
+      if (el) el.style.pointerEvents = ''
+      if (!target) return
+      const taskRow = target.closest('[data-task-index]') as HTMLElement | null
+      if (taskRow) {
+        const idx = parseInt(taskRow.dataset.taskIndex ?? '-1', 10)
+        if (idx !== -1) {
+          const rect = taskRow.getBoundingClientRect()
+          const ins = touch.clientY > rect.top + rect.height / 2 ? idx + 1 : idx
+          touchDropInsertRef.current = ins
+          setDropInsertIndex(ins)
+        }
+      } else {
+        const allRows = container.querySelectorAll('[data-task-index]')
+        if (allRows.length > 0) {
+          const lastRect = (allRows[allRows.length - 1] as HTMLElement).getBoundingClientRect()
+          if (touch.clientY > lastRect.bottom) {
+            touchDropInsertRef.current = allRows.length
+            setDropInsertIndex(allRows.length)
+          }
+        }
+      }
+    }
+    container.addEventListener('touchmove', onTouchMove, { passive: false })
+    return () => container.removeEventListener('touchmove', onTouchMove)
+  }, [])
 
   async function loadTasks() {
     try {
       const data = await getTasksOfTheDay()
-      setRows(data)
+      setRows(applyTaskOrder(data, getSavedTaskOrder()))
       setWriteError('')
     } catch (error) {
       setRows([])
@@ -1630,7 +1722,7 @@ function TodoistTasksCard({
           ) : null}
 
           {view === 'todoist' && todoistConfigured && rows.length > 0 ? (
-            <div className="todoist-task-list">
+            <div className="todoist-task-list" ref={taskListRef}>
               {rows.map((row, index) => (
                 <React.Fragment key={`summary-${row.id}`}>
                   {draggingIndex !== null && dropInsertIndex === index && draggingIndex !== index && draggingIndex !== index - 1 ? (
@@ -1642,13 +1734,25 @@ function TodoistTasksCard({
                       row.is_completed ? 'is-completed' : '',
                       draggingIndex === index ? 'is-dragging' : '',
                     ].filter(Boolean).join(' ')}
+                    data-task-index={index}
                     draggable
                     onDragStart={() => handleTaskDragStart(index)}
                     onDragOver={(e) => handleTaskDragOver(e, index)}
                     onDrop={handleTaskDrop}
                     onDragEnd={handleTaskDragEnd}
                   >
-                    <span className="todoist-drag-handle" aria-hidden="true">⠿</span>
+                    <span
+                      className="todoist-drag-handle"
+                      aria-hidden="true"
+                      onTouchStart={(e) => {
+                        const row = (e.currentTarget as HTMLElement).closest('.todoist-task-row') as HTMLDivElement | null
+                        draggingElRef.current = row
+                        draggingIndexRef.current = index
+                        setDraggingIndex(index)
+                      }}
+                      onTouchEnd={handleTouchDrop}
+                      onTouchCancel={handleTaskDragEnd}
+                    >⠿</span>
                     <button
                       type="button"
                       className="todoist-complete-btn"
@@ -6025,8 +6129,10 @@ function ActuaryExamsCard({ title }: { title: string }) {
 function ActuaryExamRow({ entry }: { entry: ActuaryExamEntry }) {
   return (
     <li className="experience-item">
-      <p className="experience-role">{entry.exam} - {entry.topic}</p>
-      <p className="experience-date">{entry.status}</p>
+      <div className="experience-header">
+        <p className="experience-role">{entry.exam} — {entry.topic}</p>
+        <p className="experience-date">{entry.status}</p>
+      </div>
     </li>
   )
 }
@@ -6049,8 +6155,17 @@ function EducationCard({ title }: { title: string }) {
 function EducationRow({ entry }: { entry: EducationEntry }) {
   return (
     <li className="experience-item">
-      <p className="experience-role">{entry.degree} - {entry.institution}</p>
-      <p className="experience-date">{entry.date}</p>
+      <div className="experience-body">
+        <div className="experience-header">
+          <p className="experience-role">{entry.institution}</p>
+          <p className="experience-date">{entry.date}</p>
+        </div>
+        <p className="experience-sub education-degree">
+          {entry.degree}
+          {entry.gpa ? <span className="education-gpa">GPA: {entry.gpa}</span> : null}
+        </p>
+        {entry.coursework ? <p className="experience-note">Relevant Coursework: {entry.coursework}</p> : null}
+      </div>
     </li>
   )
 }
@@ -6178,6 +6293,92 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
   )
 }
 
+function getExperienceIcon(position: string): { paths: React.ReactNode; color: string } {
+  const p = position.toLowerCase()
+
+  if (p.includes('data') || p.includes('analyst') || p.includes('bi')) {
+    return {
+      color: '#4f46e5',
+      paths: (
+        <>
+          <rect x="3" y="12" width="4" height="9" rx="1" />
+          <rect x="10" y="7" width="4" height="14" rx="1" />
+          <rect x="17" y="3" width="4" height="18" rx="1" />
+        </>
+      ),
+    }
+  }
+
+  if (p.includes('developer') || p.includes('software') || p.includes('engineer')) {
+    return {
+      color: '#7c3aed',
+      paths: (
+        <>
+          <polyline points="16 18 22 12 16 6" />
+          <polyline points="8 6 2 12 8 18" />
+        </>
+      ),
+    }
+  }
+
+  if (p.includes('security') || p.includes('cyber')) {
+    return {
+      color: '#ea580c',
+      paths: <path d="M12 2l8 4v6c0 5-4 9-8 10C8 21 4 17 4 12V6z" />,
+    }
+  }
+
+  if (p.includes('information technology') || p.includes('support') || p.includes(' it ')) {
+    return {
+      color: '#0891b2',
+      paths: (
+        <>
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </>
+      ),
+    }
+  }
+
+  if (p.includes('tutor') || p.includes('teacher') || p.includes('instructor') || p.includes('math')) {
+    return {
+      color: '#16a34a',
+      paths: (
+        <>
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </>
+      ),
+    }
+  }
+
+  if (p.includes('lifeguard') || p.includes('guard') || p.includes('rescue')) {
+    return {
+      color: '#0284c7',
+      paths: (
+        <>
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="12" cy="12" r="4" />
+          <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+          <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+          <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
+          <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
+        </>
+      ),
+    }
+  }
+
+  return {
+    color: '#6b7280',
+    paths: (
+      <>
+        <rect x="2" y="7" width="20" height="14" rx="2" />
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+      </>
+    ),
+  }
+}
+
 function ExperienceRow({
   entry,
   showDuration,
@@ -6186,12 +6387,22 @@ function ExperienceRow({
   showDuration: boolean
 }) {
   const dateLabel = `${entry.date}${showDuration ? formatDuration(entry.date) : ''}`
+  const icon = getExperienceIcon(entry.position)
 
   return (
     <li className="experience-item">
-      <p className="experience-role">{entry.position} - {entry.company}</p>
-      <p className="experience-date">{dateLabel}</p>
-      {entry.note ? <p className="experience-note">{entry.note}</p> : null}
+      <span className="experience-icon" style={{ color: icon.color }} aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          {icon.paths}
+        </svg>
+      </span>
+      <div className="experience-body">
+        <div className="experience-header">
+          <p className="experience-role">{entry.position} - {entry.company}</p>
+          <p className="experience-date">{dateLabel}</p>
+        </div>
+        {entry.note ? <p className="experience-note">{entry.note}</p> : null}
+      </div>
     </li>
   )
 }
