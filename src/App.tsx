@@ -1291,6 +1291,9 @@ function TodoistTasksCard({
   const touchDropInsertRef = useRef<number | null>(null)
   const draggingElRef = useRef<HTMLDivElement | null>(null)
   const taskListRef = useRef<HTMLDivElement>(null)
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null)
+  const [longPressingIndex, setLongPressingIndex] = useState<number | null>(null)
 
   function performDrop(from: number, to: number) {
     setRows((prev) => {
@@ -1739,6 +1742,7 @@ function TodoistTasksCard({
                       'todoist-task-row',
                       row.is_completed ? 'is-completed' : '',
                       draggingIndex === index ? 'is-dragging' : '',
+                      longPressingIndex === index ? 'is-long-pressing' : '',
                     ].filter(Boolean).join(' ')}
                     data-task-index={index}
                     data-priority={normalizePriority(row.priority)}
@@ -1747,19 +1751,53 @@ function TodoistTasksCard({
                     onDragOver={(e) => handleTaskDragOver(e, index)}
                     onDrop={handleTaskDrop}
                     onDragEnd={handleTaskDragEnd}
-                  >
-                    <span
-                      className="todoist-drag-handle"
-                      aria-hidden="true"
-                      onTouchStart={(e) => {
-                        const row = (e.currentTarget as HTMLElement).closest('.todoist-task-row') as HTMLDivElement | null
-                        draggingElRef.current = row
+                    onContextMenu={(e) => e.preventDefault()}
+                    onTouchStart={(e) => {
+                      const touch = e.touches[0]
+                      touchStartPosRef.current = { x: touch.clientX, y: touch.clientY }
+                      const rowEl = e.currentTarget as HTMLDivElement
+                      setLongPressingIndex(index)
+                      longPressTimerRef.current = setTimeout(() => {
+                        longPressTimerRef.current = null
+                        setLongPressingIndex(null)
+                        draggingElRef.current = rowEl
                         draggingIndexRef.current = index
                         setDraggingIndex(index)
-                      }}
-                      onTouchEnd={handleTouchDrop}
-                      onTouchCancel={handleTaskDragEnd}
-                    >⠿</span>
+                        if (typeof navigator.vibrate === 'function') navigator.vibrate(30)
+                      }, 450)
+                    }}
+                    onTouchMove={(e) => {
+                      if (longPressTimerRef.current !== null && touchStartPosRef.current) {
+                        const touch = e.touches[0]
+                        const dx = Math.abs(touch.clientX - touchStartPosRef.current.x)
+                        const dy = Math.abs(touch.clientY - touchStartPosRef.current.y)
+                        if (dx > 8 || dy > 8) {
+                          clearTimeout(longPressTimerRef.current)
+                          longPressTimerRef.current = null
+                          setLongPressingIndex(null)
+                        }
+                      }
+                    }}
+                    onTouchEnd={() => {
+                      if (longPressTimerRef.current !== null) {
+                        clearTimeout(longPressTimerRef.current)
+                        longPressTimerRef.current = null
+                        setLongPressingIndex(null)
+                      }
+                      if (draggingIndexRef.current !== null) {
+                        handleTouchDrop()
+                      }
+                    }}
+                    onTouchCancel={() => {
+                      if (longPressTimerRef.current !== null) {
+                        clearTimeout(longPressTimerRef.current)
+                        longPressTimerRef.current = null
+                        setLongPressingIndex(null)
+                      }
+                      handleTaskDragEnd()
+                    }}
+                  >
+                    <span className="todoist-drag-handle" aria-hidden="true">⠿</span>
                     <div className="todoist-task-content">
                       <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
                       {row.description ? <p className="sheets-meta">{row.description}</p> : null}

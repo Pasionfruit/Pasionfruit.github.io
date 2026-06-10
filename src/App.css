@@ -1784,6 +1784,13 @@
   cursor: grabbing;
 }
 
+.todoist-task-row.is-long-pressing {
+  transform: scale(1.02);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  cursor: grabbing;
+}
+
 .todoist-drop-indicator {
   height: 2px;
   background: var(--accent, #7a62ff);
