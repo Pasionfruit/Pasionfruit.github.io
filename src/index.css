@@ -3,23 +3,23 @@
   line-height: 1.5;
   font-weight: 400;
   color: #342f28;
-  background: #eee7dc;
+  background: #e6e3d5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --surface: #fbf7f0;
-  --surface-muted: #eee7dc;
-  --border: #d9cfc1;
-  --border-strong: #c8bbab;
+  --surface: #f5f3eb;
+  --surface-muted: #e6e3d5;
+  --border: #d3cdc3;
+  --border-strong: #c0bab0;
   --text-strong: #2f2a24;
   --text-muted: #6d6458;
   --text-accent: #2f2a24;
   --accent: #3c342c;
   --shadow: 0 1px 2px rgba(60, 52, 44, 0.06);
   --backdrop: rgba(49, 43, 36, 0.22);
-  --header-bg: rgba(238, 231, 220, 0.92);
+  --header-bg: rgba(230, 227, 213, 0.92);
 }
 
 :root[data-theme='dark'] {
