@@ -61,6 +61,7 @@ export type BackpackRecord = {
   type: string
   item: string
   quantity: string
+  packed: boolean
 }
 
 export type MealPlanRecord = {

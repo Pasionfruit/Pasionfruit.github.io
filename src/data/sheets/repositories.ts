@@ -222,8 +222,28 @@ export async function getBackpackItems(): Promise<BackpackRecord[]> {
       type: String(row.type ?? ''),
       item: String(row.item ?? ''),
       quantity: String(row.quantity ?? ''),
+      packed: parseBoolean(row.packed),
     }))
     .filter((row) => row.item)
+}
+
+export async function setBackpackPacked(
+  idToken: string,
+  payload: {
+    storage: string
+    type: string
+    item: string
+    packed: boolean
+  },
+) {
+  await runWrite({
+    action: 'setBackpackPacked',
+    idToken,
+    storage: payload.storage,
+    type: payload.type,
+    item: payload.item,
+    packed: payload.packed,
+  })
 }
 
 export async function getMealPlan(): Promise<MealPlanRecord[]> {

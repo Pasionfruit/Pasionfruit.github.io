@@ -13,14 +13,20 @@ function doPost(e) {
       return jsonResponse_({ ok: true })
     }
 
+    if (action === 'pollVote') {
+      var guestAuth = requireAnyGoogleUser_(payload)
+      if (!guestAuth.ok) {
+        return jsonResponse_({ ok: false, error: guestAuth.error })
+      }
+      return jsonResponse_(pollVote_(payload))
+    }
+
     var auth = requireAuthorizedUser_(payload)
     if (!auth.ok) {
       return jsonResponse_({ ok: false, error: auth.error })
     }
 
     switch (action) {
-      case 'pollVote':
-        return jsonResponse_(pollVote_(payload))
 
       case 'setBucketCompleted':
         return jsonResponse_(setBucketCompleted_(payload))
@@ -63,6 +69,9 @@ function doPost(e) {
 
       case 'updateBackpackItem':
         return jsonResponse_(updateBackpackItem_(payload))
+
+      case 'setBackpackPacked':
+        return jsonResponse_(setBackpackPacked_(payload))
 
       case 'updateMealPlan':
         return jsonResponse_(updateMealPlan_(payload))
@@ -124,6 +133,27 @@ function requireAuthorizedUser_(payload) {
 
   if (!isAllowedEmail_(email)) {
     return { ok: false, error: 'Unauthorized account' }
+  }
+
+  return { ok: true, email: email }
+}
+
+function requireAnyGoogleUser_(payload) {
+  var idToken = String(payload.idToken || '')
+  if (!idToken) {
+    return { ok: false, error: 'Invalid token' }
+  }
+
+  var tokenInfoUrl = 'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken)
+  var response = UrlFetchApp.fetch(tokenInfoUrl, { muteHttpExceptions: true })
+  if (response.getResponseCode() !== 200) {
+    return { ok: false, error: 'Invalid token' }
+  }
+
+  var tokenInfo = JSON.parse(response.getContentText())
+  var email = String(tokenInfo.email || '').toLowerCase().trim()
+  if (!email) {
+    return { ok: false, error: 'Invalid token' }
   }
 
   return { ok: true, email: email }
@@ -525,6 +555,44 @@ function updateBackpackItem_(payload) {
   sheet.getRange(row, typeCol).setValue(type)
   sheet.getRange(row, quantityCol).setValue(quantity)
 
+  return { ok: true }
+}
+
+function setBackpackPacked_(payload) {
+  var storage = String(payload.storage || '').trim()
+  var type = String(payload.type || '').trim()
+  var item = String(payload.item || '').trim()
+
+  if (!item) return { ok: false, error: 'item is required' }
+
+  var packed = toBoolean_(payload.packed)
+  var sheet = getSheet_('traveling')
+  var h = headerMap_(sheet)
+  var storageCol = requireHeader_(h, 'storage')
+  var typeCol = requireHeader_(h, 'type')
+  var itemCol = requireHeader_(h, 'item')
+  var packedCol = requireHeader_(h, 'packed')
+  var lastRow = sheet.getLastRow()
+
+  if (lastRow < 2) return { ok: false, error: 'Backpack item not found' }
+
+  var values = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues()
+  var row = -1
+
+  for (var i = 0; i < values.length; i += 1) {
+    var currentStorage = String(values[i][storageCol - 1] || '').trim()
+    var currentType = String(values[i][typeCol - 1] || '').trim()
+    var currentItem = String(values[i][itemCol - 1] || '').trim()
+
+    if (currentItem === item && currentStorage === storage && currentType === type) {
+      row = i + 2
+      break
+    }
+  }
+
+  if (row < 0) return { ok: false, error: 'Backpack item not found' }
+
+  sheet.getRange(row, packedCol).setValue(packed)
   return { ok: true }
 }
 

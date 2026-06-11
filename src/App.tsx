@@ -59,6 +59,7 @@ import {
   updateCountry,
   updateEvent,
   updateBackpackItem,
+  setBackpackPacked,
   updateGroceryListItem,
   updateMealPlan,
   votePoll,
@@ -3118,9 +3119,25 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
 const OREO_GANG_MEMBERS = ['Midnight', 'Pirouette', 'Inky'] as const
 type OreoMember = typeof OREO_GANG_MEMBERS[number]
 
+const OREO_GANG_DATA: Record<OreoMember, { image: string; description: string }> = {
+  Midnight: {
+    image: '/cats/midnight.jpg',
+    description: '"mi-naɪt", mr. man \nclingy, likes to snuggle and play, will turn off computers and open doors for attention',
+  },
+  Pirouette: {
+    image: '/cats/pirouette.jpg',
+    description: '"pɪruˈɛ", chonk \nLoves to eat and receive ear rubs, very vocal in the kitchen',
+  },
+  Inky: {
+    image: '/cats/inky.jpg',
+    description: '"ɪŋki", stinky, crackhead \nShy but loves her laser pointer and feathers',
+  },
+}
+
 function OreoGangCard({ title }: { title: string }) {
   const [active, setActive] = useState<OreoMember>(OREO_GANG_MEMBERS[0])
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const { image, description } = OREO_GANG_DATA[active]
 
   return (
     <article className="info-card section-page-card">
@@ -3154,15 +3171,13 @@ function OreoGangCard({ title }: { title: string }) {
           </div>
 
           <div className="oreo-gang-member">
-            <div className="oreo-gang-photo" aria-label={`Photo placeholder for ${active}`}>
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <circle cx="12" cy="12" r="3.5" />
-                <path d="M16.5 5.5l1.5-1.5" />
-              </svg>
-              <span>Add photo</span>
-            </div>
-            <p className="oreo-gang-description">Description for {active} goes here.</p>
+            <img
+              key={active}
+              src={image}
+              alt={active}
+              className="oreo-gang-photo oreo-gang-photo--loaded"
+            />
+            <p className="oreo-gang-description">{description}</p>
           </div>
         </>
       )}
@@ -4432,6 +4447,30 @@ function BackpackCard({
     setEditedRows(next)
   }
 
+  async function handleTogglePacked(row: BackpackRecord) {
+    if (!canWrite || !idToken || isWriting) return
+    const nextPacked = !row.packed
+    setRows((prev) =>
+      prev.map((r) =>
+        r.item === row.item && r.storage === row.storage && r.type === row.type
+          ? { ...r, packed: nextPacked }
+          : r,
+      ),
+    )
+    try {
+      await setBackpackPacked(idToken, { storage: row.storage, type: row.type, item: row.item, packed: nextPacked })
+    } catch (error) {
+      setRows((prev) =>
+        prev.map((r) =>
+          r.item === row.item && r.storage === row.storage && r.type === row.type
+            ? { ...r, packed: row.packed }
+            : r,
+        ),
+      )
+      setWriteError(error instanceof Error ? error.message : 'Unable to update packed status')
+    }
+  }
+
   async function handleSaveAll() {
     if (!idToken || isWriting || !canWrite) return
     setIsWriting(true)
@@ -4554,6 +4593,7 @@ function BackpackCard({
                   <th>Type</th>
                   <th>Item</th>
                   <th>Quantity</th>
+                  <th>Packed</th>
                 </tr>
               </thead>
               <tbody>
@@ -4646,6 +4686,15 @@ function BackpackCard({
                       ) : (
                         row.quantity
                       )}
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={row.packed}
+                        onChange={() => void handleTogglePacked(row)}
+                        disabled={!canWrite || !idToken || isWriting}
+                        aria-label={`${row.item} packed`}
+                      />
                     </td>
                   </tr>
                 ))}
