@@ -73,10 +73,8 @@ import {
   updateRecipe,
   deleteRecipe,
   createRecipeComponent,
-  updateRecipeComponent,
   deleteRecipeComponent,
   createRecipeStep,
-  updateRecipeStep,
   deleteRecipeStep,
 } from './data/sheets/repositories'
 import type {
