@@ -1,4 +1,5 @@
 import React, { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { BookOpen, Dumbbell, ShoppingCart, SquareCheck, Utensils } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
@@ -1496,49 +1497,54 @@ function TodoistTasksCard({
                 <button
                   type="button"
                   role="tab"
+                  aria-label="Grocery List"
                   aria-selected={view === 'grocery'}
                   className={`experience-toggle-btn ${view === 'grocery' ? 'active' : ''}`}
                   onClick={() => setView('grocery')}
                 >
-                  Grocery List
+                  <ShoppingCart size={18} />
                 </button>
                 <button
                   type="button"
                   role="tab"
+                  aria-label="Meals"
                   aria-selected={view === 'meals'}
                   className={`experience-toggle-btn ${view === 'meals' ? 'active' : ''}`}
                   onClick={() => setView('meals')}
                 >
-                  Meals
+                  <Utensils size={18} />
                 </button>
                 <button
                   type="button"
                   role="tab"
+                  aria-label="Todoist"
                   aria-selected={view === 'todoist'}
                   className={`experience-toggle-btn ${view === 'todoist' ? 'active' : ''}`}
                   onClick={() => setView('todoist')}
                 >
-                  Todoist
+                  <SquareCheck size={18} />
                 </button>
               </>
             ) : null}
             <button
               type="button"
               role="tab"
+              aria-label="Studying"
               aria-selected={view === 'studying'}
               className={`experience-toggle-btn ${view === 'studying' ? 'active' : ''}`}
               onClick={() => setView('studying')}
             >
-              Studying
+              <BookOpen size={18} />
             </button>
             <button
               type="button"
               role="tab"
+              aria-label="Training"
               aria-selected={view === 'training'}
               className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
               onClick={() => setView('training')}
             >
-              Training
+              <Dumbbell size={18} />
             </button>
           </div>
 
