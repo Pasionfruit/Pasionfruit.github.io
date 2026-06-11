@@ -127,6 +127,15 @@ function doPost(e) {
       case 'deleteRecipeStep':
         return jsonResponse_(deleteRecipeStep_(payload))
 
+      case 'createTrip':
+        return jsonResponse_(createTrip_(payload))
+
+      case 'updateTrip':
+        return jsonResponse_(updateTrip_(payload))
+
+      case 'deleteTrip':
+        return jsonResponse_(deleteTrip_(payload))
+
       default:
         return jsonResponse_({ ok: false, error: 'Unknown action: ' + action })
     }
@@ -1071,6 +1080,52 @@ function deleteRecipeStep_(payload) {
   var h = headerMap_(sheet)
   var row = findRowById_(sheet, requireHeader_(h, 'step_id'), stepId)
   if (row < 0) return { ok: false, error: 'Step not found' }
+
+  sheet.deleteRow(row)
+  return { ok: true }
+}
+
+function createTrip_(payload) {
+  var name = String(payload.name || '').trim()
+  if (!name) return { ok: false, error: 'name is required' }
+
+  var sheet = getSheet_('trips')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    name: name,
+    date: String(payload.date || '').trim(),
+    budget: Number(payload.budget) || 0,
+    saved: 0,
+  })
+
+  return { ok: true }
+}
+
+function updateTrip_(payload) {
+  var name = String(payload.name || '').trim()
+  if (!name) return { ok: false, error: 'name is required' }
+
+  var sheet = getSheet_('trips')
+  var h = headerMap_(sheet)
+  var nameCol = requireHeader_(h, 'name')
+  var row = findRowById_(sheet, nameCol, name)
+  if (row < 0) return { ok: false, error: 'Trip not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'saved')).setValue(Number(payload.saved) || 0)
+
+  return { ok: true }
+}
+
+function deleteTrip_(payload) {
+  var name = String(payload.name || '').trim()
+  if (!name) return { ok: false, error: 'name is required' }
+
+  var sheet = getSheet_('trips')
+  var h = headerMap_(sheet)
+  var nameCol = requireHeader_(h, 'name')
+  var row = findRowById_(sheet, nameCol, name)
+  if (row < 0) return { ok: false, error: 'Trip not found' }
 
   sheet.deleteRow(row)
   return { ok: true }

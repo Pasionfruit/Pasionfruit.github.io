@@ -6,7 +6,13 @@ export const financesNavSection: NavSection = {
   path: '/finances',
   summary: 'Private budget, savings, and spending overview for approved accounts',
   accent: '#1f8f3a',
-  children: [],
+  children: [
+    {
+      label: 'Points Conversion',
+      path: '/finances/points',
+      summary: 'Convert credit card points into trips, miles, food, and hotel rewards.',
+    },
+  ],
 }
 
 export const financesSectionPage: PageContent = {

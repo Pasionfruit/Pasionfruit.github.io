@@ -17,6 +17,7 @@ import type {
   RecipeStepRecord,
   RingconnHealthRecord,
   TrainingRecord,
+  TripRecord,
 } from './types'
 
 function parseBoolean(value: unknown) {
@@ -844,5 +845,50 @@ export async function deleteGroceryListItem(
     action: 'deleteGroceryListItem',
     idToken,
     item: payload.item,
+  })
+}
+
+export async function getTrips(): Promise<TripRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('trips')
+  return rows
+    .map((row) => ({
+      trip_id: String(row.name ?? '').trim(),
+      name: String(row.name ?? '').trim(),
+      target_date: String(row.date ?? '').trim(),
+      target_amount: parseNumber(row.budget) ?? 0,
+      saved_amount: parseNumber(row.saved) ?? 0,
+    }))
+    .filter((row) => row.name)
+}
+
+export async function createTrip(
+  idToken: string,
+  name: string,
+  targetDate: string,
+  targetAmount: number,
+) {
+  await runWrite({
+    action: 'createTrip',
+    idToken,
+    name,
+    date: targetDate,
+    budget: targetAmount,
+  })
+}
+
+export async function updateTrip(idToken: string, tripId: string, savedAmount: number) {
+  await runWrite({
+    action: 'updateTrip',
+    idToken,
+    name: tripId,
+    saved: savedAmount,
+  })
+}
+
+export async function deleteTrip(idToken: string, tripId: string) {
+  await runWrite({
+    action: 'deleteTrip',
+    idToken,
+    name: tripId,
   })
 }

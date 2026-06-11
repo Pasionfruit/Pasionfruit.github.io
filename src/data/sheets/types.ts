@@ -161,6 +161,14 @@ export type RecipeStepRecord = {
   instruction: string
 }
 
+export type TripRecord = {
+  trip_id: string
+  name: string
+  target_date: string
+  target_amount: number
+  saved_amount: number
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

@@ -1,5 +1,5 @@
 import React, { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, Dumbbell, ShoppingCart, SquareCheck, Utensils } from 'lucide-react'
+import { BookOpen, ShoppingCart, SquareCheck, Utensils } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
@@ -14,6 +14,7 @@ import {
 import { feature } from 'topojson-client'
 import type { Topology } from 'topojson-specification'
 import './App.css'
+import { sounds } from './sounds'
 import {
   actuaryExamEntries,
   detailPages,
@@ -67,6 +68,10 @@ import {
   getBudgetTargets,
   saveBudgetTarget,
   type BudgetTargetRecord,
+  getTrips,
+  createTrip,
+  updateTrip,
+  deleteTrip,
   getRecipes,
   getRecipeComponents,
   getRecipeSteps,
@@ -96,6 +101,7 @@ import type {
   RecipeStepRecord,
   RingconnHealthRecord,
   TrainingRecord,
+  TripRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
 import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
@@ -239,7 +245,7 @@ function App() {
         <GoogleAutoSignIn onToken={handleAutoSignInToken} />
       )}
       <Routes>
-      <Route element={<SiteLayout canViewFinances={canViewPrivateFinances} />}>
+      <Route element={<SiteLayout canViewFinances={canViewPrivateFinances} googleIdToken={googleIdToken} />}>
         <Route
           index
           element={(
@@ -276,6 +282,10 @@ function App() {
               canViewFinances={canViewPrivateFinances}
             />
           )}
+        />
+        <Route
+          path="finances/points"
+          element={canViewPrivateFinances ? <PointsConversionPage /> : <Navigate replace to="/finances" />}
         />
         <Route path="mrpasionfruit/oreo-gang" element={<DetailPage path="/mrpasionfruit/oreo-gang" />} />
         <Route path="mrpasionfruit/interests" element={<DetailPage path="/mrpasionfruit/interests" />} />
@@ -322,7 +332,15 @@ function App() {
   )
 }
 
-function SiteLayout({ canViewFinances }: { canViewFinances: boolean }) {
+const EMAIL_INITIALS: Record<string, string> = {
+  'pasionabe@gmail.com': 'AP',
+  'pixielee1000@gmail.com': 'CL',
+}
+
+function SiteLayout({ canViewFinances, googleIdToken }: { canViewFinances: boolean; googleIdToken: string }) {
+  const googleEmail = getGoogleTokenEmail(googleIdToken)
+  const brandMark = EMAIL_INITIALS[googleEmail] ?? 'PF'
+  const brandName = googleEmail.split('@')[0] || 'Pasionfruit'
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<ThemeMode>(() => getInitialTheme())
   const [isOnline, setIsOnline] = useState(() =>
@@ -365,6 +383,11 @@ function SiteLayout({ canViewFinances }: { canViewFinances: boolean }) {
   }, [])
 
   function toggleSection(sectionId: SectionId) {
+    if (expandedSectionIds.includes(sectionId)) {
+      sounds.sectionCollapse()
+    } else {
+      sounds.sectionExpand()
+    }
     setExpandedSectionIds((previous) =>
       previous.includes(sectionId)
         ? previous.filter((id) => id !== sectionId)
@@ -386,9 +409,9 @@ function SiteLayout({ canViewFinances }: { canViewFinances: boolean }) {
     <div className="app-shell">
       <header className="topbar">
         <Link to="/" className="brand" aria-label="Go to home page">
-          <span className="brand-mark">PF</span>
+          <span className="brand-mark">{brandMark}</span>
           <span className="brand-copy">
-            <strong>Pasionfruit</strong>
+            <strong>{brandName}</strong>
             <small>Another Vibe Coded Site</small>
           </span>
         </Link>
@@ -1284,6 +1307,7 @@ function TodoistTasksCard({
     if (!canWrite || !googleIdToken || !todaysTrainingRecord || isWriting) return
     const isMorning = period === 'morning'
     const nextCompleted = isMorning ? !todaysTrainingRecord.completed_morning : !todaysTrainingRecord.completed_evening
+    if (nextCompleted) sounds.studyWorkoutComplete()
     const previousRows = trainingRows
     setIsWriting(true)
     setWriteError('')
@@ -1308,6 +1332,7 @@ function TodoistTasksCard({
     if (!canWrite || !googleIdToken || isWriting) return
     const previousRows = studyRows
     const nextCompleted = !row.completed
+    if (nextCompleted) sounds.studyWorkoutComplete()
     setIsWriting(true)
     setWriteError('')
     setStudyRows((currentRows) =>
@@ -1331,6 +1356,7 @@ function TodoistTasksCard({
       return
     }
 
+    sounds.todoistComplete()
     setIsWriting(true)
     setWriteError('')
     try {
@@ -1544,7 +1570,10 @@ function TodoistTasksCard({
               className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
               onClick={() => setView('training')}
             >
-              <Dumbbell size={18} />
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="miter" aria-hidden="true">
+                <circle cx="12" cy="4" r="2.5"/>
+                <polyline points="5,21 5,9 12,15 19,9 19,21"/>
+              </svg>
             </button>
           </div>
 
@@ -2483,8 +2512,102 @@ function FinanceBarChart({
   )
 }
 
+function PiggyBankIcon({ fillPct }: { fillPct: number }) {
+  const clipped = Math.min(Math.max(fillPct, 0), 100)
+  const fillY = 80 - (clipped / 100) * 60
+  const id = 'piggy-clip'
+  return (
+    <svg className="trip-piggy" viewBox="0 0 100 100" width="80" height="80" aria-hidden="true">
+      <defs>
+        <clipPath id={id}>
+          <rect x="0" y={fillY} width="100" height="100" />
+        </clipPath>
+      </defs>
+      {/* filled body */}
+      <g clipPath={`url(#${id})`}>
+        <ellipse cx="44" cy="58" rx="28" ry="24" fill="var(--page-accent)" opacity="0.35" />
+        <circle cx="68" cy="46" rx="10" ry="10" r="10" fill="var(--page-accent)" opacity="0.35" />
+      </g>
+      {/* outline — always visible */}
+      <ellipse cx="44" cy="58" rx="28" ry="24" fill="none" stroke="currentColor" strokeWidth="3" />
+      {/* head */}
+      <circle cx="68" cy="46" r="10" fill="none" stroke="currentColor" strokeWidth="3" />
+      {/* ear */}
+      <ellipse cx="62" cy="37" rx="4" ry="3" fill="none" stroke="currentColor" strokeWidth="2" />
+      {/* snout */}
+      <ellipse cx="77" cy="49" rx="4" ry="3" fill="none" stroke="currentColor" strokeWidth="2" />
+      <circle cx="76" cy="49" r="1" fill="currentColor" />
+      <circle cx="78" cy="49" r="1" fill="currentColor" />
+      {/* eye */}
+      <circle cx="70" cy="43" r="1.5" fill="currentColor" />
+      {/* legs */}
+      <line x1="28" y1="79" x2="24" y2="90" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <line x1="38" y1="81" x2="36" y2="92" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <line x1="50" y1="81" x2="52" y2="92" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <line x1="60" y1="79" x2="64" y2="90" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      {/* tail */}
+      <path d="M16 55 Q8 48 12 42 Q16 36 12 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      {/* coin slot */}
+      <rect x="36" y="32" width="12" height="3" rx="1.5" fill="currentColor" opacity="0.5" />
+    </svg>
+  )
+}
+
+const PIE_COLORS = ['#6366f1','#f59e0b','#22c55e','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899','#14b8a6','#84cc16','#a78bfa','#fb923c']
+
+function FinancePieChart({ data, title }: { data: { label: string; value: number }[]; title: string }) {
+  const filtered = data.filter((d) => d.value > 0)
+  const total = filtered.reduce((s, d) => s + d.value, 0)
+  if (total === 0 || filtered.length === 0) return (
+    <div className="finance-pie-chart">
+      <p className="finance-pie-title">{title}</p>
+      <p className="finance-pie-empty">No data</p>
+    </div>
+  )
+
+  const SIZE = 110
+  const cx = SIZE / 2
+  const cy = SIZE / 2
+  const r = SIZE / 2 - 5
+
+  let angle = -Math.PI / 2
+  const slices = filtered.map((d, i) => {
+    const pct = d.value / total
+    const end = angle + pct * 2 * Math.PI
+    const x1 = cx + r * Math.cos(angle)
+    const y1 = cy + r * Math.sin(angle)
+    const x2 = cx + r * Math.cos(end)
+    const y2 = cy + r * Math.sin(end)
+    const largeArc = pct > 0.5 ? 1 : 0
+    const path = filtered.length === 1
+      ? `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.001} ${cy - r} Z`
+      : `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`
+    const color = PIE_COLORS[i % PIE_COLORS.length]
+    angle = end
+    return { path, color, label: d.label, pct }
+  })
+
+  return (
+    <div className="finance-pie-chart">
+      <p className="finance-pie-title">{title}</p>
+      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true">
+        {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} />)}
+      </svg>
+      <ul className="finance-pie-legend">
+        {slices.map((s, i) => (
+          <li key={i} className="finance-pie-legend-item">
+            <span className="finance-pie-dot" style={{ background: s.color }} />
+            <span className="finance-pie-label">{s.label.charAt(0).toUpperCase() + s.label.slice(1)}</span>
+            <span className="finance-pie-pct">{Math.round(s.pct * 100)}%</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function FinancesHubCard({ idToken }: { idToken: string }) {
-  type FinancesTab = 'dashboard' | 'calendar' | 'purchases'
+  type FinancesTab = 'dashboard' | 'calendar' | 'purchases' | 'trips'
   type FinancesSource = 'both' | 'abe' | 'ciara'
   const [activeTab, setActiveTab] = useState<FinancesTab>('dashboard')
   const [dashboardSource, setDashboardSource] = useState<FinancesSource>('both')
@@ -2509,6 +2632,17 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
   const [allBudgetRecords, setAllBudgetRecords] = useState<BudgetTargetRecord[]>([])
   const [budgetDrafts, setBudgetDrafts] = useState<Record<string, string>>({})
   const [selectedTableMonth, setSelectedTableMonth] = useState<number | null>(() => new Date().getMonth())
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [tripRows, setTripRows] = useState<TripRecord[]>([])
+  const [isLoadingTrips, setIsLoadingTrips] = useState(true)
+  const [tripsError, setTripsError] = useState('')
+  const [newTripName, setNewTripName] = useState('')
+  const [newTripDate, setNewTripDate] = useState('')
+  const [newTripAmount, setNewTripAmount] = useState('')
+  const [isSavingTrip, setIsSavingTrip] = useState(false)
+  const [savingTripId, setSavingTripId] = useState<string | null>(null)
+  const [tripSavedDrafts, setTripSavedDrafts] = useState<Record<string, string>>({})
+  const [mobileDashSection, setMobileDashSection] = useState<'Bills' | 'Expenses' | 'Income'>('Bills')
 
   const budgetUser = dashboardSource === 'both' ? null : dashboardSource
 
@@ -2554,6 +2688,69 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
 
     void loadTransactions()
   }, [])
+
+  async function loadTrips() {
+    try {
+      const data = await getTrips()
+      setTripRows(data)
+      setTripSavedDrafts(Object.fromEntries(data.map((t) => [t.trip_id, String(t.saved_amount)])))
+      setTripsError('')
+    } catch (error) {
+      setTripRows([])
+      setTripsError(error instanceof Error ? error.message : 'Unable to load trips')
+    } finally {
+      setIsLoadingTrips(false)
+    }
+  }
+
+  useEffect(() => { void loadTrips() }, [])
+
+  async function handleCreateTrip(event: React.FormEvent) {
+    event.preventDefault()
+    const name = newTripName.trim()
+    const amount = parseFloat(newTripAmount)
+    if (!name || !amount || amount <= 0) return
+    setIsSavingTrip(true)
+    setTripsError('')
+    try {
+      await createTrip(idToken, name, newTripDate, amount)
+      setNewTripName('')
+      setNewTripDate('')
+      setNewTripAmount('')
+      await loadTrips()
+    } catch (error) {
+      setTripsError(error instanceof Error ? error.message : 'Unable to create trip')
+    } finally {
+      setIsSavingTrip(false)
+    }
+  }
+
+  async function handleUpdateSaved(trip: TripRecord) {
+    const draft = tripSavedDrafts[trip.trip_id]
+    const saved = parseFloat(draft ?? '')
+    if (isNaN(saved) || saved < 0) return
+    setSavingTripId(trip.trip_id)
+    setTripsError('')
+    try {
+      await updateTrip(idToken, trip.trip_id, saved)
+      await loadTrips()
+    } catch (error) {
+      setTripsError(error instanceof Error ? error.message : 'Unable to update trip')
+    } finally {
+      setSavingTripId(null)
+    }
+  }
+
+  async function handleDeleteTrip(tripId: string) {
+    setTripRows((prev) => prev.filter((t) => t.trip_id !== tripId))
+    setTripsError('')
+    try {
+      await deleteTrip(idToken, tripId)
+    } catch (error) {
+      setTripsError(error instanceof Error ? error.message : 'Unable to delete trip')
+      await loadTrips()
+    }
+  }
 
   const dashboardRows = useMemo(() => {
     const withOwner = [
@@ -2731,6 +2928,19 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
 
   return (
     <article className="finance-hub-card info-card">
+      <div className="section-card-header">
+        <h3>Finances</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((v) => !v)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
+      </div>
+      {!isCollapsed ? (
+      <>
       <div className="experience-toggle" role="tablist" aria-label="Finances views">
         <button
           type="button"
@@ -2739,7 +2949,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
           aria-selected={activeTab === 'dashboard'}
           onClick={() => setActiveTab('dashboard')}
         >
-          Dashboard view
+          Dashboard
         </button>
         <button
           type="button"
@@ -2748,7 +2958,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
           aria-selected={activeTab === 'calendar'}
           onClick={() => setActiveTab('calendar')}
         >
-          Calendar view
+          Calendar
         </button>
         <button
           type="button"
@@ -2757,10 +2967,20 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
           aria-selected={activeTab === 'purchases'}
           onClick={() => setActiveTab('purchases')}
         >
-          Purchases tab
+          Purchases
+        </button>
+        <button
+          type="button"
+          className={`experience-toggle-btn ${activeTab === 'trips' ? 'active' : ''}`}
+          role="tab"
+          aria-selected={activeTab === 'trips'}
+          onClick={() => setActiveTab('trips')}
+        >
+          Trips
         </button>
       </div>
 
+      {activeTab !== 'trips' ? (
       <div className="finance-tabbar" role="group" aria-label="Dashboard source filter">
         <button
           type="button"
@@ -2784,6 +3004,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
           Ciara
         </button>
       </div>
+      ) : null}
 
       {activeTab === 'dashboard' ? (
         <div className="finance-panel">
@@ -2815,6 +3036,31 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
                 selectedMonthIndex={selectedTableMonth}
                 onMonthClick={(i) => setSelectedTableMonth((prev) => (prev === i ? null : i))}
               />
+              <div className="finance-section-selector">
+                {(['Bills', 'Expenses', 'Income'] as const).map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    className={`finance-section-selector-btn${mobileDashSection === g ? ' active' : ''}`}
+                    onClick={() => setMobileDashSection(g)}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+              <div className="finance-pie-charts-row">
+                {(['Bills', 'Expenses', 'Income'] as const).map((group) => {
+                  const cats = group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
+                  return (
+                    <div key={group} className={mobileDashSection !== group ? 'finance-group-mobile-hide' : undefined}>
+                      <FinancePieChart
+                        title={group}
+                        data={cats.map((cat) => ({ label: cat, value: budgetTotals[cat] ?? 0 }))}
+                      />
+                    </div>
+                  )
+                })}
+              </div>
               <div className="finance-table-month-filter">
                 <span className="finance-table-month-label">
                   {selectedTableMonth !== null
@@ -2844,7 +3090,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
                   group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
                 const groupTotal = cats.reduce((sum, cat) => sum + (budgetTotals[cat] ?? 0), 0)
                 return (
-                  <div key={group} className="finance-budget-group">
+                  <div key={group} className={`finance-budget-group finance-budget-section${mobileDashSection !== group ? ' finance-group-mobile-hide' : ''}`}>
                     <div className="finance-budget-group-header">
                       <p className="finance-budget-group-label">{group}</p>
                       <p className="finance-budget-group-total">
@@ -3130,6 +3376,108 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
             )
           })() : null}
         </div>
+      ) : null}
+
+      {activeTab === 'trips' ? (
+        <div className="trips-panel">
+          <form
+            className="trip-add-form"
+            onSubmit={(e) => { void handleCreateTrip(e) }}
+          >
+            <input
+              className="sheets-input"
+              type="text"
+              placeholder="Trip name"
+              value={newTripName}
+              onChange={(e) => setNewTripName(e.target.value)}
+              required
+              disabled={isSavingTrip}
+            />
+            <input
+              className="sheets-input"
+              type="date"
+              value={newTripDate}
+              onChange={(e) => setNewTripDate(e.target.value)}
+              disabled={isSavingTrip}
+            />
+            <input
+              className="sheets-input"
+              type="number"
+              placeholder="Goal $"
+              min="1"
+              step="any"
+              value={newTripAmount}
+              onChange={(e) => setNewTripAmount(e.target.value)}
+              required
+              disabled={isSavingTrip}
+            />
+            <button type="submit" className="primary-action" disabled={isSavingTrip}>
+              Add Trip
+            </button>
+          </form>
+
+          {isLoadingTrips ? <p className="sheets-meta">Loading trips...</p> : null}
+          {tripsError ? <p className="sheets-error">{tripsError}</p> : null}
+
+          {!isLoadingTrips && tripRows.length === 0 ? (
+            <p className="sheets-meta">No trips yet. Add one above!</p>
+          ) : null}
+
+          <div className="trips-list">
+            {tripRows.map((trip) => {
+              const pct = trip.target_amount > 0
+                ? Math.min((trip.saved_amount / trip.target_amount) * 100, 100)
+                : 0
+              return (
+                <div key={trip.trip_id} className="trip-card">
+                  <div className="trip-card-header">
+                    <strong className="trip-name">{trip.name}</strong>
+                    {trip.target_date ? (
+                      <span className="trip-date">{trip.target_date}</span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="section-collapse-btn trip-delete-btn"
+                      aria-label={`Delete ${trip.name}`}
+                      onClick={() => { void handleDeleteTrip(trip.trip_id) }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <PiggyBankIcon fillPct={pct} />
+
+                  <p className="trip-progress-label">
+                    ${trip.saved_amount.toLocaleString()} / ${trip.target_amount.toLocaleString()} ({Math.round(pct)}%)
+                  </p>
+
+                  <div className="trip-save-row">
+                    <input
+                      className="sheets-input"
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={tripSavedDrafts[trip.trip_id] ?? ''}
+                      onChange={(e) => setTripSavedDrafts((prev) => ({ ...prev, [trip.trip_id]: e.target.value }))}
+                      disabled={savingTripId === trip.trip_id}
+                    />
+                    <button
+                      type="button"
+                      className="secondary-action"
+                      onClick={() => { void handleUpdateSaved(trip) }}
+                      disabled={savingTripId === trip.trip_id}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      </>
       ) : null}
     </article>
   )
@@ -3680,7 +4028,7 @@ function OreoGangCard({ title }: { title: string }) {
   const { image, description } = OREO_GANG_DATA[active]
 
   return (
-    <article className="info-card section-page-card">
+    <article className="info-card section-page-card oreo-gang-card">
       <div className="section-card-header">
         <h3>{title}</h3>
         <button
@@ -5339,6 +5687,8 @@ function MealRandomizerCard({ title }: { title: string }) {
 
   function spin() {
     if (spinning) return
+    sounds.randomizerClick()
+    sounds.randomizerSpin()
     setSpinning(true)
     setReelSpinning({ meat: true, sauce: true, carb: true, veg: true })
 
@@ -5425,6 +5775,7 @@ function MealPlanCard({
   const [isWeeklyExpanded, setIsWeeklyExpanded] = useState(!showTodaySummary)
   const [isEditing, setIsEditing] = useState(false)
   const [editedRows, setEditedRows] = useState<Record<string, MealPlanRecord>>({})
+  const [mobileDayIndex, setMobileDayIndex] = useState<number | null>(null)
 
   async function loadMealPlan() {
     try {
@@ -5461,6 +5812,18 @@ function MealPlanCard({
       return a.day_of_the_week.localeCompare(b.day_of_the_week)
     })
   }, [rows])
+
+  useEffect(() => {
+    if (sortedRows.length === 0) return
+    const today = normalizeWeekday(getTodayWeekdayName())
+    const idx = sortedRows.findIndex((row) => {
+      const weekday = normalizeWeekday(row.day_of_the_week)
+      return weekday === today || weekday.slice(0, 3) === today.slice(0, 3)
+    })
+    setMobileDayIndex(idx >= 0 ? idx : 0)
+  }, [sortedRows])
+
+  const mobileRow = mobileDayIndex !== null ? (sortedRows[mobileDayIndex] ?? null) : null
 
   const todayRow = useMemo(() => {
     const today = normalizeWeekday(getTodayWeekdayName())
@@ -5524,7 +5887,7 @@ function MealPlanCard({
               aria-expanded={isWeeklyExpanded}
               onClick={() => setIsWeeklyExpanded((value) => !value)}
             >
-              {isWeeklyExpanded ? 'Hide' : 'Show'}
+              {isWeeklyExpanded ? '▾' : '▸'}
             </button>
           ) : null}
         </div>
@@ -5569,6 +5932,102 @@ function MealPlanCard({
 
       {isWeeklyExpanded ? (
         <div className="meal-plan-weekly-section">
+          <div className="meal-plan-mobile-carousel">
+            {sortedRows.length === 0 ? (
+              <p className="sheets-meta">No meal plan rows found.</p>
+            ) : mobileRow ? (
+              <>
+                <div className="meal-plan-mobile-nav">
+                  <button
+                    type="button"
+                    className="meal-plan-nav-btn"
+                    aria-label="Previous day"
+                    onClick={() => setMobileDayIndex((i) => i === null || i === 0 ? sortedRows.length - 1 : i - 1)}
+                  >
+                    ‹
+                  </button>
+                  <span className="meal-plan-nav-day">{mobileRow.day_of_the_week}</span>
+                  <button
+                    type="button"
+                    className="meal-plan-nav-btn"
+                    aria-label="Next day"
+                    onClick={() => setMobileDayIndex((i) => i === null || i >= sortedRows.length - 1 ? 0 : i + 1)}
+                  >
+                    ›
+                  </button>
+                </div>
+                <div className="meal-plan-day-grid">
+                  <div className="meal-plan-day-item">
+                    <p className="meal-plan-label">Breakfast</p>
+                    {isEditing && canWrite ? (
+                      <input
+                        className="sheets-input"
+                        type="text"
+                        value={editedRows[mobileRow.day_of_the_week]?.breakfast ?? mobileRow.breakfast}
+                        onChange={(e) => setEditedRows((cur) => ({ ...cur, [mobileRow.day_of_the_week]: { ...(cur[mobileRow.day_of_the_week] ?? mobileRow), breakfast: e.target.value } }))}
+                        disabled={!idToken || isWriting || !canWrite}
+                      />
+                    ) : (
+                      <p>{mobileRow.breakfast || 'Not planned'}</p>
+                    )}
+                  </div>
+                  <div className="meal-plan-day-item">
+                    <p className="meal-plan-label">Lunch</p>
+                    {isEditing && canWrite ? (
+                      <input
+                        className="sheets-input"
+                        type="text"
+                        value={editedRows[mobileRow.day_of_the_week]?.lunch ?? mobileRow.lunch}
+                        onChange={(e) => setEditedRows((cur) => ({ ...cur, [mobileRow.day_of_the_week]: { ...(cur[mobileRow.day_of_the_week] ?? mobileRow), lunch: e.target.value } }))}
+                        disabled={!idToken || isWriting || !canWrite}
+                      />
+                    ) : (
+                      <p>{mobileRow.lunch || 'Not planned'}</p>
+                    )}
+                  </div>
+                  <div className="meal-plan-day-item">
+                    <p className="meal-plan-label">Dinner</p>
+                    {isEditing && canWrite ? (
+                      <input
+                        className="sheets-input"
+                        type="text"
+                        value={editedRows[mobileRow.day_of_the_week]?.dinner ?? mobileRow.dinner}
+                        onChange={(e) => setEditedRows((cur) => ({ ...cur, [mobileRow.day_of_the_week]: { ...(cur[mobileRow.day_of_the_week] ?? mobileRow), dinner: e.target.value } }))}
+                        disabled={!idToken || isWriting || !canWrite}
+                      />
+                    ) : (
+                      <p>{mobileRow.dinner || 'Not planned'}</p>
+                    )}
+                  </div>
+                  <div className="meal-plan-day-item">
+                    <p className="meal-plan-label">Snack</p>
+                    {isEditing && canWrite ? (
+                      <input
+                        className="sheets-input"
+                        type="text"
+                        value={editedRows[mobileRow.day_of_the_week]?.snack ?? mobileRow.snack}
+                        onChange={(e) => setEditedRows((cur) => ({ ...cur, [mobileRow.day_of_the_week]: { ...(cur[mobileRow.day_of_the_week] ?? mobileRow), snack: e.target.value } }))}
+                        disabled={!idToken || isWriting || !canWrite}
+                      />
+                    ) : (
+                      <p>{mobileRow.snack || 'Not planned'}</p>
+                    )}
+                  </div>
+                </div>
+                {isEditing && canWrite ? (
+                  <button
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => void handleSave(mobileRow)}
+                    disabled={!idToken || isWriting || !canWrite}
+                  >
+                    Save
+                  </button>
+                ) : null}
+              </>
+            ) : null}
+          </div>
+          <div className="meal-plan-desktop-table">
           <div className="sheets-table-shell meal-plan-table-shell">
             <table className="sheets-table meal-plan-table">
               <thead>
@@ -5708,6 +6167,7 @@ function MealPlanCard({
           </div>
 
           {sortedRows.length === 0 ? <p className="sheets-meta">No meal plan rows found.</p> : null}
+          </div>
         </div>
       ) : null}
 
@@ -7993,6 +8453,36 @@ function HealthDataCard({ title }: { title: string }) {
   )
 }
 
+function PointsConversionPage() {
+  const categories = [
+    { label: 'Trips', icon: '✈️', description: 'Convert points into flights, travel credits, and vacation packages.' },
+    { label: 'Miles', icon: '🛣️', description: 'See how far your points take you in airline miles and rewards.' },
+    { label: 'Food', icon: '🍽️', description: 'Redeem points for dining credits, delivery, and restaurant rewards.' },
+    { label: 'Hotel', icon: '🏨', description: 'Turn points into hotel nights, upgrades, and loyalty rewards.' },
+  ]
+
+  return (
+    <PageFrame
+      eyebrow="Coming soon"
+      title="Points Conversion"
+      summary="Convert your credit card points into real-world value across travel, dining, and hotel rewards."
+      accent="#1f8f3a"
+      backLink="/finances"
+      backLabel="Back to Finances"
+      note="This page is a placeholder — full conversion logic coming soon."
+    >
+      {categories.map((cat) => (
+        <article key={cat.label} className="info-card section-page-card points-conversion-card">
+          <div className="points-conversion-icon">{cat.icon}</div>
+          <h3>{cat.label}</h3>
+          <p>{cat.description}</p>
+          <p className="points-conversion-badge">Coming soon</p>
+        </article>
+      ))}
+    </PageFrame>
+  )
+}
+
 function DetailPage({
   path,
   profile = 'guest',
@@ -8215,6 +8705,7 @@ function PageFrame({
   note,
   downloadPdfHref,
   downloadWordHref,
+  gridClassName,
   children,
 }: {
   eyebrow: string
@@ -8226,6 +8717,7 @@ function PageFrame({
   note: string
   downloadPdfHref?: string
   downloadWordHref?: string
+  gridClassName?: string
   children: ReactNode
 }) {
   return (
@@ -8261,7 +8753,7 @@ function PageFrame({
         </div>
       </section>
 
-      <section className="page-grid">{children}</section>
+      <section className={`page-grid${gridClassName ? ` ${gridClassName}` : ''}`}>{children}</section>
     </div>
   )
 }
