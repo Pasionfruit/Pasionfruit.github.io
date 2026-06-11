@@ -100,6 +100,33 @@ function doPost(e) {
       case 'setBudgetTarget':
         return jsonResponse_(setBudgetTarget_(payload, auth))
 
+      case 'createRecipe':
+        return jsonResponse_(createRecipe_(payload))
+
+      case 'updateRecipe':
+        return jsonResponse_(updateRecipe_(payload))
+
+      case 'deleteRecipe':
+        return jsonResponse_(deleteRecipe_(payload))
+
+      case 'createRecipeComponent':
+        return jsonResponse_(createRecipeComponent_(payload))
+
+      case 'updateRecipeComponent':
+        return jsonResponse_(updateRecipeComponent_(payload))
+
+      case 'deleteRecipeComponent':
+        return jsonResponse_(deleteRecipeComponent_(payload))
+
+      case 'createRecipeStep':
+        return jsonResponse_(createRecipeStep_(payload))
+
+      case 'updateRecipeStep':
+        return jsonResponse_(updateRecipeStep_(payload))
+
+      case 'deleteRecipeStep':
+        return jsonResponse_(deleteRecipeStep_(payload))
+
       default:
         return jsonResponse_({ ok: false, error: 'Unknown action: ' + action })
     }
@@ -875,6 +902,177 @@ function setBudgetTarget_(payload, auth) {
   if (!isNaN(amount) && amount > 0) {
     appendByHeaders_(sheet, h, { user: userVal, category: category, budget_amount: amount })
   }
+  return { ok: true }
+}
+
+function createRecipe_(payload) {
+  var recipeName = String(payload.recipe_name || '').trim()
+  if (!recipeName) return { ok: false, error: 'recipe_name is required' }
+
+  var sheet = getSheet_('recipes')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    recipe_id: Utilities.getUuid(),
+    recipe_name: recipeName,
+    category: String(payload.category || '').trim(),
+    calories: String(payload.calories || '').trim(),
+    servings: String(payload.servings || '').trim(),
+    video_link: String(payload.video_link || '').trim(),
+    website_link: String(payload.website_link || '').trim(),
+    cook_time: String(payload.cook_time || '').trim(),
+  })
+
+  return { ok: true }
+}
+
+function updateRecipe_(payload) {
+  var recipeId = String(payload.recipe_id || '').trim()
+  if (!recipeId) return { ok: false, error: 'recipe_id is required' }
+
+  var sheet = getSheet_('recipes')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'recipe_id'), recipeId)
+  if (row < 0) return { ok: false, error: 'Recipe not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'recipe_name')).setValue(String(payload.recipe_name || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'category')).setValue(String(payload.category || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'calories')).setValue(String(payload.calories || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'servings')).setValue(String(payload.servings || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'video_link')).setValue(String(payload.video_link || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'website_link')).setValue(String(payload.website_link || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'cook_time')).setValue(String(payload.cook_time || '').trim())
+
+  return { ok: true }
+}
+
+function deleteRecipe_(payload) {
+  var recipeId = String(payload.recipe_id || '').trim()
+  if (!recipeId) return { ok: false, error: 'recipe_id is required' }
+
+  var recipeSheet = getSheet_('recipes')
+  var rh = headerMap_(recipeSheet)
+  var recipeRow = findRowById_(recipeSheet, requireHeader_(rh, 'recipe_id'), recipeId)
+  if (recipeRow < 0) return { ok: false, error: 'Recipe not found' }
+
+  deleteRowsMatchingRecipeId_(getSheet_('recipe_steps'), 'recipe_id', recipeId)
+  deleteRowsMatchingRecipeId_(getSheet_('recipe_components'), 'recipe_id', recipeId)
+  recipeSheet.deleteRow(recipeRow)
+
+  return { ok: true }
+}
+
+function deleteRowsMatchingRecipeId_(sheet, colName, recipeId) {
+  var h = headerMap_(sheet)
+  var col = h[colName]
+  if (!col) return
+
+  var lastRow = sheet.getLastRow()
+  if (lastRow < 2) return
+
+  var values = sheet.getRange(2, col, lastRow - 1, 1).getValues()
+  for (var i = values.length - 1; i >= 0; i -= 1) {
+    if (String(values[i][0]).trim() === recipeId) {
+      sheet.deleteRow(i + 2)
+    }
+  }
+}
+
+function createRecipeComponent_(payload) {
+  var recipeId = String(payload.recipe_id || '').trim()
+  var name = String(payload.name || '').trim()
+  if (!recipeId || !name) return { ok: false, error: 'recipe_id and name are required' }
+
+  var sheet = getSheet_('recipe_components')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    component_id: Utilities.getUuid(),
+    recipe_id: recipeId,
+    type: String(payload.type || 'ingredient').trim(),
+    name: name,
+    quantity: String(payload.quantity || '').trim(),
+    unit: String(payload.unit || '').trim(),
+    note: String(payload.note || '').trim(),
+  })
+
+  return { ok: true }
+}
+
+function updateRecipeComponent_(payload) {
+  var componentId = String(payload.component_id || '').trim()
+  if (!componentId) return { ok: false, error: 'component_id is required' }
+
+  var sheet = getSheet_('recipe_components')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'component_id'), componentId)
+  if (row < 0) return { ok: false, error: 'Component not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'type')).setValue(String(payload.type || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'name')).setValue(String(payload.name || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'quantity')).setValue(String(payload.quantity || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'unit')).setValue(String(payload.unit || '').trim())
+  sheet.getRange(row, requireHeader_(h, 'note')).setValue(String(payload.note || '').trim())
+
+  return { ok: true }
+}
+
+function deleteRecipeComponent_(payload) {
+  var componentId = String(payload.component_id || '').trim()
+  if (!componentId) return { ok: false, error: 'component_id is required' }
+
+  var sheet = getSheet_('recipe_components')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'component_id'), componentId)
+  if (row < 0) return { ok: false, error: 'Component not found' }
+
+  sheet.deleteRow(row)
+  return { ok: true }
+}
+
+function createRecipeStep_(payload) {
+  var recipeId = String(payload.recipe_id || '').trim()
+  var instruction = String(payload.instruction || '').trim()
+  if (!recipeId || !instruction) return { ok: false, error: 'recipe_id and instruction are required' }
+
+  var sheet = getSheet_('recipe_steps')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    step_id: Utilities.getUuid(),
+    recipe_id: recipeId,
+    step_number: Number(payload.step_number) || 1,
+    instruction: instruction,
+  })
+
+  return { ok: true }
+}
+
+function updateRecipeStep_(payload) {
+  var stepId = String(payload.step_id || '').trim()
+  if (!stepId) return { ok: false, error: 'step_id is required' }
+
+  var sheet = getSheet_('recipe_steps')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'step_id'), stepId)
+  if (row < 0) return { ok: false, error: 'Step not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'step_number')).setValue(Number(payload.step_number) || 1)
+  sheet.getRange(row, requireHeader_(h, 'instruction')).setValue(String(payload.instruction || '').trim())
+
+  return { ok: true }
+}
+
+function deleteRecipeStep_(payload) {
+  var stepId = String(payload.step_id || '').trim()
+  if (!stepId) return { ok: false, error: 'step_id is required' }
+
+  var sheet = getSheet_('recipe_steps')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'step_id'), stepId)
+  if (row < 0) return { ok: false, error: 'Step not found' }
+
+  sheet.deleteRow(row)
   return { ok: true }
 }
 

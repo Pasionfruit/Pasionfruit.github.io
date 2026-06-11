@@ -133,6 +133,34 @@ export type AppleHealthRecord = {
   weight_kg: string
 }
 
+export type RecipeRecord = {
+  recipe_id: string
+  recipe_name: string
+  category: string
+  calories: string
+  servings: string
+  video_link: string
+  website_link: string
+  cook_time: string
+}
+
+export type RecipeComponentRecord = {
+  component_id: string
+  recipe_id: string
+  type: string
+  name: string
+  quantity: string
+  unit: string
+  note: string
+}
+
+export type RecipeStepRecord = {
+  step_id: string
+  recipe_id: string
+  step_number: number
+  instruction: string
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

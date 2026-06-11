@@ -66,6 +66,18 @@ import {
   getBudgetTargets,
   saveBudgetTarget,
   type BudgetTargetRecord,
+  getRecipes,
+  getRecipeComponents,
+  getRecipeSteps,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  createRecipeComponent,
+  updateRecipeComponent,
+  deleteRecipeComponent,
+  createRecipeStep,
+  updateRecipeStep,
+  deleteRecipeStep,
 } from './data/sheets/repositories'
 import type {
   AppleHealthRecord,
@@ -80,6 +92,9 @@ import type {
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
+  RecipeComponentRecord,
+  RecipeRecord,
+  RecipeStepRecord,
   RingconnHealthRecord,
   TrainingRecord,
 } from './data/sheets/types'
@@ -3132,6 +3147,527 @@ const OREO_GANG_DATA: Record<OreoMember, { image: string; description: string }>
     image: '/cats/inky.jpg',
     description: '"ɪŋki", stinky, crackhead \nShy but loves her laser pointer and feathers',
   },
+}
+
+function MakeRecipePopup({
+  recipe,
+  components,
+  steps,
+  onClose,
+}: {
+  recipe: RecipeRecord
+  components: RecipeComponentRecord[]
+  steps: RecipeStepRecord[]
+  onClose: () => void
+}) {
+  const [checkedComponents, setCheckedComponents] = useState<Set<string>>(new Set())
+  const [checkedSteps, setCheckedSteps] = useState<Set<string>>(new Set())
+
+  function toggleComponent(id: string) {
+    setCheckedComponents((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleStep(id: string) {
+    setCheckedSteps((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const equipment = components.filter((c) => c.type.toLowerCase() === 'equipment')
+  const ingredients = components.filter((c) => c.type.toLowerCase() !== 'equipment')
+  const sortedSteps = [...steps].sort((a, b) => a.step_number - b.step_number)
+
+  return (
+    <>
+      <div className="recipe-popup-header">
+        <h2 className="recipe-popup-title">{recipe.recipe_name}</h2>
+        <button type="button" className="finance-dialog-close" onClick={onClose}>
+          Close
+        </button>
+      </div>
+
+      <p className="recipe-popup-meta">
+        {recipe.category ? <span>{recipe.category}</span> : null}
+        {recipe.cook_time ? <span>⏱ {recipe.cook_time}</span> : null}
+        {recipe.servings ? <span>🍽 {recipe.servings} servings</span> : null}
+        {recipe.calories ? <span>🔥 {recipe.calories} cal</span> : null}
+      </p>
+
+      {(recipe.video_link || recipe.website_link) ? (
+        <div className="recipe-popup-links">
+          {recipe.video_link ? (
+            <a href={recipe.video_link} target="_blank" rel="noopener noreferrer" className="recipe-popup-link">
+              ▶ Video
+            </a>
+          ) : null}
+          {recipe.website_link ? (
+            <a href={recipe.website_link} target="_blank" rel="noopener noreferrer" className="recipe-popup-link">
+              🔗 Recipe source
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+
+      {equipment.length > 0 ? (
+        <>
+          <p className="recipe-popup-section-heading">Equipment</p>
+          <ul className="recipe-checklist">
+            {equipment.map((c) => (
+              <li
+                key={c.component_id}
+                className={`recipe-checklist-item ${checkedComponents.has(c.component_id) ? 'checked' : ''}`}
+                onClick={() => toggleComponent(c.component_id)}
+              >
+                <input type="checkbox" checked={checkedComponents.has(c.component_id)} onChange={() => toggleComponent(c.component_id)} />
+                <span>{c.name}{c.note ? ` — ${c.note}` : ''}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+
+      {ingredients.length > 0 ? (
+        <>
+          <p className="recipe-popup-section-heading">Ingredients</p>
+          <ul className="recipe-checklist">
+            {ingredients.map((c) => (
+              <li
+                key={c.component_id}
+                className={`recipe-checklist-item ${checkedComponents.has(c.component_id) ? 'checked' : ''}`}
+                onClick={() => toggleComponent(c.component_id)}
+              >
+                <input type="checkbox" checked={checkedComponents.has(c.component_id)} onChange={() => toggleComponent(c.component_id)} />
+                <span>
+                  {[c.quantity, c.unit, c.name].filter(Boolean).join(' ')}
+                  {c.note ? ` (${c.note})` : ''}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+
+      {sortedSteps.length > 0 ? (
+        <>
+          <p className="recipe-popup-section-heading">Instructions</p>
+          <ul className="recipe-checklist">
+            {sortedSteps.map((s) => (
+              <li
+                key={s.step_id}
+                className={`recipe-checklist-item ${checkedSteps.has(s.step_id) ? 'checked' : ''}`}
+                onClick={() => toggleStep(s.step_id)}
+              >
+                <input type="checkbox" checked={checkedSteps.has(s.step_id)} onChange={() => toggleStep(s.step_id)} />
+                <span className="recipe-step-number">{s.step_number}.</span>
+                <span>{s.instruction}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+    </>
+  )
+}
+
+function RecipesCard({
+  title,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const [recipes, setRecipes] = useState<RecipeRecord[]>([])
+  const [components, setComponents] = useState<RecipeComponentRecord[]>([])
+  const [steps, setSteps] = useState<RecipeStepRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [makingRecipe, setMakingRecipe] = useState<RecipeRecord | null>(null)
+  const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null)
+
+  // New recipe draft
+  const [draftName, setDraftName] = useState('')
+  const [draftCategory, setDraftCategory] = useState('')
+  const [draftCalories, setDraftCalories] = useState('')
+  const [draftServings, setDraftServings] = useState('')
+  const [draftVideoLink, setDraftVideoLink] = useState('')
+  const [draftWebsiteLink, setDraftWebsiteLink] = useState('')
+  const [draftCookTime, setDraftCookTime] = useState('')
+
+  // Edit existing recipe draft
+  const [editDrafts, setEditDrafts] = useState<Record<string, Partial<RecipeRecord>>>({})
+
+  // New component draft
+  const [draftCompType, setDraftCompType] = useState('ingredient')
+  const [draftCompName, setDraftCompName] = useState('')
+  const [draftCompQty, setDraftCompQty] = useState('')
+  const [draftCompUnit, setDraftCompUnit] = useState('')
+  const [draftCompNote, setDraftCompNote] = useState('')
+
+  // New step draft
+  const [draftStepInstruction, setDraftStepInstruction] = useState('')
+
+  async function loadAll() {
+    try {
+      const [r, c, s] = await Promise.all([getRecipes(), getRecipeComponents(), getRecipeSteps()])
+      setRecipes(r)
+      setComponents(c)
+      setSteps(s)
+      setWriteError('')
+    } catch {
+      setRecipes([])
+      setComponents([])
+      setSteps([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadAll()
+  }, [])
+
+  useEffect(() => {
+    const next: Record<string, Partial<RecipeRecord>> = {}
+    recipes.forEach((r) => { next[r.recipe_id] = { ...r } })
+    setEditDrafts(next)
+  }, [recipes])
+
+  async function handleCreateRecipe() {
+    if (!idToken || isWriting || !draftName.trim()) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createRecipe(idToken, {
+        recipeName: draftName.trim(),
+        category: draftCategory.trim(),
+        calories: draftCalories.trim(),
+        servings: draftServings.trim(),
+        videoLink: draftVideoLink.trim(),
+        websiteLink: draftWebsiteLink.trim(),
+        cookTime: draftCookTime.trim(),
+      })
+      setDraftName(''); setDraftCategory(''); setDraftCalories(''); setDraftServings('')
+      setDraftVideoLink(''); setDraftWebsiteLink(''); setDraftCookTime('')
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create recipe')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleUpdateRecipe(recipe: RecipeRecord) {
+    if (!idToken || isWriting) return
+    const draft = editDrafts[recipe.recipe_id]
+    if (!draft) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateRecipe(idToken, recipe.recipe_id, {
+        recipeName: String(draft.recipe_name ?? recipe.recipe_name).trim(),
+        category: String(draft.category ?? recipe.category).trim(),
+        calories: String(draft.calories ?? recipe.calories).trim(),
+        servings: String(draft.servings ?? recipe.servings).trim(),
+        videoLink: String(draft.video_link ?? recipe.video_link).trim(),
+        websiteLink: String(draft.website_link ?? recipe.website_link).trim(),
+        cookTime: String(draft.cook_time ?? recipe.cook_time).trim(),
+      })
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update recipe')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDeleteRecipe(recipeId: string) {
+    if (!idToken || isWriting) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteRecipe(idToken, recipeId)
+      if (editingRecipeId === recipeId) setEditingRecipeId(null)
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete recipe')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleAddComponent(recipeId: string) {
+    if (!idToken || isWriting || !draftCompName.trim()) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createRecipeComponent(idToken, {
+        recipeId,
+        type: draftCompType,
+        name: draftCompName.trim(),
+        quantity: draftCompQty.trim(),
+        unit: draftCompUnit.trim(),
+        note: draftCompNote.trim(),
+      })
+      setDraftCompName(''); setDraftCompQty(''); setDraftCompUnit(''); setDraftCompNote('')
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to add component')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDeleteComponent(componentId: string) {
+    if (!idToken || isWriting) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteRecipeComponent(idToken, componentId)
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete component')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleAddStep(recipeId: string) {
+    if (!idToken || isWriting || !draftStepInstruction.trim()) return
+    const existingSteps = steps.filter((s) => s.recipe_id === recipeId)
+    const nextStepNumber = existingSteps.length > 0 ? Math.max(...existingSteps.map((s) => s.step_number)) + 1 : 1
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createRecipeStep(idToken, {
+        recipeId,
+        stepNumber: nextStepNumber,
+        instruction: draftStepInstruction.trim(),
+      })
+      setDraftStepInstruction('')
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to add step')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleDeleteStep(stepId: string) {
+    if (!idToken || isWriting) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteRecipeStep(idToken, stepId)
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete step')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  const managedRecipe = editingRecipeId ? recipes.find((r) => r.recipe_id === editingRecipeId) ?? null : null
+  const managedComponents = editingRecipeId ? components.filter((c) => c.recipe_id === editingRecipeId) : []
+  const managedSteps = editingRecipeId ? [...steps.filter((s) => s.recipe_id === editingRecipeId)].sort((a, b) => a.step_number - b.step_number) : []
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              onClick={() => { setIsEditing((v) => !v); setEditingRecipeId(null) }}
+              title="Edit recipes"
+            >
+              ✎
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      {isLoading ? <p className="sheets-meta">Loading recipes...</p> : null}
+
+      {!isLoading && recipes.length === 0 ? <p className="sheets-meta">No recipes yet.</p> : null}
+
+      {!canWrite && !idToken ? null : null}
+
+      {isEditing && canWrite ? (
+        <div className="sheets-editor">
+          <p className="sheets-meta">New recipe</p>
+          <div className="sheets-editor-row">
+            <input className="sheets-input" type="text" placeholder="Name *" value={draftName} onChange={(e) => setDraftName(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Category" value={draftCategory} onChange={(e) => setDraftCategory(e.target.value)} disabled={isWriting} />
+          </div>
+          <div className="sheets-editor-row">
+            <input className="sheets-input" type="text" placeholder="Calories" value={draftCalories} onChange={(e) => setDraftCalories(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Servings" value={draftServings} onChange={(e) => setDraftServings(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Cook time" value={draftCookTime} onChange={(e) => setDraftCookTime(e.target.value)} disabled={isWriting} />
+          </div>
+          <div className="sheets-editor-row">
+            <input className="sheets-input" type="text" placeholder="Video link" value={draftVideoLink} onChange={(e) => setDraftVideoLink(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Website link" value={draftWebsiteLink} onChange={(e) => setDraftWebsiteLink(e.target.value)} disabled={isWriting} />
+          </div>
+          <button type="button" className="secondary-action" onClick={() => void handleCreateRecipe()} disabled={!idToken || isWriting || !draftName.trim()}>
+            {isWriting ? 'Saving...' : 'Add recipe'}
+          </button>
+        </div>
+      ) : null}
+
+      {recipes.length > 0 ? (
+        <div className="recipe-cards-grid">
+          {recipes.map((recipe) => {
+            const draft = editDrafts[recipe.recipe_id] ?? recipe
+            return (
+              <div key={recipe.recipe_id} className="recipe-card">
+                {isEditing && canWrite ? (
+                  <>
+                    <input
+                      className="sheets-input"
+                      type="text"
+                      value={String(draft.recipe_name ?? '')}
+                      onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], recipe_name: e.target.value } }))}
+                      disabled={isWriting}
+                    />
+                    <div className="sheets-editor-row">
+                      <input className="sheets-input" type="text" placeholder="Category" value={String(draft.category ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], category: e.target.value } }))} disabled={isWriting} />
+                      <input className="sheets-input" type="text" placeholder="Calories" value={String(draft.calories ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], calories: e.target.value } }))} disabled={isWriting} />
+                    </div>
+                    <div className="sheets-editor-row">
+                      <input className="sheets-input" type="text" placeholder="Servings" value={String(draft.servings ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], servings: e.target.value } }))} disabled={isWriting} />
+                      <input className="sheets-input" type="text" placeholder="Cook time" value={String(draft.cook_time ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], cook_time: e.target.value } }))} disabled={isWriting} />
+                    </div>
+                    <div className="sheets-editor-row">
+                      <input className="sheets-input" type="text" placeholder="Video link" value={String(draft.video_link ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], video_link: e.target.value } }))} disabled={isWriting} />
+                      <input className="sheets-input" type="text" placeholder="Website link" value={String(draft.website_link ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], website_link: e.target.value } }))} disabled={isWriting} />
+                    </div>
+                    <div className="recipe-card-actions">
+                      <button type="button" className="secondary-action" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting}>Save</button>
+                      <button type="button" className="secondary-action" onClick={() => setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id)} disabled={isWriting}>
+                        {editingRecipeId === recipe.recipe_id ? 'Done' : 'Ingredients & Steps'}
+                      </button>
+                      <button type="button" className="secondary-action" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting}>Delete</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="recipe-card-title">{recipe.recipe_name}</p>
+                    <p className="recipe-card-meta">
+                      {[recipe.category, recipe.cook_time ? `⏱ ${recipe.cook_time}` : null, recipe.calories ? `🔥 ${recipe.calories} cal` : null, recipe.servings ? `${recipe.servings} srv` : null]
+                        .filter(Boolean).join(' · ')}
+                    </p>
+                    <div className="recipe-card-actions">
+                      <button type="button" className="secondary-action" onClick={() => setMakingRecipe(recipe)}>Make</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      ) : null}
+
+      {managedRecipe && isEditing && canWrite ? (
+        <div className="recipe-manage-panel">
+          <p className="recipe-manage-heading">Ingredients & Equipment — {managedRecipe.recipe_name}</p>
+
+          {managedComponents.length > 0 ? (
+            <div className="sheets-table-shell">
+              <table className="sheets-table">
+                <thead>
+                  <tr><th>Type</th><th>Name</th><th>Qty</th><th>Unit</th><th>Note</th><th></th></tr>
+                </thead>
+                <tbody>
+                  {managedComponents.map((c) => (
+                    <tr key={c.component_id}>
+                      <td>{c.type}</td>
+                      <td>{c.name}</td>
+                      <td>{c.quantity}</td>
+                      <td>{c.unit}</td>
+                      <td>{c.note}</td>
+                      <td>
+                        <button type="button" className="secondary-action" onClick={() => void handleDeleteComponent(c.component_id)} disabled={!idToken || isWriting}>✕</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          <div className="sheets-editor-row">
+            <select className="sheets-input" value={draftCompType} onChange={(e) => setDraftCompType(e.target.value)}>
+              <option value="ingredient">Ingredient</option>
+              <option value="equipment">Equipment</option>
+            </select>
+            <input className="sheets-input" type="text" placeholder="Name *" value={draftCompName} onChange={(e) => setDraftCompName(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Qty" value={draftCompQty} onChange={(e) => setDraftCompQty(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Unit" value={draftCompUnit} onChange={(e) => setDraftCompUnit(e.target.value)} disabled={isWriting} />
+            <input className="sheets-input" type="text" placeholder="Note" value={draftCompNote} onChange={(e) => setDraftCompNote(e.target.value)} disabled={isWriting} />
+            <button type="button" className="secondary-action" onClick={() => void handleAddComponent(editingRecipeId!)} disabled={!idToken || isWriting || !draftCompName.trim()}>Add</button>
+          </div>
+
+          <p className="recipe-manage-heading">Steps</p>
+
+          {managedSteps.length > 0 ? (
+            <div className="sheets-table-shell">
+              <table className="sheets-table">
+                <thead>
+                  <tr><th>#</th><th>Instruction</th><th></th></tr>
+                </thead>
+                <tbody>
+                  {managedSteps.map((s) => (
+                    <tr key={s.step_id}>
+                      <td>{s.step_number}</td>
+                      <td>{s.instruction}</td>
+                      <td>
+                        <button type="button" className="secondary-action" onClick={() => void handleDeleteStep(s.step_id)} disabled={!idToken || isWriting}>✕</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          <div className="sheets-editor-row">
+            <input className="sheets-input" type="text" placeholder="Instruction *" value={draftStepInstruction} onChange={(e) => setDraftStepInstruction(e.target.value)} disabled={isWriting} style={{ flex: 1 }} />
+            <button type="button" className="secondary-action" onClick={() => void handleAddStep(editingRecipeId!)} disabled={!idToken || isWriting || !draftStepInstruction.trim()}>Add step</button>
+          </div>
+        </div>
+      ) : null}
+
+      {writeError ? <p className="sheets-error">{writeError}</p> : null}
+
+      {makingRecipe ? (
+        <div className="recipe-popup-backdrop" role="presentation" onClick={() => setMakingRecipe(null)}>
+          <div className="recipe-popup" role="dialog" aria-modal="true" aria-label={`Make ${makingRecipe.recipe_name}`} onClick={(e) => e.stopPropagation()}>
+            <MakeRecipePopup
+              recipe={makingRecipe}
+              components={components.filter((c) => c.recipe_id === makingRecipe.recipe_id)}
+              steps={steps.filter((s) => s.recipe_id === makingRecipe.recipe_id)}
+              onClose={() => setMakingRecipe(null)}
+            />
+          </div>
+        </div>
+      ) : null}
+    </article>
+  )
 }
 
 function OreoGangCard({ title }: { title: string }) {
@@ -7530,6 +8066,17 @@ function DetailPage({
               canWrite={canWrite}
               idToken={googleIdToken}
               showTodaySummary={false}
+            />
+          )
+        }
+
+        if (path === '/cooking/recipes' && card.title === 'Recipes') {
+          return (
+            <RecipesCard
+              key={card.title}
+              title={card.title}
+              canWrite={profile === 'admin'}
+              idToken={googleIdToken}
             />
           )
         }

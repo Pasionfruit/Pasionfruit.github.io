@@ -12,6 +12,9 @@ import type {
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
+  RecipeComponentRecord,
+  RecipeRecord,
+  RecipeStepRecord,
   RingconnHealthRecord,
   TrainingRecord,
 } from './types'
@@ -642,6 +645,193 @@ export async function updateGroceryListItem(
     completed: payload.completed ?? false,
     include: payload.include ?? false,
   })
+}
+
+export async function getRecipes(): Promise<RecipeRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('recipes')
+  return rows
+    .map((row) => ({
+      recipe_id: String(row.recipe_id ?? ''),
+      recipe_name: String(row.recipe_name ?? ''),
+      category: String(row.category ?? ''),
+      calories: String(row.calories ?? ''),
+      servings: String(row.servings ?? ''),
+      video_link: String(row.video_link ?? ''),
+      website_link: String(row.website_link ?? ''),
+      cook_time: String(row.cook_time ?? ''),
+    }))
+    .filter((row) => row.recipe_id)
+}
+
+export async function getRecipeComponents(): Promise<RecipeComponentRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('recipe_components')
+  return rows
+    .map((row) => ({
+      component_id: String(row.component_id ?? ''),
+      recipe_id: String(row.recipe_id ?? ''),
+      type: String(row.type ?? ''),
+      name: String(row.name ?? ''),
+      quantity: String(row.quantity ?? ''),
+      unit: String(row.unit ?? ''),
+      note: String(row.note ?? ''),
+    }))
+    .filter((row) => row.component_id)
+}
+
+export async function getRecipeSteps(): Promise<RecipeStepRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('recipe_steps')
+  return rows
+    .map((row) => ({
+      step_id: String(row.step_id ?? ''),
+      recipe_id: String(row.recipe_id ?? ''),
+      step_number: parseNumber(row.step_number) ?? 0,
+      instruction: String(row.instruction ?? ''),
+    }))
+    .filter((row) => row.step_id)
+}
+
+export async function createRecipe(
+  idToken: string,
+  payload: {
+    recipeName: string
+    category: string
+    calories: string
+    servings: string
+    videoLink: string
+    websiteLink: string
+    cookTime: string
+  },
+) {
+  await runWrite({
+    action: 'createRecipe',
+    idToken,
+    recipe_name: payload.recipeName,
+    category: payload.category,
+    calories: payload.calories,
+    servings: payload.servings,
+    video_link: payload.videoLink,
+    website_link: payload.websiteLink,
+    cook_time: payload.cookTime,
+  })
+}
+
+export async function updateRecipe(
+  idToken: string,
+  recipeId: string,
+  payload: {
+    recipeName: string
+    category: string
+    calories: string
+    servings: string
+    videoLink: string
+    websiteLink: string
+    cookTime: string
+  },
+) {
+  await runWrite({
+    action: 'updateRecipe',
+    idToken,
+    recipe_id: recipeId,
+    recipe_name: payload.recipeName,
+    category: payload.category,
+    calories: payload.calories,
+    servings: payload.servings,
+    video_link: payload.videoLink,
+    website_link: payload.websiteLink,
+    cook_time: payload.cookTime,
+  })
+}
+
+export async function deleteRecipe(idToken: string, recipeId: string) {
+  await runWrite({ action: 'deleteRecipe', idToken, recipe_id: recipeId })
+}
+
+export async function createRecipeComponent(
+  idToken: string,
+  payload: {
+    recipeId: string
+    type: string
+    name: string
+    quantity: string
+    unit: string
+    note: string
+  },
+) {
+  await runWrite({
+    action: 'createRecipeComponent',
+    idToken,
+    recipe_id: payload.recipeId,
+    type: payload.type,
+    name: payload.name,
+    quantity: payload.quantity,
+    unit: payload.unit,
+    note: payload.note,
+  })
+}
+
+export async function updateRecipeComponent(
+  idToken: string,
+  componentId: string,
+  payload: {
+    type: string
+    name: string
+    quantity: string
+    unit: string
+    note: string
+  },
+) {
+  await runWrite({
+    action: 'updateRecipeComponent',
+    idToken,
+    component_id: componentId,
+    type: payload.type,
+    name: payload.name,
+    quantity: payload.quantity,
+    unit: payload.unit,
+    note: payload.note,
+  })
+}
+
+export async function deleteRecipeComponent(idToken: string, componentId: string) {
+  await runWrite({ action: 'deleteRecipeComponent', idToken, component_id: componentId })
+}
+
+export async function createRecipeStep(
+  idToken: string,
+  payload: {
+    recipeId: string
+    stepNumber: number
+    instruction: string
+  },
+) {
+  await runWrite({
+    action: 'createRecipeStep',
+    idToken,
+    recipe_id: payload.recipeId,
+    step_number: payload.stepNumber,
+    instruction: payload.instruction,
+  })
+}
+
+export async function updateRecipeStep(
+  idToken: string,
+  stepId: string,
+  payload: {
+    stepNumber: number
+    instruction: string
+  },
+) {
+  await runWrite({
+    action: 'updateRecipeStep',
+    idToken,
+    step_id: stepId,
+    step_number: payload.stepNumber,
+    instruction: payload.instruction,
+  })
+}
+
+export async function deleteRecipeStep(idToken: string, stepId: string) {
+  await runWrite({ action: 'deleteRecipeStep', idToken, step_id: stepId })
 }
 
 export async function deleteGroceryListItem(
