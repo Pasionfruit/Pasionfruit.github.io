@@ -1049,6 +1049,24 @@
   overflow: hidden;
 }
 
+.home-todoist-card .experience-toggle {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.home-todoist-card .experience-toggle::-webkit-scrollbar {
+  display: none;
+}
+
+.home-todoist-card .experience-toggle-btn {
+  flex: 1;
+  min-width: max-content;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .experience-toggle-btn {
   border: 0;
   background: var(--surface-muted);
@@ -1759,6 +1777,8 @@
   align-items: center;
   gap: 0.65rem;
   padding: 0.55rem 0.75rem;
+  user-select: none;
+  -webkit-user-select: none;
   border: 1px solid var(--border);
   border-radius: 0.55rem;
   background: var(--surface);

@@ -985,7 +985,9 @@ function TodoistTasksCard({
   const canEditAny = canEditTodoist || canEditGrocery
   const canWrite = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
   const canViewOriginalTabs = shouldUseAdminProfile(googleEmail)
-  const [view, setView] = useState<'studying' | 'training' | 'todoist' | 'grocery' | 'meals'>('todoist')
+  const [view, setView] = useState<'studying' | 'training' | 'todoist' | 'grocery' | 'meals'>(
+    canViewOriginalTabs ? 'todoist' : 'studying',
+  )
   const [rows, setRows] = useState<TodoistTask[]>([])
   const [groceryRows, setGroceryRows] = useState<GroceryListRecord[]>([])
   const [mealPlanRows, setMealPlanRows] = useState<MealPlanRecord[]>([])
@@ -1475,35 +1477,8 @@ function TodoistTasksCard({
       {!isCollapsed ? (
         <>
           <div className="experience-toggle" role="tablist" aria-label="Tasks of the Day filter">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'training'}
-              className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
-              onClick={() => setView('training')}
-            >
-              Training
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'studying'}
-              className={`experience-toggle-btn ${view === 'studying' ? 'active' : ''}`}
-              onClick={() => setView('studying')}
-            >
-              Studying
-            </button>
             {canViewOriginalTabs ? (
               <>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={view === 'todoist'}
-                  className={`experience-toggle-btn ${view === 'todoist' ? 'active' : ''}`}
-                  onClick={() => setView('todoist')}
-                >
-                  Todoist
-                </button>
                 <button
                   type="button"
                   role="tab"
@@ -1522,8 +1497,35 @@ function TodoistTasksCard({
                 >
                   Meals
                 </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={view === 'todoist'}
+                  className={`experience-toggle-btn ${view === 'todoist' ? 'active' : ''}`}
+                  onClick={() => setView('todoist')}
+                >
+                  Todoist
+                </button>
               </>
             ) : null}
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'studying'}
+              className={`experience-toggle-btn ${view === 'studying' ? 'active' : ''}`}
+              onClick={() => setView('studying')}
+            >
+              Studying
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'training'}
+              className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
+              onClick={() => setView('training')}
+            >
+              Training
+            </button>
           </div>
 
           {view === 'training' ? <p className="sheets-meta">Workout(s) of the Day</p> : null}
