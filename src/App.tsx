@@ -79,8 +79,10 @@ import {
   updateRecipe,
   deleteRecipe,
   createRecipeComponent,
+  updateRecipeComponent,
   deleteRecipeComponent,
   createRecipeStep,
+  updateRecipeStep,
   deleteRecipeStep,
 } from './data/sheets/repositories'
 import type {
@@ -1462,7 +1464,7 @@ function TodoistTasksCard({
     if (isWriting || !canEditGrocery || !googleIdToken) return
     const included = groceryRows.filter((r) => r.include)
     if (included.length === 0) return
-    setGroceryRows((prev) => prev.map((r) => ({ ...r, include: false })))
+    setGroceryRows((prev) => prev.map((r) => ({ ...r, include: false, completed: false })))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -1472,7 +1474,7 @@ function TodoistTasksCard({
             originalItem: row.item,
             item: row.item,
             type: row.type,
-            completed: row.completed,
+            completed: false,
             include: false,
           }),
         ),
@@ -1480,7 +1482,7 @@ function TodoistTasksCard({
     } catch (error) {
       setGroceryRows((prev) => prev.map((r) => {
         const wasIncluded = included.find((ir) => ir.item === r.item)
-        return wasIncluded ? { ...r, include: true } : r
+        return wasIncluded ? { ...r, include: true, completed: r.completed } : r
       }))
       setWriteError(error instanceof Error ? error.message : 'Unable to deselect items')
     } finally {
@@ -3629,6 +3631,17 @@ function MakeRecipePopup({
   )
 }
 
+function parseCookMinutes(cookTime: string): number | null {
+  if (!cookTime) return null
+  const t = cookTime.toLowerCase()
+  let total = 0
+  const hrMatch = t.match(/(\d+(?:\.\d+)?)\s*h(?:r|our)?s?/)
+  const minMatch = t.match(/(\d+(?:\.\d+)?)\s*m(?:in(?:ute)?s?)?/)
+  if (hrMatch) total += parseFloat(hrMatch[1]) * 60
+  if (minMatch) total += parseFloat(minMatch[1])
+  return total > 0 ? total : null
+}
+
 function RecipesCard({
   title,
   canWrite,
@@ -3669,6 +3682,50 @@ function RecipesCard({
 
   // New step draft
   const [draftStepInstruction, setDraftStepInstruction] = useState('')
+
+  const [editingCompId, setEditingCompId] = useState<string | null>(null)
+  const [editCompDraft, setEditCompDraft] = useState<Partial<RecipeComponentRecord>>({})
+  const [editingStepId, setEditingStepId] = useState<string | null>(null)
+  const [editStepDraft, setEditStepDraft] = useState('')
+
+  const compNameInputRef = useRef<HTMLInputElement>(null)
+  const stepInputRef = useRef<HTMLInputElement>(null)
+
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [mobileEditRecipeId, setMobileEditRecipeId] = useState<string | null>(null)
+
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('')
+  const [durationFilter, setDurationFilter] = useState('')
+  const [equipmentFilter, setEquipmentFilter] = useState('')
+
+  const equipmentOptions = useMemo(() => {
+    const names = components
+      .filter((c) => c.type.toLowerCase() === 'equipment')
+      .map((c) => c.name.trim())
+      .filter(Boolean)
+    return [...new Set(names)].sort()
+  }, [components])
+
+  const filteredRecipes = useMemo(() => {
+    const q = searchQuery.toLowerCase()
+    return recipes.filter((recipe) => {
+      if (q && !recipe.recipe_name.toLowerCase().includes(q)) return false
+      if (durationFilter) {
+        const mins = parseCookMinutes(recipe.cook_time)
+        if (durationFilter === 'under-30' && (mins === null || mins >= 30)) return false
+        if (durationFilter === '30-60' && (mins === null || mins < 30 || mins > 60)) return false
+        if (durationFilter === 'over-60' && (mins === null || mins <= 60)) return false
+      }
+      if (equipmentFilter) {
+        const recipeEquipment = components
+          .filter((c) => c.recipe_id === recipe.recipe_id && c.type.toLowerCase() === 'equipment')
+          .map((c) => c.name.trim())
+        if (!recipeEquipment.includes(equipmentFilter)) return false
+      }
+      return true
+    })
+  }, [recipes, components, searchQuery, durationFilter, equipmentFilter])
 
   async function loadAll() {
     try {
@@ -3774,8 +3831,31 @@ function RecipesCard({
       })
       setDraftCompName(''); setDraftCompQty(''); setDraftCompUnit(''); setDraftCompNote('')
       await loadAll()
+      compNameInputRef.current?.focus()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to add component')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleUpdateComponent(c: RecipeComponentRecord) {
+    if (!idToken || isWriting) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateRecipeComponent(idToken, c.component_id, {
+        type: c.type,
+        name: String(editCompDraft.name ?? c.name).trim(),
+        quantity: String(editCompDraft.quantity ?? c.quantity).trim(),
+        unit: String(editCompDraft.unit ?? c.unit).trim(),
+        note: String(editCompDraft.note ?? c.note).trim(),
+      })
+      setEditingCompId(null)
+      setEditCompDraft({})
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update component')
     } finally {
       setIsWriting(false)
     }
@@ -3795,6 +3875,25 @@ function RecipesCard({
     }
   }
 
+  async function handleUpdateStep(s: RecipeStepRecord) {
+    if (!idToken || isWriting || !editStepDraft.trim()) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateRecipeStep(idToken, s.step_id, {
+        stepNumber: s.step_number,
+        instruction: editStepDraft.trim(),
+      })
+      setEditingStepId(null)
+      setEditStepDraft('')
+      await loadAll()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update step')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   async function handleAddStep(recipeId: string) {
     if (!idToken || isWriting || !draftStepInstruction.trim()) return
     const existingSteps = steps.filter((s) => s.recipe_id === recipeId)
@@ -3809,6 +3908,7 @@ function RecipesCard({
       })
       setDraftStepInstruction('')
       await loadAll()
+      stepInputRef.current?.focus()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to add step')
     } finally {
@@ -3839,6 +3939,15 @@ function RecipesCard({
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
+          <button
+            type="button"
+            className={`section-edit-btn${viewMode === 'list' ? ' active' : ''}`}
+            aria-pressed={viewMode === 'list'}
+            onClick={() => setViewMode((v) => v === 'grid' ? 'list' : 'grid')}
+            title={viewMode === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+          >
+            {viewMode === 'grid' ? '☰' : '⊞'}
+          </button>
           {canWrite ? (
             <button
               type="button"
@@ -3856,78 +3965,214 @@ function RecipesCard({
       {isLoading ? <p className="sheets-meta">Loading recipes...</p> : null}
 
       {!isLoading && recipes.length === 0 ? <p className="sheets-meta">No recipes yet.</p> : null}
+      {!isLoading && recipes.length > 0 && filteredRecipes.length === 0 ? <p className="sheets-meta">No recipes match the current filters.</p> : null}
 
       {!canWrite && !idToken ? null : null}
 
       {isEditing && canWrite ? (
-        <div className="sheets-editor">
+        <div className="recipe-add-form">
           <p className="sheets-meta">New recipe</p>
-          <div className="sheets-editor-row">
-            <input className="sheets-input" type="text" placeholder="Name *" value={draftName} onChange={(e) => setDraftName(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Category" value={draftCategory} onChange={(e) => setDraftCategory(e.target.value)} disabled={isWriting} />
-          </div>
-          <div className="sheets-editor-row">
-            <input className="sheets-input" type="text" placeholder="Calories" value={draftCalories} onChange={(e) => setDraftCalories(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Servings" value={draftServings} onChange={(e) => setDraftServings(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Cook time" value={draftCookTime} onChange={(e) => setDraftCookTime(e.target.value)} disabled={isWriting} />
-          </div>
-          <div className="sheets-editor-row">
-            <input className="sheets-input" type="text" placeholder="Video link" value={draftVideoLink} onChange={(e) => setDraftVideoLink(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Website link" value={draftWebsiteLink} onChange={(e) => setDraftWebsiteLink(e.target.value)} disabled={isWriting} />
+          <div className="recipe-card-edit-form">
+            <div className="recipe-card-edit-field recipe-card-edit-field--full">
+              <span className="recipe-card-edit-label">Name *</span>
+              <input className="sheets-input" type="text" value={draftName} onChange={(e) => setDraftName(e.target.value)} disabled={isWriting} />
+            </div>
+            <div className="recipe-card-edit-field">
+              <span className="recipe-card-edit-label">Category</span>
+              <input className="sheets-input" type="text" value={draftCategory} onChange={(e) => setDraftCategory(e.target.value)} disabled={isWriting} />
+            </div>
+            <div className="recipe-card-edit-field">
+              <span className="recipe-card-edit-label">Cook time</span>
+              <input className="sheets-input" type="text" value={draftCookTime} onChange={(e) => setDraftCookTime(e.target.value)} disabled={isWriting} />
+            </div>
+            <div className="recipe-card-edit-field">
+              <span className="recipe-card-edit-label">Calories</span>
+              <input className="sheets-input" type="text" value={draftCalories} onChange={(e) => setDraftCalories(e.target.value)} disabled={isWriting} />
+            </div>
+            <div className="recipe-card-edit-field">
+              <span className="recipe-card-edit-label">Servings</span>
+              <input className="sheets-input" type="text" value={draftServings} onChange={(e) => setDraftServings(e.target.value)} disabled={isWriting} />
+            </div>
+            <div className="recipe-card-edit-field">
+              <span className="recipe-card-edit-label">Video link</span>
+              <input className="sheets-input" type="text" value={draftVideoLink} onChange={(e) => setDraftVideoLink(e.target.value)} disabled={isWriting} />
+            </div>
+            <div className="recipe-card-edit-field">
+              <span className="recipe-card-edit-label">Website link</span>
+              <input className="sheets-input" type="text" value={draftWebsiteLink} onChange={(e) => setDraftWebsiteLink(e.target.value)} disabled={isWriting} />
+            </div>
           </div>
           <button type="button" className="secondary-action" onClick={() => void handleCreateRecipe()} disabled={!idToken || isWriting || !draftName.trim()}>
-            {isWriting ? 'Saving...' : 'Add recipe'}
+            {isWriting ? 'Saving…' : 'Add recipe'}
           </button>
         </div>
       ) : null}
 
       {recipes.length > 0 ? (
-        <div className="recipe-cards-grid">
-          {recipes.map((recipe) => {
+        <div className="recipe-filter-bar">
+          <input
+            className="sheets-input recipe-filter-search"
+            type="search"
+            placeholder="Search by title…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <select
+            className="sheets-input"
+            value={durationFilter}
+            onChange={(e) => setDurationFilter(e.target.value)}
+          >
+            <option value="">All durations</option>
+            <option value="under-30">Under 30 min</option>
+            <option value="30-60">30 – 60 min</option>
+            <option value="over-60">Over 60 min</option>
+          </select>
+          <select
+            className="sheets-input"
+            value={equipmentFilter}
+            onChange={(e) => setEquipmentFilter(e.target.value)}
+          >
+            <option value="">All equipment</option>
+            {equipmentOptions.map((eq) => (
+              <option key={eq} value={eq}>{eq}</option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
+      {recipes.length > 0 && viewMode === 'list' && !isEditing ? (
+        <ul className="recipe-list-view">
+          {filteredRecipes.map((recipe) => (
+            <li key={recipe.recipe_id} className="recipe-list-item">
+              <span className="recipe-list-name">{recipe.recipe_name}</span>
+              <span className="recipe-list-meta">
+                {[recipe.category, recipe.cook_time ? `⏱ ${recipe.cook_time}` : null, recipe.calories ? `🔥 ${recipe.calories} cal` : null]
+                  .filter(Boolean).join(' · ')}
+              </span>
+              <button type="button" className="secondary-action recipe-list-make-btn" onClick={() => setMakingRecipe(recipe)}>Make</button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {isEditing && canWrite && filteredRecipes.length > 0 ? (
+        <div className="sheets-table-shell recipe-edit-table-shell">
+          <table className="sheets-table recipe-edit-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Cook time</th>
+                <th>Calories</th>
+                <th>Servings</th>
+                <th>Video</th>
+                <th>Website</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRecipes.map((recipe) => {
+                const draft = editDrafts[recipe.recipe_id] ?? recipe
+                return (
+                  <tr key={recipe.recipe_id}>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.recipe_name ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], recipe_name: e.target.value } }))} disabled={isWriting} /></td>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.category ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], category: e.target.value } }))} disabled={isWriting} /></td>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.cook_time ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], cook_time: e.target.value } }))} disabled={isWriting} /></td>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.calories ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], calories: e.target.value } }))} disabled={isWriting} /></td>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.servings ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], servings: e.target.value } }))} disabled={isWriting} /></td>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.video_link ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], video_link: e.target.value } }))} disabled={isWriting} /></td>
+                    <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.website_link ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], website_link: e.target.value } }))} disabled={isWriting} /></td>
+                    <td className="recipe-edit-table-actions">
+                      <button type="button" className="secondary-action" onClick={() => setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id)} disabled={isWriting} title="Ingredients & Steps">⚙</button>
+                      <button type="button" className="secondary-action recipe-save-btn" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting} title="Save">✓</button>
+                      <button type="button" className="secondary-action recipe-delete-btn" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting} title="Delete">✕</button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+
+      {isEditing && canWrite && filteredRecipes.length > 0 ? (
+        <ul className="recipe-edit-mobile-list">
+          {filteredRecipes.map((recipe) => {
             const draft = editDrafts[recipe.recipe_id] ?? recipe
+            const expanded = mobileEditRecipeId === recipe.recipe_id
+            return (
+              <li key={recipe.recipe_id} className="recipe-edit-mobile-item">
+                <button
+                  type="button"
+                  className="recipe-edit-mobile-row"
+                  onClick={() => setMobileEditRecipeId(expanded ? null : recipe.recipe_id)}
+                >
+                  <span className="recipe-edit-mobile-name">{recipe.recipe_name}</span>
+                  <span className="recipe-edit-mobile-meta">{[recipe.category, recipe.cook_time].filter(Boolean).join(' · ')}</span>
+                  <span className="recipe-edit-mobile-chevron">{expanded ? '▾' : '▸'}</span>
+                </button>
+                {expanded ? (
+                  <div className="recipe-edit-mobile-form">
+                    <div className="recipe-card-edit-form">
+                      <div className="recipe-card-edit-field recipe-card-edit-field--full">
+                        <span className="recipe-card-edit-label">Name</span>
+                        <input className="sheets-input" type="text" value={String(draft.recipe_name ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], recipe_name: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                      <div className="recipe-card-edit-field">
+                        <span className="recipe-card-edit-label">Category</span>
+                        <input className="sheets-input" type="text" value={String(draft.category ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], category: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                      <div className="recipe-card-edit-field">
+                        <span className="recipe-card-edit-label">Cook time</span>
+                        <input className="sheets-input" type="text" value={String(draft.cook_time ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], cook_time: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                      <div className="recipe-card-edit-field">
+                        <span className="recipe-card-edit-label">Calories</span>
+                        <input className="sheets-input" type="text" value={String(draft.calories ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], calories: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                      <div className="recipe-card-edit-field">
+                        <span className="recipe-card-edit-label">Servings</span>
+                        <input className="sheets-input" type="text" value={String(draft.servings ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], servings: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                      <div className="recipe-card-edit-field">
+                        <span className="recipe-card-edit-label">Video link</span>
+                        <input className="sheets-input" type="text" value={String(draft.video_link ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], video_link: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                      <div className="recipe-card-edit-field">
+                        <span className="recipe-card-edit-label">Website link</span>
+                        <input className="sheets-input" type="text" value={String(draft.website_link ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], website_link: e.target.value } }))} disabled={isWriting} />
+                      </div>
+                    </div>
+                    <div className="recipe-edit-mobile-actions">
+                      <button type="button" className="secondary-action recipe-delete-btn" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting}>Delete</button>
+                      <button type="button" className="secondary-action" onClick={() => { setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id) }} disabled={isWriting}>
+                        {editingRecipeId === recipe.recipe_id ? 'Done' : '⚙ Ingredients & Steps'}
+                      </button>
+                      <button type="button" className="secondary-action recipe-save-btn" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting}>Save</button>
+                    </div>
+                  </div>
+                ) : null}
+              </li>
+            )
+          })}
+        </ul>
+      ) : null}
+
+      {recipes.length > 0 && viewMode === 'grid' && !isEditing ? (
+        <div className="recipe-cards-grid">
+          {filteredRecipes.map((recipe) => {
             return (
               <div key={recipe.recipe_id} className="recipe-card">
-                {isEditing && canWrite ? (
-                  <>
-                    <input
-                      className="sheets-input"
-                      type="text"
-                      value={String(draft.recipe_name ?? '')}
-                      onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], recipe_name: e.target.value } }))}
-                      disabled={isWriting}
-                    />
-                    <div className="sheets-editor-row">
-                      <input className="sheets-input" type="text" placeholder="Category" value={String(draft.category ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], category: e.target.value } }))} disabled={isWriting} />
-                      <input className="sheets-input" type="text" placeholder="Calories" value={String(draft.calories ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], calories: e.target.value } }))} disabled={isWriting} />
-                    </div>
-                    <div className="sheets-editor-row">
-                      <input className="sheets-input" type="text" placeholder="Servings" value={String(draft.servings ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], servings: e.target.value } }))} disabled={isWriting} />
-                      <input className="sheets-input" type="text" placeholder="Cook time" value={String(draft.cook_time ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], cook_time: e.target.value } }))} disabled={isWriting} />
-                    </div>
-                    <div className="sheets-editor-row">
-                      <input className="sheets-input" type="text" placeholder="Video link" value={String(draft.video_link ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], video_link: e.target.value } }))} disabled={isWriting} />
-                      <input className="sheets-input" type="text" placeholder="Website link" value={String(draft.website_link ?? '')} onChange={(e) => setEditDrafts((prev) => ({ ...prev, [recipe.recipe_id]: { ...prev[recipe.recipe_id], website_link: e.target.value } }))} disabled={isWriting} />
-                    </div>
-                    <div className="recipe-card-actions">
-                      <button type="button" className="secondary-action" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting}>Save</button>
-                      <button type="button" className="secondary-action" onClick={() => setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id)} disabled={isWriting}>
-                        {editingRecipeId === recipe.recipe_id ? 'Done' : 'Ingredients & Steps'}
-                      </button>
-                      <button type="button" className="secondary-action" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting}>Delete</button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="recipe-card-title">{recipe.recipe_name}</p>
-                    <p className="recipe-card-meta">
-                      {[recipe.category, recipe.cook_time ? `⏱ ${recipe.cook_time}` : null, recipe.calories ? `🔥 ${recipe.calories} cal` : null, recipe.servings ? `${recipe.servings} srv` : null]
-                        .filter(Boolean).join(' · ')}
-                    </p>
-                    <div className="recipe-card-actions">
-                      <button type="button" className="secondary-action" onClick={() => setMakingRecipe(recipe)}>Make</button>
-                    </div>
-                  </>
-                )}
+                <>
+                  <p className="recipe-card-title">{recipe.recipe_name}</p>
+                  <p className="recipe-card-meta">
+                    {[recipe.category, recipe.cook_time ? `⏱ ${recipe.cook_time}` : null, recipe.calories ? `🔥 ${recipe.calories} cal` : null, recipe.servings ? `${recipe.servings} srv` : null]
+                      .filter(Boolean).join(' · ')}
+                  </p>
+                  <div className="recipe-card-actions">
+                    <button type="button" className="secondary-action" onClick={() => setMakingRecipe(recipe)}>Make</button>
+                  </div>
+                </>
               </div>
             )
           })}
@@ -3936,70 +4181,134 @@ function RecipesCard({
 
       {managedRecipe && isEditing && canWrite ? (
         <div className="recipe-manage-panel">
-          <p className="recipe-manage-heading">Ingredients & Equipment — {managedRecipe.recipe_name}</p>
+          <p className="recipe-manage-heading">{managedRecipe.recipe_name}</p>
 
-          {managedComponents.length > 0 ? (
-            <div className="sheets-table-shell">
-              <table className="sheets-table">
-                <thead>
-                  <tr><th>Type</th><th>Name</th><th>Qty</th><th>Unit</th><th>Note</th><th></th></tr>
-                </thead>
-                <tbody>
-                  {managedComponents.map((c) => (
-                    <tr key={c.component_id}>
-                      <td>{c.type}</td>
-                      <td>{c.name}</td>
-                      <td>{c.quantity}</td>
-                      <td>{c.unit}</td>
-                      <td>{c.note}</td>
-                      <td>
-                        <button type="button" className="secondary-action" onClick={() => void handleDeleteComponent(c.component_id)} disabled={!idToken || isWriting}>✕</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="recipe-manage-section">
+            <div className="recipe-comp-tabs" role="tablist">
+              {(['ingredient', 'equipment'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  role="tab"
+                  aria-selected={draftCompType === tab}
+                  className={`recipe-comp-tab${draftCompType === tab ? ' active' : ''}`}
+                  onClick={() => { setDraftCompType(tab); setDraftCompName(''); setDraftCompQty(''); setDraftCompUnit(''); setDraftCompNote('') }}
+                >
+                  {tab === 'ingredient' ? 'Ingredients' : 'Equipment'}
+                  <span className="recipe-comp-tab-count">
+                    {managedComponents.filter((c) => c.type === tab).length}
+                  </span>
+                </button>
+              ))}
             </div>
-          ) : null}
 
-          <div className="sheets-editor-row">
-            <select className="sheets-input" value={draftCompType} onChange={(e) => setDraftCompType(e.target.value)}>
-              <option value="ingredient">Ingredient</option>
-              <option value="equipment">Equipment</option>
-            </select>
-            <input className="sheets-input" type="text" placeholder="Name *" value={draftCompName} onChange={(e) => setDraftCompName(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Qty" value={draftCompQty} onChange={(e) => setDraftCompQty(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Unit" value={draftCompUnit} onChange={(e) => setDraftCompUnit(e.target.value)} disabled={isWriting} />
-            <input className="sheets-input" type="text" placeholder="Note" value={draftCompNote} onChange={(e) => setDraftCompNote(e.target.value)} disabled={isWriting} />
-            <button type="button" className="secondary-action" onClick={() => void handleAddComponent(editingRecipeId!)} disabled={!idToken || isWriting || !draftCompName.trim()}>Add</button>
+            {managedComponents.filter((c) => c.type === draftCompType).length > 0 ? (
+              <ul className="recipe-comp-list">
+                {managedComponents.filter((c) => c.type === draftCompType).map((c) => (
+                  <li key={c.component_id} className={`recipe-comp-item${editingCompId === c.component_id ? ' recipe-comp-item--editing' : ''}`}>
+                    {editingCompId === c.component_id ? (
+                      <>
+                        <div className="recipe-comp-edit-fields">
+                          <input className="sheets-input" type="text" value={String(editCompDraft.name ?? c.name)} onChange={(e) => setEditCompDraft((p) => ({ ...p, name: e.target.value }))} onKeyDown={(e) => { if (e.key === 'Enter') void handleUpdateComponent(c); if (e.key === 'Escape') { setEditingCompId(null); setEditCompDraft({}) } }} disabled={isWriting} placeholder="Name *" autoFocus />
+                          {draftCompType === 'ingredient' ? (
+                            <>
+                              <input className="sheets-input" type="text" value={String(editCompDraft.quantity ?? c.quantity)} onChange={(e) => setEditCompDraft((p) => ({ ...p, quantity: e.target.value }))} onKeyDown={(e) => { if (e.key === 'Enter') void handleUpdateComponent(c); if (e.key === 'Escape') { setEditingCompId(null); setEditCompDraft({}) } }} disabled={isWriting} placeholder="Qty" />
+                              <input className="sheets-input" type="text" value={String(editCompDraft.unit ?? c.unit)} onChange={(e) => setEditCompDraft((p) => ({ ...p, unit: e.target.value }))} onKeyDown={(e) => { if (e.key === 'Enter') void handleUpdateComponent(c); if (e.key === 'Escape') { setEditingCompId(null); setEditCompDraft({}) } }} disabled={isWriting} placeholder="Unit" />
+                              <input className="sheets-input recipe-comp-edit-note" type="text" value={String(editCompDraft.note ?? c.note)} onChange={(e) => setEditCompDraft((p) => ({ ...p, note: e.target.value }))} onKeyDown={(e) => { if (e.key === 'Enter') void handleUpdateComponent(c); if (e.key === 'Escape') { setEditingCompId(null); setEditCompDraft({}) } }} disabled={isWriting} placeholder="Note" />
+                            </>
+                          ) : null}
+                        </div>
+                        <div className="recipe-comp-edit-actions">
+                          <button type="button" className="secondary-action" onClick={() => void handleUpdateComponent(c)} disabled={isWriting}>Save</button>
+                          <button type="button" className="recipe-comp-delete" onClick={() => { setEditingCompId(null); setEditCompDraft({}) }}>✕</button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <span className="recipe-comp-name">{c.name}</span>
+                        {(c.quantity || c.unit) ? (
+                          <span className="recipe-comp-qty">{[c.quantity, c.unit].filter(Boolean).join(' ')}</span>
+                        ) : null}
+                        {c.note ? <span className="recipe-comp-note">{c.note}</span> : null}
+                        <button type="button" className="recipe-comp-edit-btn" aria-label={`Edit ${c.name}`} onClick={() => { setEditingCompId(c.component_id); setEditCompDraft({}) }}>✎</button>
+                        <button type="button" className="recipe-comp-delete" aria-label={`Remove ${c.name}`} onClick={() => void handleDeleteComponent(c.component_id)} disabled={!idToken || isWriting}>✕</button>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="sheets-meta">No {draftCompType === 'ingredient' ? 'ingredients' : 'equipment'} yet.</p>
+            )}
+
+            {draftCompType === 'ingredient' ? (
+              <div className="recipe-comp-add-form">
+                <div className="recipe-comp-add-fields">
+                  <div className="recipe-card-edit-field recipe-card-edit-field--full">
+                    <span className="recipe-card-edit-label">Name *</span>
+                    <input ref={compNameInputRef} className="sheets-input" type="text" value={draftCompName} onChange={(e) => setDraftCompName(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleAddComponent(editingRecipeId!) }} disabled={isWriting} autoComplete="off" />
+                  </div>
+                  <div className="recipe-card-edit-field">
+                    <span className="recipe-card-edit-label">Qty</span>
+                    <input className="sheets-input" type="text" value={draftCompQty} onChange={(e) => setDraftCompQty(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleAddComponent(editingRecipeId!) }} disabled={isWriting} />
+                  </div>
+                  <div className="recipe-card-edit-field">
+                    <span className="recipe-card-edit-label">Unit</span>
+                    <input className="sheets-input" type="text" value={draftCompUnit} onChange={(e) => setDraftCompUnit(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleAddComponent(editingRecipeId!) }} disabled={isWriting} />
+                  </div>
+                  <div className="recipe-card-edit-field recipe-card-edit-field--full">
+                    <span className="recipe-card-edit-label">Note</span>
+                    <input className="sheets-input" type="text" value={draftCompNote} onChange={(e) => setDraftCompNote(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleAddComponent(editingRecipeId!) }} disabled={isWriting} />
+                  </div>
+                </div>
+                <button type="button" className="secondary-action" onClick={() => void handleAddComponent(editingRecipeId!)} disabled={!idToken || isWriting || !draftCompName.trim()}>Add ingredient</button>
+              </div>
+            ) : (
+              <div className="recipe-comp-add-form recipe-comp-add-form--equipment">
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Name *</span>
+                  <input ref={compNameInputRef} className="sheets-input" type="text" value={draftCompName} onChange={(e) => setDraftCompName(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleAddComponent(editingRecipeId!) }} disabled={isWriting} autoComplete="off" />
+                </div>
+                <button type="button" className="secondary-action" onClick={() => void handleAddComponent(editingRecipeId!)} disabled={!idToken || isWriting || !draftCompName.trim()}>Add equipment</button>
+              </div>
+            )}
           </div>
 
-          <p className="recipe-manage-heading">Steps</p>
+          <div className="recipe-manage-section">
+            <p className="recipe-manage-heading recipe-manage-heading--sub">Steps</p>
 
-          {managedSteps.length > 0 ? (
-            <div className="sheets-table-shell">
-              <table className="sheets-table">
-                <thead>
-                  <tr><th>#</th><th>Instruction</th><th></th></tr>
-                </thead>
-                <tbody>
-                  {managedSteps.map((s) => (
-                    <tr key={s.step_id}>
-                      <td>{s.step_number}</td>
-                      <td>{s.instruction}</td>
-                      <td>
-                        <button type="button" className="secondary-action" onClick={() => void handleDeleteStep(s.step_id)} disabled={!idToken || isWriting}>✕</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {managedSteps.length > 0 ? (
+              <ol className="recipe-steps-edit-list">
+                {managedSteps.map((s) => (
+                  <li key={s.step_id} className={editingStepId === s.step_id ? 'recipe-step-edit-item recipe-step-edit-item--editing' : 'recipe-step-edit-item'}>
+                    <span className="recipe-step-edit-number">{s.step_number}</span>
+                    {editingStepId === s.step_id ? (
+                      <>
+                        <input className="sheets-input recipe-step-edit-input" type="text" value={editStepDraft} onChange={(e) => setEditStepDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleUpdateStep(s); if (e.key === 'Escape') { setEditingStepId(null); setEditStepDraft('') } }} disabled={isWriting} autoFocus />
+                        <button type="button" className="secondary-action" onClick={() => void handleUpdateStep(s)} disabled={isWriting || !editStepDraft.trim()}>Save</button>
+                        <button type="button" className="recipe-comp-delete" onClick={() => { setEditingStepId(null); setEditStepDraft('') }}>✕</button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="recipe-step-edit-text">{s.instruction}</span>
+                        <button type="button" className="recipe-comp-edit-btn" aria-label="Edit step" onClick={() => { setEditingStepId(s.step_id); setEditStepDraft(s.instruction) }}>✎</button>
+                        <button type="button" className="recipe-comp-delete" aria-label="Remove step" onClick={() => void handleDeleteStep(s.step_id)} disabled={!idToken || isWriting}>✕</button>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="sheets-meta">No steps yet.</p>
+            )}
+
+            <div className="recipe-comp-add-form recipe-comp-add-form--step">
+              <div className="recipe-card-edit-field recipe-card-edit-field--full">
+                <span className="recipe-card-edit-label">Instruction * <span className="recipe-hint">(Enter to add)</span></span>
+                <input ref={stepInputRef} className="sheets-input" type="text" value={draftStepInstruction} onChange={(e) => setDraftStepInstruction(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleAddStep(editingRecipeId!) }} disabled={isWriting} />
+              </div>
+              <button type="button" className="secondary-action" onClick={() => void handleAddStep(editingRecipeId!)} disabled={!idToken || isWriting || !draftStepInstruction.trim()}>Add step</button>
             </div>
-          ) : null}
-
-          <div className="sheets-editor-row">
-            <input className="sheets-input" type="text" placeholder="Instruction *" value={draftStepInstruction} onChange={(e) => setDraftStepInstruction(e.target.value)} disabled={isWriting} style={{ flex: 1 }} />
-            <button type="button" className="secondary-action" onClick={() => void handleAddStep(editingRecipeId!)} disabled={!idToken || isWriting || !draftStepInstruction.trim()}>Add step</button>
           </div>
         </div>
       ) : null}
@@ -5802,7 +6111,7 @@ function MealPlanCard({
   }, [rows])
 
   const sortedRows = useMemo(() => {
-    const weekdayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    const weekdayOrder = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday']
     return [...rows].sort((a, b) => {
       const dayDiff = weekdayOrder.indexOf(normalizeWeekday(a.day_of_the_week)) - weekdayOrder.indexOf(normalizeWeekday(b.day_of_the_week))
       if (dayDiff !== 0) {
@@ -5833,30 +6142,36 @@ function MealPlanCard({
     })
   }, [rows])
 
-  async function handleSave(row: MealPlanRecord) {
-    if (!idToken || isWriting || !canWrite) {
-      return
-    }
+  function handleClearAll() {
+    setEditedRows((current) => {
+      const next = { ...current }
+      for (const key of Object.keys(next)) {
+        next[key] = { ...next[key], breakfast: '', lunch: '', dinner: '', snack: '' }
+      }
+      return next
+    })
+  }
 
-    const draft = editedRows[row.day_of_the_week] ?? row
-    const dayOfTheWeek = draft.day_of_the_week.trim()
-    if (!dayOfTheWeek) {
-      setWriteError('Day of the week is required.')
-      return
-    }
-
+  async function handleSaveAll() {
+    if (!idToken || isWriting || !canWrite) return
     setIsWriting(true)
     setWriteError('')
     try {
-      await updateMealPlan(idToken, {
-        originalDayOfTheWeek: row.day_of_the_week,
-        dayOfTheWeek,
-        breakfast: draft.breakfast.trim(),
-        lunch: draft.lunch.trim(),
-        dinner: draft.dinner.trim(),
-        snack: draft.snack.trim(),
-      })
+      await Promise.all(
+        rows.map((row) => {
+          const draft = editedRows[row.day_of_the_week] ?? row
+          return updateMealPlan(idToken, {
+            originalDayOfTheWeek: row.day_of_the_week,
+            dayOfTheWeek: row.day_of_the_week,
+            breakfast: draft.breakfast.trim(),
+            lunch: draft.lunch.trim(),
+            dinner: draft.dinner.trim(),
+            snack: draft.snack.trim(),
+          })
+        }),
+      )
       await loadMealPlan()
+      setIsEditing(false)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update meal plan')
     } finally {
@@ -6014,16 +6329,6 @@ function MealPlanCard({
                     )}
                   </div>
                 </div>
-                {isEditing && canWrite ? (
-                  <button
-                    type="button"
-                    className="secondary-action"
-                    onClick={() => void handleSave(mobileRow)}
-                    disabled={!idToken || isWriting || !canWrite}
-                  >
-                    Save
-                  </button>
-                ) : null}
               </>
             ) : null}
           </div>
@@ -6037,33 +6342,12 @@ function MealPlanCard({
                   <th>Lunch</th>
                   <th>Dinner</th>
                   <th>Snack</th>
-                  {isEditing && canWrite ? <th>Actions</th> : null}
                 </tr>
               </thead>
               <tbody>
                 {sortedRows.map((row) => (
                   <tr key={row.day_of_the_week}>
-                    <td data-label="Day of week">
-                      {isEditing && canWrite ? (
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={editedRows[row.day_of_the_week]?.day_of_the_week ?? row.day_of_the_week}
-                          onChange={(event) =>
-                            setEditedRows((current) => ({
-                              ...current,
-                              [row.day_of_the_week]: {
-                                ...(current[row.day_of_the_week] ?? row),
-                                day_of_the_week: event.target.value,
-                              },
-                            }))
-                          }
-                          disabled={!idToken || isWriting || !canWrite}
-                        />
-                      ) : (
-                        row.day_of_the_week
-                      )}
-                    </td>
+                    <td data-label="Day of week">{row.day_of_the_week}</td>
                     <td data-label="Breakfast">
                       {isEditing && canWrite ? (
                         <input
@@ -6148,18 +6432,6 @@ function MealPlanCard({
                         row.snack
                       )}
                     </td>
-                    {isEditing && canWrite ? (
-                      <td data-label="Actions">
-                        <button
-                          type="button"
-                          className="secondary-action"
-                          onClick={() => void handleSave(row)}
-                          disabled={!idToken || isWriting || !canWrite}
-                        >
-                          Save
-                        </button>
-                      </td>
-                    ) : null}
                   </tr>
                 ))}
               </tbody>
@@ -6168,6 +6440,26 @@ function MealPlanCard({
 
           {sortedRows.length === 0 ? <p className="sheets-meta">No meal plan rows found.</p> : null}
           </div>
+          {isEditing && canWrite ? (
+            <div className="meal-plan-edit-actions">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={handleClearAll}
+                disabled={isWriting}
+              >
+                Clear All
+              </button>
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => void handleSaveAll()}
+                disabled={!idToken || isWriting}
+              >
+                {isWriting ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
@@ -6298,7 +6590,7 @@ function GroceryListCard({
     if (!idToken || isWriting || !canWrite) return
     const included = rows.filter((r) => r.include)
     if (included.length === 0) return
-    setRows((prev) => prev.map((r) => ({ ...r, include: false })))
+    setRows((prev) => prev.map((r) => ({ ...r, include: false, completed: false })))
     setIsWriting(true)
     setWriteError('')
     try {
@@ -6308,7 +6600,7 @@ function GroceryListCard({
             originalItem: row.item,
             item: row.item,
             type: row.type,
-            completed: row.completed,
+            completed: false,
             include: false,
           }),
         ),
@@ -6316,7 +6608,7 @@ function GroceryListCard({
     } catch (error) {
       setRows((prev) => prev.map((r) => {
         const wasIncluded = included.find((ir) => ir.item === r.item)
-        return wasIncluded ? { ...r, include: true } : r
+        return wasIncluded ? { ...r, include: true, completed: r.completed } : r
       }))
       setWriteError(error instanceof Error ? error.message : 'Unable to deselect items')
     } finally {

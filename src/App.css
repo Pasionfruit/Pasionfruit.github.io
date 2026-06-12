@@ -898,10 +898,105 @@
   background: color-mix(in srgb, #1f8f3a 8%, var(--surface));
 }
 
+.recipe-list-view {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.recipe-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-list-item:last-child {
+  border-bottom: none;
+}
+
+.recipe-list-item:hover {
+  background: var(--surface-hover, color-mix(in srgb, var(--surface) 85%, var(--border)));
+}
+
+.recipe-list-name {
+  font-weight: 600;
+  color: var(--text-strong);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recipe-list-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.recipe-list-make-btn {
+  flex-shrink: 0;
+}
+
+.recipe-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.recipe-filter-search {
+  flex: 1;
+  min-width: 10rem;
+}
+
 .recipe-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: 0.75rem;
+}
+
+.recipe-add-form {
+  display: grid;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.55rem;
+}
+
+.recipe-add-form .recipe-card-edit-form .sheets-input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recipe-edit-mobile-list {
+  display: none;
+}
+
+.recipe-edit-table-shell {
+  max-height: 480px;
+}
+
+.recipe-edit-table .sheets-table-input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recipe-edit-table-actions {
+  white-space: nowrap;
+}
+
+.recipe-edit-table-actions .secondary-action {
+  padding: 0.25rem 0.45rem;
+  font-size: 0.85rem;
 }
 
 .recipe-card {
@@ -909,7 +1004,8 @@
   border-radius: 0.75rem;
   background: var(--surface);
   padding: 0.85rem;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.4rem;
 }
 
@@ -930,7 +1026,49 @@
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
+  margin-top: auto;
+  justify-content: flex-end;
   margin-top: 0.3rem;
+}
+
+.recipe-card-edit-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 0.6rem;
+}
+
+.recipe-card-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.recipe-card-edit-field--full {
+  grid-column: 1 / -1;
+}
+
+.recipe-card-edit-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.recipe-card-edit-field .sheets-input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recipe-delete-btn {
+  margin-right: auto;
+  color: var(--danger, #c0392b);
+  border-color: var(--danger, #c0392b);
+}
+
+.recipe-save-btn {
+  font-weight: 600;
 }
 
 .recipe-popup-backdrop {
@@ -1038,16 +1176,278 @@
 
 .recipe-manage-panel {
   border-top: 1px solid var(--border);
-  padding-top: 0.6rem;
+  padding-top: 0.75rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.recipe-manage-section {
   display: grid;
   gap: 0.55rem;
 }
 
 .recipe-manage-heading {
   margin: 0;
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--text-strong);
+}
+
+.recipe-manage-heading--sub {
+  font-size: 0.88rem;
+}
+
+.recipe-comp-tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0;
+}
+
+.recipe-comp-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 0.4rem 0.4rem 0 0;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.recipe-comp-tab:hover {
+  color: var(--text-strong);
+}
+
+.recipe-comp-tab.active {
+  color: var(--text-strong);
+  border-bottom-color: var(--accent, currentColor);
+  font-weight: 600;
+}
+
+.recipe-comp-tab-count {
+  background: var(--border);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.recipe-comp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.recipe-comp-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.6rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  font-size: 0.87rem;
+}
+
+.recipe-comp-name {
+  font-weight: 500;
+  color: var(--text-strong);
+  flex: 1;
+}
+
+.recipe-comp-qty {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.recipe-comp-note {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+.recipe-comp-delete {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.recipe-comp-delete:hover:not(:disabled) {
+  color: var(--danger, #c0392b);
+}
+
+.recipe-comp-edit-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.recipe-comp-edit-btn:hover {
+  color: var(--text-strong);
+}
+
+.recipe-comp-item--editing {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+
+.recipe-comp-edit-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.recipe-comp-edit-fields .sheets-input {
+  flex: 1;
+  min-width: 6rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.recipe-comp-edit-note {
+  flex: 2 !important;
+}
+
+.recipe-comp-edit-actions {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.recipe-step-edit-item--editing {
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.recipe-step-edit-input {
+  flex: 1;
+  min-width: 10rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.recipe-comp-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.65rem;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 0.6rem;
+}
+
+.recipe-comp-add-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 0.6rem;
+}
+
+.recipe-comp-add-form--equipment {
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.recipe-comp-add-form--equipment .recipe-card-edit-field {
+  flex: 1;
+  min-width: 10rem;
+}
+
+.recipe-comp-add-form--step {
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.recipe-comp-add-form--step .recipe-card-edit-field {
+  flex: 1;
+  min-width: 14rem;
+}
+
+.recipe-comp-add-form .sheets-input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recipe-steps-edit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  counter-reset: steps;
+}
+
+.recipe-step-edit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  font-size: 0.87rem;
+}
+
+.recipe-step-edit-number {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--border);
+  border-radius: 999px;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.05rem;
+}
+
+.recipe-step-edit-text {
+  flex: 1;
+  color: var(--text-strong);
+  line-height: 1.4;
+}
+
+.recipe-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 0.68rem;
 }
 
 .finance-access-dialog-backdrop {
@@ -2471,6 +2871,12 @@
   margin: 0;
 }
 
+.meal-plan-day-item .sheets-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 /* ── Meal Randomizer ────────────────────────────────────────────── */
 
 .meal-randomizer-reels {
@@ -2593,6 +2999,11 @@
   gap: 0.45rem;
 }
 
+.meal-plan-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .meal-plan-mobile-carousel {
   display: none;
 }
@@ -2608,6 +3019,112 @@
 
   .meal-plan-desktop-table {
     display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .recipe-edit-table-shell {
+    display: none;
+  }
+
+  .recipe-edit-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .recipe-edit-mobile-item {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+
+  .recipe-edit-mobile-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0.9rem;
+    width: 100%;
+    background: var(--surface);
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .recipe-edit-mobile-name {
+    font-weight: 600;
+    color: var(--text-strong);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .recipe-edit-mobile-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .recipe-edit-mobile-chevron {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .recipe-edit-mobile-form {
+    padding: 0.75rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    gap: 0.6rem;
+    background: var(--surface);
+  }
+
+  .recipe-edit-mobile-form .recipe-card-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-edit-mobile-form .recipe-card-edit-field--full {
+    grid-column: 1;
+  }
+
+  .recipe-edit-mobile-form .sheets-input {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .recipe-edit-mobile-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .recipe-edit-mobile-actions .recipe-delete-btn {
+    margin-right: auto;
+  }
+
+  .recipe-add-form .recipe-card-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-add-form .recipe-card-edit-field--full {
+    grid-column: 1;
+  }
+
+  .recipe-card-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-card-edit-field--full {
+    grid-column: 1;
   }
 }
 
