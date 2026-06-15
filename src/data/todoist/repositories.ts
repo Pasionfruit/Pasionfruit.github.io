@@ -3,6 +3,7 @@ import type { TodoistTask, TodoistTaskUpdate } from './types'
 
 type TodoistTaskApi = {
   id: string | number
+  parent_id?: string | null
   content: string
   description?: string
   priority?: number
@@ -41,6 +42,7 @@ function mapPriorityToApi(priority: number) {
 function normalizeTask(task: TodoistTaskApi): TodoistTask {
   return {
     id: String(task.id),
+    parent_id: task.parent_id ?? null,
     content: task.content,
     description: task.description ?? '',
     priority: mapPriorityFromApi(task.priority),
@@ -86,27 +88,29 @@ export async function getTasksOfTheDay(): Promise<TodoistTask[]> {
   } while (cursor)
 
   const todayKey = new Date().toISOString().slice(0, 10)
+  const allNormalized = rows.map(normalizeTask)
 
-  return rows
-    .map(normalizeTask)
-    .filter((task) => {
-      const dueDate = task.due?.date ?? task.due?.datetime?.slice(0, 10)
-      if (!dueDate) {
-        return false
-      }
+  const primaryTasks = allNormalized.filter((task) => {
+    if (task.parent_id) return false
+    const dueDate = task.due?.date ?? task.due?.datetime?.slice(0, 10)
+    if (!dueDate) return false
+    return dueDate <= todayKey
+  })
 
-      return dueDate <= todayKey
-    })
-    .sort((a, b) => dueSortValue(a) - dueSortValue(b))
+  const primaryIds = new Set(primaryTasks.map((t) => t.id))
+  const subtasks = allNormalized.filter((task) => task.parent_id && primaryIds.has(task.parent_id))
+
+  return [...primaryTasks.sort((a, b) => dueSortValue(a) - dueSortValue(b)), ...subtasks]
 }
 
-export async function createTask(content: string, dueDate?: string, priority = 1) {
+export async function createTask(content: string, dueDate?: string, priority = 1, parentId?: string) {
   await todoistRequest<unknown>('/tasks', {
     method: 'POST',
     body: JSON.stringify({
       content,
       due_date: dueDate || undefined,
       priority: mapPriorityToApi(priority),
+      parent_id: parentId || undefined,
     }),
   })
 }

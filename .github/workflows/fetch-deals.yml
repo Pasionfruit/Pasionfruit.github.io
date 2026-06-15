@@ -1,0 +1,40 @@
+name: Fetch Store Deals
+
+on:
+  schedule:
+    # 9am UTC = ~5am ET — runs after stores typically publish their weekly ads
+    - cron: '0 9 * * *'
+  # Lets you trigger a manual run from the GitHub Actions UI
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-deals:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch deals from Flipp
+        run: node scripts/fetch-deals.mjs
+        env:
+          # Miami, FL zip — ensures Publix flyers appear alongside national chains.
+          # Change to any US zip inside Publix territory if you prefer a different region.
+          FLIPP_ZIP: '33136'
+
+      - name: Commit updated deals data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/deals-data.json
+          # Only commit if the file actually changed; skip ci prevents deploy loops
+          git diff --cached --quiet || git commit -m "chore: update deals data [skip ci]"
+          git push

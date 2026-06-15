@@ -946,6 +946,145 @@
   flex-shrink: 0;
 }
 
+.recipe-import-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: var(--surface);
+}
+
+.recipe-import-url-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.recipe-import-url-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-import-notice {
+  padding: 0.4rem 0.6rem;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border-radius: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+  margin: 0;
+}
+
+.recipe-import-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+}
+
+.recipe-import-preview .recipe-card-edit-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 0.6rem;
+}
+
+.recipe-import-preview .recipe-card-edit-form .sheets-input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recipe-import-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.recipe-import-ingredient-list,
+.recipe-import-step-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.recipe-import-ingredient-row {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.recipe-import-ing-qty {
+  width: 4rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.recipe-import-ing-unit {
+  width: 5rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.recipe-import-ing-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-import-step-row {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.recipe-import-step-num {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 1.4rem;
+}
+
+.recipe-import-step-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-import-add-btn {
+  align-self: flex-start;
+  font-size: 0.82rem;
+}
+
+.recipe-import-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-top: 0.25rem;
+}
+
+.primary-action {
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  transition: opacity 0.15s;
+}
+
+.primary-action:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.primary-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .recipe-filter-bar {
   display: flex;
   flex-wrap: wrap;
@@ -961,6 +1100,25 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: 0.75rem;
+}
+
+.recipe-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.recipe-pagination-btn {
+  min-width: 2.2rem;
+  text-align: center;
+}
+
+.recipe-pagination-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  min-width: 4rem;
+  text-align: center;
 }
 
 .recipe-add-form {
@@ -2707,6 +2865,155 @@
   color: var(--text-muted);
 }
 
+.todoist-task-content {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.todoist-task-content[role='button']:hover p:first-child {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.todoist-task-row.is-editing {
+  background: var(--surface-raised, color-mix(in srgb, var(--accent) 6%, var(--surface)));
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.todoist-inline-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.55rem 0.6rem 0.6rem 2.4rem;
+  background: var(--surface-raised, color-mix(in srgb, var(--accent) 6%, var(--surface)));
+  border-radius: 0 0 0.5rem 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+.todoist-inline-edit-desc {
+  resize: vertical;
+  min-height: 2.4rem;
+}
+
+.todoist-inline-edit-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.todoist-inline-edit-row .sheets-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.todoist-inline-edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.todoist-subtask-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.4rem;
+}
+
+.todoist-subtask-list {
+  list-style: none;
+  margin: 0 0 0.15rem;
+  padding: 0;
+  border-left: 2px solid var(--border);
+  margin-left: 1.5rem;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
+
+.todoist-subtask-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.todoist-subtask-row.is-editing {
+  display: block;
+  padding: 0;
+}
+
+.todoist-subtask-inline-edit {
+  border-radius: 0.4rem;
+  padding: 0.5rem;
+}
+
+.todoist-subtask-content {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.todoist-subtask-desc {
+  display: block;
+  font-size: 0.78rem;
+}
+
+.todoist-subtask-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.todoist-subtask-toggle:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.todoist-add-task-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0.55rem 0.5rem;
+  font-size: 0.9rem;
+  text-align: left;
+  margin-top: 0.1rem;
+}
+
+.todoist-add-task-btn:hover {
+  color: var(--accent);
+}
+
+.todoist-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-top: 1px solid var(--border);
+  padding: 0.55rem 0.5rem 0.4rem;
+  margin-top: 0.1rem;
+}
+
 .grocery-catalog,
 .grocery-list-view {
   display: grid;
@@ -2984,6 +3291,63 @@
   }
 }
 
+/* Recipe randomizer */
+
+.recipe-randomizer-reel-wrap {
+  margin: 0.75rem 0 1rem;
+}
+
+.recipe-randomizer-window {
+  height: 4.5rem;
+}
+
+.recipe-randomizer-item {
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0 1rem;
+  text-align: center;
+  line-height: 1.25;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.recipe-randomizer-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-muted);
+  animation: slot-tick 200ms ease-out;
+}
+
+.recipe-randomizer-result-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.recipe-randomizer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.recipe-randomizer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
 /* ────────────────────────────────────────────────────────────────── */
 
 .meal-plan-label {
@@ -3117,6 +3481,24 @@
 
   .recipe-add-form .recipe-card-edit-field--full {
     grid-column: 1;
+  }
+
+  .recipe-import-preview .recipe-card-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-import-ingredient-row {
+    flex-wrap: wrap;
+  }
+
+  .recipe-import-ing-qty,
+  .recipe-import-ing-unit {
+    width: calc(50% - 0.15rem);
+  }
+
+  .recipe-import-ing-name {
+    flex: none;
+    width: 100%;
   }
 
   .recipe-card-edit-form {
@@ -3908,4 +4290,429 @@
   .menu-child-link small {
     max-width: 48ch;
   }
+}
+
+/* ── Deals page ─────────────────────────────────────────── */
+
+.deals-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.deals-search {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.deals-select {
+  min-width: 7rem;
+}
+
+/* Store tab bar */
+.deals-store-tabs {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.deals-store-tab-btn {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.deals-store-tab-btn:hover {
+  background: var(--surface);
+  color: var(--text-strong);
+}
+
+.deals-store-tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* Price comparison table */
+.price-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.price-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.82rem;
+  min-width: 36rem;
+}
+
+.price-table th,
+.price-table td {
+  padding: 0.42rem 0.6rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.price-table th {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.price-table-item {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.price-table-cat {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.price-table-price {
+  position: relative;
+  min-width: 5.5rem;
+}
+
+.price-cheapest {
+  background: color-mix(in srgb, #22c55e 12%, transparent);
+  font-weight: 600;
+}
+
+.price-unit {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  margin-left: 0.1rem;
+}
+
+.price-empty {
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+
+.price-best-badge {
+  display: inline-block;
+  background: #22c55e;
+  color: #fff;
+  padding: 0.18rem 0.48rem;
+  border-radius: 0.3rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.price-table-best {
+  min-width: 5rem;
+}
+
+/* Delete button (inline in table/card) */
+.deals-delete-btn {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+  opacity: 0.55;
+  transition: opacity 0.15s;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+}
+
+.deals-delete-btn:hover {
+  opacity: 1;
+  color: #e53e3e;
+}
+
+.deals-delete-btn--card {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Add form */
+.deals-add-section {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deals-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.75rem;
+  background: var(--surface-muted);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+.deals-form-row {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.deals-form-row .sheets-input {
+  flex: 1;
+  min-width: 7rem;
+}
+
+/* Deal cards */
+.deal-all-stores {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.deal-store-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deal-store-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.deal-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.deal-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.deal-card-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.deal-card-item {
+  font-weight: 600;
+  color: var(--text-strong);
+  font-size: 0.9rem;
+}
+
+.deal-card-cat {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--surface-muted);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+}
+
+.deal-card-prices {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.deal-orig-price {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.deal-sale-price {
+  font-weight: 700;
+  color: var(--text-strong);
+  font-size: 1rem;
+}
+
+.deal-badge {
+  display: inline-block;
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.3rem;
+}
+
+.deal-card-meta {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.deal-expiry {
+  font-style: italic;
+}
+
+/* Coupon cards */
+.coupon-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.coupon-place-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.coupon-place-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.coupon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.coupon-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.coupon-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  padding-right: 1.5rem;
+}
+
+.coupon-discount-badge {
+  display: inline-block;
+  background: color-mix(in srgb, #FFCE1B 30%, transparent);
+  color: var(--text-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.18rem 0.45rem;
+  border-radius: 0.3rem;
+  white-space: nowrap;
+  border: 1px solid color-mix(in srgb, #FFCE1B 60%, transparent);
+}
+
+.coupon-desc {
+  font-size: 0.87rem;
+  color: var(--text-strong);
+  line-height: 1.4;
+}
+
+.coupon-card-meta {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.coupon-code {
+  font-family: monospace;
+  font-size: 0.78rem;
+  background: var(--surface-muted);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border);
+}
+
+.coupon-expiry {
+  font-style: italic;
+}
+
+.coupon-source::before {
+  content: 'Via: ';
+}
+
+/* Flipp metadata row */
+.deals-flipp-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.deals-last-updated {
+  font-style: italic;
+}
+
+.deals-count {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.45rem;
+  border-radius: 0.3rem;
+  font-weight: 500;
+}
+
+/* Deal count bubble on store tab */
+.tab-count {
+  display: inline-block;
+  background: color-mix(in srgb, currentColor 18%, transparent);
+  padding: 0 0.35rem;
+  border-radius: 0.9rem;
+  font-size: 0.72rem;
+  margin-left: 0.3rem;
+  font-weight: 700;
+}
+
+.deal-validity {
+  font-size: 0.78rem;
+  margin-top: -0.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.deal-store-label {
+  font-style: italic;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
 }

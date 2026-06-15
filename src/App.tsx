@@ -90,11 +90,13 @@ import type {
   BackpackRecord,
   BucketListRecord,
   CountryRecord,
+  CouponRecord,
   CurrentStudyRecord,
   EventRecord,
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
+  GroceryPriceRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
@@ -108,6 +110,7 @@ import type {
 import { warmupAppsScript } from './data/sheets/client'
 import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
+import { importRecipeFromUrl, type ImportedIngredient } from './recipeImport'
 
 type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
@@ -952,23 +955,6 @@ function dateForInput(value?: string | null) {
   return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`
 }
 
-function displayDueDate(task: TodoistTask) {
-  const raw = task.due?.date ?? task.due?.datetime
-  if (!raw) {
-    return 'No due date'
-  }
-
-  const parsed = new Date(raw)
-  if (Number.isNaN(parsed.getTime())) {
-    return raw
-  }
-
-  return parsed.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
 
 function normalizePriority(value: number) {
   if (!Number.isFinite(value)) {
@@ -1055,6 +1041,11 @@ function TodoistTasksCard({
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const touchStartPosRef = useRef<{ x: number; y: number } | null>(null)
   const [longPressingIndex, setLongPressingIndex] = useState<number | null>(null)
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+  const [collapsedParentIds, setCollapsedParentIds] = useState<string[]>([])
+  const [isAddingTask, setIsAddingTask] = useState(false)
+  const [addingSubtaskParentId, setAddingSubtaskParentId] = useState<string | null>(null)
+  const [newSubtaskContent, setNewSubtaskContent] = useState('')
 
   const todayKey = toDateOnlyKey(new Date().toISOString())
 
@@ -1077,6 +1068,19 @@ function TodoistTasksCard({
       .sort((a, b) => a.topic.localeCompare(b.topic))
   }, [studyRows, todayKey])
 
+  const topLevelTasks = useMemo(() => rows.filter((r) => !r.parent_id), [rows])
+
+  const subtasksByParentId = useMemo(() => {
+    const map: Record<string, TodoistTask[]> = {}
+    for (const r of rows) {
+      if (r.parent_id) {
+        if (!map[r.parent_id]) map[r.parent_id] = []
+        map[r.parent_id].push(r)
+      }
+    }
+    return map
+  }, [rows])
+
   async function loadDailyData() {
     try {
       const [trainingData, studyData] = await Promise.all([getTrainingRecords(), getCurrentStudy()])
@@ -1092,11 +1096,13 @@ function TodoistTasksCard({
 
   function performDrop(from: number, to: number) {
     setRows((prev) => {
-      const next = [...prev]
+      const topLevel = prev.filter((r) => !r.parent_id)
+      const subtasks = prev.filter((r) => Boolean(r.parent_id))
+      const next = [...topLevel]
       const [moved] = next.splice(from, 1)
       next.splice(to > from ? to - 1 : to, 0, moved)
       saveTaskOrder(next.map((t) => t.id))
-      return next
+      return [...next, ...subtasks]
     })
     draggingIndexRef.current = null
     touchDropInsertRef.current = null
@@ -1264,6 +1270,7 @@ function TodoistTasksCard({
       setNewTaskContent('')
       setNewTaskDueDate(getTodayDateInputValue())
       setNewTaskPriority(1)
+      setIsAddingTask(false)
       await loadTasks()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to create task')
@@ -1298,8 +1305,30 @@ function TodoistTasksCard({
         priority,
       })
       await loadTasks()
+      setEditingTaskId(null)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update task')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  async function handleCreateSubTask(parentId: string) {
+    if (isWriting || !todoistConfigured || !canEditTodoist) return
+    const content = newSubtaskContent.trim()
+    if (!content) {
+      setWriteError('Subtask content is required.')
+      return
+    }
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createTask(content, undefined, 1, parentId)
+      setNewSubtaskContent('')
+      setAddingSubtaskParentId(null)
+      await loadTasks()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to create subtask')
     } finally {
       setIsWriting(false)
     }
@@ -1495,7 +1524,7 @@ function TodoistTasksCard({
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
-          {canEditAny && (view === 'todoist' || view === 'grocery') ? (
+          {canEditAny && view === 'grocery' ? (
             <button
               type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
@@ -1710,98 +1739,318 @@ function TodoistTasksCard({
             <p className="sheets-meta">Edit access restricted to approved admin Google accounts.</p>
           ) : null}
 
-          {view === 'todoist' && todoistConfigured && rows.length > 0 ? (
+          {view === 'todoist' && todoistConfigured && (rows.length > 0 || (canEditTodoist && !isLoading)) ? (
             <div className="todoist-task-list" ref={taskListRef}>
-              {rows.map((row, index) => (
-                <React.Fragment key={`summary-${row.id}`}>
-                  {draggingIndex !== null && dropInsertIndex === index && draggingIndex !== index && draggingIndex !== index - 1 ? (
-                    <div className="todoist-drop-indicator" />
-                  ) : null}
-                  <div
-                    className={[
-                      'todoist-task-row',
-                      row.is_completed ? 'is-completed' : '',
-                      draggingIndex === index ? 'is-dragging' : '',
-                      longPressingIndex === index ? 'is-long-pressing' : '',
-                    ].filter(Boolean).join(' ')}
-                    data-task-index={index}
-                    data-priority={normalizePriority(row.priority)}
-                    draggable
-                    onDragStart={() => handleTaskDragStart(index)}
-                    onDragOver={(e) => handleTaskDragOver(e, index)}
-                    onDrop={handleTaskDrop}
-                    onDragEnd={handleTaskDragEnd}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onTouchStart={(e) => {
-                      const touch = e.touches[0]
-                      touchStartPosRef.current = { x: touch.clientX, y: touch.clientY }
-                      const rowEl = e.currentTarget as HTMLDivElement
-                      setLongPressingIndex(index)
-                      longPressTimerRef.current = setTimeout(() => {
-                        longPressTimerRef.current = null
-                        setLongPressingIndex(null)
-                        draggingElRef.current = rowEl
-                        draggingIndexRef.current = index
-                        setDraggingIndex(index)
-                        if (typeof navigator.vibrate === 'function') navigator.vibrate(30)
-                      }, 450)
-                    }}
-                    onTouchMove={(e) => {
-                      if (longPressTimerRef.current !== null && touchStartPosRef.current) {
+              {topLevelTasks.map((row, topLevelIndex) => {
+                const isTaskEditing = editingTaskId === row.id
+                const taskSubtasks = subtasksByParentId[row.id] ?? []
+                const isParentCollapsed = collapsedParentIds.includes(row.id)
+                const draft = editedRows[row.id]
+                return (
+                  <React.Fragment key={`summary-${row.id}`}>
+                    {draggingIndex !== null && dropInsertIndex === topLevelIndex && draggingIndex !== topLevelIndex && draggingIndex !== topLevelIndex - 1 ? (
+                      <div className="todoist-drop-indicator" />
+                    ) : null}
+                    <div
+                      className={[
+                        'todoist-task-row',
+                        row.is_completed ? 'is-completed' : '',
+                        draggingIndex === topLevelIndex ? 'is-dragging' : '',
+                        longPressingIndex === topLevelIndex ? 'is-long-pressing' : '',
+                        isTaskEditing ? 'is-editing' : '',
+                      ].filter(Boolean).join(' ')}
+                      data-task-index={topLevelIndex}
+                      data-priority={normalizePriority(row.priority)}
+                      draggable={!isTaskEditing}
+                      onDragStart={() => { if (!isTaskEditing) handleTaskDragStart(topLevelIndex) }}
+                      onDragOver={(e) => handleTaskDragOver(e, topLevelIndex)}
+                      onDrop={handleTaskDrop}
+                      onDragEnd={handleTaskDragEnd}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onTouchStart={(e) => {
+                        if (isTaskEditing) return
                         const touch = e.touches[0]
-                        const dx = Math.abs(touch.clientX - touchStartPosRef.current.x)
-                        const dy = Math.abs(touch.clientY - touchStartPosRef.current.y)
-                        if (dx > 8 || dy > 8) {
+                        touchStartPosRef.current = { x: touch.clientX, y: touch.clientY }
+                        const rowEl = e.currentTarget as HTMLDivElement
+                        setLongPressingIndex(topLevelIndex)
+                        longPressTimerRef.current = setTimeout(() => {
+                          longPressTimerRef.current = null
+                          setLongPressingIndex(null)
+                          draggingElRef.current = rowEl
+                          draggingIndexRef.current = topLevelIndex
+                          setDraggingIndex(topLevelIndex)
+                          if (typeof navigator.vibrate === 'function') navigator.vibrate(30)
+                        }, 450)
+                      }}
+                      onTouchMove={(e) => {
+                        if (longPressTimerRef.current !== null && touchStartPosRef.current) {
+                          const touch = e.touches[0]
+                          const dx = Math.abs(touch.clientX - touchStartPosRef.current.x)
+                          const dy = Math.abs(touch.clientY - touchStartPosRef.current.y)
+                          if (dx > 8 || dy > 8) {
+                            clearTimeout(longPressTimerRef.current)
+                            longPressTimerRef.current = null
+                            setLongPressingIndex(null)
+                          }
+                        }
+                      }}
+                      onTouchEnd={() => {
+                        if (longPressTimerRef.current !== null) {
                           clearTimeout(longPressTimerRef.current)
                           longPressTimerRef.current = null
                           setLongPressingIndex(null)
                         }
-                      }
-                    }}
-                    onTouchEnd={() => {
-                      if (longPressTimerRef.current !== null) {
-                        clearTimeout(longPressTimerRef.current)
-                        longPressTimerRef.current = null
-                        setLongPressingIndex(null)
-                      }
-                      if (draggingIndexRef.current !== null) {
-                        handleTouchDrop()
-                      }
-                    }}
-                    onTouchCancel={() => {
-                      if (longPressTimerRef.current !== null) {
-                        clearTimeout(longPressTimerRef.current)
-                        longPressTimerRef.current = null
-                        setLongPressingIndex(null)
-                      }
-                      handleTaskDragEnd()
-                    }}
-                  >
-                    <span className="todoist-drag-handle" aria-hidden="true">⠿</span>
-                    <div className="todoist-task-content">
-                      <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
-                      {row.description ? <p className="sheets-meta">{row.description}</p> : null}
+                        if (draggingIndexRef.current !== null) {
+                          handleTouchDrop()
+                        }
+                      }}
+                      onTouchCancel={() => {
+                        if (longPressTimerRef.current !== null) {
+                          clearTimeout(longPressTimerRef.current)
+                          longPressTimerRef.current = null
+                          setLongPressingIndex(null)
+                        }
+                        handleTaskDragEnd()
+                      }}
+                    >
+                      <span className="todoist-drag-handle" aria-hidden="true">⠿</span>
+                      <div
+                        className="todoist-task-content"
+                        onClick={() => {
+                          if (canEditTodoist && draggingIndex === null) {
+                            setEditingTaskId(isTaskEditing ? null : row.id)
+                            setAddingSubtaskParentId(null)
+                          }
+                        }}
+                        role={canEditTodoist ? 'button' : undefined}
+                        tabIndex={canEditTodoist ? 0 : undefined}
+                        onKeyDown={(e) => {
+                          if (canEditTodoist && (e.key === 'Enter' || e.key === ' ')) {
+                            setEditingTaskId(isTaskEditing ? null : row.id)
+                          }
+                        }}
+                      >
+                        <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
+                        {row.description && !isTaskEditing ? <p className="sheets-meta">{row.description}</p> : null}
+                      </div>
+                      {taskSubtasks.length > 0 ? (
+                        <button
+                          type="button"
+                          className="todoist-subtask-toggle"
+                          onClick={() => setCollapsedParentIds((prev) =>
+                            prev.includes(row.id) ? prev.filter((id) => id !== row.id) : [...prev, row.id]
+                          )}
+                          aria-label={isParentCollapsed ? 'Show subtasks' : 'Hide subtasks'}
+                        >
+                          {isParentCollapsed ? '▸' : '▾'}{taskSubtasks.length}
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        className="todoist-complete-btn"
+                        data-priority={normalizePriority(row.priority)}
+                        onClick={() => void handleCompleteTask(row)}
+                        disabled={isWriting || row.is_completed || !canEditTodoist}
+                        title={canEditTodoist ? 'Mark complete' : undefined}
+                        aria-label={`Complete: ${row.content}`}
+                      />
                     </div>
-                    <button
-                      type="button"
-                      className="todoist-complete-btn"
-                      data-priority={normalizePriority(row.priority)}
-                      onClick={() => void handleCompleteTask(row)}
-                      disabled={isWriting || row.is_completed || !canEditTodoist}
-                      title={canEditTodoist ? 'Mark complete' : undefined}
-                      aria-label={`Complete: ${row.content}`}
-                    />
-                  </div>
-                </React.Fragment>
-              ))}
-              {draggingIndex !== null && dropInsertIndex === rows.length && draggingIndex !== rows.length - 1 ? (
+                    {isTaskEditing && canEditTodoist ? (
+                      <div className="todoist-inline-edit">
+                        <input
+                          className="sheets-input"
+                          type="text"
+                          placeholder="Task name"
+                          value={draft?.content ?? row.content}
+                          onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], content: e.target.value } }))}
+                          autoFocus
+                          disabled={isWriting}
+                          onKeyDown={(e) => { if (e.key === 'Enter') void handleSaveTask(row) }}
+                        />
+                        <textarea
+                          className="sheets-input todoist-inline-edit-desc"
+                          placeholder="Description (optional)"
+                          value={draft?.description ?? row.description ?? ''}
+                          onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], description: e.target.value } }))}
+                          rows={2}
+                          disabled={isWriting}
+                        />
+                        <div className="todoist-inline-edit-row">
+                          <input
+                            className="sheets-input"
+                            type="date"
+                            value={draft?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime ?? '')}
+                            onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], dueDate: e.target.value } }))}
+                            disabled={isWriting}
+                          />
+                          <select
+                            className="sheets-input"
+                            value={String(draft?.priority ?? normalizePriority(row.priority))}
+                            onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], priority: normalizePriority(Number(e.target.value)) } }))}
+                            disabled={isWriting}
+                          >
+                            <option value="1">P1</option>
+                            <option value="2">P2</option>
+                            <option value="3">P3</option>
+                            <option value="4">P4</option>
+                          </select>
+                        </div>
+                        <div className="todoist-inline-edit-actions">
+                          <button type="button" className="secondary-action" onClick={() => void handleSaveTask(row)} disabled={isWriting}>Save</button>
+                          <button type="button" className="secondary-action" onClick={() => setEditingTaskId(null)} disabled={isWriting}>Cancel</button>
+                          {addingSubtaskParentId !== row.id ? (
+                            <button type="button" className="secondary-action" onClick={() => setAddingSubtaskParentId(row.id)} disabled={isWriting}>
+                              + Subtask
+                            </button>
+                          ) : null}
+                        </div>
+                        {addingSubtaskParentId === row.id ? (
+                          <div className="todoist-subtask-add-form">
+                            <input
+                              className="sheets-input"
+                              type="text"
+                              placeholder="Subtask name"
+                              value={newSubtaskContent}
+                              onChange={(e) => setNewSubtaskContent(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') void handleCreateSubTask(row.id) }}
+                              autoFocus
+                              disabled={isWriting}
+                            />
+                            <div className="todoist-inline-edit-row">
+                              <button type="button" className="secondary-action" onClick={() => void handleCreateSubTask(row.id)} disabled={isWriting || !newSubtaskContent.trim()}>Add</button>
+                              <button type="button" className="secondary-action" onClick={() => { setAddingSubtaskParentId(null); setNewSubtaskContent('') }} disabled={isWriting}>Cancel</button>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    {!isParentCollapsed && taskSubtasks.length > 0 ? (
+                      <ul className="todoist-subtask-list">
+                        {taskSubtasks.map((subtask) => {
+                          const isEditingSubtask = editingTaskId === subtask.id
+                          const subtaskDraft = editedRows[subtask.id]
+                          return (
+                            <li key={subtask.id} className={`todoist-subtask-row${isEditingSubtask ? ' is-editing' : ''}`}>
+                              {isEditingSubtask ? (
+                                <div className="todoist-inline-edit todoist-subtask-inline-edit">
+                                  <input
+                                    className="sheets-input"
+                                    type="text"
+                                    placeholder="Subtask name"
+                                    value={subtaskDraft?.content ?? subtask.content}
+                                    onChange={(e) => setEditedRows((curr) => ({ ...curr, [subtask.id]: { ...curr[subtask.id], content: e.target.value } }))}
+                                    autoFocus
+                                    disabled={isWriting}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') void handleSaveTask(subtask) }}
+                                  />
+                                  <div className="todoist-inline-edit-row">
+                                    <input
+                                      className="sheets-input"
+                                      type="date"
+                                      value={subtaskDraft?.dueDate ?? dateForInput(subtask.due?.date ?? subtask.due?.datetime ?? '')}
+                                      onChange={(e) => setEditedRows((curr) => ({ ...curr, [subtask.id]: { ...curr[subtask.id], dueDate: e.target.value } }))}
+                                      disabled={isWriting}
+                                    />
+                                    <select
+                                      className="sheets-input"
+                                      value={String(subtaskDraft?.priority ?? normalizePriority(subtask.priority))}
+                                      onChange={(e) => setEditedRows((curr) => ({ ...curr, [subtask.id]: { ...curr[subtask.id], priority: normalizePriority(Number(e.target.value)) } }))}
+                                      disabled={isWriting}
+                                    >
+                                      <option value="1">P1</option>
+                                      <option value="2">P2</option>
+                                      <option value="3">P3</option>
+                                      <option value="4">P4</option>
+                                    </select>
+                                  </div>
+                                  <div className="todoist-inline-edit-actions">
+                                    <button type="button" className="secondary-action" onClick={() => void handleSaveTask(subtask)} disabled={isWriting}>Save</button>
+                                    <button type="button" className="secondary-action" onClick={() => setEditingTaskId(null)} disabled={isWriting}>Cancel</button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div
+                                    className="todoist-subtask-content"
+                                    onClick={() => { if (canEditTodoist) setEditingTaskId(subtask.id) }}
+                                    role={canEditTodoist ? 'button' : undefined}
+                                    tabIndex={canEditTodoist ? 0 : undefined}
+                                    onKeyDown={(e) => { if (canEditTodoist && (e.key === 'Enter' || e.key === ' ')) setEditingTaskId(subtask.id) }}
+                                  >
+                                    <span className={subtask.is_completed ? 'todoist-task-done' : ''}>{subtask.content}</span>
+                                    {subtask.description ? <span className="sheets-meta todoist-subtask-desc">{subtask.description}</span> : null}
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className="todoist-complete-btn"
+                                    data-priority={normalizePriority(subtask.priority)}
+                                    onClick={() => void handleCompleteTask(subtask)}
+                                    disabled={isWriting || subtask.is_completed || !canEditTodoist}
+                                    title={canEditTodoist ? 'Mark complete' : undefined}
+                                    aria-label={`Complete: ${subtask.content}`}
+                                  />
+                                </>
+                              )}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    ) : null}
+                  </React.Fragment>
+                )
+              })}
+              {draggingIndex !== null && dropInsertIndex === topLevelTasks.length && draggingIndex !== topLevelTasks.length - 1 ? (
                 <div className="todoist-drop-indicator" />
               ) : null}
               <div
                 className="todoist-drop-tail"
-                onDragOver={(e) => { e.preventDefault(); setDropInsertIndex(rows.length) }}
+                onDragOver={(e) => { e.preventDefault(); setDropInsertIndex(topLevelTasks.length) }}
                 onDrop={handleTaskDrop}
               />
+              {canEditTodoist ? (
+                isAddingTask ? (
+                  <div className="todoist-add-form">
+                    <input
+                      className="sheets-input"
+                      type="text"
+                      placeholder="Task name"
+                      value={newTaskContent}
+                      onChange={(e) => setNewTaskContent(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') void handleCreateTask() }}
+                      autoFocus
+                      disabled={isWriting}
+                    />
+                    <div className="todoist-inline-edit-row">
+                      <input
+                        className="sheets-input"
+                        type="date"
+                        value={newTaskDueDate}
+                        onChange={(e) => setNewTaskDueDate(e.target.value)}
+                        disabled={isWriting}
+                      />
+                      <select
+                        className="sheets-input"
+                        value={String(newTaskPriority)}
+                        onChange={(e) => setNewTaskPriority(normalizePriority(Number(e.target.value)))}
+                        disabled={isWriting}
+                      >
+                        <option value="1">P1</option>
+                        <option value="2">P2</option>
+                        <option value="3">P3</option>
+                        <option value="4">P4</option>
+                      </select>
+                    </div>
+                    <div className="todoist-inline-edit-actions">
+                      <button type="button" className="secondary-action" onClick={() => void handleCreateTask()} disabled={isWriting}>Add task</button>
+                      <button type="button" className="secondary-action" onClick={() => { setIsAddingTask(false); setNewTaskContent('') }} disabled={isWriting}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" className="todoist-add-task-btn" onClick={() => setIsAddingTask(true)}>
+                    + Add task
+                  </button>
+                )
+              ) : null}
             </div>
           ) : null}
 
@@ -2074,149 +2323,7 @@ function TodoistTasksCard({
             </div>
           ) : null}
 
-          {view === 'todoist' && todoistConfigured && canEditTodoist && isEditing ? (
-            <div className="sheets-editor todoist-create-row">
-              <div className="todoist-input-grid">
-                <input
-                  className="sheets-input"
-                  type="text"
-                  placeholder="New task"
-                  value={newTaskContent}
-                  onChange={(event) => setNewTaskContent(event.target.value)}
-                  disabled={isWriting}
-                />
-                <input
-                  className="sheets-input"
-                  type="date"
-                  value={newTaskDueDate}
-                  onChange={(event) => setNewTaskDueDate(event.target.value)}
-                  disabled={isWriting}
-                />
-                <select
-                  className="sheets-input"
-                  value={String(newTaskPriority)}
-                  onChange={(event) => setNewTaskPriority(normalizePriority(Number(event.target.value)))}
-                  disabled={isWriting}
-                >
-                  <option value="1">P1</option>
-                  <option value="2">P2</option>
-                  <option value="3">P3</option>
-                  <option value="4">P4</option>
-                </select>
-              </div>
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => void handleCreateTask()}
-                disabled={isWriting}
-              >
-                Add Task
-              </button>
-            </div>
-          ) : null}
-
-          {view === 'todoist' && todoistConfigured && canEditTodoist && isEditing && rows.length > 0 ? (
-            <div className="sheets-table-shell">
-              <table className="sheets-table">
-                <thead>
-                  <tr>
-                    <th>Task</th>
-                    <th>Due</th>
-                    <th>Completed</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row) => (
-                    <tr key={row.id}>
-                      <td>
-                        <div className="todoist-row-fields">
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
-                            value={editedRows[row.id]?.content ?? row.content}
-                            onChange={(event) =>
-                              setEditedRows((current) => ({
-                                ...current,
-                                [row.id]: {
-                                  content: event.target.value,
-                                  description: current[row.id]?.description ?? row.description ?? '',
-                                  dueDate: current[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime),
-                                  priority: current[row.id]?.priority ?? normalizePriority(row.priority),
-                                },
-                              }))
-                            }
-                            disabled={isWriting || !canEditTodoist}
-                          />
-                          <textarea
-                            className="sheets-input sheets-table-input"
-                            value={editedRows[row.id]?.description ?? row.description ?? ''}
-                            onChange={(event) =>
-                              setEditedRows((current) => ({
-                                ...current,
-                                [row.id]: {
-                                  content: current[row.id]?.content ?? row.content,
-                                  description: event.target.value,
-                                  dueDate: current[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime),
-                                  priority: current[row.id]?.priority ?? normalizePriority(row.priority),
-                                },
-                              }))
-                            }
-                            disabled={isWriting || !canEditTodoist}
-                            rows={3}
-                            placeholder="Task description"
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="date"
-                          value={editedRows[row.id]?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime)}
-                          onChange={(event) =>
-                            setEditedRows((current) => ({
-                              ...current,
-                              [row.id]: {
-                                content: current[row.id]?.content ?? row.content,
-                                description: current[row.id]?.description ?? row.description ?? '',
-                                dueDate: event.target.value,
-                                priority: current[row.id]?.priority ?? normalizePriority(row.priority),
-                              },
-                            }))
-                          }
-                          disabled={isWriting || !canEditTodoist}
-                        />
-                        <p className="sheets-meta">{displayDueDate(row)}</p>
-                      </td>
-                      <td>{row.is_completed ? 'Yes' : 'No'}</td>
-                      <td>
-                        <div className="sheets-table-actions">
-                          <button
-                            type="button"
-                            className="secondary-action"
-                            onClick={() => void handleSaveTask(row)}
-                            disabled={isWriting || !canEditTodoist}
-                          >
-                            Save
-                          </button>
-                          <button
-                            type="button"
-                            className="secondary-action"
-                            onClick={() => void handleCompleteTask(row)}
-                            disabled={isWriting || !canEditTodoist}
-                          >
-                            Complete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : null}
-
-          {view === 'todoist' && todoistConfigured && !isLoading && rows.length === 0 && !writeError ? (
+          {view === 'todoist' && todoistConfigured && !isLoading && rows.length === 0 && !canEditTodoist && !writeError ? (
             <p className="sheets-meta">No tasks due today or overdue.</p>
           ) : null}
 
@@ -3694,10 +3801,31 @@ function RecipesCard({
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [mobileEditRecipeId, setMobileEditRecipeId] = useState<string | null>(null)
 
+  // Import state
+  const [isImporting, setIsImporting] = useState(false)
+  const [importUrl, setImportUrl] = useState('')
+  const [importStatus, setImportStatus] = useState<'idle' | 'fetching' | 'preview' | 'error'>('idle')
+  const [importError, setImportError] = useState('')
+  const [importPlatform, setImportPlatform] = useState<'tiktok' | 'instagram' | 'web'>('web')
+  const [importAutoExtracted, setImportAutoExtracted] = useState(false)
+  const [importName, setImportName] = useState('')
+  const [importCategory, setImportCategory] = useState('')
+  const [importCalories, setImportCalories] = useState('')
+  const [importServings, setImportServings] = useState('')
+  const [importVideoLink, setImportVideoLink] = useState('')
+  const [importWebsiteLink, setImportWebsiteLink] = useState('')
+  const [importCookTime, setImportCookTime] = useState('')
+  const [importIngredients, setImportIngredients] = useState<ImportedIngredient[]>([])
+  const [importSteps, setImportSteps] = useState<string[]>([])
+
   // Filters
   const [searchQuery, setSearchQuery] = useState('')
   const [durationFilter, setDurationFilter] = useState('')
   const [equipmentFilter, setEquipmentFilter] = useState('')
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 6
 
   const equipmentOptions = useMemo(() => {
     const names = components
@@ -3726,6 +3854,11 @@ function RecipesCard({
       return true
     })
   }, [recipes, components, searchQuery, durationFilter, equipmentFilter])
+
+  useEffect(() => { setCurrentPage(1) }, [searchQuery, durationFilter, equipmentFilter, isEditing, viewMode])
+
+  const totalPages = Math.max(1, Math.ceil(filteredRecipes.length / PAGE_SIZE))
+  const pagedRecipes = filteredRecipes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   async function loadAll() {
     try {
@@ -3811,6 +3944,94 @@ function RecipesCard({
       await loadAll()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to delete recipe')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  function resetImportState() {
+    setImportUrl('')
+    setImportStatus('idle')
+    setImportError('')
+    setImportName('')
+    setImportCategory('')
+    setImportCalories('')
+    setImportServings('')
+    setImportVideoLink('')
+    setImportWebsiteLink('')
+    setImportCookTime('')
+    setImportIngredients([])
+    setImportSteps([])
+  }
+
+  async function handleFetchRecipe() {
+    const url = importUrl.trim()
+    if (!url) return
+    setImportStatus('fetching')
+    setImportError('')
+    try {
+      const draft = await importRecipeFromUrl(url)
+      setImportPlatform(draft.source_platform)
+      setImportAutoExtracted(draft.auto_extracted)
+      setImportName(draft.recipe_name)
+      setImportCategory(draft.category)
+      setImportCalories(draft.calories)
+      setImportServings(draft.servings)
+      setImportVideoLink(draft.video_link)
+      setImportWebsiteLink(draft.website_link)
+      setImportCookTime(draft.cook_time)
+      setImportIngredients(draft.ingredients.length > 0 ? draft.ingredients : [{ name: '', quantity: '', unit: '', note: '' }])
+      setImportSteps(draft.steps.length > 0 ? draft.steps : [''])
+      setImportStatus('preview')
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : 'Failed to fetch recipe')
+      setImportStatus('error')
+    }
+  }
+
+  async function handleImportConfirm() {
+    if (!idToken || isWriting || !importName.trim()) return
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      const previousIds = new Set(recipes.map((r) => r.recipe_id))
+      await createRecipe(idToken, {
+        recipeName: importName.trim(),
+        category: importCategory.trim(),
+        calories: importCalories.trim(),
+        servings: importServings.trim(),
+        videoLink: importVideoLink.trim(),
+        websiteLink: importWebsiteLink.trim(),
+        cookTime: importCookTime.trim(),
+      })
+      const freshRecipes = await getRecipes()
+      const newRecipe = freshRecipes.find((r) => !previousIds.has(r.recipe_id))
+      if (newRecipe) {
+        const validIngredients = importIngredients.filter((i) => i.name.trim())
+        for (const ing of validIngredients) {
+          await createRecipeComponent(idToken, {
+            recipeId: newRecipe.recipe_id,
+            type: 'ingredient',
+            name: ing.name.trim(),
+            quantity: ing.quantity.trim(),
+            unit: ing.unit.trim(),
+            note: ing.note.trim(),
+          })
+        }
+        const validSteps = importSteps.filter((s) => s.trim())
+        for (let i = 0; i < validSteps.length; i++) {
+          await createRecipeStep(idToken, {
+            recipeId: newRecipe.recipe_id,
+            stepNumber: i + 1,
+            instruction: validSteps[i].trim(),
+          })
+        }
+      }
+      await loadAll()
+      setIsImporting(false)
+      resetImportState()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Failed to import recipe')
     } finally {
       setIsWriting(false)
     }
@@ -3949,18 +4170,209 @@ function RecipesCard({
             {viewMode === 'grid' ? '☰' : '⊞'}
           </button>
           {canWrite ? (
-            <button
-              type="button"
-              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
-              aria-pressed={isEditing}
-              onClick={() => { setIsEditing((v) => !v); setEditingRecipeId(null) }}
-              title="Edit recipes"
-            >
-              ✎
-            </button>
+            <>
+              <button
+                type="button"
+                className={`section-edit-btn ${isImporting ? 'active' : ''}`}
+                aria-pressed={isImporting}
+                onClick={() => { setIsImporting((v) => !v); if (isImporting) resetImportState() }}
+                title="Import recipe from URL"
+              >
+                ⬇
+              </button>
+              <button
+                type="button"
+                className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+                aria-pressed={isEditing}
+                onClick={() => { setIsEditing((v) => !v); setEditingRecipeId(null) }}
+                title="Edit recipes"
+              >
+                ✎
+              </button>
+            </>
           ) : null}
         </div>
       </div>
+
+      {isImporting && canWrite ? (
+        <div className="recipe-import-panel">
+          <div className="recipe-import-url-row">
+            <input
+              className="sheets-input recipe-import-url-input"
+              type="url"
+              placeholder="Paste a TikTok, Instagram, or recipe URL…"
+              value={importUrl}
+              onChange={(e) => setImportUrl(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') void handleFetchRecipe() }}
+              disabled={importStatus === 'fetching'}
+              autoFocus
+            />
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={() => void handleFetchRecipe()}
+              disabled={!importUrl.trim() || importStatus === 'fetching'}
+            >
+              {importStatus === 'fetching' ? 'Fetching…' : 'Fetch'}
+            </button>
+          </div>
+
+          {importStatus === 'error' ? (
+            <p className="sheets-error">{importError} — fill in the details manually or try a different URL.</p>
+          ) : null}
+
+          {importStatus === 'preview' || importStatus === 'error' ? (
+            <div className="recipe-import-preview">
+              {importStatus === 'preview' && importPlatform !== 'web' ? (
+                <p className="sheets-meta recipe-import-notice">
+                  {importPlatform === 'tiktok' ? '🎵 TikTok' : '📸 Instagram'} link detected — auto-extraction isn't possible. The link has been saved; please fill in the recipe details below.
+                </p>
+              ) : importStatus === 'preview' && importAutoExtracted ? (
+                <p className="sheets-meta recipe-import-notice">
+                  ✓ Recipe extracted from {(() => { try { return new URL(importUrl).hostname } catch { return importUrl } })()} — review and confirm below.
+                </p>
+              ) : null}
+
+              <div className="recipe-card-edit-form">
+                <div className="recipe-card-edit-field recipe-card-edit-field--full">
+                  <span className="recipe-card-edit-label">Name *</span>
+                  <input className="sheets-input" type="text" value={importName} onChange={(e) => setImportName(e.target.value)} disabled={isWriting} placeholder="Recipe name" />
+                </div>
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Category</span>
+                  <input className="sheets-input" type="text" value={importCategory} onChange={(e) => setImportCategory(e.target.value)} disabled={isWriting} placeholder="e.g. Italian" />
+                </div>
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Cook time</span>
+                  <input className="sheets-input" type="text" value={importCookTime} onChange={(e) => setImportCookTime(e.target.value)} disabled={isWriting} placeholder="e.g. 30 min" />
+                </div>
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Calories</span>
+                  <input className="sheets-input" type="text" value={importCalories} onChange={(e) => setImportCalories(e.target.value)} disabled={isWriting} placeholder="per serving" />
+                </div>
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Servings</span>
+                  <input className="sheets-input" type="text" value={importServings} onChange={(e) => setImportServings(e.target.value)} disabled={isWriting} />
+                </div>
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Video link</span>
+                  <input className="sheets-input" type="text" value={importVideoLink} onChange={(e) => setImportVideoLink(e.target.value)} disabled={isWriting} />
+                </div>
+                <div className="recipe-card-edit-field">
+                  <span className="recipe-card-edit-label">Website link</span>
+                  <input className="sheets-input" type="text" value={importWebsiteLink} onChange={(e) => setImportWebsiteLink(e.target.value)} disabled={isWriting} />
+                </div>
+              </div>
+
+              <div className="recipe-import-section">
+                <p className="recipe-card-edit-label">Ingredients</p>
+                <ul className="recipe-import-ingredient-list">
+                  {importIngredients.map((ing, idx) => (
+                    <li key={idx} className="recipe-import-ingredient-row">
+                      <input
+                        className="sheets-input recipe-import-ing-qty"
+                        type="text"
+                        placeholder="Qty"
+                        value={ing.quantity}
+                        onChange={(e) => setImportIngredients((prev) => prev.map((x, i) => i === idx ? { ...x, quantity: e.target.value } : x))}
+                        disabled={isWriting}
+                      />
+                      <input
+                        className="sheets-input recipe-import-ing-unit"
+                        type="text"
+                        placeholder="Unit"
+                        value={ing.unit}
+                        onChange={(e) => setImportIngredients((prev) => prev.map((x, i) => i === idx ? { ...x, unit: e.target.value } : x))}
+                        disabled={isWriting}
+                      />
+                      <input
+                        className="sheets-input recipe-import-ing-name"
+                        type="text"
+                        placeholder="Ingredient name"
+                        value={ing.name}
+                        onChange={(e) => setImportIngredients((prev) => prev.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))}
+                        disabled={isWriting}
+                      />
+                      <button
+                        type="button"
+                        className="recipe-comp-edit-btn"
+                        onClick={() => setImportIngredients((prev) => prev.filter((_, i) => i !== idx))}
+                        disabled={isWriting}
+                        aria-label="Remove ingredient"
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  className="secondary-action recipe-import-add-btn"
+                  onClick={() => setImportIngredients((prev) => [...prev, { name: '', quantity: '', unit: '', note: '' }])}
+                  disabled={isWriting}
+                >
+                  + Add ingredient
+                </button>
+              </div>
+
+              <div className="recipe-import-section">
+                <p className="recipe-card-edit-label">Steps</p>
+                <ol className="recipe-import-step-list">
+                  {importSteps.map((step, idx) => (
+                    <li key={idx} className="recipe-import-step-row">
+                      <span className="recipe-import-step-num">{idx + 1}.</span>
+                      <input
+                        className="sheets-input recipe-import-step-input"
+                        type="text"
+                        placeholder={`Step ${idx + 1}`}
+                        value={step}
+                        onChange={(e) => setImportSteps((prev) => prev.map((s, i) => i === idx ? e.target.value : s))}
+                        disabled={isWriting}
+                      />
+                      <button
+                        type="button"
+                        className="recipe-comp-edit-btn"
+                        onClick={() => setImportSteps((prev) => prev.filter((_, i) => i !== idx))}
+                        disabled={isWriting}
+                        aria-label="Remove step"
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+                <button
+                  type="button"
+                  className="secondary-action recipe-import-add-btn"
+                  onClick={() => setImportSteps((prev) => [...prev, ''])}
+                  disabled={isWriting}
+                >
+                  + Add step
+                </button>
+              </div>
+
+              <div className="recipe-import-actions">
+                <button
+                  type="button"
+                  className="primary-action"
+                  onClick={() => void handleImportConfirm()}
+                  disabled={isWriting || !importName.trim()}
+                >
+                  {isWriting ? 'Saving…' : 'Confirm & Save Recipe'}
+                </button>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => { setIsImporting(false); resetImportState() }}
+                  disabled={isWriting}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       {isLoading ? <p className="sheets-meta">Loading recipes...</p> : null}
 
@@ -4042,7 +4454,7 @@ function RecipesCard({
 
       {recipes.length > 0 && viewMode === 'list' && !isEditing ? (
         <ul className="recipe-list-view">
-          {filteredRecipes.map((recipe) => (
+          {pagedRecipes.map((recipe) => (
             <li key={recipe.recipe_id} className="recipe-list-item">
               <span className="recipe-list-name">{recipe.recipe_name}</span>
               <span className="recipe-list-meta">
@@ -4071,7 +4483,7 @@ function RecipesCard({
               </tr>
             </thead>
             <tbody>
-              {filteredRecipes.map((recipe) => {
+              {pagedRecipes.map((recipe) => {
                 const draft = editDrafts[recipe.recipe_id] ?? recipe
                 return (
                   <tr key={recipe.recipe_id}>
@@ -4097,7 +4509,7 @@ function RecipesCard({
 
       {isEditing && canWrite && filteredRecipes.length > 0 ? (
         <ul className="recipe-edit-mobile-list">
-          {filteredRecipes.map((recipe) => {
+          {pagedRecipes.map((recipe) => {
             const draft = editDrafts[recipe.recipe_id] ?? recipe
             const expanded = mobileEditRecipeId === recipe.recipe_id
             return (
@@ -4160,7 +4572,7 @@ function RecipesCard({
 
       {recipes.length > 0 && viewMode === 'grid' && !isEditing ? (
         <div className="recipe-cards-grid">
-          {filteredRecipes.map((recipe) => {
+          {pagedRecipes.map((recipe) => {
             return (
               <div key={recipe.recipe_id} className="recipe-card">
                 <>
@@ -4176,6 +4588,32 @@ function RecipesCard({
               </div>
             )
           })}
+        </div>
+      ) : null}
+
+      {filteredRecipes.length > 0 && totalPages > 1 ? (
+        <div className="recipe-pagination">
+          <button
+            type="button"
+            className="secondary-action recipe-pagination-btn"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            aria-label="Previous page"
+          >
+            ←
+          </button>
+          <span className="recipe-pagination-info">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            type="button"
+            className="secondary-action recipe-pagination-btn"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            aria-label="Next page"
+          >
+            →
+          </button>
         </div>
       ) : null}
 
@@ -5935,6 +6373,138 @@ function normalizeWeekday(value: string) {
 
 function getTodayWeekdayName() {
   return new Date().toLocaleDateString('en-US', { weekday: 'long' })
+}
+
+function RecipeRandomizerCard({ title }: { title: string }) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [recipes, setRecipes] = useState<RecipeRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [spinning, setSpinning] = useState(false)
+  const [display, setDisplay] = useState('')
+  const [tickKey, setTickKey] = useState(0)
+  const [reelSpinning, setReelSpinning] = useState(false)
+  const [result, setResult] = useState<RecipeRecord | null>(null)
+
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const data = await getRecipes()
+        setRecipes(data)
+        if (data.length > 0) setDisplay(data[0].recipe_name)
+      } catch {
+        setRecipes([])
+      } finally {
+        setIsLoading(false)
+      }
+    })()
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
+
+  function spin() {
+    if (spinning || recipes.length === 0) return
+    sounds.randomizerClick()
+    sounds.randomizerSpin()
+    setSpinning(true)
+    setReelSpinning(true)
+    setResult(null)
+
+    intervalRef.current = setInterval(() => {
+      const r = recipes[Math.floor(Math.random() * recipes.length)]
+      setDisplay(r.recipe_name)
+      setTickKey((k) => k + 1)
+    }, 80)
+
+    timeoutRef.current = setTimeout(() => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      const final = recipes[Math.floor(Math.random() * recipes.length)]
+      setDisplay(final.recipe_name)
+      setTickKey((k) => k + 1)
+      setReelSpinning(false)
+      setResult(final)
+      setSpinning(false)
+    }, 2500)
+  }
+
+  return (
+    <article className="info-card section-page-card meal-randomizer-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          onClick={() => setIsCollapsed((v) => !v)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
+      </div>
+
+      {!isCollapsed && (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading recipes…</p> : null}
+          {!isLoading && recipes.length === 0 ? (
+            <p className="sheets-meta">No recipes yet — add some in the Recipes section first.</p>
+          ) : null}
+
+          {!isLoading && recipes.length > 0 ? (
+            <>
+              <div className="recipe-randomizer-reel-wrap">
+                <div className={`meal-randomizer-window recipe-randomizer-window${reelSpinning ? ' spinning' : ''}`}>
+                  <div className="meal-randomizer-shine" />
+                  <span key={tickKey} className="meal-randomizer-item recipe-randomizer-item">
+                    {display}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="meal-randomizer-spin-btn"
+                disabled={spinning}
+                onClick={spin}
+              >
+                {spinning ? 'Spinning…' : 'Pick a Recipe'}
+              </button>
+
+              {result ? (
+                <div className="recipe-randomizer-result">
+                  <p className="recipe-randomizer-result-name">{result.recipe_name}</p>
+                  {result.category ? <p className="sheets-meta">{result.category}</p> : null}
+                  {(result.cook_time || result.calories || result.servings) ? (
+                    <div className="recipe-randomizer-meta">
+                      {result.cook_time ? <span>⏱ {result.cook_time}</span> : null}
+                      {result.calories ? <span>🔥 {result.calories} cal</span> : null}
+                      {result.servings ? <span>🍽 {result.servings}</span> : null}
+                    </div>
+                  ) : null}
+                  {(result.video_link || result.website_link) ? (
+                    <div className="recipe-randomizer-links">
+                      {result.video_link ? (
+                        <a href={result.video_link} target="_blank" rel="noopener noreferrer" className="secondary-action">
+                          Watch Video
+                        </a>
+                      ) : null}
+                      {result.website_link ? (
+                        <a href={result.website_link} target="_blank" rel="noopener noreferrer" className="secondary-action">
+                          View Recipe
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+            </>
+          ) : null}
+        </>
+      )}
+    </article>
+  )
 }
 
 const SLOT_ITEMS = {
@@ -8775,6 +9345,636 @@ function PointsConversionPage() {
   )
 }
 
+const GROCERY_STORES = ['Walmart', 'Target', 'Publix', 'Aldi'] as const
+type GroceryStore = (typeof GROCERY_STORES)[number]
+
+const FAST_FOOD_PLACES = [
+  "McDonald's", 'Burger King', 'Chick-fil-A', 'Chipotle', 'Taco Bell',
+  'Subway', "Wendy's", 'Panda Express', 'Popeyes', "Raising Cane's", 'Other',
+]
+
+type FlippDeal = {
+  id: string
+  item: string
+  description: string
+  originalPrice: number | null
+  salePrice: number | null
+  discountPct: number | null
+  saleName: string
+  category: string
+  validFrom: string | null
+  validTo: string | null
+}
+
+type FlippStoreData = {
+  validFrom: string | null
+  validTo: string | null
+  deals: FlippDeal[]
+  error?: string
+}
+
+type FlippData = {
+  lastUpdated: string | null
+  stores: Record<string, FlippStoreData>
+}
+
+const PRICE_STORAGE_KEY = 'gp_prices_v1'
+
+function GroceryPriceCard({
+  title,
+  fallbackBody,
+}: {
+  title: string
+  fallbackBody: string
+}) {
+  const [rows, setRows] = useState<GroceryPriceRecord[]>(() => {
+    try {
+      const s = localStorage.getItem(PRICE_STORAGE_KEY)
+      return s ? (JSON.parse(s) as GroceryPriceRecord[]) : []
+    } catch { return [] }
+  })
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [error, setError] = useState('')
+  const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('All')
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [draftItem, setDraftItem] = useState('')
+  const [draftCategory, setDraftCategory] = useState('')
+  const [draftStore, setDraftStore] = useState<GroceryStore>('Walmart')
+  const [draftPrice, setDraftPrice] = useState('')
+  const [draftUnit, setDraftUnit] = useState('')
+  const [draftQty, setDraftQty] = useState('')
+  const [draftDate, setDraftDate] = useState('')
+  const [draftNotes, setDraftNotes] = useState('')
+
+  useEffect(() => {
+    try { localStorage.setItem(PRICE_STORAGE_KEY, JSON.stringify(rows)) } catch { /* quota */ }
+  }, [rows])
+
+  const categories = useMemo(() => {
+    const cats = [...new Set(rows.map((r) => r.category).filter(Boolean))].sort()
+    return ['All', ...cats]
+  }, [rows])
+
+  const filteredRows = useMemo(() => {
+    const q = search.toLowerCase()
+    return rows.filter((r) => {
+      if (categoryFilter !== 'All' && r.category !== categoryFilter) return false
+      if (q && !r.item.toLowerCase().includes(q)) return false
+      return true
+    })
+  }, [rows, search, categoryFilter])
+
+  const pivoted = useMemo(() => {
+    const itemMap = new Map<string, { item: string; category: string; prices: Partial<Record<GroceryStore, GroceryPriceRecord>> }>()
+    for (const row of filteredRows) {
+      const key = `${row.item}||${row.category}`
+      if (!itemMap.has(key)) {
+        itemMap.set(key, { item: row.item, category: row.category, prices: {} })
+      }
+      const store = row.store as GroceryStore
+      if (GROCERY_STORES.includes(store)) {
+        itemMap.get(key)!.prices[store] = row
+      }
+    }
+    return [...itemMap.values()].sort((a, b) => a.category.localeCompare(b.category) || a.item.localeCompare(b.item))
+  }, [filteredRows])
+
+  function resetDraft() {
+    setDraftItem(''); setDraftCategory(''); setDraftStore('Walmart')
+    setDraftPrice(''); setDraftUnit(''); setDraftQty(''); setDraftDate(''); setDraftNotes('')
+  }
+
+  function handleAdd() {
+    const item = draftItem.trim()
+    const category = draftCategory.trim()
+    const price = parseFloat(draftPrice)
+    const unit = draftUnit.trim()
+    const qty = draftQty.trim()
+    if (!item || !category || !draftStore || isNaN(price)) {
+      setError('Item, category, store, and price are required.')
+      return
+    }
+    setError('')
+    const pricePerUnit = qty && !isNaN(parseFloat(qty)) ? +(price / parseFloat(qty)).toFixed(4) : price
+    const newEntry: GroceryPriceRecord = {
+      price_id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+      item, category, store: draftStore, price, unit, quantity: qty,
+      price_per_unit: pricePerUnit,
+      date_checked: draftDate || undefined,
+      notes: draftNotes || undefined,
+    }
+    setRows((prev) => [...prev, newEntry])
+    resetDraft()
+    setShowAddForm(false)
+  }
+
+  function handleDelete(priceId: string) {
+    setRows((prev) => prev.filter((r) => r.price_id !== priceId))
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          <button
+            type="button"
+            className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+            aria-pressed={isEditing}
+            onClick={() => { setIsEditing((v) => !v); if (!isEditing) setIsCollapsed(false) }}
+            title="Edit prices"
+          >✎</button>
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((v) => !v)}
+          >{isCollapsed ? '▸' : '▾'}</button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          {rows.length === 0 && !isEditing ? (
+            <p className="sheets-meta">{fallbackBody}</p>
+          ) : null}
+
+          <div className="deals-filters">
+            <input
+              className="sheets-input deals-search"
+              placeholder="Search item..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select
+              className="sheets-input deals-select"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              {categories.map((c) => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+
+          {pivoted.length > 0 ? (
+            <div className="price-table-wrap">
+              <table className="price-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    {GROCERY_STORES.map((s) => <th key={s}>{s}</th>)}
+                    <th>Best</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pivoted.map(({ item, category, prices }) => {
+                    const available = GROCERY_STORES
+                      .map((s) => ({ store: s, record: prices[s] }))
+                      .filter((sp) => sp.record)
+                    const cheapest = available.length > 0
+                      ? available.reduce((best, sp) =>
+                          sp.record!.price_per_unit > 0
+                            ? (best.record!.price_per_unit <= sp.record!.price_per_unit ? best : sp)
+                            : (best.record!.price <= sp.record!.price ? best : sp),
+                        )
+                      : null
+                    return (
+                      <tr key={`${item}||${category}`}>
+                        <td className="price-table-item">{item}</td>
+                        <td className="price-table-cat">{category}</td>
+                        {GROCERY_STORES.map((s) => {
+                          const rec = prices[s]
+                          const isCheapest = cheapest?.store === s
+                          return (
+                            <td key={s} className={`price-table-price ${isCheapest ? 'price-cheapest' : ''}`}>
+                              {rec ? (
+                                <span title={[rec.quantity && `${rec.quantity} ${rec.unit}`, rec.notes].filter(Boolean).join(' — ')}>
+                                  ${rec.price.toFixed(2)}
+                                  {rec.unit ? <span className="price-unit">/{rec.unit}</span> : null}
+                                  {isEditing ? (
+                                    <button
+                                      type="button"
+                                      className="deals-delete-btn"
+                                      onClick={() => handleDelete(rec.price_id)}
+                                      title="Remove"
+                                    >×</button>
+                                  ) : null}
+                                </span>
+                              ) : <span className="price-empty">—</span>}
+                            </td>
+                          )
+                        })}
+                        <td className="price-table-best">
+                          {cheapest ? <span className="price-best-badge">{cheapest.store}</span> : '—'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {isEditing ? (
+            <div className="deals-add-section">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => setShowAddForm((v) => !v)}
+              >{showAddForm ? 'Cancel' : '+ Add Price'}</button>
+
+              {showAddForm ? (
+                <div className="deals-add-form">
+                  <div className="deals-form-row">
+                    <input className="sheets-input" placeholder="Item name *" value={draftItem} onChange={(e) => setDraftItem(e.target.value)} />
+                    <input className="sheets-input" placeholder="Category *" value={draftCategory} onChange={(e) => setDraftCategory(e.target.value)} />
+                    <select className="sheets-input" value={draftStore} onChange={(e) => setDraftStore(e.target.value as GroceryStore)}>
+                      {GROCERY_STORES.map((s) => <option key={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div className="deals-form-row">
+                    <input className="sheets-input" placeholder="Price * (e.g. 3.99)" value={draftPrice} onChange={(e) => setDraftPrice(e.target.value)} />
+                    <input className="sheets-input" placeholder="Unit (lb, oz, each...)" value={draftUnit} onChange={(e) => setDraftUnit(e.target.value)} />
+                    <input className="sheets-input" placeholder="Package qty (e.g. 5)" value={draftQty} onChange={(e) => setDraftQty(e.target.value)} />
+                  </div>
+                  <div className="deals-form-row">
+                    <input className="sheets-input" placeholder="Date checked (optional)" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
+                    <input className="sheets-input" placeholder="Notes (optional)" value={draftNotes} onChange={(e) => setDraftNotes(e.target.value)} />
+                    <button type="button" className="primary-action" onClick={handleAdd}>Save</button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {error ? <p className="sheets-error">{error}</p> : null}
+        </>
+      ) : null}
+    </article>
+  )
+}
+
+function StoreDealsCard({
+  title,
+  fallbackBody,
+}: {
+  title: string
+  fallbackBody: string
+}) {
+  const [flippData, setFlippData] = useState<FlippData | null>(null)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
+  const [activeStore, setActiveStore] = useState<GroceryStore | 'All'>('All')
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    fetch('/deals-data.json')
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<FlippData> })
+      .then((d) => { setFlippData(d); setIsLoading(false) })
+      .catch((e: unknown) => {
+        setFetchError(e instanceof Error ? e.message : 'Failed to load deals')
+        setIsLoading(false)
+      })
+  }, [])
+
+  const activeStoreData: FlippStoreData | null =
+    flippData && activeStore !== 'All' ? (flippData.stores[activeStore] ?? null) : null
+
+  const visibleDeals = useMemo(() => {
+    const source =
+      activeStore === 'All'
+        ? Object.entries(flippData?.stores ?? {}).flatMap(([store, sd]) =>
+            sd.deals.map((d) => ({ ...d, _store: store })),
+          )
+        : (activeStoreData?.deals.map((d) => ({ ...d, _store: activeStore })) ?? [])
+    const q = search.toLowerCase()
+    return q
+      ? source.filter((d) => d.item.toLowerCase().includes(q) || d.category.toLowerCase().includes(q))
+      : source
+  }, [flippData, activeStore, activeStoreData, search])
+
+  const totalDeals = Object.values(flippData?.stores ?? {}).reduce(
+    (sum, s) => sum + s.deals.length, 0,
+  )
+
+  function formatDate(iso: string | null | undefined) {
+    if (!iso) return null
+    const d = new Date(iso)
+    return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+
+  function renderFlippDeal(deal: FlippDeal & { _store?: string }) {
+    return (
+      <div key={deal.id} className="deal-card">
+        <div className="deal-card-main">
+          <span className="deal-card-item">{deal.item}</span>
+          {deal.category ? <span className="deal-card-cat">{deal.category}</span> : null}
+          {activeStore === 'All' && deal._store ? (
+            <span className="deal-card-cat deal-store-label">{deal._store}</span>
+          ) : null}
+        </div>
+        <div className="deal-card-prices">
+          {deal.originalPrice != null ? (
+            <span className="deal-orig-price">${deal.originalPrice.toFixed(2)}</span>
+          ) : null}
+          {deal.salePrice != null ? (
+            <span className="deal-sale-price">${deal.salePrice.toFixed(2)}</span>
+          ) : null}
+          {deal.discountPct != null && deal.discountPct > 0 ? (
+            <span className="deal-badge">{Math.round(deal.discountPct)}% off</span>
+          ) : null}
+        </div>
+        <div className="deal-card-meta">
+          {deal.saleName ? <span className="deal-notes">{deal.saleName}</span> : null}
+          {deal.description && deal.description !== deal.saleName ? (
+            <span className="deal-notes">{deal.description}</span>
+          ) : null}
+          {deal.validTo ? <span className="deal-expiry">thru {formatDate(deal.validTo)}</span> : null}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((v) => !v)}
+          >{isCollapsed ? '▸' : '▾'}</button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          {isLoading ? <p className="sheets-meta">Loading deals from Flipp…</p> : null}
+          {fetchError ? <p className="sheets-error">{fetchError}</p> : null}
+
+          {!isLoading && !fetchError && flippData ? (
+            <>
+              <div className="deals-flipp-meta">
+                {flippData.lastUpdated ? (
+                  <span className="deals-last-updated">
+                    Updated {new Date(flippData.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                  </span>
+                ) : null}
+                <span className="deals-count">{totalDeals} deals</span>
+              </div>
+
+              <div className="deals-store-tabs">
+                {(['All', ...GROCERY_STORES] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`deals-store-tab-btn ${activeStore === s ? 'active' : ''}`}
+                    onClick={() => { setActiveStore(s as GroceryStore | 'All'); setSearch('') }}
+                  >
+                    {s}
+                    {s !== 'All' && flippData.stores[s]?.deals.length
+                      ? <span className="tab-count">{flippData.stores[s].deals.length}</span>
+                      : null}
+                  </button>
+                ))}
+              </div>
+
+              {activeStore !== 'All' && activeStoreData?.validFrom ? (
+                <p className="sheets-meta deal-validity">
+                  Valid {formatDate(activeStoreData.validFrom)} – {formatDate(activeStoreData.validTo)}
+                  {activeStoreData.error ? ` · ${activeStoreData.error}` : ''}
+                </p>
+              ) : null}
+
+              <div className="deals-filters">
+                <input
+                  className="sheets-input deals-search"
+                  placeholder="Search deals…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+
+              {visibleDeals.length === 0 ? (
+                <p className="sheets-meta">{fallbackBody}</p>
+              ) : (
+                <div className="deal-cards-list">
+                  {visibleDeals.map(renderFlippDeal)}
+                </div>
+              )}
+            </>
+          ) : null}
+        </>
+      ) : null}
+    </article>
+  )
+}
+
+const COUPON_STORAGE_KEY = 'gp_coupons_v1'
+
+function CouponsCard({
+  title,
+  fallbackBody,
+}: {
+  title: string
+  fallbackBody: string
+}) {
+  const [rows, setRows] = useState<CouponRecord[]>(() => {
+    try {
+      const s = localStorage.getItem(COUPON_STORAGE_KEY)
+      return s ? (JSON.parse(s) as CouponRecord[]) : []
+    } catch { return [] }
+  })
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState<'grocery' | 'fastfood'>('grocery')
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [draftPlace, setDraftPlace] = useState('')
+  const [draftType, setDraftType] = useState<'grocery' | 'fastfood'>('grocery')
+  const [draftDesc, setDraftDesc] = useState('')
+  const [draftDiscount, setDraftDiscount] = useState('')
+  const [draftCode, setDraftCode] = useState('')
+  const [draftExpiry, setDraftExpiry] = useState('')
+  const [draftSource, setDraftSource] = useState('')
+
+  useEffect(() => {
+    try { localStorage.setItem(COUPON_STORAGE_KEY, JSON.stringify(rows)) } catch { /* quota */ }
+  }, [rows])
+
+  const visibleCoupons = useMemo(
+    () => rows.filter((r) => r.active && r.type === activeTab),
+    [rows, activeTab],
+  )
+
+  const groupedByPlace = useMemo(() => {
+    const order: string[] = []
+    const map: Record<string, CouponRecord[]> = {}
+    for (const c of visibleCoupons) {
+      if (!map[c.place]) { order.push(c.place); map[c.place] = [] }
+      map[c.place].push(c)
+    }
+    return order.map((place) => ({ place, coupons: map[place] }))
+  }, [visibleCoupons])
+
+  function resetDraft() {
+    setDraftPlace(''); setDraftType('grocery'); setDraftDesc('')
+    setDraftDiscount(''); setDraftCode(''); setDraftExpiry(''); setDraftSource('')
+  }
+
+  function handleAdd() {
+    const place = draftPlace.trim()
+    const desc = draftDesc.trim()
+    const discount = draftDiscount.trim()
+    if (!place || !desc || !discount) {
+      setError('Place, description, and discount are required.')
+      return
+    }
+    setError('')
+    const newEntry: CouponRecord = {
+      coupon_id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+      place, type: draftType, description: desc, discount,
+      code: draftCode || undefined,
+      expiry_date: draftExpiry || undefined,
+      source: draftSource || undefined,
+      active: true,
+    }
+    setRows((prev) => [...prev, newEntry])
+    resetDraft()
+    setShowAddForm(false)
+  }
+
+  function handleDelete(couponId: string) {
+    setRows((prev) => prev.filter((r) => r.coupon_id !== couponId))
+  }
+
+  const placeOptions = draftType === 'grocery'
+    ? [...GROCERY_STORES, 'Other']
+    : FAST_FOOD_PLACES
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          <button
+            type="button"
+            className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+            aria-pressed={isEditing}
+            onClick={() => { setIsEditing((v) => !v); if (!isEditing) setIsCollapsed(false) }}
+            title="Edit coupons"
+          >✎</button>
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            onClick={() => setIsCollapsed((v) => !v)}
+          >{isCollapsed ? '▸' : '▾'}</button>
+        </div>
+      </div>
+
+      {!isCollapsed ? (
+        <>
+          {rows.filter((r) => r.active).length === 0 && !isEditing ? (
+            <p className="sheets-meta">{fallbackBody}</p>
+          ) : null}
+
+          <div className="deals-store-tabs">
+            <button
+              type="button"
+              className={`deals-store-tab-btn ${activeTab === 'grocery' ? 'active' : ''}`}
+              onClick={() => setActiveTab('grocery')}
+            >Grocery Stores</button>
+            <button
+              type="button"
+              className={`deals-store-tab-btn ${activeTab === 'fastfood' ? 'active' : ''}`}
+              onClick={() => setActiveTab('fastfood')}
+            >Fast Food</button>
+          </div>
+
+          {groupedByPlace.length === 0 && !isEditing ? (
+            <p className="sheets-meta">No {activeTab === 'grocery' ? 'grocery store' : 'fast food'} coupons yet.</p>
+          ) : null}
+
+          {groupedByPlace.length > 0 ? (
+            <div className="coupon-groups">
+              {groupedByPlace.map(({ place, coupons }) => (
+                <div key={place} className="coupon-place-section">
+                  <h4 className="coupon-place-heading">{place}</h4>
+                  <div className="coupon-list">
+                    {coupons.map((c) => (
+                      <div key={c.coupon_id} className="coupon-card">
+                        <div className="coupon-card-top">
+                          <span className="coupon-discount-badge">{c.discount}</span>
+                          <span className="coupon-desc">{c.description}</span>
+                          {isEditing ? (
+                            <button
+                              type="button"
+                              className="deals-delete-btn"
+                              onClick={() => handleDelete(c.coupon_id)}
+                            >×</button>
+                          ) : null}
+                        </div>
+                        <div className="coupon-card-meta">
+                          {c.code ? <span className="coupon-code">Code: <strong>{c.code}</strong></span> : null}
+                          {c.expiry_date ? <span className="coupon-expiry">Exp: {c.expiry_date}</span> : null}
+                          {c.source ? <span className="coupon-source">{c.source}</span> : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {isEditing ? (
+            <div className="deals-add-section">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => setShowAddForm((v) => !v)}
+              >{showAddForm ? 'Cancel' : '+ Add Coupon'}</button>
+
+              {showAddForm ? (
+                <div className="deals-add-form">
+                  <div className="deals-form-row">
+                    <select className="sheets-input" value={draftType} onChange={(e) => { setDraftType(e.target.value as 'grocery' | 'fastfood'); setDraftPlace('') }}>
+                      <option value="grocery">Grocery Store</option>
+                      <option value="fastfood">Fast Food</option>
+                    </select>
+                    <select className="sheets-input" value={draftPlace} onChange={(e) => setDraftPlace(e.target.value)}>
+                      <option value="">Select place *</option>
+                      {placeOptions.map((p) => <option key={p}>{p}</option>)}
+                    </select>
+                    <input className="sheets-input" placeholder="Discount (e.g. $5 off, BOGO) *" value={draftDiscount} onChange={(e) => setDraftDiscount(e.target.value)} />
+                  </div>
+                  <div className="deals-form-row">
+                    <input className="sheets-input" placeholder="Description *" value={draftDesc} onChange={(e) => setDraftDesc(e.target.value)} />
+                    <input className="sheets-input" placeholder="Promo code (optional)" value={draftCode} onChange={(e) => setDraftCode(e.target.value)} />
+                  </div>
+                  <div className="deals-form-row">
+                    <input className="sheets-input" placeholder="Expiry date" value={draftExpiry} onChange={(e) => setDraftExpiry(e.target.value)} />
+                    <input className="sheets-input" placeholder="Source (App, Email, Website...)" value={draftSource} onChange={(e) => setDraftSource(e.target.value)} />
+                    <button type="button" className="primary-action" onClick={handleAdd}>Save</button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {error ? <p className="sheets-error">{error}</p> : null}
+        </>
+      ) : null}
+    </article>
+  )
+}
+
 function DetailPage({
   path,
   profile = 'guest',
@@ -8857,14 +10057,21 @@ function DetailPage({
         }
 
         if (path === '/cooking/recipes' && card.title === 'Recipes') {
+          const googleEmail = getGoogleTokenEmail(googleIdToken)
+          const canWrite = profile === 'admin' && shouldUseAdminProfile(googleEmail)
+
           return (
             <RecipesCard
               key={card.title}
               title={card.title}
-              canWrite={profile === 'admin'}
+              canWrite={canWrite}
               idToken={googleIdToken}
             />
           )
+        }
+
+        if (path === '/cooking/recipes' && card.title === 'Randomizer') {
+          return <RecipeRandomizerCard key={card.title} title={card.title} />
         }
 
         if (path === '/cooking/plan' && card.title === 'Grocery list') {
@@ -8878,6 +10085,36 @@ function DetailPage({
               fallbackBody={card.body}
               canWrite={canWrite}
               idToken={googleIdToken}
+            />
+          )
+        }
+
+        if (path === '/cooking/deals' && card.title === 'Cost Analysis') {
+          return (
+            <GroceryPriceCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+            />
+          )
+        }
+
+        if (path === '/cooking/deals' && card.title === 'Store Deals') {
+          return (
+            <StoreDealsCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
+            />
+          )
+        }
+
+        if (path === '/cooking/deals' && card.title === 'Coupons') {
+          return (
+            <CouponsCard
+              key={card.title}
+              title={card.title}
+              fallbackBody={card.body}
             />
           )
         }

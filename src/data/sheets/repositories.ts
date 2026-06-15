@@ -4,11 +4,13 @@ import type {
   BackpackRecord,
   BucketListRecord,
   CountryRecord,
+  CouponRecord,
   CurrentStudyRecord,
   EventRecord,
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
+  GroceryPriceRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
@@ -16,6 +18,7 @@ import type {
   RecipeRecord,
   RecipeStepRecord,
   RingconnHealthRecord,
+  StoreDealRecord,
   TrainingRecord,
   TripRecord,
 } from './types'
@@ -891,4 +894,245 @@ export async function deleteTrip(idToken: string, tripId: string) {
     idToken,
     name: tripId,
   })
+}
+
+export async function getGroceryPrices(): Promise<GroceryPriceRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('grocery_prices')
+  return rows
+    .map((row) => ({
+      price_id: String(row.price_id ?? ''),
+      item: String(row.item ?? '').trim(),
+      category: String(row.category ?? '').trim(),
+      store: String(row.store ?? '').trim(),
+      price: parseNumber(row.price) ?? 0,
+      unit: String(row.unit ?? '').trim(),
+      quantity: String(row.quantity ?? '').trim(),
+      price_per_unit: parseNumber(row.price_per_unit) ?? 0,
+      date_checked: row.date_checked ? String(row.date_checked) : undefined,
+      notes: row.notes ? String(row.notes) : undefined,
+    }))
+    .filter((row) => row.price_id && row.item)
+}
+
+export async function createGroceryPrice(
+  idToken: string,
+  payload: {
+    item: string
+    category: string
+    store: string
+    price: number
+    unit: string
+    quantity: string
+    pricePerUnit: number
+    dateChecked?: string
+    notes?: string
+  },
+) {
+  await runWrite({
+    action: 'createGroceryPrice',
+    idToken,
+    item: payload.item,
+    category: payload.category,
+    store: payload.store,
+    price: payload.price,
+    unit: payload.unit,
+    quantity: payload.quantity,
+    price_per_unit: payload.pricePerUnit,
+    date_checked: payload.dateChecked ?? '',
+    notes: payload.notes ?? '',
+  })
+}
+
+export async function updateGroceryPrice(
+  idToken: string,
+  priceId: string,
+  payload: {
+    item: string
+    category: string
+    store: string
+    price: number
+    unit: string
+    quantity: string
+    pricePerUnit: number
+    dateChecked?: string
+    notes?: string
+  },
+) {
+  await runWrite({
+    action: 'updateGroceryPrice',
+    idToken,
+    price_id: priceId,
+    item: payload.item,
+    category: payload.category,
+    store: payload.store,
+    price: payload.price,
+    unit: payload.unit,
+    quantity: payload.quantity,
+    price_per_unit: payload.pricePerUnit,
+    date_checked: payload.dateChecked ?? '',
+    notes: payload.notes ?? '',
+  })
+}
+
+export async function deleteGroceryPrice(idToken: string, priceId: string) {
+  await runWrite({ action: 'deleteGroceryPrice', idToken, price_id: priceId })
+}
+
+export async function getStoreDeals(): Promise<StoreDealRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('store_deals')
+  return rows
+    .map((row) => ({
+      deal_id: String(row.deal_id ?? ''),
+      store: String(row.store ?? '').trim(),
+      item: String(row.item ?? '').trim(),
+      category: String(row.category ?? '').trim(),
+      original_price: parseNumber(row.original_price) ?? 0,
+      sale_price: parseNumber(row.sale_price) ?? 0,
+      discount_pct: parseNumber(row.discount_pct) ?? 0,
+      expiry_date: row.expiry_date ? String(row.expiry_date) : undefined,
+      notes: row.notes ? String(row.notes) : undefined,
+      active: parseBoolean(row.active),
+    }))
+    .filter((row) => row.deal_id && row.item)
+}
+
+export async function createStoreDeal(
+  idToken: string,
+  payload: {
+    store: string
+    item: string
+    category: string
+    originalPrice: number
+    salePrice: number
+    discountPct: number
+    expiryDate?: string
+    notes?: string
+    active?: boolean
+  },
+) {
+  await runWrite({
+    action: 'createStoreDeal',
+    idToken,
+    store: payload.store,
+    item: payload.item,
+    category: payload.category,
+    original_price: payload.originalPrice,
+    sale_price: payload.salePrice,
+    discount_pct: payload.discountPct,
+    expiry_date: payload.expiryDate ?? '',
+    notes: payload.notes ?? '',
+    active: payload.active ?? true,
+  })
+}
+
+export async function updateStoreDeal(
+  idToken: string,
+  dealId: string,
+  payload: {
+    store: string
+    item: string
+    category: string
+    originalPrice: number
+    salePrice: number
+    discountPct: number
+    expiryDate?: string
+    notes?: string
+    active?: boolean
+  },
+) {
+  await runWrite({
+    action: 'updateStoreDeal',
+    idToken,
+    deal_id: dealId,
+    store: payload.store,
+    item: payload.item,
+    category: payload.category,
+    original_price: payload.originalPrice,
+    sale_price: payload.salePrice,
+    discount_pct: payload.discountPct,
+    expiry_date: payload.expiryDate ?? '',
+    notes: payload.notes ?? '',
+    active: payload.active ?? true,
+  })
+}
+
+export async function deleteStoreDeal(idToken: string, dealId: string) {
+  await runWrite({ action: 'deleteStoreDeal', idToken, deal_id: dealId })
+}
+
+export async function getCoupons(): Promise<CouponRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('coupons')
+  return rows
+    .map((row) => ({
+      coupon_id: String(row.coupon_id ?? ''),
+      place: String(row.place ?? '').trim(),
+      type: String(row.type ?? '').trim().toLowerCase(),
+      description: String(row.description ?? '').trim(),
+      discount: String(row.discount ?? '').trim(),
+      code: row.code ? String(row.code) : undefined,
+      expiry_date: row.expiry_date ? String(row.expiry_date) : undefined,
+      source: row.source ? String(row.source) : undefined,
+      active: parseBoolean(row.active),
+    }))
+    .filter((row) => row.coupon_id && row.description)
+}
+
+export async function createCoupon(
+  idToken: string,
+  payload: {
+    place: string
+    type: string
+    description: string
+    discount: string
+    code?: string
+    expiryDate?: string
+    source?: string
+    active?: boolean
+  },
+) {
+  await runWrite({
+    action: 'createCoupon',
+    idToken,
+    place: payload.place,
+    type: payload.type,
+    description: payload.description,
+    discount: payload.discount,
+    code: payload.code ?? '',
+    expiry_date: payload.expiryDate ?? '',
+    source: payload.source ?? '',
+    active: payload.active ?? true,
+  })
+}
+
+export async function updateCoupon(
+  idToken: string,
+  couponId: string,
+  payload: {
+    place: string
+    type: string
+    description: string
+    discount: string
+    code?: string
+    expiryDate?: string
+    source?: string
+    active?: boolean
+  },
+) {
+  await runWrite({
+    action: 'updateCoupon',
+    idToken,
+    coupon_id: couponId,
+    place: payload.place,
+    type: payload.type,
+    description: payload.description,
+    discount: payload.discount,
+    code: payload.code ?? '',
+    expiry_date: payload.expiryDate ?? '',
+    source: payload.source ?? '',
+    active: payload.active ?? true,
+  })
+}
+
+export async function deleteCoupon(idToken: string, couponId: string) {
+  await runWrite({ action: 'deleteCoupon', idToken, coupon_id: couponId })
 }

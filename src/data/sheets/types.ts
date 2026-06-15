@@ -169,6 +169,44 @@ export type TripRecord = {
   saved_amount: number
 }
 
+export type GroceryPriceRecord = {
+  price_id: string
+  item: string
+  category: string
+  store: string
+  price: number
+  unit: string
+  quantity: string
+  price_per_unit: number
+  date_checked?: string
+  notes?: string
+}
+
+export type StoreDealRecord = {
+  deal_id: string
+  store: string
+  item: string
+  category: string
+  original_price: number
+  sale_price: number
+  discount_pct: number
+  expiry_date?: string
+  notes?: string
+  active: boolean
+}
+
+export type CouponRecord = {
+  coupon_id: string
+  place: string
+  type: string
+  description: string
+  discount: string
+  code?: string
+  expiry_date?: string
+  source?: string
+  active: boolean
+}
+
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }

@@ -96,16 +96,19 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
     summary: 'One day if dynamic grocery pricing exist, the grocery stores will be a stock market',
     accent: '#e0a800',
     cards: [
-      { title: 'Coupons', body: 'Capture what was on sale and where it was found.' },
       {
-        title: 'Specific store deals',
-        body: 'Keep an eye on the ingredients that matter most to the weekly budget.',
+        title: 'Cost Analysis',
+        body: 'Compare grocery item prices across Walmart, Target, Publix, and Aldi.',
       },
       {
-        title: 'Fast Food Deals',
-        body: 'Keep track of limited-time offers and discounts at fast food restaurants.',
+        title: 'Store Deals',
+        body: 'Browse active deals and discounts per store.',
+      },
+      {
+        title: 'Coupons',
+        body: 'Track coupons for grocery stores and fast food places.',
       },
     ],
-    note: 'test',
+    note: '',
   },
 }

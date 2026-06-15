@@ -7,6 +7,7 @@ export type TodoistDue = {
 
 export type TodoistTask = {
   id: string
+  parent_id?: string | null
   content: string
   description?: string
   priority: number

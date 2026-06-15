@@ -1,0 +1,9 @@
+{
+  "lastUpdated": null,
+  "stores": {
+    "Walmart": { "validFrom": null, "validTo": null, "deals": [] },
+    "Target":  { "validFrom": null, "validTo": null, "deals": [] },
+    "Publix":  { "validFrom": null, "validTo": null, "deals": [] },
+    "Aldi":    { "validFrom": null, "validTo": null, "deals": [] }
+  }
+}
