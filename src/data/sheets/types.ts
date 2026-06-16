@@ -169,19 +169,6 @@ export type TripRecord = {
   saved_amount: number
 }
 
-export type GroceryPriceRecord = {
-  price_id: string
-  item: string
-  category: string
-  store: string
-  price: number
-  unit: string
-  quantity: string
-  price_per_unit: number
-  date_checked?: string
-  notes?: string
-}
-
 export type StoreDealRecord = {
   deal_id: string
   store: string

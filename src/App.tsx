@@ -96,7 +96,6 @@ import type {
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
-  GroceryPriceRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
@@ -9356,12 +9355,8 @@ const FAST_FOOD_PLACES = [
 type FlippDeal = {
   id: string
   item: string
-  description: string
-  originalPrice: number | null
-  salePrice: number | null
-  discountPct: number | null
-  saleName: string
-  category: string
+  brand: string | null
+  price: number | null
   validFrom: string | null
   validTo: string | null
 }
@@ -9378,7 +9373,40 @@ type FlippData = {
   stores: Record<string, FlippStoreData>
 }
 
-const PRICE_STORAGE_KEY = 'gp_prices_v1'
+type StoreCostStats = {
+  store: GroceryStore
+  count: number
+  avg: number | null
+  cheapest: FlippDeal | null
+  priciest: FlippDeal | null
+}
+
+type UnitInfo = { qty: number; unit: string }
+
+// Best-effort: pull a "12 oz" / "5-lb" / "1 gal" style quantity out of a flyer
+// item's free-text name so unit cost can be estimated. Returns null if no
+// recognizable quantity+unit is present.
+const UNIT_PATTERN =
+  /(\d+(?:\.\d+)?)\s*-?\s*(fl\.?\s*oz|ounces?|oz|pounds?|lbs?|gallons?|gal|quarts?|qt|count|ct|packs?|pk|kg|g|ml|l)\b/i
+
+function parseUnitInfo(name: string): UnitInfo | null {
+  const m = name.match(UNIT_PATTERN)
+  if (!m) return null
+  const qty = parseFloat(m[1])
+  if (!qty || qty <= 0) return null
+  const raw = m[2].toLowerCase().replace(/\./g, '').replace(/\s+/g, '')
+  let unit = raw
+  if (raw.startsWith('fl')) unit = 'fl oz'
+  else if (raw.startsWith('ounce') || raw === 'oz') unit = 'oz'
+  else if (raw.startsWith('pound') || raw.startsWith('lb')) unit = 'lb'
+  else if (raw.startsWith('gallon') || raw === 'gal') unit = 'gal'
+  else if (raw.startsWith('quart') || raw === 'qt') unit = 'qt'
+  else if (raw.startsWith('count') || raw === 'ct') unit = 'ct'
+  else if (raw.startsWith('pack') || raw === 'pk') unit = 'pk'
+  return { qty, unit }
+}
+
+const COST_SEARCH_PER_PAGE = 5
 
 function GroceryPriceCard({
   title,
@@ -9387,105 +9415,79 @@ function GroceryPriceCard({
   title: string
   fallbackBody: string
 }) {
-  const [rows, setRows] = useState<GroceryPriceRecord[]>(() => {
-    try {
-      const s = localStorage.getItem(PRICE_STORAGE_KEY)
-      return s ? (JSON.parse(s) as GroceryPriceRecord[]) : []
-    } catch { return [] }
-  })
+  const [flippData, setFlippData] = useState<FlippData | null>(null)
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
   const [search, setSearch] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('All')
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [draftItem, setDraftItem] = useState('')
-  const [draftCategory, setDraftCategory] = useState('')
-  const [draftStore, setDraftStore] = useState<GroceryStore>('Walmart')
-  const [draftPrice, setDraftPrice] = useState('')
-  const [draftUnit, setDraftUnit] = useState('')
-  const [draftQty, setDraftQty] = useState('')
-  const [draftDate, setDraftDate] = useState('')
-  const [draftNotes, setDraftNotes] = useState('')
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
-    try { localStorage.setItem(PRICE_STORAGE_KEY, JSON.stringify(rows)) } catch { /* quota */ }
-  }, [rows])
+    fetch('/deals-data.json')
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<FlippData> })
+      .then((d) => { setFlippData(d); setIsLoading(false) })
+      .catch((e: unknown) => {
+        setFetchError(e instanceof Error ? e.message : 'Failed to load prices')
+        setIsLoading(false)
+      })
+  }, [])
 
-  const categories = useMemo(() => {
-    const cats = [...new Set(rows.map((r) => r.category).filter(Boolean))].sort()
-    return ['All', ...cats]
-  }, [rows])
-
-  const filteredRows = useMemo(() => {
-    const q = search.toLowerCase()
-    return rows.filter((r) => {
-      if (categoryFilter !== 'All' && r.category !== categoryFilter) return false
-      if (q && !r.item.toLowerCase().includes(q)) return false
-      return true
+  const storeStats: StoreCostStats[] = useMemo(() => {
+    return GROCERY_STORES.map((store) => {
+      const deals = (flippData?.stores[store]?.deals ?? []).filter((d) => d.price != null)
+      if (deals.length === 0) {
+        return { store, count: 0, avg: null, cheapest: null, priciest: null }
+      }
+      const avg = deals.reduce((sum, d) => sum + (d.price ?? 0), 0) / deals.length
+      const cheapest = deals.reduce((best, d) => (d.price! < best.price! ? d : best))
+      const priciest = deals.reduce((worst, d) => (d.price! > worst.price! ? d : worst))
+      return { store, count: deals.length, avg, cheapest, priciest }
     })
-  }, [rows, search, categoryFilter])
+  }, [flippData])
 
-  const pivoted = useMemo(() => {
-    const itemMap = new Map<string, { item: string; category: string; prices: Partial<Record<GroceryStore, GroceryPriceRecord>> }>()
-    for (const row of filteredRows) {
-      const key = `${row.item}||${row.category}`
-      if (!itemMap.has(key)) {
-        itemMap.set(key, { item: row.item, category: row.category, prices: {} })
-      }
-      const store = row.store as GroceryStore
-      if (GROCERY_STORES.includes(store)) {
-        itemMap.get(key)!.prices[store] = row
-      }
-    }
-    return [...itemMap.values()].sort((a, b) => a.category.localeCompare(b.category) || a.item.localeCompare(b.item))
-  }, [filteredRows])
+  const bestValueStore = useMemo(() => {
+    const ranked = storeStats.filter((s) => s.avg != null)
+    if (!ranked.length) return null
+    return ranked.reduce((best, s) => (s.avg! < best.avg! ? s : best)).store
+  }, [storeStats])
 
-  function resetDraft() {
-    setDraftItem(''); setDraftCategory(''); setDraftStore('Walmart')
-    setDraftPrice(''); setDraftUnit(''); setDraftQty(''); setDraftDate(''); setDraftNotes('')
-  }
+  const allPricedDeals = useMemo(() => {
+    if (!flippData) return []
+    return GROCERY_STORES.flatMap((store) =>
+      (flippData.stores[store]?.deals ?? [])
+        .filter((d) => d.price != null)
+        .map((d) => ({ ...d, _store: store, unit: parseUnitInfo(d.item) })),
+    )
+  }, [flippData])
 
-  function handleAdd() {
-    const item = draftItem.trim()
-    const category = draftCategory.trim()
-    const price = parseFloat(draftPrice)
-    const unit = draftUnit.trim()
-    const qty = draftQty.trim()
-    if (!item || !category || !draftStore || isNaN(price)) {
-      setError('Item, category, store, and price are required.')
-      return
-    }
-    setError('')
-    const pricePerUnit = qty && !isNaN(parseFloat(qty)) ? +(price / parseFloat(qty)).toFixed(4) : price
-    const newEntry: GroceryPriceRecord = {
-      price_id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
-      item, category, store: draftStore, price, unit, quantity: qty,
-      price_per_unit: pricePerUnit,
-      date_checked: draftDate || undefined,
-      notes: draftNotes || undefined,
-    }
-    setRows((prev) => [...prev, newEntry])
-    resetDraft()
-    setShowAddForm(false)
-  }
+  const searchResults = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return []
+    const seen = new Set<string>()
+    return allPricedDeals
+      .filter((d) => d.item.toLowerCase().includes(q) || (d.brand ?? '').toLowerCase().includes(q))
+      .filter((d) => {
+        const key = `${d._store}|${d.item}|${d.price}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      .map((d) => ({ ...d, effectivePrice: d.unit ? d.price! / d.unit.qty : d.price! }))
+      .sort((a, b) => a.effectivePrice - b.effectivePrice)
+  }, [allPricedDeals, search])
 
-  function handleDelete(priceId: string) {
-    setRows((prev) => prev.filter((r) => r.price_id !== priceId))
-  }
+  const totalPages = Math.max(1, Math.ceil(searchResults.length / COST_SEARCH_PER_PAGE))
+  const currentPage = Math.min(page, totalPages)
+  const pagedResults = searchResults.slice(
+    (currentPage - 1) * COST_SEARCH_PER_PAGE,
+    currentPage * COST_SEARCH_PER_PAGE,
+  )
 
   return (
     <article className="info-card section-page-card sheets-card">
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
-          <button
-            type="button"
-            className={`section-edit-btn ${isEditing ? 'active' : ''}`}
-            aria-pressed={isEditing}
-            onClick={() => { setIsEditing((v) => !v); if (!isEditing) setIsCollapsed(false) }}
-            title="Edit prices"
-          >✎</button>
           <button
             type="button"
             className="section-collapse-btn"
@@ -9497,119 +9499,110 @@ function GroceryPriceCard({
 
       {!isCollapsed ? (
         <>
-          {rows.length === 0 && !isEditing ? (
-            <p className="sheets-meta">{fallbackBody}</p>
-          ) : null}
+          {isLoading ? <p className="sheets-meta">Loading prices from this week's flyers…</p> : null}
+          {fetchError ? <p className="sheets-error">{fetchError}</p> : null}
 
-          <div className="deals-filters">
-            <input
-              className="sheets-input deals-search"
-              placeholder="Search item..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <select
-              className="sheets-input deals-select"
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              {categories.map((c) => <option key={c}>{c}</option>)}
-            </select>
-          </div>
+          {!isLoading && !fetchError && flippData ? (
+            <>
+              <p className="sheets-meta">{fallbackBody}</p>
 
-          {pivoted.length > 0 ? (
-            <div className="price-table-wrap">
-              <table className="price-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Category</th>
-                    {GROCERY_STORES.map((s) => <th key={s}>{s}</th>)}
-                    <th>Best</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pivoted.map(({ item, category, prices }) => {
-                    const available = GROCERY_STORES
-                      .map((s) => ({ store: s, record: prices[s] }))
-                      .filter((sp) => sp.record)
-                    const cheapest = available.length > 0
-                      ? available.reduce((best, sp) =>
-                          sp.record!.price_per_unit > 0
-                            ? (best.record!.price_per_unit <= sp.record!.price_per_unit ? best : sp)
-                            : (best.record!.price <= sp.record!.price ? best : sp),
-                        )
-                      : null
-                    return (
-                      <tr key={`${item}||${category}`}>
-                        <td className="price-table-item">{item}</td>
-                        <td className="price-table-cat">{category}</td>
-                        {GROCERY_STORES.map((s) => {
-                          const rec = prices[s]
-                          const isCheapest = cheapest?.store === s
-                          return (
-                            <td key={s} className={`price-table-price ${isCheapest ? 'price-cheapest' : ''}`}>
-                              {rec ? (
-                                <span title={[rec.quantity && `${rec.quantity} ${rec.unit}`, rec.notes].filter(Boolean).join(' — ')}>
-                                  ${rec.price.toFixed(2)}
-                                  {rec.unit ? <span className="price-unit">/{rec.unit}</span> : null}
-                                  {isEditing ? (
-                                    <button
-                                      type="button"
-                                      className="deals-delete-btn"
-                                      onClick={() => handleDelete(rec.price_id)}
-                                      title="Remove"
-                                    >×</button>
-                                  ) : null}
-                                </span>
-                              ) : <span className="price-empty">—</span>}
-                            </td>
-                          )
-                        })}
-                        <td className="price-table-best">
-                          {cheapest ? <span className="price-best-badge">{cheapest.store}</span> : '—'}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : null}
+              <div className="deals-filters">
+                <input
+                  className="sheets-input deals-search"
+                  placeholder="Search an item (e.g. milk, chicken, eggs)…"
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                />
+              </div>
 
-          {isEditing ? (
-            <div className="deals-add-section">
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => setShowAddForm((v) => !v)}
-              >{showAddForm ? 'Cancel' : '+ Add Price'}</button>
+              {search.trim() ? (
+                searchResults.length === 0 ? (
+                  <p className="sheets-meta">No matching items in this week's flyers.</p>
+                ) : (
+                  <>
+                    <div className="cost-search-list">
+                      {pagedResults.map((d, idx) => (
+                        <div
+                          key={d.id}
+                          className={`cost-search-row ${currentPage === 1 && idx === 0 ? 'best-deal' : ''}`}
+                        >
+                          <div className="cost-search-main">
+                            <span className="cost-search-item">{d.item}</span>
+                            <span className="deal-card-cat deal-store-label">{d._store}</span>
+                            {currentPage === 1 && idx === 0 ? (
+                              <span className="price-best-badge">Best deal</span>
+                            ) : null}
+                          </div>
+                          <div className="cost-search-prices">
+                            <span className="deal-sale-price">${d.price!.toFixed(2)}</span>
+                            {d.unit ? (
+                              <span className="cost-search-unit">
+                                ${(d.price! / d.unit.qty).toFixed(2)}/{d.unit.unit}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-              {showAddForm ? (
-                <div className="deals-add-form">
-                  <div className="deals-form-row">
-                    <input className="sheets-input" placeholder="Item name *" value={draftItem} onChange={(e) => setDraftItem(e.target.value)} />
-                    <input className="sheets-input" placeholder="Category *" value={draftCategory} onChange={(e) => setDraftCategory(e.target.value)} />
-                    <select className="sheets-input" value={draftStore} onChange={(e) => setDraftStore(e.target.value as GroceryStore)}>
-                      {GROCERY_STORES.map((s) => <option key={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <div className="deals-form-row">
-                    <input className="sheets-input" placeholder="Price * (e.g. 3.99)" value={draftPrice} onChange={(e) => setDraftPrice(e.target.value)} />
-                    <input className="sheets-input" placeholder="Unit (lb, oz, each...)" value={draftUnit} onChange={(e) => setDraftUnit(e.target.value)} />
-                    <input className="sheets-input" placeholder="Package qty (e.g. 5)" value={draftQty} onChange={(e) => setDraftQty(e.target.value)} />
-                  </div>
-                  <div className="deals-form-row">
-                    <input className="sheets-input" placeholder="Date checked (optional)" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
-                    <input className="sheets-input" placeholder="Notes (optional)" value={draftNotes} onChange={(e) => setDraftNotes(e.target.value)} />
-                    <button type="button" className="primary-action" onClick={handleAdd}>Save</button>
-                  </div>
+                    {totalPages > 1 ? (
+                      <div className="deals-pagination">
+                        <button
+                          type="button"
+                          className="deals-page-btn"
+                          onClick={() => setPage((p) => Math.max(1, p - 1))}
+                          disabled={currentPage === 1}
+                        >‹ Prev</button>
+                        <span className="deals-page-status">Page {currentPage} of {totalPages}</span>
+                        <button
+                          type="button"
+                          className="deals-page-btn"
+                          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                          disabled={currentPage === totalPages}
+                        >Next ›</button>
+                      </div>
+                    ) : null}
+                  </>
+                )
+              ) : (
+                <div className="cost-analysis-grid">
+                  {storeStats.map(({ store, count, avg, cheapest, priciest }) => (
+                    <div
+                      key={store}
+                      className={`cost-analysis-card ${bestValueStore === store ? 'best-value' : ''}`}
+                    >
+                      <div className="cost-analysis-store-row">
+                        <span className="cost-analysis-store">{store}</span>
+                        {bestValueStore === store ? (
+                          <span className="price-best-badge">Best value</span>
+                        ) : null}
+                      </div>
+                      {count === 0 ? (
+                        <p className="sheets-meta">No flyer data this week.</p>
+                      ) : (
+                        <>
+                          <p className="cost-analysis-avg">
+                            Avg deal price: <strong>${avg!.toFixed(2)}</strong>
+                          </p>
+                          <p className="cost-analysis-stat">{count} deals tracked</p>
+                          {cheapest ? (
+                            <p className="cost-analysis-stat">
+                              Cheapest: {cheapest.item} — ${cheapest.price!.toFixed(2)}
+                            </p>
+                          ) : null}
+                          {priciest ? (
+                            <p className="cost-analysis-stat">
+                              Priciest: {priciest.item} — ${priciest.price!.toFixed(2)}
+                            </p>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ) : null}
-            </div>
+              )}
+            </>
           ) : null}
-
-          {error ? <p className="sheets-error">{error}</p> : null}
         </>
       ) : null}
     </article>
@@ -9629,6 +9622,10 @@ function StoreDealsCard({
   const [fetchError, setFetchError] = useState('')
   const [activeStore, setActiveStore] = useState<GroceryStore | 'All'>('All')
   const [search, setSearch] = useState('')
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+  const [page, setPage] = useState(1)
+  const DEALS_PER_PAGE = 5
 
   useEffect(() => {
     fetch('/deals-data.json')
@@ -9650,14 +9647,34 @@ function StoreDealsCard({
             sd.deals.map((d) => ({ ...d, _store: store })),
           )
         : (activeStoreData?.deals.map((d) => ({ ...d, _store: activeStore })) ?? [])
+
     const q = search.toLowerCase()
-    return q
-      ? source.filter((d) => d.item.toLowerCase().includes(q) || d.category.toLowerCase().includes(q))
-      : source
-  }, [flippData, activeStore, activeStoreData, search])
+    const min = minPrice.trim() ? parseFloat(minPrice) : null
+    const max = maxPrice.trim() ? parseFloat(maxPrice) : null
+
+    const seen = new Set<string>()
+    return source
+      .filter((d) => !q || d.item.toLowerCase().includes(q) || (d.brand ?? '').toLowerCase().includes(q))
+      .filter((d) => min == null || (d.price != null && d.price >= min))
+      .filter((d) => max == null || (d.price != null && d.price <= max))
+      .filter((d) => {
+        const key = `${d._store}|${d.item}|${d.price}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      .sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity))
+  }, [flippData, activeStore, activeStoreData, search, minPrice, maxPrice])
 
   const totalDeals = Object.values(flippData?.stores ?? {}).reduce(
     (sum, s) => sum + s.deals.length, 0,
+  )
+
+  const totalPages = Math.max(1, Math.ceil(visibleDeals.length / DEALS_PER_PAGE))
+  const currentPage = Math.min(page, totalPages)
+  const pagedDeals = visibleDeals.slice(
+    (currentPage - 1) * DEALS_PER_PAGE,
+    currentPage * DEALS_PER_PAGE,
   )
 
   function formatDate(iso: string | null | undefined) {
@@ -9671,27 +9688,17 @@ function StoreDealsCard({
       <div key={deal.id} className="deal-card">
         <div className="deal-card-main">
           <span className="deal-card-item">{deal.item}</span>
-          {deal.category ? <span className="deal-card-cat">{deal.category}</span> : null}
+          {deal.brand ? <span className="deal-card-cat">{deal.brand}</span> : null}
           {activeStore === 'All' && deal._store ? (
             <span className="deal-card-cat deal-store-label">{deal._store}</span>
           ) : null}
         </div>
         <div className="deal-card-prices">
-          {deal.originalPrice != null ? (
-            <span className="deal-orig-price">${deal.originalPrice.toFixed(2)}</span>
-          ) : null}
-          {deal.salePrice != null ? (
-            <span className="deal-sale-price">${deal.salePrice.toFixed(2)}</span>
-          ) : null}
-          {deal.discountPct != null && deal.discountPct > 0 ? (
-            <span className="deal-badge">{Math.round(deal.discountPct)}% off</span>
+          {deal.price != null ? (
+            <span className="deal-sale-price">${deal.price.toFixed(2)}</span>
           ) : null}
         </div>
         <div className="deal-card-meta">
-          {deal.saleName ? <span className="deal-notes">{deal.saleName}</span> : null}
-          {deal.description && deal.description !== deal.saleName ? (
-            <span className="deal-notes">{deal.description}</span>
-          ) : null}
           {deal.validTo ? <span className="deal-expiry">thru {formatDate(deal.validTo)}</span> : null}
         </div>
       </div>
@@ -9734,7 +9741,7 @@ function StoreDealsCard({
                     key={s}
                     type="button"
                     className={`deals-store-tab-btn ${activeStore === s ? 'active' : ''}`}
-                    onClick={() => { setActiveStore(s as GroceryStore | 'All'); setSearch('') }}
+                    onClick={() => { setActiveStore(s as GroceryStore | 'All'); setSearch(''); setPage(1) }}
                   >
                     {s}
                     {s !== 'All' && flippData.stores[s]?.deals.length
@@ -9756,16 +9763,54 @@ function StoreDealsCard({
                   className="sheets-input deals-search"
                   placeholder="Search deals…"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                />
+                <input
+                  className="sheets-input deals-price-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Min $"
+                  value={minPrice}
+                  onChange={(e) => { setMinPrice(e.target.value); setPage(1) }}
+                />
+                <input
+                  className="sheets-input deals-price-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Max $"
+                  value={maxPrice}
+                  onChange={(e) => { setMaxPrice(e.target.value); setPage(1) }}
                 />
               </div>
 
               {visibleDeals.length === 0 ? (
                 <p className="sheets-meta">{fallbackBody}</p>
               ) : (
-                <div className="deal-cards-list">
-                  {visibleDeals.map(renderFlippDeal)}
-                </div>
+                <>
+                  <div className="deal-cards-list">
+                    {pagedDeals.map(renderFlippDeal)}
+                  </div>
+
+                  {totalPages > 1 ? (
+                    <div className="deals-pagination">
+                      <button
+                        type="button"
+                        className="deals-page-btn"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >‹ Prev</button>
+                      <span className="deals-page-status">Page {currentPage} of {totalPages}</span>
+                      <button
+                        type="button"
+                        className="deals-page-btn"
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >Next ›</button>
+                    </div>
+                  ) : null}
+                </>
               )}
             </>
           ) : null}

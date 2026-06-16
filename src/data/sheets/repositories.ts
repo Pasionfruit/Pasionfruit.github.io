@@ -10,7 +10,6 @@ import type {
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
-  GroceryPriceRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
@@ -894,88 +893,6 @@ export async function deleteTrip(idToken: string, tripId: string) {
     idToken,
     name: tripId,
   })
-}
-
-export async function getGroceryPrices(): Promise<GroceryPriceRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('grocery_prices')
-  return rows
-    .map((row) => ({
-      price_id: String(row.price_id ?? ''),
-      item: String(row.item ?? '').trim(),
-      category: String(row.category ?? '').trim(),
-      store: String(row.store ?? '').trim(),
-      price: parseNumber(row.price) ?? 0,
-      unit: String(row.unit ?? '').trim(),
-      quantity: String(row.quantity ?? '').trim(),
-      price_per_unit: parseNumber(row.price_per_unit) ?? 0,
-      date_checked: row.date_checked ? String(row.date_checked) : undefined,
-      notes: row.notes ? String(row.notes) : undefined,
-    }))
-    .filter((row) => row.price_id && row.item)
-}
-
-export async function createGroceryPrice(
-  idToken: string,
-  payload: {
-    item: string
-    category: string
-    store: string
-    price: number
-    unit: string
-    quantity: string
-    pricePerUnit: number
-    dateChecked?: string
-    notes?: string
-  },
-) {
-  await runWrite({
-    action: 'createGroceryPrice',
-    idToken,
-    item: payload.item,
-    category: payload.category,
-    store: payload.store,
-    price: payload.price,
-    unit: payload.unit,
-    quantity: payload.quantity,
-    price_per_unit: payload.pricePerUnit,
-    date_checked: payload.dateChecked ?? '',
-    notes: payload.notes ?? '',
-  })
-}
-
-export async function updateGroceryPrice(
-  idToken: string,
-  priceId: string,
-  payload: {
-    item: string
-    category: string
-    store: string
-    price: number
-    unit: string
-    quantity: string
-    pricePerUnit: number
-    dateChecked?: string
-    notes?: string
-  },
-) {
-  await runWrite({
-    action: 'updateGroceryPrice',
-    idToken,
-    price_id: priceId,
-    item: payload.item,
-    category: payload.category,
-    store: payload.store,
-    price: payload.price,
-    unit: payload.unit,
-    quantity: payload.quantity,
-    price_per_unit: payload.pricePerUnit,
-    date_checked: payload.dateChecked ?? '',
-    notes: payload.notes ?? '',
-  })
-}
-
-export async function deleteGroceryPrice(idToken: string, priceId: string) {
-  await runWrite({ action: 'deleteGroceryPrice', idToken, price_id: priceId })
 }
 
 export async function getStoreDeals(): Promise<StoreDealRecord[]> {

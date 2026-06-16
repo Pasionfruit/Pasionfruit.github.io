@@ -4,41 +4,36 @@
  * and Aldi. Intended to run as a daily GitHub Actions job.
  * Output: public/deals-data.json
  *
- * Flipp API is unofficial — field names may drift over time. If a field is
- * missing the code falls back gracefully and that store's deals array stays empty.
+ * Flipp's flyer_items endpoint only exposes a single "price" field (no
+ * separate original/sale price), so deals are shown as flat weekly-ad prices
+ * rather than percent-off discounts. This is an unofficial API — field names
+ * may drift over time, in which case a store's deals array stays empty.
  *
  * Environment variables:
- *   FLIPP_ZIP  — US zip code used to localise flyers (default: 33136 = Miami, FL)
- *                Use a zip inside Publix's territory (SE United States) to ensure
- *                Publix flyers are returned alongside the national chains.
+ *   FLIPP_ZIP — US zip code used to localize flyers (default: 33136 = Miami, FL)
+ *               Use a zip inside Publix's territory (SE United States) to ensure
+ *               Publix flyers are returned alongside the national chains.
  */
 
 import { writeFileSync, mkdirSync } from 'fs'
-import { resolve, dirname }          from 'path'
-import { fileURLToPath }             from 'url'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const OUT_PATH  = resolve(__dirname, '../public/deals-data.json')
+const OUT_PATH = resolve(__dirname, '../public/deals-data.json')
 
-const FLIPP_BASE = 'https://backflipp.wishabi.com/flipp'
-const ZIP_CODE   = process.env.FLIPP_ZIP ?? '33136'
+const FLIPP_BASE = 'https://flyers-ng.flippback.com/api/flipp'
+const ZIP_CODE = process.env.FLIPP_ZIP ?? '33136'
+const SID = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('')
 
-const STORES = [
-  { name: 'Walmart', query: 'walmart' },
-  { name: 'Target',  query: 'target'  },
-  { name: 'Publix',  query: 'publix'  },
-  { name: 'Aldi',    query: 'aldi'    },
-]
+const STORES = ['Walmart', 'Target', 'Publix', 'Aldi']
 
 // Mimic a real browser so Flipp doesn't reject the request.
 const HEADERS = {
   'User-Agent':
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
     '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  Accept:          'application/json, text/plain, */*',
-  'Accept-Language': 'en-US,en;q=0.9',
-  Origin:          'https://flipp.com',
-  Referer:         'https://flipp.com/',
+  Accept: 'application/json, text/plain, */*',
 }
 
 async function flippGet(url) {
@@ -48,45 +43,40 @@ async function flippGet(url) {
   return res.json()
 }
 
-// Fetch the list of all publications available for this zip code.
-async function fetchPublications() {
+// Fetch every flyer Flipp has for this zip code.
+async function fetchFlyers() {
   const body = await flippGet(
-    `${FLIPP_BASE}/publications?locale=en-US&access_code=${ZIP_CODE}`,
+    `${FLIPP_BASE}/data?locale=en-US&postal_code=${ZIP_CODE}&sid=${SID}`,
   )
-  // Flipp has returned either `publications` or `flyers` depending on version.
-  return body.publications ?? body.flyers ?? []
+  return body.flyers ?? []
 }
 
 // Fetch the deal items inside one flyer.
-async function fetchFlyerItems(flyerRunId) {
-  const body = await flippGet(`${FLIPP_BASE}/flyers/${flyerRunId}/items`)
-  return body.items ?? (Array.isArray(body) ? body : [])
+async function fetchFlyerItems(flyerId) {
+  const body = await flippGet(
+    `${FLIPP_BASE}/flyers/${flyerId}/flyer_items?locale=en-US&sid=${SID}`,
+  )
+  return Array.isArray(body) ? body : []
 }
 
-function normalizeItem(raw, storePrefix) {
-  const salePrice     = raw.price          ?? raw.current_price ?? null
-  const originalPrice = raw.pre_price      ?? raw.was_price     ?? null
-  const discountPct =
-    originalPrice != null && salePrice != null && originalPrice > salePrice
-      ? +((1 - salePrice / originalPrice) * 100).toFixed(1)
-      : (raw.discount_percent ?? null)
-
+function normalizeItem(raw, storeName) {
+  const price = raw.price !== undefined && raw.price !== '' ? Number(raw.price) : null
   return {
-    id:            `${storePrefix}-${raw.id}`,
-    item:          String(raw.name          ?? '').trim(),
-    description:   String(raw.description   ?? raw.display_name ?? '').trim(),
-    originalPrice,
-    salePrice,
-    discountPct,
-    saleName:      String(raw.sale_story    ?? raw.offer_text   ?? '').trim(),
-    category:      String(
-                     Array.isArray(raw.category_names)
-                       ? (raw.category_names[0] ?? '')
-                       : (raw.category ?? ''),
-                   ).trim(),
-    validFrom:     raw.valid_from ?? null,
-    validTo:       raw.valid_to   ?? null,
+    id: `${storeName}-${raw.id}`,
+    item: String(raw.name ?? '').trim(),
+    brand: raw.brand ? String(raw.brand).trim() : null,
+    price: price != null && !Number.isNaN(price) ? price : null,
+    validFrom: raw.valid_from ?? null,
+    validTo: raw.valid_to ?? null,
   }
+}
+
+// A flyer is "current" if today falls inside its valid_from/valid_to window.
+function isCurrent(flyer) {
+  const now = Date.now()
+  const from = flyer.valid_from ? new Date(flyer.valid_from).getTime() : -Infinity
+  const to = flyer.valid_to ? new Date(flyer.valid_to).getTime() : Infinity
+  return now >= from && now <= to
 }
 
 async function main() {
@@ -95,71 +85,67 @@ async function main() {
     stores: {},
   }
 
-  let publications
+  let flyers
   try {
-    console.log('Fetching publications from Flipp…')
-    publications = await fetchPublications()
-    console.log(`  ${publications.length} publications found`)
+    console.log('Fetching flyers from Flipp…')
+    flyers = await fetchFlyers()
+    console.log(`  ${flyers.length} flyers found for zip ${ZIP_CODE}`)
   } catch (err) {
-    console.error('Failed to load publications:', err.message)
+    console.error('Failed to load flyers:', err.message)
     process.exit(1)
   }
 
-  for (const { name, query } of STORES) {
+  for (const name of STORES) {
     console.log(`\n── ${name} ──`)
 
-    const matches = publications.filter((p) => {
-      const merchant = String(
-        p.merchant ?? p.merchant_name ?? p.name ?? '',
-      ).toLowerCase()
-      return merchant.includes(query)
-    })
+    const matches = flyers.filter(
+      (f) => String(f.merchant ?? '').toLowerCase() === name.toLowerCase(),
+    )
+    const current = matches.filter(isCurrent)
+    const relevant = current.length ? current : matches
 
-    if (!matches.length) {
+    if (!relevant.length) {
       console.log('  No matching flyer found for this zip code')
       result.stores[name] = {
         validFrom: null,
-        validTo:   null,
-        deals:     [],
-        error:     'No flyer found — try a different FLIPP_ZIP',
+        validTo: null,
+        deals: [],
+        error: 'No flyer found — try a different FLIPP_ZIP',
       }
       continue
     }
 
-    // Use the first matching publication (Flipp returns them newest-first).
-    const flyer      = matches[0]
-    const flyerRunId = flyer.flyer_run_id ?? flyer.id
-    console.log(
-      `  Flyer ID ${flyerRunId}  valid ${flyer.valid_from ?? '?'} → ${flyer.valid_to ?? '?'}`,
-    )
+    const validFrom = relevant.map((f) => f.valid_from).filter(Boolean).sort()[0] ?? null
+    const validTo = relevant.map((f) => f.valid_to).filter(Boolean).sort().slice(-1)[0] ?? null
 
-    try {
-      const rawItems = await fetchFlyerItems(flyerRunId)
-      console.log(`  ${rawItems.length} raw items`)
-
-      const deals = rawItems
-        .filter((i) => String(i.name ?? i.description ?? '').trim())
-        .map((i)    => normalizeItem(i, flyerRunId))
-        .filter((i) => i.item && (i.salePrice !== null || i.saleName))
-
-      result.stores[name] = {
-        validFrom: flyer.valid_from ?? null,
-        validTo:   flyer.valid_to   ?? null,
-        deals,
+    // Flipp's flyer_items endpoint frequently lists the same product twice
+    // (e.g. once per page placement) with different item ids but identical
+    // name+price, so dedupe on content rather than id.
+    const dealsByContent = new Map()
+    for (const flyer of relevant) {
+      console.log(
+        `  Flyer ID ${flyer.id}  valid ${flyer.valid_from ?? '?'} → ${flyer.valid_to ?? '?'}`,
+      )
+      try {
+        const rawItems = await fetchFlyerItems(flyer.id)
+        console.log(`    ${rawItems.length} raw items`)
+        for (const raw of rawItems) {
+          const deal = normalizeItem(raw, name)
+          if (deal.item && deal.price !== null && deal.price > 0) {
+            const contentKey = `${deal.item}|${deal.price}`
+            if (!dealsByContent.has(contentKey)) dealsByContent.set(contentKey, deal)
+          }
+        }
+      } catch (err) {
+        console.error(`    Items fetch failed: ${err.message}`)
       }
-      console.log(`  Saved ${deals.length} deals`)
-    } catch (err) {
-      console.error(`  Items fetch failed: ${err.message}`)
-      result.stores[name] = {
-        validFrom: null,
-        validTo:   null,
-        deals:     [],
-        error:     err.message,
-      }
+      // Small delay — be a polite API consumer.
+      await new Promise((r) => setTimeout(r, 700))
     }
 
-    // Small delay — be a polite API consumer.
-    await new Promise((r) => setTimeout(r, 700))
+    const deals = [...dealsByContent.values()]
+    result.stores[name] = { validFrom, validTo, deals }
+    console.log(`  Saved ${deals.length} deals`)
   }
 
   mkdirSync(resolve(__dirname, '../public'), { recursive: true })

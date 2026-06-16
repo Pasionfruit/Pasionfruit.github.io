@@ -90,15 +90,23 @@ export async function getTasksOfTheDay(): Promise<TodoistTask[]> {
   const todayKey = new Date().toISOString().slice(0, 10)
   const allNormalized = rows.map(normalizeTask)
 
-  const primaryTasks = allNormalized.filter((task) => {
-    if (task.parent_id) return false
+  const isDueToday = (task: TodoistTask) => {
     const dueDate = task.due?.date ?? task.due?.datetime?.slice(0, 10)
-    if (!dueDate) return false
-    return dueDate <= todayKey
-  })
+    return Boolean(dueDate && dueDate <= todayKey)
+  }
 
-  const primaryIds = new Set(primaryTasks.map((t) => t.id))
-  const subtasks = allNormalized.filter((task) => task.parent_id && primaryIds.has(task.parent_id))
+  const dueTasks = allNormalized.filter(isDueToday)
+  const dueIds = new Set(dueTasks.map((t) => t.id))
+
+  // A due subtask nests under its parent only if that parent is also due
+  // today. Otherwise the parent is just an organizational header with no
+  // due date of its own (e.g. "Cats"), and the subtask would be silently
+  // dropped — so promote it to top-level instead.
+  const primaryTasks = dueTasks
+    .filter((task) => !task.parent_id || !dueIds.has(task.parent_id))
+    .map((task) => (task.parent_id ? { ...task, parent_id: null } : task))
+
+  const subtasks = dueTasks.filter((task) => task.parent_id && dueIds.has(task.parent_id))
 
   return [...primaryTasks.sort((a, b) => dueSortValue(a) - dueSortValue(b)), ...subtasks]
 }
