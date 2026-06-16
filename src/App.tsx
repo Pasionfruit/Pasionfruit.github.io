@@ -6081,6 +6081,29 @@ function BackpackCard({
     setEditedRows(next)
   }
 
+  async function handleUnpackAll() {
+    if (!canWrite || !idToken || isWriting) return
+    const packedRows = rows.filter((row) => row.packed)
+    if (packedRows.length === 0) return
+
+    setIsWriting(true)
+    setWriteError('')
+    const previousRows = rows
+    setRows((prev) => prev.map((row) => ({ ...row, packed: false })))
+    try {
+      await Promise.all(
+        packedRows.map((row) =>
+          setBackpackPacked(idToken, { storage: row.storage, type: row.type, item: row.item, packed: false }),
+        ),
+      )
+    } catch (error) {
+      setRows(previousRows)
+      setWriteError(error instanceof Error ? error.message : 'Unable to unpack all items')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   async function handleTogglePacked(row: BackpackRecord) {
     if (!canWrite || !idToken || isWriting) return
     const nextPacked = !row.packed
@@ -6217,6 +6240,16 @@ function BackpackCard({
               />
               Has quantity
             </label>
+            {canWrite ? (
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => void handleUnpackAll()}
+                disabled={!idToken || isWriting || !rows.some((row) => row.packed)}
+              >
+                Unpack all
+              </button>
+            ) : null}
           </div>
 
           <div className="sheets-table-shell">
