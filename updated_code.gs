@@ -30,54 +30,19 @@ function doPost(e) {
       var mcSheet = ss.getSheetByName('mc_server_log')
       if (!mcSheet) {
         mcSheet = ss.insertSheet('mc_server_log')
-        mcSheet.appendRow(['timestamp', 'player_name', 'auto_started'])
+        mcSheet.appendRow(['timestamp', 'player_name'])
       }
 
-      // Trigger GitHub Actions to start the Aternos server
-      var token       = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN')
-      var autoStarted = false
-
-      if (token) {
-        try {
-          var ghResponse = UrlFetchApp.fetch(
-            'https://api.github.com/repos/Pasionfruit/Pasionfruit.github.io/dispatches',
-            {
-              method:  'post',
-              headers: {
-                'Authorization':        'Bearer ' + token,
-                'Accept':               'application/vnd.github+json',
-                'Content-Type':         'application/json',
-                'X-GitHub-Api-Version': '2022-11-28',
-              },
-              payload: JSON.stringify({
-                event_type:     'mc-server-start',
-                client_payload: { player_name: playerName },
-              }),
-              muteHttpExceptions: true,
-            }
-          )
-          autoStarted = ghResponse.getResponseCode() === 204
-        } catch (dispatchErr) {
-          Logger.log('GitHub dispatch failed: ' + dispatchErr.message)
-        }
-      }
-
-      mcSheet.appendRow([timestamp, playerName, autoStarted])
-
-      var statusLine = autoStarted
-        ? 'GitHub Actions has been triggered — the server should be online in ~2 minutes.'
-        : 'Auto-start was NOT triggered (check GITHUB_TOKEN in Script Properties). Start manually on Aternos.'
+      mcSheet.appendRow([timestamp, playerName])
 
       GmailApp.sendEmail(
         'pasionabe@gmail.com',
         '🎮 MC Server — ' + playerName + ' wants to play',
-        playerName + ' clicked Start Server.\n\n' + statusLine +
-          '\n\nServer address: pasionabe.aternos.me' +
-          '\nAternos panel:  https://aternos.org/server/pasionabe',
+        playerName + ' wants to join the server.\n\nStart it here: https://aternos.org/server/pasionabe\nServer address: pasionabe.aternos.me',
         { name: 'MC Server Bot' }
       )
 
-      return jsonResponse_({ ok: true, serverStarted: autoStarted })
+      return jsonResponse_({ ok: true, serverStarted: false })
     }
 
     if (action === 'updateMcPlayerStats') {
