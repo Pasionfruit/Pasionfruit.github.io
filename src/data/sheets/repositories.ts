@@ -10,6 +10,7 @@ import type {
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
+  McPlayerStatsRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
@@ -1066,4 +1067,15 @@ export async function logMcServerStart(playerName: string): Promise<{ serverStar
     throw new Error(result.error || 'Failed to log server start')
   }
   return { serverStarted: result.serverStarted ?? false }
+}
+
+export async function getMcPlayerStats(): Promise<McPlayerStatsRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('mc_player_stats')
+  return rows.map(r => ({
+    player_name:    String(r.player_name    ?? ''),
+    kills:          Number(r.kills          ?? 0),
+    deaths:         Number(r.deaths         ?? 0),
+    playtime_hours: Number(r.playtime_hours ?? 0),
+    last_updated:   String(r.last_updated   ?? ''),
+  }))
 }

@@ -97,6 +97,7 @@ import {
   updateRecipeStep,
   deleteRecipeStep,
   logMcServerStart,
+  getMcPlayerStats,
 } from './data/sheets/repositories'
 import type {
   AppleHealthRecord,
@@ -109,6 +110,7 @@ import type {
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
+  McPlayerStatsRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
   PollRecord,
@@ -10678,6 +10680,12 @@ function LoginPage({
 
 const MC_DOC_URL = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
 
+const MC_PLAYERS = [
+  'azulfrog', 'Bacono', 'Bfyce', 'Contrulwhy', 'Contrulzee',
+  'CrimsonKing7585', 'Jnson_tm', 'MoinstzMomo', 'MrPasionfruit',
+  'ninja_penguinfl', 'Shoot5193', 'theboss920',
+]
+
 type McServerStatus = { online: boolean; players?: { online: number; max: number }; version?: string }
 
 function GamingServerPage() {
@@ -10689,6 +10697,8 @@ function GamingServerPage() {
   const [srvStatus,      setSrvStatus]      = useState<McServerStatus | null>(null)
   const [srvChecking,    setSrvChecking]    = useState(true)
   const [srvLastChecked, setSrvLastChecked] = useState<Date | null>(null)
+
+  const [playerStats, setPlayerStats] = useState<McPlayerStatsRecord[]>([])
 
   async function checkServerStatus() {
     setSrvChecking(true)
@@ -10704,7 +10714,10 @@ function GamingServerPage() {
     }
   }
 
-  useEffect(() => { checkServerStatus() }, [])
+  useEffect(() => {
+    checkServerStatus()
+    getMcPlayerStats().then(setPlayerStats).catch(() => {})
+  }, [])
 
   async function handleStart() {
     const name = playerName.trim()
@@ -10731,8 +10744,26 @@ function GamingServerPage() {
       backLabel="Back to Gaming"
       note=""
     >
-      {/* ── Server Status ── */}
-      <div className="info-card section-page-card mc-srvstatus-card">
+      {/* ── How to Connect ── */}
+      <div className="info-card section-page-card mc-doc-card">
+        <h3>How to Connect</h3>
+        <p className="mc-card-body">Full connection instructions, server rules, and mods are in the guide below.</p>
+        <div className="mc-doc-footer">
+          <a
+            href={MC_DOC_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="primary-action mc-doc-link"
+          >
+            Open Connection Guide
+          </a>
+        </div>
+      </div>
+
+      {/* ── Server Status + Start (merged) ── */}
+      <div className="info-card section-page-card mc-server-card">
+
+        {/* Status row */}
         <div className="mc-srvstatus-header">
           <h3>Server Status</h3>
           <button
@@ -10768,48 +10799,34 @@ function GamingServerPage() {
             <span className="mc-srv-checked"> · checked {srvLastChecked.toLocaleTimeString()}</span>
           )}
         </p>
-      </div>
 
-      {/* ── How to Connect ── */}
-      <div className="info-card section-page-card mc-doc-card">
-        <h3>How to Connect</h3>
-        <p className="mc-card-body">Full connection instructions, server rules, and mods are in the guide below.</p>
-        <a
-          href={MC_DOC_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="primary-action mc-doc-link"
-        >
-          Open Connection Guide
-        </a>
-      </div>
+        <hr className="mc-divider" />
 
-      {/* ── Start the Server ── */}
-      <div className="info-card section-page-card mc-server-card">
+        {/* Start form */}
         <h3>Start the Server</h3>
         <p className="mc-card-body">
-          Enter your name and click <strong>Start Server</strong>. The server will start automatically
-          and the owner will be notified. It may take up to 2 minutes to come online.
+          {srvStatus?.online
+            ? 'The server is already online — join now!'
+            : <>Enter your name and click <strong>Start Server</strong>. It may take up to 2 minutes to come online.</>}
         </p>
 
         <div className="mc-start-form">
-          <input
-            type="text"
-            className="mc-name-input"
-            placeholder="Your name"
+          <select
+            className="mc-name-input mc-name-select"
             value={playerName}
             onChange={e => {
               setPlayerName(e.target.value)
               if (status !== 'idle') { setStatus('idle'); setAutoStarted(false) }
             }}
-            onKeyDown={e => { if (e.key === 'Enter') handleStart() }}
-            disabled={status === 'loading' || status === 'success'}
-            maxLength={40}
-          />
+            disabled={status === 'loading' || status === 'success' || !!srvStatus?.online}
+          >
+            <option value="">Select your name…</option>
+            {MC_PLAYERS.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
           <button
             className="primary-action mc-start-btn"
             onClick={handleStart}
-            disabled={!playerName.trim() || status === 'loading' || status === 'success'}
+            disabled={!playerName.trim() || status === 'loading' || status === 'success' || !!srvStatus?.online}
           >
             {status === 'loading' ? 'Starting…' : 'Start Server'}
           </button>
@@ -10826,7 +10843,58 @@ function GamingServerPage() {
           <p className="mc-status mc-status--err">{errorMsg}</p>
         )}
       </div>
+
+      {/* ── Player Insights ── */}
+      {playerStats.length > 0 && (
+        <div className="info-card section-page-card mc-insights-card">
+          <h3>Player Insights</h3>
+          <div className="mc-leaderboards">
+            <McLeaderboard
+              title="Player Kills"
+              rows={[...playerStats].sort((a, b) => b.kills - a.kills).slice(0, 3)}
+              getValue={r => r.kills}
+              unit="kills"
+            />
+            <McLeaderboard
+              title="Deaths"
+              rows={[...playerStats].sort((a, b) => b.deaths - a.deaths).slice(0, 3)}
+              getValue={r => r.deaths}
+              unit="deaths"
+            />
+            <McLeaderboard
+              title="Playtime"
+              rows={[...playerStats].sort((a, b) => b.playtime_hours - a.playtime_hours).slice(0, 3)}
+              getValue={r => r.playtime_hours}
+              unit="hrs"
+              formatValue={v => v.toFixed(1)}
+            />
+          </div>
+        </div>
+      )}
     </PageFrame>
+  )
+}
+
+function McLeaderboard({ title, rows, getValue, unit, formatValue }: {
+  title: string
+  rows: McPlayerStatsRecord[]
+  getValue: (r: McPlayerStatsRecord) => number
+  unit: string
+  formatValue?: (v: number) => string
+}) {
+  const medals = ['1st', '2nd', '3rd']
+  return (
+    <div className="mc-lb-col">
+      <p className="mc-lb-title">{title}</p>
+      {rows.map((r, i) => (
+        <div key={r.player_name} className="mc-lb-row">
+          <span className={`mc-lb-rank mc-lb-rank--${i + 1}`}>{medals[i]}</span>
+          <span className="mc-lb-name">{r.player_name}</span>
+          <span className="mc-lb-value">{formatValue ? formatValue(getValue(r)) : getValue(r)} {unit}</span>
+        </div>
+      ))}
+      {rows.length === 0 && <p className="mc-lb-empty">No data yet</p>}
+    </div>
   )
 }
 

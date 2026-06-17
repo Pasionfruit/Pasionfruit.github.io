@@ -90,6 +90,39 @@ function doPost(e) {
       return jsonResponse_({ ok: true, serverStarted: autoStarted })
     }
 
+    if (action === 'updateMcPlayerStats') {
+      var statsPayload = payload.stats
+      if (!Array.isArray(statsPayload) || statsPayload.length === 0) {
+        return jsonResponse_({ ok: false, error: 'stats array is required' })
+      }
+
+      var statsSs    = getSpreadsheet_()
+      var statsSheet = statsSs.getSheetByName('mc_player_stats')
+      if (!statsSheet) {
+        statsSheet = statsSs.insertSheet('mc_player_stats')
+        statsSheet.appendRow(['player_name', 'kills', 'deaths', 'playtime_hours', 'last_updated'])
+      } else {
+        // Clear data rows, keep header
+        var lastDataRow = statsSheet.getLastRow()
+        if (lastDataRow > 1) {
+          statsSheet.deleteRows(2, lastDataRow - 1)
+        }
+      }
+
+      for (var si = 0; si < statsPayload.length; si++) {
+        var sp = statsPayload[si]
+        statsSheet.appendRow([
+          String(sp.player_name    || ''),
+          Number(sp.kills          || 0),
+          Number(sp.deaths         || 0),
+          Number(sp.playtime_hours || 0),
+          String(sp.last_updated   || new Date().toISOString()),
+        ])
+      }
+
+      return jsonResponse_({ ok: true })
+    }
+
     var auth = requireAuthorizedUser_(payload)
     if (!auth.ok) {
       return jsonResponse_({ ok: false, error: auth.error })

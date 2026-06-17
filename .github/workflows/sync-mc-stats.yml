@@ -1,0 +1,28 @@
+name: Sync MC Player Stats
+
+on:
+  schedule:
+    # Runs daily at 3 AM UTC (after most play sessions end)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # allow manual trigger from GitHub Actions tab
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Sync player stats from Aternos
+        run: python scripts/gaming/sync_player_stats.py
+        env:
+          ATERNOS_FTP_HOST: ${{ secrets.ATERNOS_FTP_HOST }}
+          ATERNOS_FTP_USER: ${{ secrets.ATERNOS_FTP_USER }}
+          ATERNOS_FTP_PASS: ${{ secrets.ATERNOS_FTP_PASS }}
+          ATERNOS_FTP_PORT: ${{ secrets.ATERNOS_FTP_PORT }}
+          SHEETS_SCRIPT_URL: ${{ secrets.SHEETS_SCRIPT_URL }}

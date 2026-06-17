@@ -182,6 +182,14 @@ export type StoreDealRecord = {
   active: boolean
 }
 
+export type McPlayerStatsRecord = {
+  player_name: string
+  kills: number
+  deaths: number
+  playtime_hours: number
+  last_updated: string
+}
+
 export type CouponRecord = {
   coupon_id: string
   place: string
