@@ -53,6 +53,12 @@ function doPost(e) {
         })
       }
 
+      MailApp.sendEmail({
+        to: 'pasionabe@gmail.com',
+        subject: 'MC Server Start Request',
+        body: playerName + ' wants to play!\n\nStart the server on Aternos:\nhttps://aternos.org/server/',
+      })
+
       return jsonResponse_({ ok: true, serverStarted: false })
     }
 
