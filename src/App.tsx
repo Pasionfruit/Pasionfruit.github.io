@@ -10705,13 +10705,22 @@ function GamingServerPage() {
   async function checkServerStatus() {
     setSrvChecking(true)
     try {
-      const res  = await fetch(`https://api.mcstatus.io/v2/status/java/${MC_SERVER_ADDR}`)
-      const data = await res.json()
-      setSrvStatus({
-        online:  !!data.online,
-        players: data.players,
-        version: data.version?.name_clean ?? data.version,
-      })
+      const localApi = (import.meta.env.VITE_MC_LOCAL_API as string | undefined)?.replace(/\/$/, '')
+      if (localApi) {
+        const token = import.meta.env.VITE_MC_API_TOKEN as string | undefined
+        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+        const res  = await fetch(`${localApi}/status`, { headers })
+        const data = await res.json()
+        setSrvStatus({ online: !!data.online })
+      } else {
+        const res  = await fetch(`https://api.mcstatus.io/v2/status/java/${MC_SERVER_ADDR}`)
+        const data = await res.json()
+        setSrvStatus({
+          online:  !!data.online,
+          players: data.players,
+          version: data.version?.name_clean ?? data.version,
+        })
+      }
     } catch {
       setSrvStatus({ online: false })
     } finally {
@@ -10842,7 +10851,7 @@ function GamingServerPage() {
           <p className="mc-status mc-status--ok">
             {autoStarted
               ? `Server is starting, ${playerName}! Give it 1–2 minutes to come online.`
-              : `Request logged, ${playerName}! The owner has been notified and will start the server shortly.`}
+              : `Got it, ${playerName}! A notification was sent to the owner's phone — the server will be up shortly.`}
           </p>
         )}
         {status === 'error' && (

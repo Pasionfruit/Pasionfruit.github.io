@@ -30,37 +30,30 @@ function doPost(e) {
       var mcSheet = ss.getSheetByName('mc_server_log')
       if (!mcSheet) {
         mcSheet = ss.insertSheet('mc_server_log')
-        mcSheet.appendRow(['timestamp', 'player_name', 'started'])
+        mcSheet.appendRow(['timestamp', 'player_name'])
       }
-      mcSheet.appendRow([timestamp, playerName, true])
+      mcSheet.appendRow([timestamp, playerName])
 
-      // Trigger GitHub Actions to start the Aternos server via Playwright
-      var props      = PropertiesService.getScriptProperties()
-      var ghToken    = String(props.getProperty('GITHUB_TOKEN') || '').trim()
-      var ghRepo     = 'Pasionfruit/Pasionfruit.github.io'
-      var serverStarted = false
+      // Send push notification via ntfy.sh
+      // Set NTFY_TOPIC in Apps Script → Project Settings → Script Properties
+      var props     = PropertiesService.getScriptProperties()
+      var ntfyTopic = String(props.getProperty('NTFY_TOPIC') || '').trim()
 
-      if (ghToken) {
-        var dispatchUrl = 'https://api.github.com/repos/' + ghRepo + '/dispatches'
-        var dispatchBody = JSON.stringify({
-          event_type: 'start-mc-server',
-          client_payload: { playerName: playerName }
-        })
-        var dispatchResp = UrlFetchApp.fetch(dispatchUrl, {
+      if (ntfyTopic) {
+        UrlFetchApp.fetch('https://ntfy.sh/' + ntfyTopic, {
           method: 'post',
+          payload: playerName + ' wants to play — tap to open Aternos and start the server.',
           headers: {
-            'Authorization': 'Bearer ' + ghToken,
-            'Accept': 'application/vnd.github+json',
-            'Content-Type': 'application/json',
-            'X-GitHub-Api-Version': '2022-11-28',
+            'Title': 'MC Server Start Request',
+            'Priority': 'high',
+            'Tags': 'video_game,bell',
+            'Click': 'https://aternos.org/server/',
           },
-          payload: dispatchBody,
           muteHttpExceptions: true,
         })
-        serverStarted = (dispatchResp.getResponseCode() === 204)
       }
 
-      return jsonResponse_({ ok: true, serverStarted: serverStarted })
+      return jsonResponse_({ ok: true, serverStarted: false })
     }
 
     if (action === 'updateMcPlayerStats') {

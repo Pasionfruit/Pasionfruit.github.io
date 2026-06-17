@@ -1057,7 +1057,25 @@ export async function deleteCoupon(idToken: string, couponId: string) {
 
 // ── Gaming ─────────────────────────────────────────────────────────────────
 
+const MC_LOCAL_API  = (import.meta.env.VITE_MC_LOCAL_API  as string | undefined)?.replace(/\/$/, '')
+const MC_API_TOKEN  = import.meta.env.VITE_MC_API_TOKEN   as string | undefined
+
+function mcApiHeaders(): Record<string, string> {
+  return MC_API_TOKEN ? { Authorization: `Bearer ${MC_API_TOKEN}` } : {}
+}
+
 export async function logMcServerStart(playerName: string): Promise<{ serverStarted: boolean }> {
+  if (MC_LOCAL_API) {
+    const res = await fetch(`${MC_LOCAL_API}/start`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', ...mcApiHeaders() },
+      body:    JSON.stringify({ playerName }),
+    })
+    if (!res.ok) throw new Error('Local API /start failed')
+    const data = await res.json()
+    return { serverStarted: !!data.ok }
+  }
+  // Aternos path: log to sheet + send ntfy push notification
   const result = await postSheetsAction<SheetsWriteResponse & { serverStarted?: boolean }>({
     action:     'mcServerStart',
     playerName,
@@ -1070,6 +1088,12 @@ export async function logMcServerStart(playerName: string): Promise<{ serverStar
 }
 
 export async function getMcPlayerStats(): Promise<McPlayerStatsRecord[]> {
+  if (MC_LOCAL_API) {
+    const res = await fetch(`${MC_LOCAL_API}/stats`, { headers: mcApiHeaders() })
+    if (!res.ok) return []
+    return res.json()
+  }
+  // Aternos path: read from Google Sheets (populated by sync workflow)
   const rows = await fetchSheetTable<Record<string, unknown>>('mc_player_stats')
   return rows.map(r => ({
     player_name:    String(r.player_name    ?? ''),
