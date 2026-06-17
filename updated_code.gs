@@ -33,16 +33,6 @@ function doPost(e) {
         mcSheet.appendRow(['timestamp', 'player_name', 'auto_started'])
       }
 
-      // Cooldown: block repeated requests within 10 minutes
-      var COOLDOWN_MS = 10 * 60 * 1000
-      var lastRow = mcSheet.getLastRow()
-      if (lastRow >= 2) {
-        var lastTs = mcSheet.getRange(lastRow, 1).getValue()
-        if (lastTs && (new Date() - new Date(lastTs)) < COOLDOWN_MS) {
-          return jsonResponse_({ ok: false, error: 'Server start was requested recently. Please wait a few minutes.' })
-        }
-      }
-
       // Trigger GitHub Actions to start the Aternos server
       var token       = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN')
       var autoStarted = false

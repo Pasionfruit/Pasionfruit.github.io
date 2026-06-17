@@ -10703,9 +10703,13 @@ function GamingServerPage() {
   async function checkServerStatus() {
     setSrvChecking(true)
     try {
-      const res  = await fetch('https://api.mcsrvstat.us/3/pasionabe.aternos.me')
+      const res  = await fetch('https://api.mcstatus.io/v2/status/java/pasionabe.aternos.me')
       const data = await res.json()
-      setSrvStatus({ online: !!data.online, players: data.players, version: data.version })
+      setSrvStatus({
+        online:  !!data.online,
+        players: data.players,
+        version: data.version?.name_clean ?? data.version,
+      })
     } catch {
       setSrvStatus({ online: false })
     } finally {
@@ -10818,7 +10822,7 @@ function GamingServerPage() {
               setPlayerName(e.target.value)
               if (status !== 'idle') { setStatus('idle'); setAutoStarted(false) }
             }}
-            disabled={status === 'loading' || status === 'success' || !!srvStatus?.online}
+            disabled={status === 'loading' || !!srvStatus?.online}
           >
             <option value="">Select your name…</option>
             {MC_PLAYERS.map(p => <option key={p} value={p}>{p}</option>)}
@@ -10826,7 +10830,7 @@ function GamingServerPage() {
           <button
             className="primary-action mc-start-btn"
             onClick={handleStart}
-            disabled={!playerName.trim() || status === 'loading' || status === 'success' || !!srvStatus?.online}
+            disabled={!playerName.trim() || status === 'loading' || !!srvStatus?.online}
           >
             {status === 'loading' ? 'Starting…' : 'Start Server'}
           </button>
