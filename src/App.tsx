@@ -10678,7 +10678,9 @@ function LoginPage({
 
 // ── Gaming ────────────────────────────────────────────────────────────────
 
-const MC_DOC_URL = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
+const MC_DOC_URL    = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
+// Replace XXXXX with the port shown in your Aternos panel (e.g. 25565 or a 5-digit port)
+const MC_SERVER_ADDR = 'pasionabe.aternos.me:46705'
 
 const MC_PLAYERS = [
   'azulfrog', 'Bacono', 'Bfyce', 'Contrulwhy', 'Contrulzee',
@@ -10703,7 +10705,7 @@ function GamingServerPage() {
   async function checkServerStatus() {
     setSrvChecking(true)
     try {
-      const res  = await fetch('https://api.mcstatus.io/v2/status/java/pasionabe.aternos.me')
+      const res  = await fetch(`https://api.mcstatus.io/v2/status/java/${MC_SERVER_ADDR}`)
       const data = await res.json()
       setSrvStatus({
         online:  !!data.online,
@@ -10741,7 +10743,7 @@ function GamingServerPage() {
   return (
     <PageFrame
       eyebrow="Minecraft"
-      title="Server"
+      title="Minecraft Server"
       summary="Start the Aternos server and get connection instructions."
       accent="#7e22ce"
       backLink="/gaming"
@@ -10849,8 +10851,7 @@ function GamingServerPage() {
       </div>
 
       {/* ── Player Insights ── */}
-      {playerStats.length > 0 && (
-        <div className="info-card section-page-card mc-insights-card">
+      <div className="info-card section-page-card mc-insights-card">
           <h3>Player Insights</h3>
           <div className="mc-leaderboards">
             <McLeaderboard
@@ -10874,7 +10875,6 @@ function GamingServerPage() {
             />
           </div>
         </div>
-      )}
     </PageFrame>
   )
 }

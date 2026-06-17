@@ -8,7 +8,7 @@ export const gamingNavSection: NavSection = {
   accent: '#9333ea',
   children: [
     {
-      label: 'Server',
+      label: 'Minecraft',
       path: '/gaming/server',
       summary: 'Start the Minecraft server, log your name, and get connection info.',
     },
@@ -18,7 +18,7 @@ export const gamingNavSection: NavSection = {
 export const gamingSectionPage: PageContent = {
   eyebrow: 'Game hub',
   title: 'Gaming',
-  summary: 'A hub for my favorite games and gaming servers.',
+  summary: 'A hub for my favorite games and gaming servers',
   accent: '#7e22ce',
   cards: [
     {

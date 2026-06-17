@@ -25,24 +25,42 @@ function doPost(e) {
       var playerName = String(payload.playerName || 'unknown')
       var timestamp  = String(payload.timestamp  || new Date().toISOString())
 
-      // Auto-create the log sheet if it doesn't exist yet
+      // Log the request
       var ss      = getSpreadsheet_()
       var mcSheet = ss.getSheetByName('mc_server_log')
       if (!mcSheet) {
         mcSheet = ss.insertSheet('mc_server_log')
-        mcSheet.appendRow(['timestamp', 'player_name'])
+        mcSheet.appendRow(['timestamp', 'player_name', 'started'])
+      }
+      mcSheet.appendRow([timestamp, playerName, true])
+
+      // Trigger GitHub Actions to start the Aternos server via Playwright
+      var props      = PropertiesService.getScriptProperties()
+      var ghToken    = String(props.getProperty('GITHUB_TOKEN') || '').trim()
+      var ghRepo     = 'Pasionfruit/Pasionfruit.github.io'
+      var serverStarted = false
+
+      if (ghToken) {
+        var dispatchUrl = 'https://api.github.com/repos/' + ghRepo + '/dispatches'
+        var dispatchBody = JSON.stringify({
+          event_type: 'start-mc-server',
+          client_payload: { playerName: playerName }
+        })
+        var dispatchResp = UrlFetchApp.fetch(dispatchUrl, {
+          method: 'post',
+          headers: {
+            'Authorization': 'Bearer ' + ghToken,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+          payload: dispatchBody,
+          muteHttpExceptions: true,
+        })
+        serverStarted = (dispatchResp.getResponseCode() === 204)
       }
 
-      mcSheet.appendRow([timestamp, playerName])
-
-      GmailApp.sendEmail(
-        'pasionabe@gmail.com',
-        '🎮 MC Server — ' + playerName + ' wants to play',
-        playerName + ' wants to join the server.\n\nStart it here: https://aternos.org/server/pasionabe\nServer address: pasionabe.aternos.me',
-        { name: 'MC Server Bot' }
-      )
-
-      return jsonResponse_({ ok: true, serverStarted: false })
+      return jsonResponse_({ ok: true, serverStarted: serverStarted })
     }
 
     if (action === 'updateMcPlayerStats') {

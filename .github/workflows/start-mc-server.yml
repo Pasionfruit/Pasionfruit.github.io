@@ -1,0 +1,37 @@
+name: Start MC Server
+
+on:
+  repository_dispatch:
+    types: [start-mc-server]
+
+jobs:
+  start:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium --with-deps
+
+      - name: Start Aternos server
+        run: python scripts/gaming/start_aternos.py
+        env:
+          ATERNOS_USERNAME: ${{ secrets.ATERNOS_USERNAME }}
+          ATERNOS_PASSWORD: ${{ secrets.ATERNOS_PASSWORD }}
+          PLAYER_NAME:      ${{ github.event.client_payload.playerName }}
+
+      - name: Upload debug screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aternos-screenshots
+          path: /tmp/*.png
+          if-no-files-found: ignore
