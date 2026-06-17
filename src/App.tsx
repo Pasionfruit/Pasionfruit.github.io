@@ -10678,11 +10678,33 @@ function LoginPage({
 
 const MC_DOC_URL = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
 
+type McServerStatus = { online: boolean; players?: { online: number; max: number }; version?: string }
+
 function GamingServerPage() {
   const [playerName, setPlayerName] = useState('')
   const [status,     setStatus]     = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg,   setErrorMsg]   = useState('')
   const [autoStarted, setAutoStarted] = useState(false)
+
+  const [srvStatus,      setSrvStatus]      = useState<McServerStatus | null>(null)
+  const [srvChecking,    setSrvChecking]    = useState(true)
+  const [srvLastChecked, setSrvLastChecked] = useState<Date | null>(null)
+
+  async function checkServerStatus() {
+    setSrvChecking(true)
+    try {
+      const res  = await fetch('https://api.mcsrvstat.us/3/pasionabe.aternos.me')
+      const data = await res.json()
+      setSrvStatus({ online: !!data.online, players: data.players, version: data.version })
+    } catch {
+      setSrvStatus({ online: false })
+    } finally {
+      setSrvChecking(false)
+      setSrvLastChecked(new Date())
+    }
+  }
+
+  useEffect(() => { checkServerStatus() }, [])
 
   async function handleStart() {
     const name = playerName.trim()
@@ -10709,6 +10731,45 @@ function GamingServerPage() {
       backLabel="Back to Gaming"
       note=""
     >
+      {/* ── Server Status ── */}
+      <div className="info-card section-page-card mc-srvstatus-card">
+        <div className="mc-srvstatus-header">
+          <h3>Server Status</h3>
+          <button
+            className="mc-refresh-btn"
+            onClick={checkServerStatus}
+            disabled={srvChecking}
+            title="Refresh status"
+          >
+            {srvChecking ? '…' : '↺ Refresh'}
+          </button>
+        </div>
+
+        {srvChecking && !srvStatus ? (
+          <p className="mc-card-body">Checking server…</p>
+        ) : srvStatus ? (
+          <div className="mc-srvstatus-body">
+            <div className={`mc-srv-badge ${srvStatus.online ? 'mc-srv-badge--on' : 'mc-srv-badge--off'}`}>
+              <span className="mc-srv-dot" />
+              {srvStatus.online ? 'Online' : 'Offline'}
+            </div>
+            {srvStatus.online && srvStatus.players != null && (
+              <span className="mc-srv-players">{srvStatus.players.online} / {srvStatus.players.max} players</span>
+            )}
+            {srvStatus.version && (
+              <span className="mc-srv-version">{srvStatus.version}</span>
+            )}
+          </div>
+        ) : null}
+
+        <p className="mc-card-body mc-srv-address">
+          <code>pasionabe.aternos.me</code>
+          {srvLastChecked && (
+            <span className="mc-srv-checked"> · checked {srvLastChecked.toLocaleTimeString()}</span>
+          )}
+        </p>
+      </div>
+
       {/* ── How to Connect ── */}
       <div className="info-card section-page-card mc-doc-card">
         <h3>How to Connect</h3>

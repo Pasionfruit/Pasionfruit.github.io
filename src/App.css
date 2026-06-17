@@ -5189,3 +5189,118 @@
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
+
+/* ── Server Status card ──────────────────────────────── */
+.mc-srvstatus-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.mc-srvstatus-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mc-srvstatus-header h3 {
+  margin: 0;
+}
+
+.mc-refresh-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.mc-refresh-btn:hover:not(:disabled) {
+  color: #9333ea;
+  border-color: #9333ea;
+}
+
+.mc-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mc-srvstatus-body {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mc-srv-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+
+.mc-srv-badge--on {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.mc-srv-badge--off {
+  background: rgba(156, 163, 175, 0.1);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.mc-srv-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.mc-srv-badge--on .mc-srv-dot {
+  animation: mc-pulse 2s infinite;
+}
+
+@keyframes mc-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+.mc-srv-players {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.mc-srv-version {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.mc-srv-address {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mc-srv-address code {
+  font-size: 0.82rem;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  padding: 0.1em 0.4em;
+}
+
+.mc-srv-checked {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.65;
+}
