@@ -10708,7 +10708,7 @@ function GamingServerPage() {
       const localApi = (import.meta.env.VITE_MC_LOCAL_API as string | undefined)?.replace(/\/$/, '')
       if (localApi) {
         const token = import.meta.env.VITE_MC_API_TOKEN as string | undefined
-        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+        const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
         const res  = await fetch(`${localApi}/status`, { headers })
         const data = await res.json()
         setSrvStatus({ online: !!data.online })
