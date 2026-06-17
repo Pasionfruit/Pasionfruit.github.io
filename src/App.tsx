@@ -13,6 +13,18 @@ import {
 } from 'react-router-dom'
 import { feature } from 'topojson-client'
 import type { Topology } from 'topojson-specification'
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  Filler,
+  Tooltip,
+  TimeScale,
+} from 'chart.js'
+import 'chartjs-adapter-date-fns'
 import './App.css'
 import { sounds } from './sounds'
 import {
@@ -84,6 +96,7 @@ import {
   createRecipeStep,
   updateRecipeStep,
   deleteRecipeStep,
+  logMcServerStart,
 } from './data/sheets/repositories'
 import type {
   AppleHealthRecord,
@@ -329,6 +342,11 @@ function App() {
           path="cooking/deals"
           element={<DetailPage path="/cooking/deals" profile={profile} googleIdToken={googleIdToken} />}
         />
+        <Route
+          path="gaming"
+          element={<SectionPage sectionId="gaming" profile={profile} googleIdToken={googleIdToken} />}
+        />
+        <Route path="gaming/server" element={<GamingServerPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>
     </Routes>
@@ -9230,6 +9248,174 @@ function CurrentStudyPlanCard({
   )
 }
 
+Chart.register(CategoryScale, LinearScale, LineController, LineElement, PointElement, Filler, Tooltip, TimeScale)
+
+// ── Health dashboard helpers ───────────────────────────────────────────────
+
+// Normalise sheet date strings (MM/DD/YYYY or YYYY-MM-DD) → YYYY-MM-DD for
+// consistent sorting and Chart.js time scale parsing.
+function parseToISO(dateStr: string): string {
+  const s = dateStr.trim()
+  const parts = s.split('/')
+  if (parts.length === 3 && parts[2].length === 4) {
+    return `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`
+  }
+  return s.slice(0, 10)
+}
+
+function hMean(vals: number[]): number {
+  const clean = vals.filter(v => isFinite(v) && v > 0)
+  return clean.length ? clean.reduce((a, b) => a + b, 0) / clean.length : 0
+}
+
+function daysAgoISO(n: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return d.toISOString().slice(0, 10)
+}
+
+type TrendDir = 'up' | 'down' | 'flat'
+
+function trendDir(recent: number, prev: number, higherBetter = true): TrendDir {
+  if (!recent || !prev) return 'flat'
+  const pct = (recent - prev) / prev
+  if (Math.abs(pct) < 0.03) return 'flat'
+  return (pct > 0) === higherBetter ? 'up' : 'down'
+}
+
+// ── HealthLineChart (Chart.js) ─────────────────────────────────────────────
+
+// Per-scale time unit and display format for Chart.js time scale
+const TIME_SCALE_CFG: Record<ChartScale, {
+  unit: 'day' | 'week' | 'month'
+  dayFmt: string
+  weekFmt: string
+  monthFmt: string
+  maxTicks: number
+}> = {
+  '1W':  { unit: 'day',   dayFmt: 'EEE MM/dd', weekFmt: 'MM/dd', monthFmt: 'MMM',    maxTicks: 7  },
+  '1M':  { unit: 'week',  dayFmt: 'MM/dd',      weekFmt: 'MM/dd', monthFmt: 'MMM',    maxTicks: 5  },
+  '1Y':  { unit: 'month', dayFmt: 'MM/dd',      weekFmt: 'MM/dd', monthFmt: 'MMM',    maxTicks: 12 },
+  'all': { unit: 'month', dayFmt: 'MM/dd',      weekFmt: 'MM/dd', monthFmt: "MMM yy", maxTicks: 24 },
+}
+
+function HealthLineChart({
+  points, color, unit, minWidth, scale,
+}: {
+  points: { date: string; value: number }[]
+  color: string
+  unit: string
+  minWidth: string
+  scale: ChartScale
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const chartRef  = useRef<Chart | null>(null)
+
+  useEffect(() => {
+    chartRef.current?.destroy()
+    chartRef.current = null
+
+    if (!canvasRef.current || points.length < 2) return
+
+    const style     = getComputedStyle(document.documentElement)
+    const gridColor = style.getPropertyValue('--border').trim()     || 'rgba(127,127,127,0.15)'
+    const tickColor = style.getPropertyValue('--text-muted').trim() || 'rgba(127,127,127,0.65)'
+    const fillColor = color + Math.round(0.18 * 255).toString(16).padStart(2, '0')
+
+    const cfg = TIME_SCALE_CFG[scale]
+
+    // For 1Y and all, pick a time unit based on the actual data span so we
+    // always produce visible ticks even when data is sparse.
+    let timeUnit: 'day' | 'week' | 'month' = cfg.unit
+    if ((scale === '1Y' || scale === 'all') && points.length >= 2) {
+      const ms   = new Date(points[points.length - 1].date).getTime() - new Date(points[0].date).getTime()
+      const days = ms / 86_400_000
+      if      (days < 14)  timeUnit = 'day'
+      else if (days < 90)  timeUnit = 'week'
+      else                 timeUnit = 'month'
+    }
+
+    chartRef.current = new Chart(canvasRef.current, {
+      type: 'line',
+      data: {
+        datasets: [{
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data:                 points.map(p => ({ x: p.date, y: p.value })) as any,
+          borderColor:          color,
+          backgroundColor:      fillColor,
+          borderWidth:          2,
+          fill:                 true,
+          tension:              0.35,
+          pointRadius:          points.length > 60 ? 0 : 3,
+          pointHoverRadius:     5,
+          pointBackgroundColor: color,
+          pointBorderColor:     'transparent',
+        }],
+      },
+      options: {
+        responsive:          true,
+        maintainAspectRatio: false,
+        animation:           { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label:  ctx => `${(ctx.parsed.y as number).toFixed(1)}${unit ? ' ' + unit : ''}`,
+              title:  items => {
+                if (!items[0]) return ''
+                return new Date(items[0].parsed.x).toLocaleDateString('en-US', {
+                  month: '2-digit', day: '2-digit', year: 'numeric',
+                })
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              unit:           timeUnit,
+              displayFormats: { day: cfg.dayFmt, week: cfg.weekFmt, month: cfg.monthFmt },
+            },
+            ticks: {
+              color:         tickColor,
+              font:          { size: 10 },
+              maxRotation:   0,
+              maxTicksLimit: cfg.maxTicks,
+            },
+            grid:   { color: gridColor },
+            border: { color: gridColor },
+          },
+          y: {
+            ticks: {
+              color:    tickColor,
+              font:     { size: 10 },
+              callback: v => `${v}${unit}`,
+            },
+            grid:   { color: gridColor },
+            border: { color: gridColor },
+          },
+        },
+      },
+    })
+
+    return () => {
+      chartRef.current?.destroy()
+      chartRef.current = null
+    }
+  }, [points, color, unit, scale])
+
+  return (
+    <div className="health-chart-scroll">
+      <div className="health-chart-inner" style={{ minWidth }}>
+        <canvas ref={canvasRef} />
+      </div>
+    </div>
+  )
+}
+
+// ── Health source types ────────────────────────────────────────────────────
+
 type HealthSource = 'garmin' | 'ringconn' | 'apple'
 
 const HEALTH_SOURCE_LABELS: Record<HealthSource, string> = {
@@ -9238,12 +9424,41 @@ const HEALTH_SOURCE_LABELS: Record<HealthSource, string> = {
   apple:    'Apple Health',
 }
 
-const GARMIN_COLS:   (keyof GarminHealthRecord)[]   = ['date', 'activity_type', 'title', 'distance_km', 'duration_min', 'avg_hr', 'max_hr', 'calories', 'tss']
+const GARMIN_COLS:   (keyof GarminHealthRecord)[]   = ['date', 'activity_type', 'title', 'distance_mi', 'duration_min', 'avg_hr', 'max_hr', 'calories', 'tss']
 const RINGCONN_COLS: (keyof RingconnHealthRecord)[] = ['date', 'sleep_score', 'sleep_duration_h', 'deep_sleep_h', 'rem_sleep_h', 'resting_hr', 'hrv', 'spo2', 'steps', 'calories']
 const APPLE_COLS:    (keyof AppleHealthRecord)[]    = ['date', 'steps', 'resting_hr', 'hrv_sdnn', 'active_calories', 'sleep_h', 'spo2_avg', 'weight_kg']
 
+// Condensed column sets for narrow screens
+const MOBILE_GARMIN_COLS:   (keyof GarminHealthRecord)[]   = ['date', 'activity_type', 'distance_mi', 'duration_min']
+const MOBILE_RINGCONN_COLS: (keyof RingconnHealthRecord)[] = ['date', 'sleep_score', 'sleep_duration_h', 'hrv']
+const MOBILE_APPLE_COLS:    (keyof AppleHealthRecord)[]    = ['date', 'steps', 'resting_hr', 'hrv_sdnn']
+
+type ChartScale = '1W' | '1M' | '1Y' | 'all'
+const SCALE_DAYS: Record<ChartScale, number> = { '1W': 7, '1M': 30, '1Y': 365, 'all': 0 }
+const SCALE_LABELS: Record<ChartScale, string> = { '1W': '1W', '1M': '1M', '1Y': '1Y', 'all': 'All' }
+
+const CHART_CFG: Record<HealthSource, { label: string; color: string; unit: string; metricKey: string }> = {
+  garmin:   { label: 'Distance per Activity', color: '#FC5200', unit: 'mi',  metricKey: 'distance_mi'  },
+  ringconn: { label: 'Sleep Score',           color: '#8B5CF6', unit: '',    metricKey: 'sleep_score'  },
+  apple:    { label: 'Resting Heart Rate',    color: '#30D158', unit: 'bpm', metricKey: 'resting_hr'   },
+}
+
 function HealthDataCard({ title }: { title: string }) {
-  const [source, setSource] = useState<HealthSource>('garmin')
+  const [source,     setSource]     = useState<HealthSource>('garmin')
+  const [page,       setPage]       = useState(0)
+  const [chartScale, setChartScale] = useState<ChartScale>('1M')
+  const [isMobile,   setIsMobile]   = useState(() => window.matchMedia('(max-width: 640px)').matches)
+
+  // Reset page and chart scale whenever the active source tab changes
+  useEffect(() => { setPage(0); setChartScale('1M') }, [source])
+
+  // Track viewport width so chart and columns update on resize
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)')
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const [garminRows,   setGarminRows]   = useState<GarminHealthRecord[]>([])
   const [ringconnRows, setRingconnRows] = useState<RingconnHealthRecord[]>([])
@@ -9287,14 +9502,110 @@ function HealthDataCard({ title }: { title: string }) {
   const isLoading  = source === 'garmin' ? garminLoading  : source === 'ringconn' ? ringconnLoading  : appleLoading
   const hasError   = source === 'garmin' ? garminError    : source === 'ringconn' ? ringconnError    : appleError
   const allRows    = source === 'garmin' ? garminRows     : source === 'ringconn' ? ringconnRows     : appleRows
-  const cols       = source === 'garmin' ? GARMIN_COLS    : source === 'ringconn' ? RINGCONN_COLS    : APPLE_COLS
-  const recentRows = [...allRows].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10)
-  const lastSync   = allRows.length > 0 ? [...allRows].sort((a, b) => b.date.localeCompare(a.date))[0].date : null
+  const fullCols   = source === 'garmin' ? GARMIN_COLS    : source === 'ringconn' ? RINGCONN_COLS    : APPLE_COLS
+  const mobileCols = source === 'garmin' ? MOBILE_GARMIN_COLS : source === 'ringconn' ? MOBILE_RINGCONN_COLS : MOBILE_APPLE_COLS
+  const cols       = isMobile ? mobileCols : fullCols
+  const sortedRows = [...allRows].sort((a, b) => parseToISO(b.date).localeCompare(parseToISO(a.date)))
+  const totalPages = Math.max(1, Math.ceil(sortedRows.length / 10))
+  const pageRows   = sortedRows.slice(page * 10, (page + 1) * 10)
+  const lastSync   = sortedRows.length > 0 ? sortedRows[0].date.slice(0, 10) : null
+
+  // ── Well-being overview (cross-source) ──────────────────────────────────
+  const { wbTiles, wbInsight } = useMemo(() => {
+    const n30 = daysAgoISO(30), n7 = daysAgoISO(7), n14 = daysAgoISO(14)
+
+    const g30  = garminRows.filter(r => parseToISO(r.date) >= n30)
+    const r30  = ringconnRows.filter(r => parseToISO(r.date) >= n30)
+    const a30  = appleRows.filter(r => parseToISO(r.date) >= n30)
+    const r7   = ringconnRows.filter(r => parseToISO(r.date) >= n7)
+    const rP7  = ringconnRows.filter(r => { const d = parseToISO(r.date); return d >= n14 && d < n7 })
+
+    const workouts   = g30.length
+    const avgDist    = hMean(g30.map(r => parseFloat(r.distance_mi)))
+    const sleepScore = hMean(r30.map(r => parseFloat(r.sleep_score)))
+    const sleepHours = hMean(r30.map(r => parseFloat(r.sleep_duration_h)))
+    const restHR     = r30.length > 0
+      ? hMean(r30.map(r => parseFloat(r.resting_hr)))
+      : hMean(a30.map(r => parseFloat(r.resting_hr)))
+    const hrv        = r30.length > 0
+      ? hMean(r30.map(r => parseFloat(r.hrv)))
+      : hMean(a30.map(r => parseFloat(r.hrv_sdnn)))
+
+    const sleepTrend = trendDir(hMean(r7.map(r => parseFloat(r.sleep_score))), hMean(rP7.map(r => parseFloat(r.sleep_score))))
+    const hrvTrend   = trendDir(hMean(r7.map(r => parseFloat(r.hrv))),         hMean(rP7.map(r => parseFloat(r.hrv))))
+    const hrTrend    = trendDir(hMean(r7.map(r => parseFloat(r.resting_hr))),  hMean(rP7.map(r => parseFloat(r.resting_hr))), false)
+
+    const tiles: { label: string; value: string; trend: TrendDir }[] = [
+      { label: 'Workouts / 30d', value: workouts   > 0 ? String(workouts)                  : '—', trend: 'flat' },
+      { label: 'Avg Distance',   value: avgDist    > 0 ? `${avgDist.toFixed(1)} mi`        : '—', trend: 'flat' },
+      { label: 'Sleep Score',    value: sleepScore > 0 ? `${Math.round(sleepScore)} / 100` : '—', trend: sleepTrend },
+      { label: 'Avg Sleep',      value: sleepHours > 0 ? `${sleepHours.toFixed(1)} h`      : '—', trend: 'flat' },
+      { label: 'Resting HR',     value: restHR     > 0 ? `${Math.round(restHR)} bpm`       : '—', trend: hrTrend },
+      { label: 'Avg HRV',        value: hrv        > 0 ? `${Math.round(hrv)} ms`           : '—', trend: hrvTrend },
+    ]
+
+    const parts: string[] = []
+    if      (sleepScore >= 80)                   parts.push('Sleep quality is strong')
+    else if (sleepScore > 0 && sleepScore < 65)  parts.push('Sleep score is below target — prioritize rest')
+    if      (hrv > 0 && hrvTrend === 'up')       parts.push('HRV trending up — recovery adapting well')
+    else if (hrv > 0 && hrvTrend === 'down')     parts.push('HRV dipping — consider an easier week')
+    if      (workouts >= 16)                     parts.push(`${workouts} workouts this month — consistency is high`)
+    else if (workouts > 0 && workouts < 8)       parts.push('Training frequency is low — aim for more sessions')
+
+    return {
+      wbTiles: tiles,
+      wbInsight: parts.slice(0, 2).join('. ') + (parts.length ? '.' : ''),
+    }
+  }, [garminRows, ringconnRows, appleRows])
+
+  const anyData = garminRows.length > 0 || ringconnRows.length > 0 || appleRows.length > 0
+  const allLoading = garminLoading && ringconnLoading && appleLoading
+
+  // ── Chart data for active source ─────────────────────────────────────────
+  const cfg = CHART_CFG[source]
+
+  const chartPoints = useMemo(() => {
+    const cutoff = chartScale === 'all' ? '' : daysAgoISO(SCALE_DAYS[chartScale])
+    return [...allRows]
+      .sort((a, b) => parseToISO(a.date).localeCompare(parseToISO(b.date)))
+      .map(r => ({ date: parseToISO(r.date), value: parseFloat((r as Record<string, string>)[cfg.metricKey] ?? '') }))
+      .filter(p => !isNaN(p.value) && p.value > 0 && (chartScale === 'all' || p.date >= cutoff))
+  }, [allRows, cfg.metricKey, chartScale])
+
+  const canvasMinWidth = useMemo(() => {
+    if (isMobile) return '100%'
+    if (chartScale === '1W' || chartScale === '1M') return '100%'
+    if (chartScale === '1Y') return '1000px'
+    return `${Math.max(1200, chartPoints.length * 6)}px`
+  }, [chartScale, chartPoints.length, isMobile])
 
   return (
     <article className="info-card section-page-card health-data-card">
       <h3>{title}</h3>
 
+      {/* ── Well-being overview ── */}
+      {!allLoading && anyData && (
+        <div className="wellbeing-section">
+          <div className="wellbeing-grid">
+            {wbTiles.map(tile => (
+              <div key={tile.label} className="wellbeing-stat">
+                <span className="wellbeing-stat-value">{tile.value}</span>
+                <span className="wellbeing-stat-meta">
+                  <span className="wellbeing-stat-label">{tile.label}</span>
+                  {tile.trend !== 'flat' && (
+                    <span className={`wellbeing-trend-${tile.trend}`}>
+                      {tile.trend === 'up' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+          {wbInsight && <p className="wellbeing-insight">{wbInsight}</p>}
+        </div>
+      )}
+
+      {/* ── Source tabs ── */}
       <div className="experience-toggle" role="tablist" aria-label="Health data source">
         {(Object.keys(HEALTH_SOURCE_LABELS) as HealthSource[]).map((s) => (
           <button
@@ -9318,9 +9629,42 @@ function HealthDataCard({ title }: { title: string }) {
         <p className="sheets-meta">No {HEALTH_SOURCE_LABELS[source]} data found. Run the ingestion script and check the sheet tab name matches exactly.</p>
       ) : (
         <>
+          {/* ── Chart ── */}
+          <div className="health-chart-container">
+            <div className="health-chart-controls">
+              <div className="health-scale-btns" role="group" aria-label="Chart time range">
+                {(Object.keys(SCALE_LABELS) as ChartScale[]).map(s => (
+                  <button
+                    key={s}
+                    className={`health-scale-btn ${chartScale === s ? 'active' : ''}`}
+                    onClick={() => setChartScale(s)}
+                  >
+                    {SCALE_LABELS[s]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {chartPoints.length < 2 ? (
+              <div className="health-chart-empty">No data for this time range</div>
+            ) : (
+              <HealthLineChart
+                points={chartPoints}
+                color={cfg.color}
+                unit={cfg.unit}
+                minWidth={canvasMinWidth}
+                scale={chartScale}
+              />
+            )}
+
+            <p className="health-chart-label">{cfg.label} · {chartPoints.length} {chartPoints.length === 1 ? 'entry' : 'entries'}</p>
+          </div>
+
           <p className="sheets-meta">
             {allRows.length} records · last synced {lastSync}
           </p>
+
+          {/* ── Raw data table ── */}
           <div className="health-data-table-scroll">
             <table className="health-data-table">
               <thead>
@@ -9331,16 +9675,44 @@ function HealthDataCard({ title }: { title: string }) {
                 </tr>
               </thead>
               <tbody>
-                {recentRows.map((row, i) => (
+                {pageRows.map((row, i) => (
                   <tr key={i}>
-                    {cols.map((col) => (
-                      <td key={col}>{(row as Record<string, string>)[col] || '—'}</td>
-                    ))}
+                    {cols.map((col) => {
+                      const raw  = (row as Record<string, string>)[col] ?? ''
+                      const cell = col === 'date' ? raw.slice(0, 10) : raw
+                      return <td key={col}>{cell || '—'}</td>
+                    })}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          {totalPages > 1 && (
+            <div className="health-table-pagination">
+              <button
+                className="health-pagination-btn"
+                onClick={() => setPage(p => Math.max(0, p - 1))}
+                disabled={page === 0}
+                aria-label="Previous page"
+              >
+                ‹
+              </button>
+              <span className="health-pagination-info">{page + 1} / {totalPages}</span>
+              <button
+                className="health-pagination-btn"
+                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+                aria-label="Next page"
+              >
+                ›
+              </button>
+            </div>
+          )}
+
+          {isMobile && (
+            <p className="health-desktop-note">More data analysis available on desktop.</p>
+          )}
         </>
       )}
     </article>
@@ -10299,6 +10671,101 @@ function LoginPage({
         </div>
       </PageFrame>
     </section>
+  )
+}
+
+// ── Gaming ────────────────────────────────────────────────────────────────
+
+const MC_DOC_URL = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
+
+function GamingServerPage() {
+  const [playerName, setPlayerName] = useState('')
+  const [status,     setStatus]     = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorMsg,   setErrorMsg]   = useState('')
+  const [autoStarted, setAutoStarted] = useState(false)
+
+  async function handleStart() {
+    const name = playerName.trim()
+    if (!name) return
+    setStatus('loading')
+    setErrorMsg('')
+    try {
+      const result = await logMcServerStart(name)
+      setAutoStarted(result.serverStarted)
+      setStatus('success')
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : 'Something went wrong')
+      setStatus('error')
+    }
+  }
+
+  return (
+    <PageFrame
+      eyebrow="Minecraft"
+      title="Server"
+      summary="Start the Aternos server and get connection instructions."
+      accent="#7e22ce"
+      backLink="/gaming"
+      backLabel="Back to Gaming"
+      note=""
+    >
+      {/* ── How to Connect ── */}
+      <div className="info-card section-page-card mc-doc-card">
+        <h3>How to Connect</h3>
+        <p className="mc-card-body">Full connection instructions, server rules, and mods are in the guide below.</p>
+        <a
+          href={MC_DOC_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="primary-action mc-doc-link"
+        >
+          Open Connection Guide
+        </a>
+      </div>
+
+      {/* ── Start the Server ── */}
+      <div className="info-card section-page-card mc-server-card">
+        <h3>Start the Server</h3>
+        <p className="mc-card-body">
+          Enter your name and click <strong>Start Server</strong>. The server will start automatically
+          and the owner will be notified. It may take up to 2 minutes to come online.
+        </p>
+
+        <div className="mc-start-form">
+          <input
+            type="text"
+            className="mc-name-input"
+            placeholder="Your name"
+            value={playerName}
+            onChange={e => {
+              setPlayerName(e.target.value)
+              if (status !== 'idle') { setStatus('idle'); setAutoStarted(false) }
+            }}
+            onKeyDown={e => { if (e.key === 'Enter') handleStart() }}
+            disabled={status === 'loading' || status === 'success'}
+            maxLength={40}
+          />
+          <button
+            className="primary-action mc-start-btn"
+            onClick={handleStart}
+            disabled={!playerName.trim() || status === 'loading' || status === 'success'}
+          >
+            {status === 'loading' ? 'Starting…' : 'Start Server'}
+          </button>
+        </div>
+
+        {status === 'success' && (
+          <p className="mc-status mc-status--ok">
+            {autoStarted
+              ? `Server is starting, ${playerName}! Give it 1–2 minutes to come online.`
+              : `Request logged, ${playerName}! The owner has been notified and will start the server shortly.`}
+          </p>
+        )}
+        {status === 'error' && (
+          <p className="mc-status mc-status--err">{errorMsg}</p>
+        )}
+      </div>
+    </PageFrame>
   )
 }
 

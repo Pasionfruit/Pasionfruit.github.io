@@ -98,7 +98,7 @@ export type GarminHealthRecord = {
   date: string
   activity_type: string
   title: string
-  distance_km: string
+  distance_mi: string
   duration_min: string
   avg_hr: string
   max_hr: string

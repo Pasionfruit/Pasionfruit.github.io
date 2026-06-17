@@ -170,7 +170,7 @@ export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
       date:          String(row.date ?? '').trim(),
       activity_type: String(row.activity_type ?? '').trim(),
       title:         String(row.title ?? '').trim(),
-      distance_km:   String(row.distance_km ?? '').trim(),
+      distance_mi:   String(row.distance_mi ?? '').trim(),
       duration_min:  String(row.duration_min ?? '').trim(),
       avg_hr:        String(row.avg_hr ?? '').trim(),
       max_hr:        String(row.max_hr ?? '').trim(),
@@ -1052,4 +1052,18 @@ export async function updateCoupon(
 
 export async function deleteCoupon(idToken: string, couponId: string) {
   await runWrite({ action: 'deleteCoupon', idToken, coupon_id: couponId })
+}
+
+// ── Gaming ─────────────────────────────────────────────────────────────────
+
+export async function logMcServerStart(playerName: string): Promise<{ serverStarted: boolean }> {
+  const result = await postSheetsAction<SheetsWriteResponse & { serverStarted?: boolean }>({
+    action:     'mcServerStart',
+    playerName,
+    timestamp:  new Date().toISOString(),
+  })
+  if (!result.ok) {
+    throw new Error(result.error || 'Failed to log server start')
+  }
+  return { serverStarted: result.serverStarted ?? false }
 }

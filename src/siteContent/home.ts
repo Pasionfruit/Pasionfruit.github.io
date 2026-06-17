@@ -4,6 +4,7 @@ import { financesNavSection } from './finances'
 import { cookingNavSection } from './cooking'
 import { experiencesNavSection } from './experiences'
 import { trainingNavSection } from './training'
+import { gamingNavSection } from './gaming'
 
 export const homeHighlights: PageCard[] = [
   {
@@ -24,6 +25,7 @@ export const navSections: NavSection[] = [
   experiencesNavSection,
   trainingNavSection,
   cookingNavSection,
+  gamingNavSection,
   aboutMeNavSection,
   financesNavSection,
 ]

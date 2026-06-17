@@ -10,7 +10,6 @@ cd scripts/health-ingestion
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-pip install python-dotenv        # for loading config.env
 ```
 
 ### 2. Google service account
@@ -25,13 +24,7 @@ The scripts write to Sheets using a **service account** (separate from the web a
 ### 3. Config file
 ```bash
 cp config.env.example config.env
-# Edit config.env with your paths
-```
-
-`config.env`:
-```
-GOOGLE_SERVICE_ACCOUNT_JSON=/absolute/path/to/service_account.json
-SPREADSHEET_NAME=Your Spreadsheet Name
+# Edit config.env with your paths and credentials
 ```
 
 ### 4. Create the three sheet tabs
@@ -39,7 +32,7 @@ In your Google Spreadsheet, add three new tabs with these **exact names and head
 
 **`garmin_health`** (row 1):
 ```
-date  activity_type  title  distance_km  duration_min  avg_hr  max_hr  calories  tss
+date  activity_type  title  distance_mi  duration_min  avg_hr  max_hr  calories  tss
 ```
 
 **`ringconn_health`** (row 1):
@@ -56,14 +49,38 @@ date  steps  resting_hr  hrv_sdnn  active_calories  basal_calories  sleep_h  spo
 
 ## Usage
 
-### Garmin
-1. Go to [connect.garmin.com](https://connect.garmin.com) → Activities
-2. Click the export icon → **Export to CSV** (exports all activities)
+### Garmin — CSV mode (manual refresh)
+
+1. In Garmin Connect account settings, set units to **Statute (Imperial)** so Distance exports in miles
+2. Go to [connect.garmin.com](https://connect.garmin.com) → Activities → export icon → **Export to CSV**
 3. Run:
 ```bash
 python ingest_garmin.py --file ~/Downloads/activities.csv
 # Preview without writing:
 python ingest_garmin.py --file ~/Downloads/activities.csv --dry-run
+```
+
+### Garmin — API mode (ongoing automation)
+
+Pulls directly from Garmin Connect — no manual CSV export needed.
+
+```bash
+# Last 30 days (default)
+python ingest_garmin.py --api
+
+# Specific date range
+python ingest_garmin.py --api --since 2025-01-01
+
+# Preview without writing
+python ingest_garmin.py --api --since 2025-06-01 --dry-run
+```
+
+Requires `GARMIN_EMAIL` and `GARMIN_PASSWORD` in `config.env`.
+
+**To automate daily:** add a cron job (Mac/Linux) or Task Scheduler entry (Windows):
+```
+# cron: run every day at 6 AM
+0 6 * * * cd /path/to/scripts/health-ingestion && .venv/bin/python ingest_garmin.py --api
 ```
 
 ### Ringconn
@@ -90,9 +107,9 @@ python ingest_apple_health.py --file export.xml --since 2024-01-01
 
 ## How upsert works
 
-Each script uses `date` as the primary key. Running a script twice with the same file will **update** existing rows rather than creating duplicates.
+Each script uses `date` as the primary key. Running a script twice with the same file will **update** existing rows rather than create duplicates.
 
-For Garmin, if you have multiple activities on the same date, the last one in the CSV wins. If you need per-activity granularity, the `title` column helps distinguish them visually on the web app.
+For Garmin, if you have multiple activities on the same date, the last one in the source wins. The `title` column helps distinguish them visually on the web app.
 
 ---
 
@@ -100,5 +117,5 @@ For Garmin, if you have multiple activities on the same date, the last one in th
 
 After running the scripts, open the web app → **Training** → **Training Data Analysis** → **Health Data** card. You should see record counts and a preview table for each source. If a source shows "No data found", check that:
 - The sheet tab name matches exactly (`garmin_health`, `ringconn_health`, `apple_health`)
-- The header row in the sheet tab matches the schema above
+- The header row in the sheet tab matches the schema above (note: `distance_mi`, not `distance_km`)
 - The spreadsheet is shared with your service account email
