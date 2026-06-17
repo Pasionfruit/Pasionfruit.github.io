@@ -27,6 +27,18 @@ if not all([USERNAME, PASSWORD, SCRIPT_URL]):
     print('ERROR: Missing ATERNOS_USERNAME, ATERNOS_PASSWORD, or SHEETS_SCRIPT_URL.')
     sys.exit(1)
 
+STEALTH_JS = """
+    Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+    Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3,4,5]});
+    Object.defineProperty(navigator, 'languages', {get: () => ['en-US','en']});
+    window.chrome = {runtime: {}, loadTimes: function(){}, csi: function(){}, app: {}};
+    const origQuery = window.navigator.permissions.query;
+    window.navigator.permissions.query = p =>
+        p.name === 'notifications'
+            ? Promise.resolve({state: Notification.permission})
+            : origQuery(p);
+"""
+
 USERNAME_SELECTORS = [
     'input[name="username"]', '#user', '[autocomplete="username"]',
     'input[type="text"]',
@@ -55,15 +67,16 @@ def login(page):
     page.goto('https://aternos.org/go/', wait_until='domcontentloaded', timeout=30_000)
 
     username_sel = None
-    for delay in [5, 10, 15]:
+    for delay in [8, 12, 20, 20]:
         time.sleep(delay)
-        page.screenshot(path=f'/tmp/sync-login-{delay}.png')
+        page.screenshot(path=f'/tmp/sync-login-{delay}s.png')
+        print(f'[Sync] URL={page.url}  title={page.title()!r}')
         username_sel = find_sel(page, USERNAME_SELECTORS, timeout_ms=3000)
         if username_sel:
             break
 
     with open('/tmp/sync-login.html', 'w', errors='replace') as fh:
-        fh.write(page.content()[:50_000])
+        fh.write(page.content()[:80_000])
 
     if not username_sel:
         print(f'[Sync] Login form not found. URL={page.url}')
@@ -251,9 +264,7 @@ try:
             ),
             viewport={'width': 1280, 'height': 800},
         )
-        ctx.add_init_script(
-            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        )
+        ctx.add_init_script(STEALTH_JS)
         page = browser.new_page()
 
         try:

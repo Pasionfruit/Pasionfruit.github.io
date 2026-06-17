@@ -18,6 +18,18 @@ if not USERNAME or not PASSWORD:
 
 print(f'[MC] Start requested by: {PLAYER}')
 
+STEALTH_JS = """
+    Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+    Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3,4,5]});
+    Object.defineProperty(navigator, 'languages', {get: () => ['en-US','en']});
+    window.chrome = {runtime: {}, loadTimes: function(){}, csi: function(){}, app: {}};
+    const origQuery = window.navigator.permissions.query;
+    window.navigator.permissions.query = p =>
+        p.name === 'notifications'
+            ? Promise.resolve({state: Notification.permission})
+            : origQuery(p);
+"""
+
 USERNAME_SELECTORS = [
     'input[name="username"]', '#user', '[autocomplete="username"]',
     'input[type="text"]', '.login-username',
@@ -49,14 +61,15 @@ def login(page):
 
     # Wait for Cloudflare to pass — try up to 30 s
     username_sel = None
-    for delay in [5, 10, 15]:
+    for delay in [8, 12, 20, 20]:
         time.sleep(delay)
-        page.screenshot(path=f'/tmp/login-wait-{delay}.png')
+        page.screenshot(path=f'/tmp/login-wait-{delay}s.png')
         username_sel = find_selector(page, USERNAME_SELECTORS, timeout_ms=3000)
         if username_sel:
             break
+        print(f'[MC] Still waiting... URL={page.url}  title={page.title()!r}')
     with open('/tmp/login-page.html', 'w', errors='replace') as f:
-        f.write(page.content()[:50_000])
+        f.write(page.content()[:80_000])
 
     if not username_sel:
         print(f'[MC] Login form not found. URL={page.url}')
@@ -153,9 +166,7 @@ def run():
             ),
             viewport={'width': 1280, 'height': 800},
         )
-        ctx.add_init_script(
-            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        )
+        ctx.add_init_script(STEALTH_JS)
         page = ctx.new_page()
 
         try:

@@ -28,10 +28,12 @@ jobs:
           ATERNOS_PASSWORD: ${{ secrets.ATERNOS_PASSWORD }}
           PLAYER_NAME:      ${{ github.event.client_payload.playerName }}
 
-      - name: Upload debug screenshots
+      - name: Upload debug files
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: aternos-screenshots
-          path: /tmp/*.png
+          name: aternos-debug
+          path: |
+            /tmp/*.png
+            /tmp/*.html
           if-no-files-found: ignore

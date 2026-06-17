@@ -29,10 +29,12 @@ jobs:
           ATERNOS_PASSWORD:  ${{ secrets.ATERNOS_PASSWORD }}
           SHEETS_SCRIPT_URL: ${{ secrets.SHEETS_SCRIPT_URL }}
 
-      - name: Upload debug screenshots
+      - name: Upload debug files
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sync-screenshots
-          path: /tmp/sync-*.png
+          name: sync-debug
+          path: |
+            /tmp/sync-*.png
+            /tmp/sync-*.html
           if-no-files-found: ignore
