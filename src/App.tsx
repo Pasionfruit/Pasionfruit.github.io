@@ -9363,7 +9363,7 @@ function HealthLineChart({
               label:  ctx => `${(ctx.parsed.y as number).toFixed(1)}${unit ? ' ' + unit : ''}`,
               title:  items => {
                 if (!items[0]) return ''
-                return new Date(items[0].parsed.x).toLocaleDateString('en-US', {
+                return new Date(items[0].parsed.x as number).toLocaleDateString('en-US', {
                   month: '2-digit', day: '2-digit', year: 'numeric',
                 })
               },
