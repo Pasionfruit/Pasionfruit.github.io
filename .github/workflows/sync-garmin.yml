@@ -42,4 +42,4 @@ jobs:
           GARMIN_EMAIL:                ${{ secrets.GARMIN_EMAIL }}
           GARMIN_PASSWORD:             ${{ secrets.GARMIN_PASSWORD }}
           GOOGLE_SERVICE_ACCOUNT_JSON: /tmp/sa.json
-          SPREADSHEET_NAME:            ${{ secrets.SPREADSHEET_NAME }}
+          SPREADSHEET_ID:              ${{ secrets.SPREADSHEET_ID }}

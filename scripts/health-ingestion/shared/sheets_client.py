@@ -9,13 +9,13 @@ from google.oauth2.service_account import Credentials
 
 _SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.readonly",
 ]
 
 
 def get_spreadsheet() -> gspread.Spreadsheet:
     """Return the configured spreadsheet using service account credentials."""
     json_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+    spreadsheet_id = os.environ.get("SPREADSHEET_ID")
     spreadsheet_name = os.environ.get("SPREADSHEET_NAME")
 
     if not json_path:
@@ -23,15 +23,17 @@ def get_spreadsheet() -> gspread.Spreadsheet:
             "GOOGLE_SERVICE_ACCOUNT_JSON env var not set. "
             "Copy config.env.example to config.env and fill it in."
         )
-    if not spreadsheet_name:
+    if not spreadsheet_id and not spreadsheet_name:
         raise EnvironmentError(
-            "SPREADSHEET_NAME env var not set. "
-            "Copy config.env.example to config.env and fill it in."
+            "Set SPREADSHEET_ID (recommended) or SPREADSHEET_NAME env var. "
+            "SPREADSHEET_ID is the long ID from your Google Sheets URL."
         )
 
     creds = Credentials.from_service_account_file(json_path, scopes=_SCOPES)
     client = gspread.authorize(creds)
-    return client.open(spreadsheet_name)
+    if spreadsheet_id:
+        return client.open_by_key(spreadsheet_id)
+    return client.open(spreadsheet_name)  # requires Google Drive API to be enabled
 
 
 def upsert_rows(
