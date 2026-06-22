@@ -21,10 +21,7 @@ export const gamingSectionPage: PageContent = {
   summary: 'A hub for my favorite games and gaming servers',
   accent: '#7e22ce',
   cards: [
-    {
-      title: 'Games I like to play - UI implemented later',
-      body: '• Minecraft\n• Valorant\n• Among Us\n• Rocket League\n• Plants vs Zombies',
-    },
+    { title: 'Games I Like to Play', body: '' },
   ],
   callout: '',
 }

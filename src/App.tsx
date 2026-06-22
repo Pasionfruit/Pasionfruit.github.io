@@ -2504,6 +2504,10 @@ function SectionPage({
           return <TechnicalSkillsCard key={card.title} title={card.title} body={card.body} />
         }
 
+        if (sectionId === 'gaming' && card.title === 'Games I Like to Play') {
+          return <GamesCarouselCard key={card.title} title={card.title} />
+        }
+
         return (
           <article key={card.title} className="info-card section-page-card">
             <h3>{card.title}</h3>
@@ -10677,6 +10681,52 @@ function LoginPage({
 }
 
 // ── Gaming ────────────────────────────────────────────────────────────────
+
+const FAVORITE_GAMES = [
+  { name: 'Minecraft',         cover: '/game-covers/minecraft.jpg' },
+  { name: 'Valorant',          cover: '/game-covers/valorant.jpg' },
+  { name: 'Among Us',          cover: '/game-covers/among-us.jpg' },
+  { name: 'Rocket League',     cover: '/game-covers/rocket-league.jpg' },
+  { name: 'Plants vs Zombies', cover: '/game-covers/plants-vs-zombies.jpg' },
+  { name: 'Meccha Chameleon',  cover: '/game-covers/meccha-chameleon.jpg' },
+  { name: 'Pico Park',         cover: '/game-covers/pico-park.jpg' },
+  { name: 'R.E.P.O',           cover: '/game-covers/repo.jpg' },
+]
+
+function GamesCarouselCard({ title }: { title: string }) {
+  const trackRef = useRef<HTMLDivElement>(null)
+
+  function scroll(dir: 'left' | 'right') {
+    const track = trackRef.current
+    if (!track) return
+    const card = track.querySelector('.game-cover-slide') as HTMLElement | null
+    const cardW = card ? card.offsetWidth + 16 : 220
+    track.scrollBy({ left: dir === 'right' ? cardW : -cardW, behavior: 'smooth' })
+  }
+
+  return (
+    <article className="info-card section-page-card game-carousel-card">
+      <h3>{title}</h3>
+      <div className="game-carousel-wrapper">
+        <button className="game-carousel-arrow left" onClick={() => scroll('left')} aria-label="Previous">&#8249;</button>
+        <div className="game-carousel-track" ref={trackRef}>
+          {FAVORITE_GAMES.map((g) => (
+            <div key={g.name} className="game-cover-slide">
+              <img
+                src={g.cover}
+                alt={g.name}
+                className="game-cover-img"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '' ; e.currentTarget.classList.add('missing') }}
+              />
+              <span className="game-cover-label">{g.name}</span>
+            </div>
+          ))}
+        </div>
+        <button className="game-carousel-arrow right" onClick={() => scroll('right')} aria-label="Next">&#8250;</button>
+      </div>
+    </article>
+  )
+}
 
 const MC_DOC_URL    = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
 // Replace XXXXX with the port shown in your Aternos panel (e.g. 25565 or a 5-digit port)

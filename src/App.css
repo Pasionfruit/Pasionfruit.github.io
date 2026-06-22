@@ -5310,6 +5310,7 @@
   border: 1px solid var(--border);
   border-radius: 0.25rem;
   padding: 0.1em 0.4em;
+  word-break: break-all;
 }
 
 .mc-srv-checked {
@@ -5400,4 +5401,140 @@
   color: var(--text-muted);
   font-style: italic;
   margin: 0;
+}
+
+/* ── Games Carousel ──────────────────────────────────────────────────────── */
+
+.game-carousel-card {
+  overflow: hidden;
+}
+
+.game-carousel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+.game-carousel-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.game-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.game-cover-slide {
+  scroll-snap-align: start;
+  flex: 0 0 180px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--surface-2, #2a2a2a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.game-cover-img.missing {
+  display: none;
+}
+
+.game-cover-slide:has(.game-cover-img.missing)::before,
+.game-cover-slide:not(:has(img[src]))::before {
+  content: '🎮';
+  font-size: 2.5rem;
+}
+
+.game-cover-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem 0.6rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.75));
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.game-carousel-arrow {
+  flex: 0 0 auto;
+  background: var(--surface-2, #2a2a2a);
+  border: 1px solid var(--border, #444);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.game-carousel-arrow:hover {
+  background: var(--surface-3, #383838);
+}
+
+@media (max-width: 640px) {
+  /* Stack select + button, both full width */
+  .mc-start-form {
+    flex-direction: column;
+  }
+  .mc-name-input {
+    min-width: 0;
+    width: 100%;
+  }
+  .mc-start-btn {
+    width: 100%;
+  }
+
+  /* Connection guide button full width */
+  .mc-doc-footer {
+    justify-content: stretch;
+  }
+  .mc-doc-link {
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+
+  /* Server address: stack address and checked-time */
+  .mc-srv-address {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  /* Larger touch targets for carousel arrows */
+  .game-carousel-arrow {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.6rem;
+  }
+
+  /* Slightly narrower cards so 1.5 fit in view, hinting there's more */
+  .game-cover-slide {
+    flex: 0 0 155px;
+  }
 }
