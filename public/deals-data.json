@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-26T10:10:26.363Z",
+  "lastUpdated": "2026-06-27T09:47:27.253Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-06-24T00:00:00-04:00",
@@ -2390,297 +2390,9 @@
       ]
     },
     "Publix": {
-      "validFrom": "2026-06-13T00:00:00-04:00",
-      "validTo": "2026-07-01T23:59:59-04:00",
+      "validFrom": "2026-06-25T00:00:00-04:00",
+      "validTo": "2026-07-10T23:59:59-04:00",
       "deals": [
-        {
-          "id": "Publix-1017956843",
-          "item": "Dr. Squatch Lip Balm",
-          "brand": "Dr. Squatch",
-          "price": 4.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956756",
-          "item": "Always Discreet Pads",
-          "brand": "Always",
-          "price": 14.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956747",
-          "item": "Primal Kitchen Avocado Oil",
-          "brand": "Primal Kitchen",
-          "price": 11.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956744",
-          "item": "Catalina Crunch Granola",
-          "brand": "Catalina Crunch",
-          "price": 6.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956783",
-          "item": "King's Hawaiian Rolls",
-          "brand": "King's Hawaiian",
-          "price": 8.49,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956782",
-          "item": "4505 Chicharrones",
-          "brand": "4505",
-          "price": 7,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956784",
-          "item": "Archer Minis Sticks",
-          "brand": "Archer",
-          "price": 13.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956789",
-          "item": "Pop-Tarts",
-          "brand": null,
-          "price": 7,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956787",
-          "item": "Rice Krispies Treats",
-          "brand": null,
-          "price": 10.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956786",
-          "item": "Cheez-It Family Size 19 or 21-oz, Club Family Size 18.8-oz, Town House Original Family Size 20.7-oz or Toasteds 12-oz",
-          "brand": null,
-          "price": 4.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956749",
-          "item": "Local Hive Hot Honey or Organic Hive Honey",
-          "brand": "Local Hive Honey",
-          "price": 6.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956871",
-          "item": "San-J No Soy Tamari Sauce",
-          "brand": "SAN J",
-          "price": 5.49,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956866",
-          "item": "Centerville Pie Co. Chicken Pot Pie, Spinach & Feta Pie or Shepherd's Pie",
-          "brand": "centerville pie",
-          "price": 11.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956864",
-          "item": "Parmalat Milk",
-          "brand": "Parmalat",
-          "price": 2.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956865",
-          "item": "Eagle Brand Sweetened Condensed Milk",
-          "brand": "Eagle Brand",
-          "price": 2.5,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956832",
-          "item": "Saffron Road Crunchy Chickpeas",
-          "brand": "Saffron Road",
-          "price": 3.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956827",
-          "item": "Applegate Natural Beef Hot Dogs 10-oz or No Sugar Bacon 8-oz",
-          "brand": null,
-          "price": 5.49,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956758",
-          "item": "Always Radiant or Infinity Flexfoam Pads",
-          "brand": "Always",
-          "price": 9.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956807",
-          "item": "Florajen Probiotics",
-          "brand": "Florajen",
-          "price": 19.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956812",
-          "item": "Colgate Optic White Pro Series",
-          "brand": "Colgate",
-          "price": 4.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956805",
-          "item": "Tampax Tampons 28-36-ct. or Always Ultra or Maxi Pads 21-46-ct.",
-          "brand": "Tampax",
-          "price": 8.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956831",
-          "item": "Softsoap or Irish Spring Body Wash",
-          "brand": "Softsoap| Irish",
-          "price": 6,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956833",
-          "item": "Softsoap Velvet Silk Foaming Hand Soap 9-oz or Liquid Hand Soap 11.25-oz or Irish Spring Bar Soap 3-ct.",
-          "brand": "Softsoap| Irish Spring",
-          "price": 6,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956828",
-          "item": "Stauffer's Simply Animals Crackers, Ginger Snaps or Lemon Snaps",
-          "brand": null,
-          "price": 6,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956829",
-          "item": "Siete Potato Chips 5.5-oz or Puff Snacks 4-oz",
-          "brand": null,
-          "price": 7,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956840",
-          "item": "Tom's Of Maine Deodorant Stick",
-          "brand": "Tom's of Maine",
-          "price": 5.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956862",
-          "item": "Planet Oat",
-          "brand": "Planet Oat®",
-          "price": 4,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956868",
-          "item": "Clearly Canadian Original or Zero",
-          "brand": "Clearly Canadian",
-          "price": 5.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956746",
-          "item": "Bubbies Mochi",
-          "brand": "Bubbies",
-          "price": 5.49,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956745",
-          "item": "G Hughes Sugar Free Dressing",
-          "brand": "G Hughes",
-          "price": 5,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956748",
-          "item": "Bays English Muffins",
-          "brand": "Bays",
-          "price": 5,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956860",
-          "item": "Knorr Soup, Gravy or Sauce",
-          "brand": "Knorr",
-          "price": 3,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956743",
-          "item": "Sparkling Ice",
-          "brand": null,
-          "price": 11.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956838",
-          "item": "Always Discreet Underwear",
-          "brand": "Always",
-          "price": 13.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956863",
-          "item": "Kimono Mom's Umami Sauce",
-          "brand": "Kimono Mom's",
-          "price": 9.99,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1017956806",
-          "item": "Portland Pet Food Company Homestyle Dog Meal",
-          "brand": "Portland Pet Food Company",
-          "price": 5.49,
-          "validFrom": "2026-06-13T00:00:00-04:00",
-          "validTo": "2026-06-26T23:59:59-04:00"
-        },
         {
           "id": "Publix-1020951087",
           "item": "Chobani Greek Yogurt Or",
@@ -5232,6 +4944,294 @@
           "price": 3.99,
           "validFrom": "2026-06-25T00:00:00-04:00",
           "validTo": "2026-07-01T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528880",
+          "item": "Chosen Foods 100% Avocado Oil",
+          "brand": "Chosen Foods",
+          "price": 6.49,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529071",
+          "item": "Dove Shampoo or Conditioner",
+          "brand": "Dove",
+          "price": 9,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529079",
+          "item": "Dial Hand Soap",
+          "brand": "Dial",
+          "price": 3.5,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528858",
+          "item": "Utz Snacks Container",
+          "brand": "UTZ",
+          "price": 6.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528859",
+          "item": "Siete Cookies",
+          "brand": "Siete",
+          "price": 7,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528864",
+          "item": "Tylenol Extra Strength Liquid Gels",
+          "brand": "Tylenol",
+          "price": 9.89,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528891",
+          "item": "Goodles Vegan 5.25-oz, Gluten Free 6-oz or Deluxe 9-oz",
+          "brand": "Goodles",
+          "price": 3.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528892",
+          "item": "Suddenly Salad",
+          "brand": "Suddenly Salad",
+          "price": 4,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528918",
+          "item": "Arm & Hammer Advance White Clean Mint Toothpaste",
+          "brand": "Arm & Hammer",
+          "price": 6.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528899",
+          "item": "Applegate Organic Beef Hot Dogs 10-oz or Organic Chicken Strips or Nuggets 8-oz",
+          "brand": "Applegate",
+          "price": 6.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528922",
+          "item": "Arm & Hammer Baking Soda Pure",
+          "brand": "Arm & Hammer",
+          "price": 1.89,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528924",
+          "item": "Dial Bar Soap",
+          "brand": "Dial",
+          "price": 4.5,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528972",
+          "item": "Planet Oat Oatmilk 52-oz or Planet Oat Creamer 32-oz",
+          "brand": "Planet Oat",
+          "price": 7,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528973",
+          "item": "Lactaid Creamer 32-oz or Milk 64-oz",
+          "brand": "LACTAID®",
+          "price": 8,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528974",
+          "item": "Dirty Deli Style Potato Chips",
+          "brand": null,
+          "price": 8,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529096",
+          "item": "Dial Liquid Hand Soap Refill",
+          "brand": "Dial",
+          "price": 9.49,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529063",
+          "item": "Dove Men + Care Shampoo, Conditioner or 2 in 1",
+          "brand": "Dove Men+Care",
+          "price": 7.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529088",
+          "item": "Always Daily Protect Liners 48–60-ct. or Daily Fresh Liners 72-ct.",
+          "brand": "Always",
+          "price": 10,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528919",
+          "item": "OxiClean Versatile Stain Remover",
+          "brand": "OxiClean",
+          "price": 4.49,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529081",
+          "item": "Tree Hut Body Wash or Scrub",
+          "brand": "Tree Hut",
+          "price": 8.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528860",
+          "item": "Cheez-It Grab n'Go Bags",
+          "brand": "Cheez-It",
+          "price": 10,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528983",
+          "item": "Ginger Chews Plus+ Original",
+          "brand": null,
+          "price": 4.89,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528978",
+          "item": "Allegra 24-30-ct., Allegra Kids 8-oz, Xyzal 35-ct. or Nasacort. 57-oz",
+          "brand": "Allegra | Xyzal | Nasacort",
+          "price": 19.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528865",
+          "item": "Band-Aid Brand Flexible Fabric Red, White & Blue Bandages",
+          "brand": "Band-Aid",
+          "price": 6.49,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528900",
+          "item": "Monster Energy",
+          "brand": "Monster",
+          "price": 21.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528940",
+          "item": "Pure Leaf Tea",
+          "brand": "Pure Leaf",
+          "price": 6,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528862",
+          "item": "Green Giant Specialty Corn",
+          "brand": "Green Giant",
+          "price": 5,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528863",
+          "item": "Success Instant Rice",
+          "brand": "Success",
+          "price": 3.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528975",
+          "item": "Utz Party Size 12.5-13-oz or Boulder Canyon Tortilla Chips 8-oz",
+          "brand": "UTZ",
+          "price": 10,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528982",
+          "item": "Chick-fil-A Sauce",
+          "brand": "Chick-fil-A",
+          "price": 8,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528857",
+          "item": "Filippo Berio Balsamic Glaze",
+          "brand": "Filippo Berio",
+          "price": 3.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529078",
+          "item": "Dove Men + Care Deodorant & Antiperspirant Stick",
+          "brand": "Dove Men+Care",
+          "price": 7.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528941",
+          "item": "Quaker Express Cups",
+          "brand": "Quaker",
+          "price": 3,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528976",
+          "item": "So Delicious or Silk",
+          "brand": "So Delicious | Silk",
+          "price": 5,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020528980",
+          "item": "Louisiana Hot Sauce",
+          "brand": "Louisiana Hot Sauce",
+          "price": 3,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1020529073",
+          "item": "Dove Men + Care Body Wash",
+          "brand": "Dove",
+          "price": 7.99,
+          "validFrom": "2026-06-27T00:00:00-04:00",
+          "validTo": "2026-07-10T23:59:59-04:00"
         }
       ]
     },
