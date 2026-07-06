@@ -904,31 +904,32 @@ function HomePage({
       <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
       <section id="sections" className="section-block">
         <div className="section-grid">
-          {navSections.map((section) => (
-            <article
-              key={section.id}
-              className="section-tile"
-              style={{ '--tile-accent': section.accent } as CSSProperties}
-            >
-              <p>{section.title}</p>
-              <h3>{section.summary}</h3>
-              <div className="tile-links">
-                {section.id === 'finances' && !canViewFinances ? (
-                  <button
-                    type="button"
-                    className="tile-link-button"
-                    onClick={() => setFinanceAccessDeniedOpen(true)}
-                  >
-                    Open
-                  </button>
-                ) : (
-                  <Link to={section.path} className="tile-link-button">
-                    Open
-                  </Link>
-                )}
-              </div>
-            </article>
-          ))}
+          {navSections.map((section) =>
+            section.id === 'finances' && !canViewFinances ? (
+              <button
+                key={section.id}
+                type="button"
+                className="section-tile"
+                style={{ '--tile-accent': section.accent } as CSSProperties}
+                onClick={() => setFinanceAccessDeniedOpen(true)}
+              >
+                <span className="tile-title">{section.title}</span>
+                <span className="tile-summary">{section.summary}</span>
+                <span className="tile-open" aria-hidden="true">→</span>
+              </button>
+            ) : (
+              <Link
+                key={section.id}
+                to={section.path}
+                className="section-tile"
+                style={{ '--tile-accent': section.accent } as CSSProperties}
+              >
+                <span className="tile-title">{section.title}</span>
+                <span className="tile-summary">{section.summary}</span>
+                <span className="tile-open" aria-hidden="true">→</span>
+              </Link>
+            ),
+          )}
         </div>
       </section>
 

@@ -74,7 +74,6 @@
 .menu-back,
 .primary-action,
 .secondary-action,
-.tile-links a,
 .menu-section-link,
 .menu-child-link,
 .back-link {
@@ -101,7 +100,6 @@
   .menu-back:hover,
   .primary-action:hover,
   .secondary-action:hover,
-  .tile-links a:hover,
   .menu-section-link:hover,
   .menu-child-link:hover,
   .back-link:hover,
@@ -120,7 +118,6 @@
 .menu-back:active,
 .primary-action:active,
 .secondary-action:active,
-.tile-links a:active,
 .menu-section-link:active,
 .menu-child-link:active,
 .back-link:active,
@@ -138,7 +135,6 @@
 :root[data-theme='dark'] .menu-back:active,
 :root[data-theme='dark'] .primary-action:active,
 :root[data-theme='dark'] .secondary-action:active,
-:root[data-theme='dark'] .tile-links a:active,
 :root[data-theme='dark'] .menu-section-link:active,
 :root[data-theme='dark'] .menu-child-link:active,
 :root[data-theme='dark'] .back-link:active,
@@ -349,7 +345,6 @@
 .page-summary,
 .page-note,
 .hero-text,
-.section-tile h3,
 .info-card p {
   margin: 0.45rem 0 0;
   white-space: pre-line;
@@ -547,8 +542,8 @@
 
 .section-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
 }
 
 .section-grid--compact {
@@ -558,78 +553,66 @@
 .section-tile {
   display: flex;
   flex-direction: column;
-  min-height: 12.5rem;
-  padding: 0.9rem;
+  gap: 0.3rem;
+  min-height: 7rem;
+  padding: 0.8rem 0.85rem;
   border-top: 2px solid var(--tile-accent, #111827);
+  overflow: hidden;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+@media (hover: hover) {
+  .section-tile:hover {
+    background: var(--surface-muted);
+  }
+
+  .section-tile:hover .tile-open {
+    transform: translateX(3px);
+    color: var(--text-strong);
+  }
+}
+
+.section-tile:focus-visible {
+  outline: 2px solid var(--tile-accent, #111827);
+  outline-offset: 2px;
+}
+
+.tile-title {
+  color: var(--text-strong);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.tile-summary {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.section-tile p {
-  margin: 0;
-  color: var(--text-strong);
-  font-size: 1.32rem;
-  font-weight: 500;
-  line-height: 1.15;
+.tile-open {
+  margin-top: auto;
+  align-self: flex-end;
+  padding-top: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: transform 140ms ease, color 140ms ease;
 }
 
-.section-tile h3,
 .info-card h3 {
   margin: 0.5rem 0 0;
   color: var(--text-strong);
   font-size: 1.02rem;
   font-weight: 400;
-}
-
-.tile-links {
-  margin-top: auto;
-  margin-inline: -0.9rem;
-  margin-bottom: -0.9rem;
-}
-
-.tile-links a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 0.78rem 0.85rem;
-  text-align: center;
-  border: 0;
-  border-top: 1px solid var(--border);
-  border-radius: 0;
-  background: var(--surface-muted);
-  transition: background-color 140ms ease, color 140ms ease;
-}
-
-.tile-links a:hover {
-  background: var(--surface);
-  color: var(--text-strong);
-}
-
-.tile-links button,
-.tile-links button.tile-link-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 0.78rem 0.85rem;
-  text-align: center;
-  border: 0;
-  border-top: 1px solid var(--border);
-  border-radius: 0;
-  background: var(--surface-muted);
-  color: var(--text-strong);
-  font: inherit;
-  cursor: pointer;
-  transition: background-color 140ms ease, color 140ms ease;
-}
-
-.tile-links button:hover {
-  background: var(--surface);
-  color: var(--text-strong);
-}
-
-.tile-links button:active {
-  background: color-mix(in srgb, var(--surface) 92%, #000000 8%);
 }
 
 .split-block {
@@ -4510,7 +4493,7 @@
   }
 
   .section-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .page-grid {
@@ -4528,7 +4511,7 @@
   }
 
   .section-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .section-grid--compact {

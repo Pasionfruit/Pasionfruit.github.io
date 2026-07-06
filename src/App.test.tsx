@@ -655,18 +655,12 @@ describe('admin about me page', () => {
     expect(screen.getByText(/Abe groceries|Ciara coffee/)).toBeTruthy()
   })
 
-  it('shows an access denied popup when an unauthorized user clicks the home finances Open button', async () => {
+  it('shows an access denied popup when an unauthorized user clicks the home Finances tile', async () => {
     const user = userEvent.setup()
     renderHomePageWithEmail('someoneelse@gmail.com')
 
-    const financesTitle = (await screen.findAllByText('Finances')).find((element) => element.closest('article'))
-    const financesCard = financesTitle?.closest('article')
-
-    if (!financesCard) {
-      throw new Error('Finances card not found')
-    }
-
-    await user.click(within(financesCard).getByRole('button', { name: 'Open' }))
+    const financesTile = await screen.findByRole('button', { name: /Finances/ })
+    await user.click(financesTile)
 
     expect(await screen.findByRole('dialog', { name: 'Access denied' })).toBeTruthy()
     expect(screen.getByText("You don't have access to Finances.")).toBeTruthy()
