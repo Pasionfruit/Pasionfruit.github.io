@@ -1075,15 +1075,7 @@ function TodoistTasksCard({
 
   const todaysLessons = useMemo(() => {
     return studyRows
-      .filter((row) => {
-        if (toDateOnlyKey(row.date) !== todayKey) return false
-        const topic = row.topic.trim()
-        if (!topic) return false
-        if (topic.toLowerCase() === 'rest day') return false
-        if (/^take sample exam #\d+$/i.test(topic)) return false
-        if (/^attempt \d+ problems$/i.test(topic)) return false
-        return true
-      })
+      .filter((row) => toDateOnlyKey(row.date) === todayKey && row.topic.trim().length > 0)
       .sort((a, b) => a.topic.localeCompare(b.topic))
   }, [studyRows, todayKey])
 
@@ -9072,8 +9064,6 @@ function CurrentStudyPlanCard({
 }) {
   const [rows, setRows] = useState<CurrentStudyRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [expanded, setExpanded] = useState(false)
-  const [relatedExamFilter, setRelatedExamFilter] = useState('all')
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
 
@@ -9118,29 +9108,9 @@ function CurrentStudyPlanCard({
     }
   }
 
-  // Exclude topics: 'Rest Day' and 'Take Sample Exam #(any number)'
-  function isExcludedTopic(topic: string) {
-    if (!topic) return false
-    const trimmed = topic.trim()
-    if (trimmed.toLowerCase() === 'rest day') return true
-    if (/^take sample exam #\d+$/i.test(trimmed)) return true
-    if (/^attempt \d+ problems$/i.test(trimmed)) return true
-    return false
-  }
-
-  const filteredRowsAll = rows.filter((row) => !isExcludedTopic(row.topic))
-
   const todayKey = toDateOnlyKey(new Date().toISOString())
-  const todaysLessons = filteredRowsAll
-    .filter((row) => toDateOnlyKey(row.date) === todayKey)
-    .sort((a, b) => a.topic.localeCompare(b.topic))
-
-  const relatedExams = Array.from(
-    new Set(filteredRowsAll.map((row) => row.related_exam).filter((value) => value.trim().length > 0)),
-  ).sort((a, b) => a.localeCompare(b))
-
-  const filteredRows = filteredRowsAll
-    .filter((row) => relatedExamFilter === 'all' || row.related_exam === relatedExamFilter)
+  const todaysLessons = rows
+    .filter((row) => toDateOnlyKey(row.date) === todayKey && row.topic.trim().length > 0)
     .sort((a, b) => a.topic.localeCompare(b.topic))
 
   return (
@@ -9192,58 +9162,6 @@ function CurrentStudyPlanCard({
 
           {canWrite && !idToken ? (
             <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
-          ) : null}
-
-          <button
-            type="button"
-            className="section-collapse-btn"
-            aria-expanded={expanded}
-            onClick={() => setExpanded((current) => !current)}
-          >
-            {expanded ? 'Hide Study Table' : 'Show Study Table'}
-          </button>
-
-          {expanded ? (
-            <div className="study-table-panel">
-              <label className="study-filter-row">
-                <span className="sheets-meta">Filter by related exam</span>
-                <select
-                  className="sheets-input"
-                  value={relatedExamFilter}
-                  onChange={(event) => setRelatedExamFilter(event.target.value)}
-                >
-                  <option value="all">All exams</option>
-                  {relatedExams.map((exam) => (
-                    <option key={exam} value={exam}>
-                      {exam}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <div className="sheets-table-shell">
-                <table className="sheets-table">
-                  <thead>
-                    <tr>
-                      <th>Topic</th>
-                      <th>Problems Solved</th>
-                      <th>Problems Worked</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRows.map((row) => (
-                      <tr key={`study-${row.study_id}`}>
-                        <td>{row.topic}</td>
-                        <td>{row.problems_solved ?? 0}</td>
-                        <td>{row.problems_worked ?? 0}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {filteredRows.length === 0 ? <p className="sheets-meta">No rows for this exam filter.</p> : null}
-            </div>
           ) : null}
         </>
       ) : null}

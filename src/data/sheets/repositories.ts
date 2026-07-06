@@ -109,9 +109,6 @@ export async function getCurrentStudy(): Promise<CurrentStudyRecord[]> {
       related_exam: String(row.related_exam ?? ''),
       topic: String(row.topic ?? ''),
       date: row.date ? String(row.date) : undefined,
-      own_terms: row.own_terms ? String(row.own_terms) : undefined,
-      problems_solved: parseNumber(row.problems_solved),
-      problems_worked: parseNumber(row.problems_worked),
       completed: parseBoolean(row.completed),
     }))
     .filter((row) => row.study_id && row.topic)

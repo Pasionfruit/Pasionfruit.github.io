@@ -344,9 +344,6 @@ beforeEach(() => {
       related_exam: 'Exam FM',
       topic: 'Interest Theory',
       date: now.toISOString(),
-      own_terms: 'Rates and discounting',
-      problems_solved: 3,
-      problems_worked: 6,
       completed: false,
     },
     {
@@ -354,9 +351,6 @@ beforeEach(() => {
       related_exam: 'Exam P',
       topic: 'Bayes Rule',
       date: now.toISOString(),
-      own_terms: 'Conditional probability',
-      problems_solved: 4,
-      problems_worked: 5,
       completed: true,
     },
     {
@@ -364,9 +358,6 @@ beforeEach(() => {
       related_exam: 'Exam FM',
       topic: 'Annuities',
       date: studyTomorrow.toISOString(),
-      own_terms: 'Present value',
-      problems_solved: 8,
-      problems_worked: 10,
       completed: false,
     },
   ])
@@ -858,29 +849,6 @@ describe('admin about me page', () => {
     expect(
       within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
     ).toBeTruthy()
-  })
-
-  it('filters Current Study Plan rows by related exam', async () => {
-    const user = userEvent.setup()
-    renderAdminStudyingPage()
-
-    const heading = await screen.findByRole('heading', { name: 'Current Study Plan' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Current Study Plan card not found')
-    }
-
-    await user.click(within(card).getByRole('button', { name: 'Show Study Table' }))
-
-    const combo = within(card).getByRole('combobox')
-    await user.selectOptions(combo, 'Exam FM')
-
-    const tables = within(card).getAllByRole('table')
-    const studyTable = tables[1]
-
-    expect(within(studyTable).getByText('Interest Theory')).toBeTruthy()
-    expect(within(studyTable).getByText('Annuities')).toBeTruthy()
-    expect(within(studyTable).queryByText('Bayes Rule')).toBeNull()
   })
 
   it('allows admin to mark today lesson completed or not completed', async () => {

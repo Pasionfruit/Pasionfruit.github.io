@@ -29,9 +29,6 @@ export type CurrentStudyRecord = {
   related_exam: string
   topic: string
   date?: string
-  own_terms?: string
-  problems_solved?: number
-  problems_worked?: number
   completed: boolean
 }
 
