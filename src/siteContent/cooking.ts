@@ -106,7 +106,7 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
       },
       {
         title: 'Coupons',
-        body: 'Track coupons for grocery stores and fast food places.',
+        body: 'Grocery manufacturer coupons and fast food offers, pulled daily from Flipp and Slickdeals.',
       },
     ],
     note: '',

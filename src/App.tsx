@@ -104,7 +104,6 @@ import type {
   BackpackRecord,
   BucketListRecord,
   CountryRecord,
-  CouponRecord,
   CurrentStudyRecord,
   EventRecord,
   FinanceTransactionRecord,
@@ -9677,11 +9676,6 @@ function PointsConversionPage() {
 const GROCERY_STORES = ['Walmart', 'Target', 'Publix', 'Aldi'] as const
 type GroceryStore = (typeof GROCERY_STORES)[number]
 
-const FAST_FOOD_PLACES = [
-  "McDonald's", 'Burger King', 'Chick-fil-A', 'Chipotle', 'Taco Bell',
-  'Subway', "Wendy's", 'Panda Express', 'Popeyes', "Raising Cane's", 'Other',
-]
-
 type FlippDeal = {
   id: string
   item: string
@@ -10150,7 +10144,31 @@ function StoreDealsCard({
   )
 }
 
-const COUPON_STORAGE_KEY = 'gp_coupons_v1'
+type GroceryCoupon = {
+  id: string
+  brand: string | null
+  discount: string
+  description: string
+  category: string
+  validTo: string | null
+  redemption: string | null
+}
+
+type FastFoodCouponPost = {
+  id: string
+  place: string
+  title: string
+  url: string
+  postedAt: string | null
+}
+
+type CouponsData = {
+  lastUpdated: string | null
+  grocery: { source: string; error: string | null; coupons: GroceryCoupon[] }
+  fastfood: { source: string; error: string | null; coupons: FastFoodCouponPost[] }
+}
+
+const COUPONS_PER_PAGE = 5
 
 function CouponsCard({
   title,
@@ -10159,91 +10177,65 @@ function CouponsCard({
   title: string
   fallbackBody: string
 }) {
-  const [rows, setRows] = useState<CouponRecord[]>(() => {
-    try {
-      const s = localStorage.getItem(COUPON_STORAGE_KEY)
-      return s ? (JSON.parse(s) as CouponRecord[]) : []
-    } catch { return [] }
-  })
+  const [couponsData, setCouponsData] = useState<CouponsData | null>(null)
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
   const [activeTab, setActiveTab] = useState<'grocery' | 'fastfood'>('grocery')
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [draftPlace, setDraftPlace] = useState('')
-  const [draftType, setDraftType] = useState<'grocery' | 'fastfood'>('grocery')
-  const [draftDesc, setDraftDesc] = useState('')
-  const [draftDiscount, setDraftDiscount] = useState('')
-  const [draftCode, setDraftCode] = useState('')
-  const [draftExpiry, setDraftExpiry] = useState('')
-  const [draftSource, setDraftSource] = useState('')
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
-    try { localStorage.setItem(COUPON_STORAGE_KEY, JSON.stringify(rows)) } catch { /* quota */ }
-  }, [rows])
+    fetch('/coupons-data.json')
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() as Promise<CouponsData> })
+      .then((d) => { setCouponsData(d); setIsLoading(false) })
+      .catch((e: unknown) => {
+        setFetchError(e instanceof Error ? e.message : 'Failed to load coupons')
+        setIsLoading(false)
+      })
+  }, [])
 
-  const visibleCoupons = useMemo(
-    () => rows.filter((r) => r.active && r.type === activeTab),
-    [rows, activeTab],
-  )
+  const groceryCoupons = useMemo(() => couponsData?.grocery.coupons ?? [], [couponsData])
+  const fastfoodPosts = useMemo(() => couponsData?.fastfood.coupons ?? [], [couponsData])
 
-  const groupedByPlace = useMemo(() => {
-    const order: string[] = []
-    const map: Record<string, CouponRecord[]> = {}
-    for (const c of visibleCoupons) {
-      if (!map[c.place]) { order.push(c.place); map[c.place] = [] }
-      map[c.place].push(c)
-    }
-    return order.map((place) => ({ place, coupons: map[place] }))
-  }, [visibleCoupons])
+  const visibleGrocery = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return groceryCoupons
+    return groceryCoupons.filter(
+      (c) =>
+        c.description.toLowerCase().includes(q) ||
+        (c.brand ?? '').toLowerCase().includes(q) ||
+        c.category.toLowerCase().includes(q) ||
+        c.discount.toLowerCase().includes(q),
+    )
+  }, [groceryCoupons, search])
 
-  function resetDraft() {
-    setDraftPlace(''); setDraftType('grocery'); setDraftDesc('')
-    setDraftDiscount(''); setDraftCode(''); setDraftExpiry(''); setDraftSource('')
+  const visibleFastfood = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return fastfoodPosts
+    return fastfoodPosts.filter(
+      (c) => c.title.toLowerCase().includes(q) || c.place.toLowerCase().includes(q),
+    )
+  }, [fastfoodPosts, search])
+
+  const visibleCount = activeTab === 'grocery' ? visibleGrocery.length : visibleFastfood.length
+  const totalPages = Math.max(1, Math.ceil(visibleCount / COUPONS_PER_PAGE))
+  const currentPage = Math.min(page, totalPages)
+  const sliceStart = (currentPage - 1) * COUPONS_PER_PAGE
+
+  const activeError = activeTab === 'grocery' ? couponsData?.grocery.error : couponsData?.fastfood.error
+
+  function formatCouponDate(iso: string | null) {
+    if (!iso) return null
+    const d = new Date(iso)
+    return isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
-
-  function handleAdd() {
-    const place = draftPlace.trim()
-    const desc = draftDesc.trim()
-    const discount = draftDiscount.trim()
-    if (!place || !desc || !discount) {
-      setError('Place, description, and discount are required.')
-      return
-    }
-    setError('')
-    const newEntry: CouponRecord = {
-      coupon_id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
-      place, type: draftType, description: desc, discount,
-      code: draftCode || undefined,
-      expiry_date: draftExpiry || undefined,
-      source: draftSource || undefined,
-      active: true,
-    }
-    setRows((prev) => [...prev, newEntry])
-    resetDraft()
-    setShowAddForm(false)
-  }
-
-  function handleDelete(couponId: string) {
-    setRows((prev) => prev.filter((r) => r.coupon_id !== couponId))
-  }
-
-  const placeOptions = draftType === 'grocery'
-    ? [...GROCERY_STORES, 'Other']
-    : FAST_FOOD_PLACES
 
   return (
     <article className="info-card section-page-card sheets-card">
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
-          <button
-            type="button"
-            className={`section-edit-btn ${isEditing ? 'active' : ''}`}
-            aria-pressed={isEditing}
-            onClick={() => { setIsEditing((v) => !v); if (!isEditing) setIsCollapsed(false) }}
-            title="Edit coupons"
-          >✎</button>
           <button
             type="button"
             className="section-collapse-btn"
@@ -10255,95 +10247,109 @@ function CouponsCard({
 
       {!isCollapsed ? (
         <>
-          {rows.filter((r) => r.active).length === 0 && !isEditing ? (
-            <p className="sheets-meta">{fallbackBody}</p>
-          ) : null}
+          {isLoading ? <p className="sheets-meta">Loading coupons…</p> : null}
+          {fetchError ? <p className="sheets-error">{fetchError}</p> : null}
 
-          <div className="deals-store-tabs">
-            <button
-              type="button"
-              className={`deals-store-tab-btn ${activeTab === 'grocery' ? 'active' : ''}`}
-              onClick={() => setActiveTab('grocery')}
-            >Grocery Stores</button>
-            <button
-              type="button"
-              className={`deals-store-tab-btn ${activeTab === 'fastfood' ? 'active' : ''}`}
-              onClick={() => setActiveTab('fastfood')}
-            >Fast Food</button>
-          </div>
+          {!isLoading && !fetchError && couponsData ? (
+            <>
+              <div className="deals-flipp-meta">
+                {couponsData.lastUpdated ? (
+                  <span className="deals-last-updated">
+                    Updated {new Date(couponsData.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                  </span>
+                ) : null}
+                <span className="deals-count">{groceryCoupons.length + fastfoodPosts.length} coupons</span>
+              </div>
 
-          {groupedByPlace.length === 0 && !isEditing ? (
-            <p className="sheets-meta">No {activeTab === 'grocery' ? 'grocery store' : 'fast food'} coupons yet.</p>
-          ) : null}
+              <div className="deals-store-tabs">
+                <button
+                  type="button"
+                  className={`deals-store-tab-btn ${activeTab === 'grocery' ? 'active' : ''}`}
+                  onClick={() => { setActiveTab('grocery'); setSearch(''); setPage(1) }}
+                >
+                  Grocery Stores
+                  {groceryCoupons.length ? <span className="tab-count">{groceryCoupons.length}</span> : null}
+                </button>
+                <button
+                  type="button"
+                  className={`deals-store-tab-btn ${activeTab === 'fastfood' ? 'active' : ''}`}
+                  onClick={() => { setActiveTab('fastfood'); setSearch(''); setPage(1) }}
+                >
+                  Fast Food
+                  {fastfoodPosts.length ? <span className="tab-count">{fastfoodPosts.length}</span> : null}
+                </button>
+              </div>
 
-          {groupedByPlace.length > 0 ? (
-            <div className="coupon-groups">
-              {groupedByPlace.map(({ place, coupons }) => (
-                <div key={place} className="coupon-place-section">
-                  <h4 className="coupon-place-heading">{place}</h4>
+              <p className="sheets-meta">
+                {activeTab === 'grocery'
+                  ? 'Manufacturer coupons via Flipp — redeem through store loyalty cards or print.'
+                  : 'Recent fast food offers from Slickdeals — links open the deal post.'}
+                {activeError ? ` · ${activeError}` : ''}
+              </p>
+
+              <div className="deals-filters">
+                <input
+                  className="sheets-input deals-search"
+                  placeholder="Search coupons…"
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                />
+              </div>
+
+              {visibleCount === 0 ? (
+                <p className="sheets-meta">{fallbackBody}</p>
+              ) : (
+                <>
                   <div className="coupon-list">
-                    {coupons.map((c) => (
-                      <div key={c.coupon_id} className="coupon-card">
-                        <div className="coupon-card-top">
-                          <span className="coupon-discount-badge">{c.discount}</span>
-                          <span className="coupon-desc">{c.description}</span>
-                          {isEditing ? (
-                            <button
-                              type="button"
-                              className="deals-delete-btn"
-                              onClick={() => handleDelete(c.coupon_id)}
-                            >×</button>
-                          ) : null}
-                        </div>
-                        <div className="coupon-card-meta">
-                          {c.code ? <span className="coupon-code">Code: <strong>{c.code}</strong></span> : null}
-                          {c.expiry_date ? <span className="coupon-expiry">Exp: {c.expiry_date}</span> : null}
-                          {c.source ? <span className="coupon-source">{c.source}</span> : null}
-                        </div>
-                      </div>
-                    ))}
+                    {activeTab === 'grocery'
+                      ? visibleGrocery.slice(sliceStart, sliceStart + COUPONS_PER_PAGE).map((c) => (
+                          <div key={c.id} className="coupon-card">
+                            <div className="coupon-card-top">
+                              <span className="coupon-discount-badge">{c.discount}</span>
+                              <span className="coupon-desc">{c.description}</span>
+                            </div>
+                            <div className="coupon-card-meta">
+                              {c.brand ? <span>{c.brand}</span> : null}
+                              <span>{c.category}</span>
+                              {c.validTo ? <span className="coupon-expiry">thru {formatCouponDate(c.validTo)}</span> : null}
+                            </div>
+                          </div>
+                        ))
+                      : visibleFastfood.slice(sliceStart, sliceStart + COUPONS_PER_PAGE).map((c) => (
+                          <div key={c.id} className="coupon-card">
+                            <div className="coupon-card-top">
+                              <span className="coupon-discount-badge">{c.place}</span>
+                              <a className="coupon-desc" href={c.url} target="_blank" rel="noreferrer">{c.title}</a>
+                            </div>
+                            <div className="coupon-card-meta">
+                              {c.postedAt ? <span className="coupon-expiry">posted {formatCouponDate(c.postedAt)}</span> : null}
+                              <span className="coupon-source">Slickdeals</span>
+                            </div>
+                          </div>
+                        ))}
                   </div>
-                </div>
-              ))}
-            </div>
+
+                  {totalPages > 1 ? (
+                    <div className="deals-pagination">
+                      <button
+                        type="button"
+                        className="deals-page-btn"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >‹ Prev</button>
+                      <span className="deals-page-status">Page {currentPage} of {totalPages}</span>
+                      <button
+                        type="button"
+                        className="deals-page-btn"
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >Next ›</button>
+                    </div>
+                  ) : null}
+                </>
+              )}
+            </>
           ) : null}
-
-          {isEditing ? (
-            <div className="deals-add-section">
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => setShowAddForm((v) => !v)}
-              >{showAddForm ? 'Cancel' : '+ Add Coupon'}</button>
-
-              {showAddForm ? (
-                <div className="deals-add-form">
-                  <div className="deals-form-row">
-                    <select className="sheets-input" value={draftType} onChange={(e) => { setDraftType(e.target.value as 'grocery' | 'fastfood'); setDraftPlace('') }}>
-                      <option value="grocery">Grocery Store</option>
-                      <option value="fastfood">Fast Food</option>
-                    </select>
-                    <select className="sheets-input" value={draftPlace} onChange={(e) => setDraftPlace(e.target.value)}>
-                      <option value="">Select place *</option>
-                      {placeOptions.map((p) => <option key={p}>{p}</option>)}
-                    </select>
-                    <input className="sheets-input" placeholder="Discount (e.g. $5 off, BOGO) *" value={draftDiscount} onChange={(e) => setDraftDiscount(e.target.value)} />
-                  </div>
-                  <div className="deals-form-row">
-                    <input className="sheets-input" placeholder="Description *" value={draftDesc} onChange={(e) => setDraftDesc(e.target.value)} />
-                    <input className="sheets-input" placeholder="Promo code (optional)" value={draftCode} onChange={(e) => setDraftCode(e.target.value)} />
-                  </div>
-                  <div className="deals-form-row">
-                    <input className="sheets-input" placeholder="Expiry date" value={draftExpiry} onChange={(e) => setDraftExpiry(e.target.value)} />
-                    <input className="sheets-input" placeholder="Source (App, Email, Website...)" value={draftSource} onChange={(e) => setDraftSource(e.target.value)} />
-                    <button type="button" className="primary-action" onClick={handleAdd}>Save</button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          {error ? <p className="sheets-error">{error}</p> : null}
         </>
       ) : null}
     </article>

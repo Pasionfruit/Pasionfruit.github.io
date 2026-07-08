@@ -30,11 +30,16 @@ jobs:
           # Change to any US zip inside Publix territory if you prefer a different region.
           FLIPP_ZIP: '33136'
 
+      - name: Fetch coupons from Flipp and Slickdeals
+        run: node scripts/fetch-coupons.mjs
+        env:
+          FLIPP_ZIP: '33136'
+
       - name: Commit updated deals data
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/deals-data.json
+          git add public/deals-data.json public/coupons-data.json
           # Only commit if the file actually changed; skip ci prevents deploy loops
           git diff --cached --quiet || git commit -m "chore: update deals data"
           git push
