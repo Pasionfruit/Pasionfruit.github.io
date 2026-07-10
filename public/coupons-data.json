@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-09T10:13:19.352Z",
+  "lastUpdated": "2026-07-10T10:11:25.773Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -1049,15 +1049,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4568493",
-        "brand": "Fancy Feast",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any TWO (2) 4 oz packages of Fancy Feast® Gems® Wet Cat Food",
-        "category": "Pets",
-        "validTo": "2026-07-28T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4591783",
         "brand": "Fancy Feast",
         "discount": "Save $1.50",
@@ -1217,15 +1208,6 @@
         "description": "Save $2.00 on any ONE (1) Frito-Lay Party Size (8.12-17 oz)",
         "category": "Grocery",
         "validTo": "2026-07-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-79292",
-        "brand": "Gain",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
-        "category": "Other",
-        "validTo": "2026-07-09T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1634,15 +1616,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608309",
-        "brand": "L'Oréal",
-        "discount": "$3.00 OFF",
-        "description": "$3.00 OFF ANY ONE (1) L’Oréal Paris® Cosmetics Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-12T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4624938",
         "brand": "La Colombe",
         "discount": "Save $1.00",
@@ -1658,6 +1631,15 @@
         "description": "Save $1.00 on any ONE (1) LANCE® Crackers 10 ct",
         "category": "Grocery",
         "validTo": "2026-07-28T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4645982",
+        "brand": "Liquid Death",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any TWO (2) Liquid Death 12oz 6pks",
+        "category": "Grocery",
+        "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1730,15 +1712,6 @@
         "description": "ONE Mr. Clean Magic Eraser 3ct or Larger (excludes Trial/Travel Size).",
         "category": "Household",
         "validTo": "2026-07-11T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4584263",
-        "brand": "MYLANTA",
-        "discount": "SAVE $1.00",
-        "description": "SAVE $1.00 on ONE (1) MYLANTA Antacid + Anti Gas item including NEW Better Tasting Liquid Formula",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-10T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2030,6 +2003,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4646427",
+        "brand": "Oral-B",
+        "discount": "Save $10.00",
+        "description": "Save $10.00 ONE Oral-B iO Rechargeable Electric Toothbrush AND ONE Oral-B iO or non-iO Replacement Brush Heads (excludes travel/trial size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-19T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4633792",
         "brand": "Oral-B",
         "discount": "Save $2.00",
@@ -2090,15 +2072,6 @@
         "description": "Save $5.00 THREE Pantene Products including Pantene Pro-V, Gold Series, and Stylers (excludes trial/travel size, Nutrient Blends, Miracle Rescue, Pro-V Miracles, and Abundant & Strong).",
         "category": "Health & Beauty",
         "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4490601",
-        "brand": "Pepcid",
-        "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 on any ONE (1) Pepcid Maximum Strength, 75ct.",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-10T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2480,21 +2453,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4607759",
+        "brand": "Sparkle",
+        "discount": "Save $0.50",
+        "description": "Save $0.50 on any ONE (1) package of any Sparkle® Paper Towels",
+        "category": "Other",
+        "validTo": "2026-08-09T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4605638",
         "brand": "STEM™",
         "discount": "Save $5.00",
         "description": "Save $5.00 on any ONE (1) STEM™ Devices",
         "category": "Household",
         "validTo": "2026-07-22T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-75899",
-        "brand": "Suave",
-        "discount": "save $0.75",
-        "description": "on any ONE (1) Suave® Body Wash product (excludes trial and travel sizes)",
-        "category": "Other",
-        "validTo": "2026-07-09T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2576,15 +2549,6 @@
         "description": "Save $2.00 ONE Tide EVO Laundry Detergent 16 ct (excludes trial and travel size).",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4616083",
-        "brand": "Tidy Cats",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) 8.5 lb or larger package of TIDY CATS® LightWeight Clumping Cat Litter",
-        "category": "Pets",
-        "validTo": "2026-08-11T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2801,6 +2765,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19741536",
+        "place": "Dunkin'",
+        "title": "DUNKIN REWARDS: Order an Espresso Drink through the app, earn 200 Rewards Points (stacked offers, activation needed) ends 7/10",
+        "url": "https://slickdeals.net/f/19741536-dunkin-rewards-order-an-espresso-drink-through-the-app-earn-200-rewards-points-stacked-offers-activation-needed-ends-7-10?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-09T17:41:22.000Z"
+      },
+      {
         "id": "sd-19735383",
         "place": "Chipotle",
         "title": "Chipotle - $50 Gift Card [Digital], $45, Best Buy",
@@ -3011,13 +2982,6 @@
         "postedAt": "2026-06-22T07:40:16.000Z"
       },
       {
-        "id": "sd-19655916",
-        "place": "Dunkin'",
-        "title": "$2.78: Dunkin' Refreshers Strawberry Dragonfruit Lemonade Singles to Go Powdered Drink Mix, 10 Count Packets",
-        "url": "https://slickdeals.net/f/19655916-2-78-dunkin-refreshers-strawberry-dragonfruit-lemonade-singles-to-go-powdered-drink-mix-10-count-packets?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-22T05:19:04.000Z"
-      },
-      {
         "id": "sd-19654536",
         "place": "Subway",
         "title": "Satori Hudson Brilliant White 3\" x 6\" Glossy Ceramic Subway Wall Tile $0.04 & More + Free Store Pickup at Lowe's",
@@ -3118,8 +3082,8 @@
       {
         "id": "sd-19610796",
         "place": "Chick-fil-A",
-        "title": "Select SoCal Chick-fil-A Residents Rewards Offer: Chick-fil-A Fudge Brownie Free to Claim & More (Valid Select Dates in June/July)",
-        "url": "https://slickdeals.net/f/19610796-select-socal-chick-fil-a-residents-rewards-offer-chick-fil-a-fudge-brownie-free-to-claim-more-valid-select-dates-in-june-july?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Select SoCal Chick-fil-A Residents Rewards Offer: 2-Pc Chick-fil-A Chick-n-Strip Free to Claim & More (Valid Select Dates in June/July)",
+        "url": "https://slickdeals.net/f/19610796-select-socal-chick-fil-a-residents-rewards-offer-2-pc-chick-fil-a-chick-n-strip-free-to-claim-more-valid-select-dates-in-june-july?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-09T19:01:52.000Z"
       },
       {
