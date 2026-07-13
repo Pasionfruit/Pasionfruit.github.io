@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-12T09:38:10.386Z",
+  "lastUpdated": "2026-07-13T10:12:31.458Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -20,15 +20,6 @@
         "description": "$5.00 OFF on ANY TWO (2) ALMAY Products",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4619916",
-        "brand": "Almond Breeze",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Almond Breeze Almondmilk 64 or 96oz",
-        "category": "Grocery",
-        "validTo": "2026-08-06T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -257,15 +248,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4597147",
-        "brand": "bubly",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any TWO (2) BUBLY 8 pks",
-        "category": "Grocery",
-        "validTo": "2026-07-14T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4633748",
         "brand": "Cascade",
         "discount": "Save $2.00",
@@ -380,6 +362,15 @@
         "description": "Save $2.00 on any ONE (1) CLEAN & CLEAR® product (excludes single use masks & travel/trial sizes products)",
         "category": "Health & Beauty",
         "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4656966",
+        "brand": "Clinere",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Clinere Earwax Remover 10ct Stick or Clinere Earwax Remover Kit",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-24T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -815,15 +806,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4562868",
-        "brand": "Dove Men+Care",
-        "discount": "Save $8.00",
-        "description": "Save $8.00 on any TWO (2) FIFA World Cup Edition Dove Men+Care Hair items (excluding any Dove Men+Care items not listed, as well as trial and travel sizes).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608322",
         "brand": "Downy",
         "discount": "Save $1.00",
@@ -968,6 +950,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4656965",
+        "brand": "Feel Good Foods",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Feel Good Foods Mozzarella Sticks, Crispy Jalapeño Bites or Crispy Chicken Bites",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4608227",
         "brand": "Finish®",
         "discount": "Buy One, Get One",
@@ -1058,15 +1049,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4596821",
-        "brand": "Freschetta",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) Pepsi 10-pk. 7.5-oz Mini Cans and ONE (1) Freschetta Pizza",
-        "category": "Grocery",
-        "validTo": "2026-07-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4594896",
         "brand": "Fresh Press Farms",
         "discount": "Save $1.50",
@@ -1126,7 +1108,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
         "category": "Other",
-        "validTo": "2026-07-12T20:00:00.000-04:00",
+        "validTo": "2026-07-13T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1577,15 +1559,6 @@
         "description": "Save $3.00 on any ONE (1) Lil' Critters Supplement",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4624938",
-        "brand": "La Colombe",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) La Colombe Draft Latte, single serve 11oz Can",
-        "category": "Grocery",
-        "validTo": "2026-07-30T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2075,15 +2048,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4597148",
-        "brand": "Pepsi",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Pepsi Zero Sugar 12 pk, Mountain Dew Zero Sugar 12pk, or Starry Zero Sugar 12-pk",
-        "category": "Grocery",
-        "validTo": "2026-07-14T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4633788",
         "brand": "Pepto-Bismol",
         "discount": "Save $0.50",
@@ -2099,15 +2063,6 @@
         "description": "Save $2.50 on any ONE (1) pack of Poise® Pads (12 Ct+) or Liners (44 Ct+) OR any Depend® Product (8 Ct or larger). (Not valid on One™ by Poise®, Poise® Liners 8-30 Ct, or Depend® Postpartum)",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4597074",
-        "brand": "poppi",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) poppi variety 8-pk.",
-        "category": "Grocery",
-        "validTo": "2026-07-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2207,15 +2162,6 @@
         "description": "Save $3.00 off TWO (2) packages of Pull-Ups® Training Pants, Night*Time™, or Pull-Ups® Skin Essentials® (13 ct. or higher. Not valid on Trial Packs)",
         "category": "Baby",
         "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4594852",
-        "brand": "Quaker",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any TWO (2) Quaker Rice Crisps",
-        "category": "Grocery",
-        "validTo": "2026-07-16T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2855,6 +2801,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19753512",
+        "place": "Domino's",
+        "title": "$41: Domino's $50 Gift Card (Email Delivery) at Newegg, Limit 3 per customer.",
+        "url": "https://slickdeals.net/f/19753512-41-domino-s-50-gift-card-email-delivery-at-newegg-limit-3-per-customer?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-13T07:04:34.000Z"
+      },
+      {
         "id": "sd-19748748",
         "place": "Pizza Hut",
         "title": "Pizza Hut- $10 large any 3 topping pizza  (rewards members)",
@@ -3128,13 +3081,6 @@
         "postedAt": "2026-06-15T20:35:46.000Z"
       },
       {
-        "id": "sd-19632297",
-        "place": "Domino's",
-        "title": "Domino’s Best Deal Ever 6/15-7/26 Any Pizza Any Toppings (Limit 7) NOW INCLUDING Parmesan Crust Online Only $9.99",
-        "url": "https://slickdeals.net/f/19632297-domino-s-best-deal-ever-6-15-7-26-any-pizza-any-toppings-limit-7-now-including-parmesan-crust-online-only-9-99?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-15T16:21:47.000Z"
-      },
-      {
         "id": "sd-19630932",
         "place": "Subway",
         "title": "$7.50 bonus on $50 One4All Gift Card, redeem for Lowe's, Lyft, Subway, + more + 4x fuel points, Kroger Gift Card Portal",
@@ -3252,13 +3198,6 @@
         "title": "Pizza Hut 50% off",
         "url": "https://slickdeals.net/f/19580415-pizza-hut-50-off?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-05-31T21:08:30.000Z"
-      },
-      {
-        "id": "sd-19571391",
-        "place": "Chick-fil-A",
-        "title": "Free Chick-fil-A Entrée- Dress Like A Cow - July 14",
-        "url": "https://slickdeals.net/f/19571391-free-chick-fil-a-entr-e-dress-like-a-cow-july-14?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-05-28T20:48:31.000Z"
       }
     ]
   }
