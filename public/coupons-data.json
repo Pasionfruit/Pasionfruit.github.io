@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-13T10:12:31.458Z",
+  "lastUpdated": "2026-07-14T09:40:41.381Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -284,21 +284,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4608233",
+        "brand": "Charmin",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 ONE Charmin Ultra Toilet paper product 9 MEGA Roll, 12 MEGA Roll, 6 MEGA XL Roll, 8 MEGA XL Roll, 9 MEGA XL Roll, 12 MEGA XL Roll, 6 MEGA XXL Roll, 9 MEGA XXL Roll (excludes Charmin Essentials, all other Charmin Ultra pack sizes,",
+        "category": "Household",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4608256",
         "brand": "Charmin",
         "discount": "Save $1.00",
         "description": "Save $1.00 ONE Charmin Ultra Toilet paper product 4 roll count or larger (excluding 9 MEGA Roll, 12 MEGA, 6 MEGA XL Roll, 8 MEGA XL Roll, 9 MEGA XL Roll, 12 MEGA XL,16 MEGA XL Roll,18 MEGA XL, 24 MEGA XL Roll, 6 MEGA XXL Roll, 9MEGA XXL Roll",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634861",
-        "brand": "Chobani",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any TWO (2) Chobani® Creamer or La Colombe Multi-Serve Cold Brew",
-        "category": "Grocery",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -361,6 +361,15 @@
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) CLEAN & CLEAR® product (excludes single use masks & travel/trial sizes products)",
         "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4652644",
+        "brand": "Clearly Canadian",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 on TWO (2) CLEARLY CANADIAN Products",
+        "category": "Grocery",
         "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -842,15 +851,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608233",
-        "brand": "Downy | Tide",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 ONE Charmin Ultra Toilet paper product 9 MEGA Roll, 12 MEGA Roll, 6 MEGA XL Roll, 8 MEGA XL Roll, 9 MEGA XL Roll, 12 MEGA XL Roll, 6 MEGA XXL Roll, 9 MEGA XXL Roll (excludes Charmin Essentials, all other Charmin Ultra pack sizes,",
-        "category": "Household",
-        "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4616981",
         "brand": "Dulcolax®",
         "discount": "$8.00 OFF",
@@ -866,6 +866,15 @@
         "description": "Save $7.00 on any ONE (1) DUREX® Product, 24ct or larger",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4542351",
+        "brand": "El Monterey",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) El Monterey Mas Bold Taquitos",
+        "category": "Grocery",
+        "validTo": "2026-08-11T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -947,15 +956,6 @@
         "description": "Save $3.50 TWO Febreze Products (excludes Febreze Plug Scent Booster, Febreze Plug Scent Booster Starter Kit, trial/travel size).",
         "category": "Household",
         "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4656965",
-        "brand": "Feel Good Foods",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Feel Good Foods Mozzarella Sticks, Crispy Jalapeño Bites or Crispy Chicken Bites",
-        "category": "Grocery",
-        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1108,7 +1108,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
         "category": "Other",
-        "validTo": "2026-07-13T20:00:00.000-04:00",
+        "validTo": "2026-07-14T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1904,6 +1904,51 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654471",
+        "brand": "Old Spice",
+        "discount": "Save $7.00",
+        "description": "TWO Old Spice Alchemist Deodorant, Alchemist Body Wash, OR Alchemist Cologne Mist (excludes travel/trial size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654474",
+        "brand": "Old Spice",
+        "discount": "Save $3.00",
+        "description": "ONE Old Spice Whole Body Deodorant Sprays, Sticks, or Creams (excludes trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654482",
+        "brand": "Old Spice",
+        "discount": "Save $2.00",
+        "description": "ONE Old Spice Body Wash Pump 25oz or Larger (excludes Super Hydration and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654486",
+        "brand": "Old Spice",
+        "discount": "Save $5.00",
+        "description": "THREE Old Spice Antiperspirant/Deodorant or Body Wash (excludes Items under 2oz, Gift-packs, High Endurance or Base Antiperspirant/Deodorant, Whole Body Deodorant, Sprays, Super Hydration, Alchemist, Bar Soap, Pump Body Wash 25oz or larger and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654489",
+        "brand": "Old Spice",
+        "discount": "Save $2.00",
+        "description": "ONE Old Spice Dry Spray or Body Spray (excludes Total Body and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4608236",
         "brand": "Old Spice",
         "discount": "Save $7.00",
@@ -2333,6 +2378,15 @@
         "description": "TWO Secret Clinical Antiperspirant/Deodorants (excludes trial/travel sizes).",
         "category": "Health & Beauty",
         "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4656967",
+        "brand": "Secret",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any TWO (2) Secret, Old Spice or Gillette Deodorants 1.6-7.6 oz, Olay or Old Spice Body Wash or Lotion 17-35 oz AND/OR Olay Bar Soap 6 ct (excludes 24HR PH Balance & High Endurance/Classic)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
