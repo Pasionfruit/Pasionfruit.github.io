@@ -1,9 +1,27 @@
 {
-  "lastUpdated": "2026-07-14T09:40:41.381Z",
+  "lastUpdated": "2026-07-15T09:42:39.551Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
     "coupons": [
+      {
+        "id": "flipp-4649919",
+        "brand": null,
+        "discount": "Coupon",
+        "description": "$10 off the purchase of one (1) $50 Gas Card with a grocery purchase of $100 or more",
+        "category": "Other",
+        "validTo": "2026-07-22T23:59:59.000-04:00",
+        "redemption": "print"
+      },
+      {
+        "id": "flipp-4651621",
+        "brand": null,
+        "discount": "Coupon",
+        "description": "$10 off the purchase of one (1) $50 Gas Card with a grocery purchase of $100 or more.",
+        "category": "Grocery",
+        "validTo": "2026-07-19T23:59:59.000-04:00",
+        "redemption": "print"
+      },
       {
         "id": "flipp-4608270",
         "brand": "Against the Grain",
@@ -11,6 +29,15 @@
         "description": "Save $2.00 ONE Gain Sheets 240 ct (excludes Gain Rinse, Gain Flings, Gain Liquid/Powder Laundry Detergent and trial/travel size).",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661302",
+        "brand": "Align",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Align Probiotic Supplement Product (excludes trial/travel size)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -176,6 +203,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4659467",
+        "brand": "Banquet",
+        "discount": "Save $1.25",
+        "description": "Save $1.25 on any ONE (1) Banquet® MEGA Bowls® 13.5-14 oz",
+        "category": "Grocery",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4592629",
         "brand": "Blue Buffalo",
         "discount": "Save $3.00",
@@ -257,21 +293,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4659860",
+        "brand": "CENTRUM",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 on any ONE (1) Centrum Multigummies (60CT or higher)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4592626",
         "brand": "Cetaphil®",
         "discount": "Save $2.00",
         "description": "Save $2.00 on ONE (1) Cetaphil® product (excludes 4 oz. or less–Daily Facial Cleanser, Gentle Skin Cleanser, Moisturizing Lotion or Moisturizing Cream; Single Bars; 10 ct. Gentle Skin Cleansing Cloths; Cetaphil Kits)",
         "category": "Health & Beauty",
         "validTo": "2026-07-22T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633763",
-        "brand": "Charmin",
-        "discount": "Save $1.00",
-        "description": "ONE Charmin Essentials Soft or Charmin Essentials Strong Toilet Paper Product 6 Roll Count or Larger (excludes trial/travel size).",
-        "category": "Household",
-        "validTo": "2026-07-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -374,15 +410,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4656966",
-        "brand": "Clinere",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Clinere Earwax Remover 10ct Stick or Clinere Earwax Remover Kit",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-24T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4619920",
         "brand": "Colgate",
         "discount": "Save $3.00",
@@ -401,13 +428,13 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4619921",
+        "id": "flipp-4644627",
         "brand": "Colgate",
-        "discount": "Save $4.00",
-        "description": "SAVE $4.00 on any TWO (2) Colgate Optic White Advanced, Purple, Charcoal, Sensitivity Relief, Total Gum Protect, Plaque Cleanse, Sensitivity Mineral Shield, Tom's of Maine or hello Adult Toothpastes",
+        "discount": "$5 off",
+        "description": "Colgate Optic White Pro Series",
         "category": "Health & Beauty",
-        "validTo": "2026-07-15T19:59:59.000-04:00",
-        "redemption": "savetocard"
+        "validTo": "2026-07-28T23:59:59.000-04:00",
+        "redemption": "print"
       },
       {
         "id": "flipp-4645980",
@@ -860,6 +887,42 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4659461",
+        "brand": "Duracell",
+        "discount": "Save $4.50",
+        "description": "Save $4.50 on any ONE (1) Duracell Coppertop AA/AAA 24-pk",
+        "category": "Other",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4659462",
+        "brand": "Duracell",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Duracell Coppertop AA/AAA 16-pk",
+        "category": "Other",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4659463",
+        "brand": "Duracell",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Duracell Coppertop AA/AAA 4-pk",
+        "category": "Other",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4659464",
+        "brand": "Duracell",
+        "discount": "Save $3.50",
+        "description": "Save $3.50 on any ONE (1) Duracell Coppertop AA/AAA 8-pk",
+        "category": "Other",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4584246",
         "brand": "DUREX®",
         "discount": "Save $7.00",
@@ -911,15 +974,6 @@
         "description": "Save $1.50 on any ONE (1) Excedrin 20ct or larger",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4543361",
-        "brand": "Fancy Feast",
-        "discount": "SAVE $1.00",
-        "description": "SAVE $1.00 on TWO (2) 4 oz packages of Fancy Feast® Gems® Wet Cat Food",
-        "category": "Pets",
-        "validTo": "2026-07-29T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1103,15 +1157,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-79292",
-        "brand": "Gain",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
-        "category": "Other",
-        "validTo": "2026-07-14T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608276",
         "brand": "Gain",
         "discount": "Save $3.00",
@@ -1163,6 +1208,15 @@
         "description": "Save $3.00 ONE Gain Flings Laundry Detergent 60 ct (excludes Gain Liquid/Powder Laundry Detergent, Gain Liquid Fabric Softeners, Gain Fireworks, Gain Sheets, Gain Flings 9 ct and below and travel size).",
         "category": "Household",
         "validTo": "2026-07-19T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661267",
+        "brand": "Garden of Life",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Garden of Life Product",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-06T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1373,6 +1427,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4661260",
+        "brand": "Greenfield Natural Meat Co.",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Greenfield Protein Kit",
+        "category": "Other",
+        "validTo": "2026-08-11T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4637707",
         "brand": "GreenWise",
         "discount": "Save $1.00",
@@ -1415,6 +1478,15 @@
         "description": "Save $5.00 ONE Head & Shoulders Bare Treatment (excludes Classic Collections, Clinical, Supreme, Bare Shampoos, Bare 2 in 1 Shampoo and Conditioner, and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-19T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661297",
+        "brand": "Herbal Essences",
+        "discount": "Save $7.00",
+        "description": "Save $7.00 on any TWO (2) Herbal Essences Classics 33.8 oz Shampoo OR Conditioners (excludes 400 mL and 100 mL Shampoo and Conditioners and trial/travel size)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1517,6 +1589,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4644626",
+        "brand": "King's Hawaiian",
+        "discount": "Coupon",
+        "description": "Buy King's Hawaiian Soft Pretzel Bites 10 2 - oz and Get 1 Publix Jalapeño Popper Deli Dip Free WITH MFR DIGITAL COUPON",
+        "category": "Grocery",
+        "validTo": "2026-07-28T23:59:59.000-04:00",
+        "redemption": "print"
+      },
+      {
         "id": "flipp-4633847",
         "brand": "Kleenex",
         "discount": "Save $1.00",
@@ -1607,12 +1688,30 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4661283",
+        "brand": "Mielle",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Mielle Shampoo, Conditioner, Treatment OR Styling Product (excludes trial/travel size)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4608250",
         "brand": "Mielle Organics",
         "discount": "Save $3.00",
         "description": "Save $3.00 ONE Mielle Shampoo, Conditioner, Treatment, OR Styling Products (entire Mielle portfolio).",
         "category": "Health & Beauty",
         "validTo": "2026-07-19T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661306",
+        "brand": "Motrin",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Adult MOTRIN® Product (excludes trial & travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2489,15 +2588,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4599547",
-        "brand": "Simple Mills",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Simple Mills product",
-        "category": "Grocery",
-        "validTo": "2026-07-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4586892",
         "brand": "Sour Punch",
         "discount": "SAVE $1.00",
@@ -2651,6 +2741,24 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4661312",
+        "brand": "Tylenol",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) TYLENOL® or TYLENOL® PM (Excludes 200 ct. or larger, TYLENOL® Precise, TYLENOL® Proactive, TYLENOL® Cold & Sinus and travel & trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661309",
+        "brand": "Tylenol",
+        "discount": "Save $3.50",
+        "description": "Save $3.50 on any ONE (1) TYLENOL® PRECISE ™ Pain Relieving Patches or Cream Products (Excludes Adult TYLENOL®,  TYLENOL® PM, TYLENOL® Cold & Sinus, and travel & trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4634828",
         "brand": "Tylenol",
         "discount": "Save $3.50",
@@ -2750,6 +2858,24 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4659466",
+        "brand": "Vita Coco®",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Vita Coco Treats 500ml",
+        "category": "Grocery",
+        "validTo": "2026-08-04T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4644625",
+        "brand": "Vita Coco®",
+        "discount": "$1.5 off",
+        "description": "Vita Coco® Vita Coco Treats",
+        "category": "Grocery",
+        "validTo": "2026-07-28T23:59:59.000-04:00",
+        "redemption": "print"
+      },
+      {
         "id": "flipp-4586911",
         "brand": "WaterWipes™",
         "discount": "Save $1.30",
@@ -2774,6 +2900,15 @@
         "description": "SAVE $1.00 On any TWO (2) Welch’s® Fruit Snacks, Welch’s® Fruit ‘n Yogurt™ Snacks, Welch’s® Juicefuls®, Welch’s® Juicefuls® Fusions™ or Welch’s® Absolute Fruitfuls™ (8oz or larger bag or 6ct or larger box)",
         "category": "Grocery",
         "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661256",
+        "brand": "Whole Fruit",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Whole Fruit",
+        "category": "Grocery",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2854,6 +2989,13 @@
     "source": "Slickdeals",
     "error": null,
     "coupons": [
+      {
+        "id": "sd-19759596",
+        "place": "Dunkin'",
+        "title": "TODAY! FREE King Kylie Drink with any purchase at DUNKIN starts at 11AM to NOON Local Time",
+        "url": "https://slickdeals.net/f/19759596-today-free-king-kylie-drink-with-any-purchase-at-dunkin-starts-at-11am-to-noon-local-time?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-14T13:01:23.000Z"
+      },
       {
         "id": "sd-19753512",
         "place": "Domino's",
@@ -3084,13 +3226,6 @@
         "title": "Prime Members: 40-Ct Dunkin' Zero Sugar Refreshers Drink Mix (Variety) $6.15 w/ S&S + Free S&H",
         "url": "https://slickdeals.net/f/19657692-prime-members-40-ct-dunkin-zero-sugar-refreshers-drink-mix-variety-6-15-w-s-s-free-s-h?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-22T13:04:35.000Z"
-      },
-      {
-        "id": "sd-19656570",
-        "place": "Dunkin'",
-        "title": "[Prime, SnS] $6.49 | Dunkin’ Zero Sugar Refreshers Singles To Go! Powdered Drink Mix, 40 Ct Variety Pack at Amazon",
-        "url": "https://slickdeals.net/f/19656570-prime-sns-6-49-dunkin-zero-sugar-refreshers-singles-to-go-powdered-drink-mix-40-ct-variety-pack-at-amazon?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-22T07:40:16.000Z"
       },
       {
         "id": "sd-19654536",
