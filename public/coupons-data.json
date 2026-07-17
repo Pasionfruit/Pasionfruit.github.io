@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-16T09:47:20.635Z",
+  "lastUpdated": "2026-07-17T09:40:23.285Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -320,6 +320,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4663649",
+        "brand": "Carando®",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Carando® Italian Sausage, Meatball, or Pepperoni Item",
+        "category": "Grocery",
+        "validTo": "2026-08-19T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4659860",
         "brand": "CENTRUM",
         "discount": "SAVE $3.00",
@@ -446,19 +455,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4663657",
+        "id": "flipp-4663653",
         "brand": "Colgate",
-        "discount": "Save $2.00",
-        "description": "SAVE $2.00 On any ONE (1) Colgate Total (3.3oz or 5.1oz), Optic White Stain Fighter, Max Fresh or Sensitive Toothpaste (excluding 3pack Toothpastes)",
+        "discount": "Save $1.00",
+        "description": "SAVE $1.00 on any ONE (1) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4663653",
+        "id": "flipp-4663657",
         "brand": "Colgate",
-        "discount": "Save $1.00",
-        "description": "SAVE $1.00 on any ONE (1) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
+        "discount": "Save $2.00",
+        "description": "SAVE $2.00 On any ONE (1) Colgate Total (3.3oz or 5.1oz), Optic White Stain Fighter, Max Fresh or Sensitive Toothpaste (excluding 3pack Toothpastes)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -803,15 +812,6 @@
         "description": "Save $3.00 on any TWO (2) Dial® Body Wash Products (excluding trial/travel size)",
         "category": "Health & Beauty",
         "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4605015",
-        "brand": "Dial",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on ANY TWO (2) Dial Products",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-31T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1207,7 +1207,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
         "category": "Other",
-        "validTo": "2026-07-16T20:00:00.000-04:00",
+        "validTo": "2026-07-17T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1289,6 +1289,24 @@
         "description": "$1.00 OFF WHEN YOU BUY ONE (1) GATORADE®, PROPEL®, or GATORADE WATER MULTIPACK",
         "category": "Grocery",
         "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4663647",
+        "brand": "Gatorade",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) GATORADE® 20 oz 8 pk",
+        "category": "Grocery",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4663645",
+        "brand": "Gatorade",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) GATORADE® 12 oz 6 pk",
+        "category": "Grocery",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1742,6 +1760,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4663662",
+        "brand": "Liquid Death",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any TWO (2) Liquid Death Still Water 12oz 12pks",
+        "category": "Grocery",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4645982",
         "brand": "Liquid Death",
         "discount": "Save $2.00",
@@ -1931,21 +1958,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654464",
+        "id": "flipp-4654461",
         "brand": "Neutrogena",
-        "discount": "Save $3.50",
-        "description": "Save $3.50 on any ONE (1) NEUTROGENA® ACNE & EVENLY CLEAR product (excludes trial/travel & bar soaps)",
+        "discount": "Save $2.50",
+        "description": "Save $2.50 on any ONE (1) NEUTROGENA® Liquid Cleanser (excludes Acne Cleansers, Bars, Concentrate Refill Packs, Trial/Travel sizes & Wipes)",
         "category": "Health & Beauty",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654462",
-        "brand": "Neutrogena",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) NEUTROGENA® Facial Moisturizer, Serum or Treatment (excludes Acne, Clearance, Masks, & Trial & Travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
+        "validTo": "2026-08-15T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1958,12 +1976,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654461",
+        "id": "flipp-4654462",
         "brand": "Neutrogena",
-        "discount": "Save $2.50",
-        "description": "Save $2.50 on any ONE (1) NEUTROGENA® Liquid Cleanser (excludes Acne Cleansers, Bars, Concentrate Refill Packs, Trial/Travel sizes & Wipes)",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) NEUTROGENA® Facial Moisturizer, Serum or Treatment (excludes Acne, Clearance, Masks, & Trial & Travel sizes)",
         "category": "Health & Beauty",
-        "validTo": "2026-08-15T19:59:59.000-04:00",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654464",
+        "brand": "Neutrogena",
+        "discount": "Save $3.50",
+        "description": "Save $3.50 on any ONE (1) NEUTROGENA® ACNE & EVENLY CLEAR product (excludes trial/travel & bar soaps)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2219,6 +2246,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4663648",
+        "brand": "One4All",
+        "discount": "Save $10.00",
+        "description": "Buy $50 in ONE4ALL Ultimate & ONE4ALL Favorites Gift cards & save $10 when you purchase $25 or more of groceries",
+        "category": "Other",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4645954",
         "brand": "Oral-B",
         "discount": "Save $10.00",
@@ -2315,6 +2351,15 @@
         "description": "Save $3.00 on any ONE (1) PEPCID® (20ct or higher), IMODIUM® (excluding 6ct) or LACTAID® Supplement product (excluding trial and travel).",
         "category": "Health & Beauty",
         "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4664118",
+        "brand": "Pepsi",
+        "discount": "Save $2.00",
+        "description": "SAVE $2.00 ON ANY ONE (1) 12OZ 12PK PEPSI, MOUNTAIN DEW, STARRY OR MUG",
+        "category": "Grocery",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2477,6 +2522,15 @@
         "description": "Save $5.00 on any ONE (1) Refresh Mega 3 or Relieva Xtra Eye Drops",
         "category": "Health & Beauty",
         "validTo": "2026-08-04T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4664181",
+        "brand": "Replenza",
+        "discount": "Save $10.00",
+        "description": "Save $10.00 when you buy ONE (1) Replenza Supplement",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-15T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2710,7 +2764,7 @@
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) Irish Spring or Softsoap Body Wash (12oz or larger), Softsoap Liquid Foaming Hand Soap Pump (9oz ONLY), Softsoap Liquid Hand Soap Pump (11.25oz ONLY) or Irish Spring Bar Soap Multipack (3ct or larger)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-28T19:59:59.000-04:00",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3116,6 +3170,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19770321",
+        "place": "Chipotle",
+        "title": "Chipotle - Free 100,000 Burritos During World Cup Final Water Break #2 - Sunday, 7/19/26",
+        "url": "https://slickdeals.net/f/19770321-chipotle-free-100-000-burritos-during-world-cup-final-water-break-2-sunday-7-19-26?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-16T18:19:56.000Z"
+      },
+      {
         "id": "sd-19759596",
         "place": "Dunkin'",
         "title": "TODAY! FREE King Kylie Drink with any purchase at DUNKIN starts at 11AM to NOON Local Time",
@@ -3312,13 +3373,6 @@
         "postedAt": "2026-06-24T05:43:30.000Z"
       },
       {
-        "id": "sd-19665861",
-        "place": "Chipotle",
-        "title": "[Prime] 11-Ounce San Marcos Chipotle Peppers in Adobo Sauce $1.43 w/ S&S + Free Shipping",
-        "url": "https://slickdeals.net/f/19665861-prime-11-ounce-san-marcos-chipotle-peppers-in-adobo-sauce-1-43-w-s-s-free-shipping?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-23T10:12:32.000Z"
-      },
-      {
         "id": "sd-19663029",
         "place": "Popeyes",
         "title": "$50 Popeyes Physical Gift Card - $40",
@@ -3492,20 +3546,6 @@
         "title": "Taco Bell Rewards Drop: $1 Cheesy Gordita Crunch at 2pm Today (6/2)",
         "url": "https://slickdeals.net/f/19586358-taco-bell-rewards-drop-1-cheesy-gordita-crunch-at-2pm-today-6-2?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-02T12:21:45.000Z"
-      },
-      {
-        "id": "sd-19584393",
-        "place": "Popeyes",
-        "title": "Popeyes $6 Big Box (2Pc Signature Chicken OR 3Pc Tenders, plus 2 sides & a biscuit)",
-        "url": "https://slickdeals.net/f/19584393-popeyes-6-big-box-2pc-signature-chicken-or-3pc-tenders-plus-2-sides-a-biscuit?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-01T21:13:09.000Z"
-      },
-      {
-        "id": "sd-19582599",
-        "place": "Burger King",
-        "title": "Burger king- BK Birthday Free Whopper Jr $3 min. (Ymmv)",
-        "url": "https://slickdeals.net/f/19582599-burger-king-bk-birthday-free-whopper-jr-3-min-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-01T13:53:21.000Z"
       }
     ]
   }

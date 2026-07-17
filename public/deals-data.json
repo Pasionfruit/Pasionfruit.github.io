@@ -1,356 +1,12 @@
 {
-  "lastUpdated": "2026-07-16T09:47:15.944Z",
+  "lastUpdated": "2026-07-17T09:40:18.221Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-07-15T00:00:00-04:00",
       "validTo": "2026-07-21T23:59:59-04:00",
       "deals": [
         {
-          "id": "Walmart-1026820976",
-          "item": "Starface Hydro-Star® Black Pimple Patches - 32 Count",
-          "brand": "Starface Hydro-Sta",
-          "price": 9.78,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820973",
-          "item": "Gain Plus Liquid Laundry Detergent, Now with Odor Defense + OXI, Moonlight Breeze Scent, 99 fl oz, 75 Loads",
-          "brand": "Gain Plus",
-          "price": 13.47,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820996",
-          "item": "Avenli London Hot Tub",
-          "brand": "Avenli",
-          "price": 298,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821078",
-          "item": "Mainstays All-In-One Reversible Comforter and Sheet Set - 7 Piece, Queen, Beige Stripe",
-          "brand": "Mainstays",
-          "price": 36.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820992",
-          "item": "onn Large Party Speaker Gen 2 with LED Lighting",
-          "brand": "onn Large Party Speaker",
-          "price": 109,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821089",
-          "item": "Frigidaire 6.5 Cu. ft. Garage Ready Upright Freezer, Compact Vertical Freezer for Apartments, Garage, Basement, Office, Bulk Storage, Platinum Silver",
-          "brand": "Frigidaire",
-          "price": 218,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821017",
-          "item": "EGOHOME Essence Sleep Twin Mattress, 6\" Memory Foam Mattress in a Box, Medium",
-          "brand": "EGOHOME",
-          "price": 80.89,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820986",
-          "item": "Expert Grill, 4-Burner Propane Gas Grill with Side Table and Wheels, Stainless Steel",
-          "brand": "Expert Grill",
-          "price": 194,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821034",
-          "item": "Joyspun Women's Woven Pajama Boxer Shorts, 3'' Inseam, Sizes XS-2X",
-          "brand": "Joyspun",
-          "price": 7.48,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821028",
-          "item": "Midea 5,000 BTU Mechanical Window Air Conditioner, 150 Sq Ft, Black",
-          "brand": "Midea",
-          "price": 156,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821055",
-          "item": "Better Homes & Gardens 52\" Bronze Transitional Ceiling Fan, 5 Reversible Blades, 3 LED Bulbs Included",
-          "brand": "Better Homes & Gardens",
-          "price": 85.46,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821003",
-          "item": "Shark Steam Mop, Corded, Chemical-Free Sanitization, XL Removable Water Tank, Lightweight & Compact, S1000WM",
-          "brand": "Shark Steam",
-          "price": 49.96,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821042",
-          "item": "Better Homes & Gardens Bellamy Outdoor 1pc Patio Coffee Table",
-          "brand": "Better Homes & Gardens",
-          "price": 148,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821066",
-          "item": "Better Homes & Gardens Marlow Outdoor 2pk Patio Nesting Tables",
-          "brand": "Better Homes & Gardens",
-          "price": 98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821019",
-          "item": "Mainstays Albany Lane 3-Piece Outdoor Bistro Set, Folding Chairs & Glass Table, Black",
-          "brand": "Mainstays",
-          "price": 67,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821044",
-          "item": "Better Homes & Gardens Brookbury 4-Piece Outdoor Wicker Patio Sectional Dining Set, Terracotta Cushions",
-          "brand": "Better Homes & Gardens",
-          "price": 797,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821090",
-          "item": "Better Homes & Gardens River Oaks Outdoor Swivel Gliders with Patio Covers, Set of 2, Red",
-          "brand": "Better Homes & Gardens",
-          "price": 598,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821098",
-          "item": "Aerosoles Women's Lucca Footbed Buckle Clog",
-          "brand": "Aerosoles",
-          "price": 24.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821074",
-          "item": "No Boundaries Women's Platform Casual Lace Up Sneakers, Wide Width Available",
-          "brand": "No Boundaries",
-          "price": 12.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821092",
-          "item": "No Boundaries Women's Lace Up Sport Sneakers, Wide Width Available",
-          "brand": "No Boundaries",
-          "price": 18.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820975",
-          "item": "Coppertone Sport Sunscreen Spray, Ilona Maher Limited Edition Design, SPF 50 Sunscreen, 8.3 oz",
-          "brand": "Coppertone",
-          "price": 9.34,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821002",
-          "item": "Mainstays Dashwood Steel 3-Piece Rocker Outdoor Chat Set, Black",
-          "brand": "Mainstays",
-          "price": 147,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820993",
-          "item": "Safavieh Courtyard Ercan Bordered Indoor/Outdoor Area Rug, Natural/Black, 5'3\" x 7'7\"",
-          "brand": "Safavieh",
-          "price": 62.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821023",
-          "item": "Better Homes & Gardens 9 inch Copper Paul Planter - Ribbed Ceramic Design with Drainage Hole",
-          "brand": "Better Homes & Gardens",
-          "price": 12.44,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821107",
-          "item": "Ninja SLUSHi 72-Oz Frozen Drink Machine with RapidChill Technology, 3 Presets, Dishwasher Safe, FS300 Gray",
-          "brand": "Ninja",
-          "price": 249,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821210",
-          "item": "JBL Tune 510BT - Wireless on-ear headphones - Pure Bass. Zero Cables. - White",
-          "brand": "JBL",
-          "price": 49.95,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821241",
-          "item": "Govee 24.6ft Wi-Fi RGBICW LED Strip Light",
-          "brand": "Govee",
-          "price": 42.49,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821249",
-          "item": "Crayola Crayons, 24 Count, Coloring Supplies for Kids, Classroom Must Haves for Teachers, Classic Colors, 3+",
-          "brand": "Crayola",
-          "price": 0.5,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820999",
-          "item": "Better Homes & Gardens River Oaks Outdoor Sofa & 2 Nesting Tables with Patio Cover, Dark Brown",
-          "brand": "Better Homes & Gardens",
-          "price": 598,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820991",
-          "item": "Aiwa Retro Wireless Karaoke Speaker, Mint, AI6028-MNT",
-          "brand": "Aiwa",
-          "price": 14.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821026",
-          "item": "Athletic Works Women's Water Shoe, Wide Width Available",
-          "brand": "Athletic Works",
-          "price": 8,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821050",
-          "item": "Mainstays Albany Lane Steel 6-Piece Outdoor Patio Dining Set with Umbrella, Red",
-          "brand": "Mainstays",
-          "price": 117,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821053",
-          "item": "Mainstays All-In-One Reversible Comforter and Sheet Set - 7 Piece, Queen, Beige Stripe",
-          "brand": "Blackstone",
-          "price": 187,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821059",
-          "item": "Cirkul 40oz All-Day StrawSip Double-Wall Insulated Stainless Steel Tumbler with Handle, Lilac (Light Purple)",
-          "brand": "Cirkul",
-          "price": 19.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820978",
-          "item": "Madden NYC Women's Low Profile Sneakers",
-          "brand": "Madden NYC Women's",
-          "price": 29,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821001",
-          "item": "Time and Tru Women's and Women's Plus Cotton Swing Dress with Short Sleeves, Sizes XS-4X",
-          "brand": "Time and Tru",
-          "price": 12,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821072",
-          "item": "Magic Bullet 4 Piece Personal Blender MBR-0401WM, Black",
-          "brand": "Magic Bullet",
-          "price": 19.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821086",
-          "item": "George Foreman 4–6 Serving Electric Indoor Grill, Contact Smokeless Grilling with Removable Plates and Drip Tray, Stainless Steel Housing",
-          "brand": "George Foreman",
-          "price": 87.96,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821033",
-          "item": "Mainstays Can Opener and Knife Sharpener, Bottle Opener with Removable Cutting Lever Black",
-          "brand": "Mainstays",
-          "price": 14.96,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821049",
-          "item": "De'Longhi Dedica Duo Espresso Machine, Compact Size with Built in Frother for Latte Art, Brew Espresso, Cold Brew, Lattes & More, Stainless Steel",
-          "brand": "De’Longhi",
-          "price": 245,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821054",
-          "item": "Goodyear Women's Raylan Slip Resistant Shoes",
-          "brand": "Goodyear",
-          "price": 29.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821038",
-          "item": "Better Homes & Gardens Aubrey Outdoor Metal Sofa with Blue Cushion",
-          "brand": "Better Homes & Gardens",
-          "price": 247,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821045",
-          "item": "STEM Blue Light Trap Starter Kit, Pet Friendly and Chemical Free, Flying Insect Trap",
-          "brand": "STEM",
-          "price": 14.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821075",
+          "id": "Walmart-1027009738",
           "item": "PowerXL 6.3 Quart AirMax Air Fryer Oven with Four Presets and Compact Two-Tier Design, 450F Maximum Temperature, No Preheat Needed",
           "brand": "PowerXL",
           "price": 52,
@@ -358,95 +14,7 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821064",
-          "item": "Madden NYC Women's Pointed Toe Mules",
-          "brand": "Madden NYC",
-          "price": 14.4,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821071",
-          "item": "Mainstays Smokeless Wood Burning Fire Pit, 19.5-Inch Portable Outdoor Fire Pit with Convertible Table Lid, Cover, Ash Pan & Fire Poker for Backyard, Patio & Camping, Black",
-          "brand": "Mainstays",
-          "price": 147,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821110",
-          "item": "Wonder Nation Toddler Little and Big Boys or Girls Water Shoes",
-          "brand": "Wonder Nation",
-          "price": 6.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821144",
-          "item": "Beautiful 6 Qt Programmable Slow Cooker, White Icing by Drew Barrymore",
-          "brand": "Beautiful",
-          "price": 54.24,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821129",
-          "item": "Wonder Nation Boys Relaxed Denim Jeans, Sizes 4-18, Slim & Husky",
-          "brand": "Wonder Nation",
-          "price": 6.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821135",
-          "item": "Chefman Anti-Overflow Belgian Waffle Maker with Shade Selector and Non-Stick Plates, Black",
-          "brand": "Chefman",
-          "price": 26.92,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821160",
-          "item": "Athletic Works Little and Big Girls Active Shorts, Sizes 4-18 & Plus",
-          "brand": "Athletic Works",
-          "price": 4.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821163",
-          "item": "Wonder Nation Little and Big Kids Unisex Sport Sneakers",
-          "brand": "Wonder Nation",
-          "price": 14.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821176",
-          "item": "RTIC 16 oz Ceramic Lined Insulated Outback Bottle, Leak Resistant, Orchid",
-          "brand": "RTIC",
-          "price": 11.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821189",
-          "item": "Pen+Gear Blue Letter Size 2-Pocket Paper Folder",
-          "brand": "Pen+Gear",
-          "price": 0.25,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821206",
-          "item": "Pen+Gear Pencil Cap Erasers, 25 Count – Assorted Colors, Smudge-Free, Fits #2 Pencils",
-          "brand": "Pen+Gear",
-          "price": 0.47,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821219",
+          "id": "Walmart-1027009587",
           "item": "onn Mini Wireless Office Keyboard with USB Receiver, Pearl Blush Pink",
           "brand": "onn",
           "price": 14.88,
@@ -454,263 +22,23 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821230",
-          "item": "Vivitar InstaPrint Digital Camera, 12MP, 4 Games, 2 Rolls of Paper, Instantly Prints 2\" X 3\" Pictures -Pink",
-          "brand": "Vivitar",
-          "price": 24.88,
+          "id": "Walmart-1027009752",
+          "item": "Elmer's Liquid School Glue, Washable, 4oz., 1 Count",
+          "brand": "Elmer's",
+          "price": 0.98,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821067",
-          "item": "Avia Women's Two Tone Slide Sandals",
-          "brand": "Avia",
-          "price": 14,
+          "id": "Walmart-1027009465",
+          "item": "Mainstays Albany Lane 3-Piece Outdoor Bistro Set, Folding Chairs & Glass Table, Black",
+          "brand": "Mainstays",
+          "price": 67,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821084",
-          "item": "Better Homes & Gardens by POLYWOOD Southlake Outdoor Modern Adirondack Chair, All-Weather HDPE, Patio Seat, Slate Grey",
-          "brand": "Better Homes & Gardens",
-          "price": 157,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821082",
-          "item": "Joybees Women's Slip-on Arch Support Sandals",
-          "brand": "Joybees",
-          "price": 25,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821117",
-          "item": "AND1 Boys Python Athletic Sneakers",
-          "brand": "AND1",
-          "price": 14.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821151",
-          "item": "Wonder Nation Toddler Boys' Graphic Tank Top, Size 18M-5T",
-          "brand": "Wonder Nation",
-          "price": 2.48,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821116",
-          "item": "Nespresso Vertuo Pop Coffee and Espresso Maker by De'Longhi, Liquorice Black",
-          "brand": "Nespresso",
-          "price": 94.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821142",
-          "item": "Wonder Nation Girls No Show Socks, 20-Pack",
-          "brand": "Wonder Nation",
-          "price": 9.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821125",
-          "item": "Athletic Works Boys Core Performance Shorts, 2-Pack, Sizes 4-18 & Husky",
-          "brand": "Athletic Works",
-          "price": 7.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821149",
-          "item": "LED Flying Disc, Outdoor Lawn Games, Family Games, for All Ages, by MinnARK",
-          "brand": "MinnARK",
-          "price": 12.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821155",
-          "item": "Wonder Nation Girls Kid Tough Knit Shorts, Sizes 4-18 & Plus",
-          "brand": "Wonder Nation",
-          "price": 3,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821150",
-          "item": "Magic Bullet Mini Juicer, 400-Watt, Silver, MBJ10100WM",
-          "brand": "Magic Bullet",
-          "price": 39.96,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821213",
-          "item": "Pen+Gear Pink Block Erasers",
-          "brand": "Pen+Gear",
-          "price": 0.47,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821215",
-          "item": "Ozark Trail 30L Unisex Coated Polyester Travel Backpack with Padded Laptop Sleeve and Luggage Pass-Through, Blue",
-          "brand": "Ozark Trail",
-          "price": 29.76,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821216",
-          "item": "Pen+Gear Wide Rule 1 Subject Notebook, 8\" x 10.5\", Red, 70 Sheets, New",
-          "brand": "Pen+Gear",
-          "price": 0.55,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821242",
-          "item": "BIC Cristal Xtra Smooth Medium Point Ball Pen, School Supplies",
-          "brand": "BIC",
-          "price": 0.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821255",
-          "item": "Altec Lansing Hydra Jolt 2.0 Everything Proof Wireless Magnetic Portable Bluetooth Speaker, Periwinkle Blue White, IMW1202-PERIWT",
-          "brand": "Altec Lansing",
-          "price": 29.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820984",
-          "item": "O-Cedar EasyWring™ Spin Mop & Bucket System",
-          "brand": "O-Cedar EasyWring",
-          "price": 34.96,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821248",
-          "item": "onn On-Ear Headphones Black Lightweight, Adjustable Headband, AUX Cord",
-          "brand": "onn",
-          "price": 9.1,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820983",
-          "item": "Better Homes & Gardens Emma Papasan Accent Chair, Gray Linen",
-          "brand": "Better Homes & Gardens",
-          "price": 164,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820980",
-          "item": "Apple AirPods 4",
-          "brand": "Apple AirPods",
-          "price": 29,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026820970",
-          "item": "onn 32\" Class 720P HD Powered by VIZIO Smart Television, 32S2V1",
-          "brand": "onn",
-          "price": 68,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821016",
-          "item": "Igloo 50 QT Overland Ice Chest Cooler, Blue",
-          "brand": "Igloo",
-          "price": 71.22,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821004",
-          "item": "Crocs Men's and Women's Unisex Baya Lined Clogs",
-          "brand": "Crocs",
-          "price": 29.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821006",
-          "item": "Lasko 20\" Classic Box Fan with Weather-Resistant Motor, Portable Cooling Floor or Window Fan, 3 Speeds, White, B20200",
-          "brand": "Lasko",
-          "price": 19.87,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821102",
-          "item": "Time and Tru Women's String Bow Block Heel Ballet Shoes, Wide Width Available",
-          "brand": "Time and Tru",
-          "price": 19.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821158",
-          "item": "Avia Toddler Boys and Girls Air Sneakers",
-          "brand": "Avia",
-          "price": 14.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821096",
-          "item": "Athletic Works Women's Water Shoes, Wide Width Available",
-          "brand": "Athletic Works",
-          "price": 26.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821167",
-          "item": "Hanes Boy' Ecosmart White Crew Undershirt Value Pack, 5-pack sizes S-XXL",
-          "brand": "Hanes",
-          "price": 8.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821134",
-          "item": "Franklin Sports Official US Soccer Federation (USSF) Soccer Ball",
-          "brand": "Franklin Sports",
-          "price": 14.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821121",
-          "item": "Sportspower My 1st Toddler Swing Indoor & Outdoor Backyard Play Structure with Safety Harness & Foldable Frame for 9-36 Months",
-          "brand": "Sportspower",
-          "price": 55.86,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821174",
-          "item": "Franklin Sports Blackhawk Soccer Goal - Pop up - Indoor + Outdoor - Adult + Kids - 4' x 3' - Yellow",
-          "brand": "Franklin Sports",
-          "price": 24.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821020",
+          "id": "Walmart-1027009471",
           "item": "Avia Women's Bubble Bottom Sneakers",
           "brand": "Avia",
           "price": 26,
@@ -718,311 +46,23 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821225",
-          "item": "ekids Spiderman Kids Camera with SD Card, Digital Camera for Kids with Video Camera and Built-in Digital Stickers",
-          "brand": "Marvel",
-          "price": 22,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821227",
-          "item": "LED Cornhole Board Set - Light Up Bean Bag Toss with 6 Bags, by MinnARK",
-          "brand": "MinnARK",
-          "price": 34.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821244",
-          "item": "JBL Vibe Flex 2 - True Wireless Earbuds - White",
-          "brand": "JBL",
-          "price": 39.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821172",
-          "item": "FitRx SmartBell Gym, 60 lbs. 4-in-1 Adjustable Interchangeable Dumbbell, Barbell, and Kettlebell Weight Set, Black",
-          "brand": "FitRx",
-          "price": 84,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821269",
-          "item": "Great Value 100% Whole Wheat Round Top Bread, 20 oz",
-          "brand": "Great Value",
-          "price": 1.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821276",
-          "item": "Great Value Colby & Monterey Jack Cheese Snack, 9 oz Bag, 12 Cheese Sticks",
-          "brand": "Great Value",
-          "price": 2.56,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821094",
-          "item": "No Boundaries Women's Mesh Mary Jane Flats",
-          "brand": "No Boundaries",
-          "price": 22.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821039",
-          "item": "Crocs Men's and Women's Unisex Baya II Slide Sandals",
-          "brand": "Crocs",
-          "price": 19.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821065",
-          "item": "Hamilton Beach 2 Slice Toaster with Wide Slots, Bagel Function, Toast Boost, Stainless Steel",
-          "brand": "Hamilton Beach",
-          "price": 15.98,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821127",
-          "item": "Little Tikes First Slide, Easy Set Up Playset, Indoor Outdoor Backyard Slide, 18 Months",
-          "brand": "Little Tikes",
-          "price": 34.49,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821115",
-          "item": "MinnARK 8.5-Inch Playground Ball for Kids – Rubber Kickball for Outdoor Games, School, Recess & Backyard Sports, Ages 3+",
-          "brand": "MinnARK",
-          "price": 8.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821193",
-          "item": "Cornhole Wooden, Stick & Slide, 10 Pieces, 2 Boards, 8 Bean Bags, Family Games, Ages 3+ by MinnARK",
-          "brand": "MinnARK",
-          "price": 59.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821198",
-          "item": "OFF! Area Insect & Mosquito Repellent, Outdoor Fogger, 8.5 oz",
-          "brand": "OFF!",
-          "price": 7.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821180",
-          "item": "Sportspower My 1st Trampoline 36\" Indoor/Outdoor Mini Rebounder Trampoline with No-Gap Padded Cover, for Toddlers & Kids, Max Weight Capacity 220 LBS - BLUE",
-          "brand": "Bounce Pro",
-          "price": 49.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821146",
-          "item": "Eastsport Unisex Axis Sport 18.5\" Bungee Backpack, Nine Iron",
-          "brand": "Eastsport",
-          "price": 19.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821166",
-          "item": "Minnie Mouse Toddler Girls Graphic Tee and Bike Shorts Set, 2-Piece",
-          "brand": "Minnie Mouse",
-          "price": 7,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821169",
-          "item": "Avia Kids Running Sneakers with Bungee Laces",
-          "brand": "Avia",
-          "price": 14.97,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821196",
-          "item": "Elmer's Disappearing Purple School Glue Sticks, Washable, 2 Count",
-          "brand": "Elmer's",
-          "price": 0.5,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821232",
-          "item": "Pen+Gear Glue Sticks, Disappearing Purple, Washable",
-          "brand": "Pen+Gear",
-          "price": 0.25,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821237",
-          "item": "onn Wireless On-Ear Headphones, Blue",
-          "brand": "onn",
-          "price": 12.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821188",
-          "item": "Logitech Full Size Wireless Mouse, Silver, Walmart Exclusive",
-          "brand": "Logitech",
-          "price": 16.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821217",
-          "item": "JLab JBuddies Pop Wireless Kids Headphones, 2 in 1 Wireless + Wired, Volume Safe, Pink",
-          "brand": "JLab",
-          "price": 17.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821027",
-          "item": "Better Homes & Gardens Paige 1 Piece Wicker Outdoor Loveseat with Cushions, White",
-          "brand": "Better Homes & Gardens",
-          "price": 298,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821122",
-          "item": "BLACK+DECKER Black Stainless Steel 2‑Slice Toaster, Extra‑Wide Slots with Bagel Mode, 7 Adjustable Shade Controls, High‑Lift Lever & Drop‑Down Crumb Tray",
-          "brand": "BLACK+DECKER",
-          "price": 20.26,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821226",
-          "item": "Elmer's Liquid School Glue, Washable, 4oz., 1 Count",
-          "brand": "Elmer's",
-          "price": 0.5,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821136",
-          "item": "Athletic Works Boys Mesh Shorts, Sizes 4-18 & Husky",
-          "brand": "Athletic Works",
-          "price": 4.48,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821164",
-          "item": "Little Tikes Campin' & Climb Wall, Active Play with Tent and Pegs, Indoor Playground Climber, Outdoor Children 3 Year and Up",
-          "brand": "Little Tikes",
-          "price": 93.59,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821008",
-          "item": "Suncast 150ft. Hose Hideaway Hose Reel, Gray",
-          "brand": "Suncast",
-          "price": 59,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821015",
-          "item": "Mainstays Dashwood 4pc Conversation Set, Creme",
+          "id": "Walmart-1027009507",
+          "item": "Mainstays Albany Lane Steel 6-Piece Outdoor Patio Dining Set with Umbrella, Red",
           "brand": "Mainstays",
-          "price": 247,
+          "price": 117,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821041",
-          "item": "Hamilton Beach Smoothie Blender, 48 oz BPA-Free Jar 650 W 12-Function Countertop Blender for Kitchen, Black",
-          "brand": "Hamilton Beach",
-          "price": 24.92,
+          "id": "Walmart-1027009477",
+          "item": "Athletic Works Women's Water Shoe, Wide Width Available",
+          "brand": "Athletic Works",
+          "price": 8,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821130",
-          "item": "Hamilton Beach 0.9 Cu ft Countertop Microwave Oven, 900 Watts, Stainless Steel, New",
-          "brand": "Hamilton Beach",
-          "price": 59,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821087",
-          "item": "Avia Women's Performance Bungee Athletic Sneakers",
-          "brand": "Avia",
-          "price": 25,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821137",
-          "item": "Sportspower 40\" Super Fun Super Saucer Swing, Great for Kids 3-8",
-          "brand": "Sportspower",
-          "price": 35.86,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821105",
-          "item": "Ninja HyperHeat 8-in-1 Electric Pressure Cooker with SimpliServe Pot — 6.5 Qt, Cooks Up to 2X Faster, 1200W, Feeds 8–10, Sage Leaf",
-          "brand": "Ninja",
-          "price": 135,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821147",
-          "item": "Justice Girls Mesh Hem Tulip Short Set, Sizes XS - XLP",
-          "brand": "Justice",
-          "price": 10,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821159",
-          "item": "Wilson NBA DRV Outdoor Basketball - Brown",
-          "brand": "Wilson",
-          "price": 9.62,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821185",
-          "item": "onn 20 Inch Bluetooth 2.1 Channel Soundbar with Multi-Color LED Lighting, Black",
-          "brand": "onn",
-          "price": 29.88,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821190",
-          "item": "onn Desktop Mat, Rectangle, Polyester Surface with Nonslip Natural Rubber Backing, Black, 32\" x12\"",
-          "brand": "onn",
-          "price": 10.47,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821100",
+          "id": "Walmart-1027009550",
           "item": "Avia Women's 5000 Performance Sneakers, Wide Width Available",
           "brand": "Avia",
           "price": 24,
@@ -1030,7 +70,15 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821197",
+          "id": "Walmart-1027009621",
+          "item": "STEM Blue Light Trap Starter Kit, Pet Friendly and Chemical Free, Flying Insect Trap",
+          "brand": "STEM",
+          "price": 14.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009566",
           "item": "Microsoft 365 Personal | 6-Month Subscription, 1 Person | Premium Office apps | 1TB OneDrive Cloud Storage | PC/Mac Download",
           "brand": "Microsoft",
           "price": 49.97,
@@ -1038,71 +86,135 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821203",
-          "item": "Sterilite Small Pencil Box, Plastic Case with Hinged Lid and Snap Latch, Portable Storage for Back to School Supplies, Clear",
-          "brand": "Sterilite",
-          "price": 0.92,
+          "id": "Walmart-1027009599",
+          "item": "Eastsport Unisex Axis Sport 18.5\" Bungee Backpack, Nine Iron",
+          "brand": "Eastsport",
+          "price": 19.97,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821200",
-          "item": "Logitech Wireless Keyboard and Mouse Combo for Windows, 2.4 GHz Wireless, 8 Multimedia and Shortcut Keys, Walmart Exclusive",
-          "brand": "Logitech",
-          "price": 17.92,
+          "id": "Walmart-1027009697",
+          "item": "Franklin Sports Official US Soccer Federation (USSF) Soccer Ball",
+          "brand": "Franklin Sports",
+          "price": 14.97,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821218",
-          "item": "Pen+Gear 24 Count Assorted Color Crayons Set",
+          "id": "Walmart-1027009699",
+          "item": "De'Longhi Dedica Duo Espresso Machine, Compact Size with Built in Frother for Latte Art, Brew Espresso, Cold Brew, Lattes & More, Stainless Steel",
+          "brand": "De’Longhi",
+          "price": 249.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009746",
+          "item": "Pen+Gear Wide Rule 1 Subject Notebook, 8\" x 10.5\", Red, 70 Sheets, New",
           "brand": "Pen+Gear",
-          "price": 0.25,
+          "price": 0.97,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821247",
-          "item": "Pen+Gear 5-inch Blunt-Tip Kids Scissors, Age 4-7, School Supplies, Multi-Purpose, Blue",
+          "id": "Walmart-1027009661",
+          "item": "Expert Grill, 4-Burner Propane Gas Grill with Side Table and Wheels, Stainless Steel",
+          "brand": "Expert Grill",
+          "price": 194,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009506",
+          "item": "Avia Women's Two Tone Slide Sandals",
+          "brand": "Avia",
+          "price": 14,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009740",
+          "item": "Pen+Gear Pencil Cap Erasers, 25 Count – Assorted Colors, Smudge-Free, Fits #2 Pencils",
           "brand": "Pen+Gear",
-          "price": 0.87,
+          "price": 0.97,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821277",
-          "item": "Fresh Banana, Each",
-          "brand": "Unbranded",
-          "price": 0.2,
+          "id": "Walmart-1027009580",
+          "item": "ekids Spiderman Kids Camera with SD Card, Digital Camera for Kids with Video Camera and Built-in Digital Stickers",
+          "brand": "Marvel",
+          "price": 22,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821281",
-          "item": "Frito Lay Simply NKD No Dyes No Artificial Flavors Variety pack Snack Mix, 9.625 oz (10 pack)",
-          "brand": "Frito Lay",
-          "price": 5.97,
+          "id": "Walmart-1027009578",
+          "item": "Wonder Nation Boys Relaxed Denim Jeans, Sizes 4-18, Slim & Husky",
+          "brand": "Wonder Nation",
+          "price": 6.98,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821283",
-          "item": "Crunch Pak Snack Featuring Bluey with Fresh Sliced Peeled Apples, Pretzels, and Cheese, 2.5oz Tray",
-          "brand": "Crunch Pak",
-          "price": 1.47,
+          "id": "Walmart-1027009584",
+          "item": "onn Wireless On-Ear Headphones, Blue",
+          "brand": "onn",
+          "price": 12.88,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821271",
-          "item": "Great Value Natural No Stir Creamy Peanut Butter, 16 oz",
-          "brand": "Great Value",
-          "price": 1.98,
+          "id": "Walmart-1027009677",
+          "item": "Midea 5,000 BTU Mechanical Window Air Conditioner, 150 Sq Ft, Black",
+          "brand": "Midea",
+          "price": 156,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821207",
+          "id": "Walmart-1027009726",
+          "item": "Magic Bullet 4 Piece Personal Blender MBR-0401WM, Black",
+          "brand": "Magic Bullet",
+          "price": 19.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009671",
+          "item": "Igloo 50 QT Overland Ice Chest Cooler, Blue",
+          "brand": "Igloo",
+          "price": 69,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009700",
+          "item": "Mainstays Dashwood Steel 3-Piece Rocker Outdoor Chat Set, Black",
+          "brand": "Mainstays",
+          "price": 147,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009524",
+          "item": "LED Cornhole Board Set - Light Up Bean Bag Toss with 6 Bags, by MinnARK",
+          "brand": "MinnARK",
+          "price": 34.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009568",
+          "item": "Wonder Nation Girls Kid Tough Knit Shorts, Sizes 4-18 & Plus",
+          "brand": "Wonder Nation",
+          "price": 3,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009572",
           "item": "HP DeskJet 2942 Wireless All-in-One Color Inkjet Printer, 3 Months Free Instant Ink, Retro Sky Blue",
           "brand": "HP",
           "price": 49,
@@ -1110,31 +222,887 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821186",
+          "id": "Walmart-1027009634",
+          "item": "BLACK+DECKER Black Stainless Steel 2‑Slice Toaster, Extra‑Wide Slots with Bagel Mode, 7 Adjustable Shade Controls, High‑Lift Lever & Drop‑Down Crumb Tray",
+          "brand": "BLACK+DECKER",
+          "price": 20.26,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009682",
+          "item": "Joyspun Women's Woven Pajama Boxer Shorts, 3'' Inseam, Sizes XS-2X",
+          "brand": "Joyspun",
+          "price": 7.48,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009715",
+          "item": "Hamilton Beach 2 Slice Toaster with Wide Slots, Bagel Function, Toast Boost, Stainless Steel",
+          "brand": "Hamilton Beach",
+          "price": 15.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009772",
+          "item": "Pen+Gear 3-Inch by 3-Inch Sustainable Yellow Sticky Notes, 100 Sheets",
+          "brand": "Pen+Gear",
+          "price": 0.96,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009709",
+          "item": "Wilson NBA DRV Outdoor Basketball - Brown",
+          "brand": "Wilson",
+          "price": 9.62,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009488",
+          "item": "Starface Hydro-Star® Black Pimple Patches - 32 Count",
+          "brand": "Starface Hydro-Sta",
+          "price": 9.78,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009515",
+          "item": "Apple AirPods 4",
+          "brand": "Apple AirPods",
+          "price": 99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009462",
+          "item": "onn 32\" Class 720P HD Powered by VIZIO Smart Television, 32S2V1",
+          "brand": "onn",
+          "price": 68,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009467",
+          "item": "Gain Plus Liquid Laundry Detergent, Now with Odor Defense + OXI, Moonlight Breeze Scent, 99 fl oz, 75 Loads",
+          "brand": "Gain Plus",
+          "price": 13.47,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009529",
+          "item": "Better Homes & Gardens Emma Papasan Accent Chair, Gray Linen",
+          "brand": "Better Homes & Gardens",
+          "price": 164,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009501",
+          "item": "Madden NYC Women's Low Profile Sneakers",
+          "brand": "Madden NYC Women's",
+          "price": 29,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009476",
+          "item": "Coppertone Sport Sunscreen Spray, Ilona Maher Limited Edition Design, SPF 50 Sunscreen, 8.3 oz",
+          "brand": "Coppertone",
+          "price": 11.32,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009538",
+          "item": "O-Cedar EasyWring™ Spin Mop & Bucket System",
+          "brand": "O-Cedar EasyWring",
+          "price": 34.96,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009611",
+          "item": "onn Large Party Speaker Gen 2 with LED Lighting",
+          "brand": "onn Large Party Speaker",
+          "price": 109,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009613",
+          "item": "Avenli London Hot Tub",
+          "brand": "Avenli",
+          "price": 298,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009626",
+          "item": "Mainstays All-In-One Reversible Comforter and Sheet Set - 7 Piece, Queen, Beige Stripe",
+          "brand": "Mainstays",
+          "price": 36.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009616",
+          "item": "Lasko 20\" Classic Box Fan with Weather-Resistant Motor, Portable Cooling Floor or Window Fan, 3 Speeds, White, B20200",
+          "brand": "Lasko",
+          "price": 19.87,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009622",
+          "item": "Mainstays All-In-One Reversible Comforter and Sheet Set - 7 Piece, Queen, Beige Stripe",
+          "brand": "Blackstone",
+          "price": 187,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009629",
+          "item": "Frigidaire 6.5 Cu. ft. Garage Ready Upright Freezer, Compact Vertical Freezer for Apartments, Garage, Basement, Office, Bulk Storage, Platinum Silver",
+          "brand": "Frigidaire",
+          "price": 218,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009618",
+          "item": "EGOHOME Essence Sleep Twin Mattress, 6\" Memory Foam Mattress in a Box, Medium",
+          "brand": "EGOHOME",
+          "price": 80.89,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009662",
+          "item": "Aiwa Retro Wireless Karaoke Speaker, Mint, AI6028-MNT",
+          "brand": "Aiwa",
+          "price": 14.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009664",
+          "item": "Time and Tru Women's and Women's Plus Cotton Swing Dress with Short Sleeves, Sizes XS-4X",
+          "brand": "Time and Tru",
+          "price": 12,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009688",
+          "item": "Better Homes & Gardens 52\" Bronze Transitional Ceiling Fan, 5 Reversible Blades, 3 LED Bulbs Included",
+          "brand": "Better Homes & Gardens",
+          "price": 85.46,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009667",
+          "item": "Shark Steam Mop, Corded, Chemical-Free Sanitization, XL Removable Water Tank, Lightweight & Compact, S1000WM",
+          "brand": "Shark Steam",
+          "price": 49.96,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009718",
+          "item": "Better Homes & Gardens Paige 1 Piece Wicker Outdoor Loveseat with Cushions, White",
+          "brand": "Better Homes & Gardens",
+          "price": 298,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009675",
+          "item": "Safavieh Courtyard Ercan Bordered Indoor/Outdoor Area Rug, Natural/Black, 5'3\" x 7'7\"",
+          "brand": "Safavieh",
+          "price": 62.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009704",
+          "item": "Suncast 150ft. Hose Hideaway Hose Reel, Gray",
+          "brand": "Suncast",
+          "price": 59,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009727",
+          "item": "Better Homes & Gardens Aubrey Outdoor Metal Sofa with Blue Cushion",
+          "brand": "Better Homes & Gardens",
+          "price": 247,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009684",
+          "item": "Better Homes & Gardens River Oaks Outdoor Sofa & 2 Nesting Tables with Patio Cover, Dark Brown",
+          "brand": "Better Homes & Gardens",
+          "price": 598,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009736",
+          "item": "Better Homes & Gardens Bellamy Outdoor 1pc Patio Coffee Table",
+          "brand": "Better Homes & Gardens",
+          "price": 148,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009710",
+          "item": "Mainstays Dashwood 4pc Conversation Set, Creme",
+          "brand": "Mainstays",
+          "price": 247,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009514",
+          "item": "Better Homes & Gardens Marlow Outdoor 2pk Patio Nesting Tables",
+          "brand": "Better Homes & Gardens",
+          "price": 98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009474",
+          "item": "Better Homes & Gardens 9 inch Copper Paul Planter - Ribbed Ceramic Design with Drainage Hole",
+          "brand": "Better Homes & Gardens",
+          "price": 12.44,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009537",
+          "item": "Better Homes & Gardens by POLYWOOD Southlake Outdoor Modern Adirondack Chair, All-Weather HDPE, Patio Seat, Slate Grey",
+          "brand": "Better Homes & Gardens",
+          "price": 157,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009485",
+          "item": "Better Homes & Gardens Brookbury 4-Piece Outdoor Wicker Patio Sectional Dining Set, Terracotta Cushions",
+          "brand": "Better Homes & Gardens",
+          "price": 797,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009545",
+          "item": "Better Homes & Gardens River Oaks Outdoor Swivel Gliders with Patio Covers, Set of 2, Red",
+          "brand": "Better Homes & Gardens",
+          "price": 598,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009532",
+          "item": "Mainstays Smokeless Wood Burning Fire Pit, 19.5-Inch Portable Outdoor Fire Pit with Convertible Table Lid, Cover, Ash Pan & Fire Poker for Backyard, Patio & Camping, Black",
+          "brand": "Mainstays",
+          "price": 147,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009502",
+          "item": "No Boundaries Women's Lace Up Sport Sneakers, Wide Width Available",
+          "brand": "No Boundaries",
+          "price": 18.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009539",
+          "item": "Aerosoles Women's Lucca Footbed Buckle Clog",
+          "brand": "Aerosoles",
+          "price": 24.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009475",
+          "item": "No Boundaries Women's Platform Casual Lace Up Sneakers, Wide Width Available",
+          "brand": "No Boundaries",
+          "price": 12.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009516",
+          "item": "No Boundaries Women's Mesh Mary Jane Flats",
+          "brand": "No Boundaries",
+          "price": 22.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009486",
+          "item": "Avia Women's Performance Bungee Athletic Sneakers",
+          "brand": "Avia",
+          "price": 25,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009530",
+          "item": "Athletic Works Women's Water Shoes, Wide Width Available",
+          "brand": "Athletic Works",
+          "price": 9.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009555",
+          "item": "Time and Tru Women's String Bow Block Heel Ballet Shoes, Wide Width Available",
+          "brand": "Time and Tru",
+          "price": 19.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009491",
+          "item": "Goodyear Women's Raylan Slip Resistant Shoes",
+          "brand": "Goodyear",
+          "price": 29.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009464",
+          "item": "Crocs Men's and Women's Unisex Baya Lined Clogs",
+          "brand": "Crocs",
+          "price": 29.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009518",
+          "item": "Joybees Women's Slip-on Arch Support Sandals",
+          "brand": "Joybees",
+          "price": 25,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009499",
+          "item": "Madden NYC Women's Pointed Toe Mules",
+          "brand": "Madden NYC",
+          "price": 14.4,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009484",
+          "item": "Crocs Men's and Women's Unisex Baya II Slide Sandals",
+          "brand": "Crocs",
+          "price": 19.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009678",
+          "item": "Mainstays Can Opener and Knife Sharpener, Bottle Opener with Removable Cutting Lever Black",
+          "brand": "Mainstays",
+          "price": 18.44,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009708",
+          "item": "Cirkul 40oz All-Day StrawSip Double-Wall Insulated Stainless Steel Tumbler with Handle, Lilac (Light Purple)",
+          "brand": "Cirkul",
+          "price": 19.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009690",
+          "item": "Hamilton Beach Smoothie Blender, 48 oz BPA-Free Jar 650 W 12-Function Countertop Blender for Kitchen, Black",
+          "brand": "Hamilton Beach",
+          "price": 22.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009751",
+          "item": "George Foreman 4–6 Serving Electric Indoor Grill, Contact Smokeless Grilling with Removable Plates and Drip Tray, Stainless Steel Housing",
+          "brand": "George Foreman",
+          "price": 87.96,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009636",
+          "item": "Hamilton Beach 0.9 Cu ft Countertop Microwave Oven, 900 Watts, Stainless Steel, New",
+          "brand": "Hamilton Beach",
+          "price": 59,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009627",
+          "item": "Ninja SLUSHi 72-Oz Frozen Drink Machine with RapidChill Technology, 3 Presets, Dishwasher Safe, FS300 Gray",
+          "brand": "Ninja",
+          "price": 249,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009623",
+          "item": "Ninja HyperHeat 8-in-1 Electric Pressure Cooker with SimpliServe Pot — 6.5 Qt, Cooks Up to 2X Faster, 1200W, Feeds 8–10, Sage Leaf",
+          "brand": "Ninja",
+          "price": 135,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009640",
+          "item": "Beautiful 6 Qt Programmable Slow Cooker, White Icing by Drew Barrymore",
+          "brand": "Beautiful",
+          "price": 54.24,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009632",
+          "item": "Nespresso Vertuo Pop Coffee and Espresso Maker by De'Longhi, Liquorice Black",
+          "brand": "Nespresso",
+          "price": 94.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009644",
+          "item": "Magic Bullet Mini Juicer, 400-Watt, Silver, MBJ10100WM",
+          "brand": "Magic Bullet",
+          "price": 39.96,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009638",
+          "item": "Chefman Anti-Overflow Belgian Waffle Maker with Shade Selector and Non-Stick Plates, Black",
+          "brand": "Chefman",
+          "price": 26.92,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009705",
+          "item": "LED Flying Disc, Outdoor Lawn Games, Family Games, for All Ages, by MinnARK",
+          "brand": "MinnARK",
+          "price": 12.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009680",
+          "item": "MinnARK 8.5-Inch Playground Ball for Kids – Rubber Kickball for Outdoor Games, School, Recess & Backyard Sports, Ages 3+",
+          "brand": "MinnARK",
+          "price": 8.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009693",
+          "item": "Little Tikes First Slide, Easy Set Up Playset, Indoor Outdoor Backyard Slide, 18 Months",
+          "brand": "Little Tikes",
+          "price": 34.49,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009687",
+          "item": "Sportspower My 1st Toddler Swing Indoor & Outdoor Backyard Play Structure with Safety Harness & Foldable Frame for 9-36 Months",
+          "brand": "Sportspower",
+          "price": 55.86,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009701",
+          "item": "Sportspower 40\" Super Fun Super Saucer Swing, Great for Kids 3-8",
+          "brand": "Sportspower",
+          "price": 35.86,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009713",
+          "item": "Little Tikes Campin' & Climb Wall, Active Play with Tent and Pegs, Indoor Playground Climber, Outdoor Children 3 Year and Up",
+          "brand": "Little Tikes",
+          "price": 93.59,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009505",
+          "item": "Cornhole Wooden, Stick & Slide, 10 Pieces, 2 Boards, 8 Bean Bags, Family Games, Ages 3+ by MinnARK",
+          "brand": "MinnARK",
+          "price": 59.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009478",
+          "item": "FitRx SmartBell Gym, 60 lbs. 4-in-1 Adjustable Interchangeable Dumbbell, Barbell, and Kettlebell Weight Set, Black",
+          "brand": "FitRx",
+          "price": 84,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009487",
+          "item": "Franklin Sports Blackhawk Soccer Goal - Pop up - Indoor + Outdoor - Adult + Kids - 4' x 3' - Yellow",
+          "brand": "Franklin Sports",
+          "price": 24.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009517",
+          "item": "Ozark Trail 30L Unisex Coated Polyester Travel Backpack with Padded Laptop Sleeve and Luggage Pass-Through, Blue",
+          "brand": "Ozark Trail",
+          "price": 29.76,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009492",
+          "item": "RTIC 16 oz Ceramic Lined Insulated Outback Bottle, Leak Resistant, Orchid",
+          "brand": "RTIC",
+          "price": 11.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009511",
+          "item": "OFF! Area Insect & Mosquito Repellent, Outdoor Fogger, 8.5 oz",
+          "brand": "OFF!",
+          "price": 7.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009498",
+          "item": "Sportspower My 1st Trampoline 36\" Indoor/Outdoor Mini Rebounder Trampoline with No-Gap Padded Cover, for Toddlers & Kids, Max Weight Capacity 220 LBS - BLUE",
+          "brand": "Bounce Pro",
+          "price": 49.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009558",
+          "item": "Athletic Works Boys Core Performance Shorts, 2-Pack, Sizes 4-18 & Husky",
+          "brand": "Athletic Works",
+          "price": 7.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009536",
+          "item": "Wonder Nation Toddler Little and Big Boys or Girls Water Shoes",
+          "brand": "Wonder Nation",
+          "price": 6.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009607",
+          "item": "Avia Toddler Boys and Girls Air Sneakers",
+          "brand": "Avia",
+          "price": 14.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009547",
+          "item": "AND1 Boys Python Athletic Sneakers",
+          "brand": "AND1",
+          "price": 14.99,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009586",
+          "item": "Athletic Works Boys Mesh Shorts, Sizes 4-18 & Husky",
+          "brand": "Athletic Works",
+          "price": 7.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009610",
+          "item": "Hanes Boy' Ecosmart White Crew Undershirt Value Pack, 5-pack sizes S-XXL",
+          "brand": "Hanes",
+          "price": 8.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009574",
+          "item": "Athletic Works Little and Big Girls Active Shorts, Sizes 4-18 & Plus",
+          "brand": "Athletic Works",
+          "price": 4.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009528",
+          "item": "Wonder Nation Girls No Show Socks, 20-Pack",
+          "brand": "Wonder Nation",
+          "price": 9.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009601",
+          "item": "Minnie Mouse Toddler Girls Graphic Tee and Bike Shorts Set, 2-Piece",
+          "brand": "Minnie Mouse",
+          "price": 7,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009542",
+          "item": "Justice Girls Mesh Hem Tulip Short Set, Sizes XS - XLP",
+          "brand": "Justice",
+          "price": 10,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009553",
+          "item": "Wonder Nation Toddler Boys' Graphic Tank Top, Size 18M-5T",
+          "brand": "Wonder Nation",
+          "price": 2.48,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009590",
+          "item": "Wonder Nation Little and Big Kids Unisex Sport Sneakers",
+          "brand": "Wonder Nation",
+          "price": 14.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009606",
+          "item": "Avia Kids Running Sneakers with Bungee Laces",
+          "brand": "Avia",
+          "price": 14.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009759",
+          "item": "Pen+Gear Ruled Index Cards, 3\" x 5\", White, 100 Count",
+          "brand": "Pen+Gear",
+          "price": 0.94,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009723",
           "item": "Pen+Gear #2 HB Unsharpened Wood Pencils, Yellow, 24 Count",
           "brand": "Pen+Gear",
+          "price": 0.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009766",
+          "item": "Crayola Crayons, 24 Count, Coloring Supplies for Kids, Classroom Must Haves for Teachers, Classic Colors, 3+",
+          "brand": "Crayola",
+          "price": 0.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009730",
+          "item": "Elmer's Disappearing Purple School Glue Sticks, Washable, 2 Count",
+          "brand": "Elmer's",
+          "price": 0.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009652",
+          "item": "Pen+Gear Glue Sticks, Disappearing Purple, Washable",
+          "brand": "Pen+Gear",
+          "price": 0.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009642",
+          "item": "Pen+Gear Blue Letter Size 2-Pocket Paper Folder",
+          "brand": "Pen+Gear",
+          "price": 0.54,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009645",
+          "item": "Sterilite Small Pencil Box, Plastic Case with Hinged Lid and Snap Latch, Portable Storage for Back to School Supplies, Clear",
+          "brand": "Sterilite",
           "price": 0.92,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821279",
-          "item": "Capri Sun Flavored with Other Natural Flavor Juice Drink Blend, 10 Pouches, for School Lunches and On-the-Go Hydration, Fruit Punch, All Natural Ingredients, 6 fl oz",
-          "brand": "Capri Sun",
-          "price": 3.12,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1026821235",
-          "item": "Pen+Gear Ruled Index Cards, 3\" x 5\", White, 100 Count",
+          "id": "Walmart-1027009656",
+          "item": "Pen+Gear 5-inch Blunt-Tip Kids Scissors, Age 4-7, School Supplies, Multi-Purpose, Blue",
           "brand": "Pen+Gear",
-          "price": 0.72,
+          "price": 0.98,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821274",
+          "id": "Walmart-1027009648",
+          "item": "Pen+Gear Pink Block Erasers",
+          "brand": "Pen+Gear",
+          "price": 0.84,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009654",
+          "item": "BIC Cristal Xtra Smooth Medium Point Ball Pen, School Supplies",
+          "brand": "BIC",
+          "price": 0.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009658",
+          "item": "Pen+Gear 12\" Plastic Ruler – Clear, Bulk pack Available , recommend for Middle School, High School, College,",
+          "brand": "Pen+Gear",
+          "price": 0.94,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009650",
+          "item": "Pen+Gear 24 Count Assorted Color Crayons Set",
+          "brand": "Pen+Gear",
+          "price": 0.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009556",
+          "item": "onn 20 Inch Bluetooth 2.1 Channel Soundbar with Multi-Color LED Lighting, Black",
+          "brand": "onn",
+          "price": 29.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009562",
+          "item": "Logitech Full Size Wireless Mouse, Silver, Walmart Exclusive",
+          "brand": "Logitech",
+          "price": 16.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009575",
+          "item": "JLab JBuddies Pop Wireless Kids Headphones, 2 in 1 Wireless + Wired, Volume Safe, Pink",
+          "brand": "JLab",
+          "price": 17.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009591",
+          "item": "Govee 24.6ft Wi-Fi RGBICW LED Strip Light",
+          "brand": "Govee",
+          "price": 42.49,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009589",
+          "item": "Vivitar InstaPrint Digital Camera, 12MP, 4 Games, 2 Rolls of Paper, Instantly Prints 2\" X 3\" Pictures -Pink",
+          "brand": "Vivitar",
+          "price": 24.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009573",
+          "item": "Logitech Wireless Keyboard and Mouse Combo for Windows, 2.4 GHz Wireless, 8 Multimedia and Shortcut Keys, Walmart Exclusive",
+          "brand": "Logitech",
+          "price": 17.92,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009567",
+          "item": "onn Desktop Mat, Rectangle, Polyester Surface with Nonslip Natural Rubber Backing, Black, 32\" x12\"",
+          "brand": "onn",
+          "price": 9.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009598",
+          "item": "onn On-Ear Headphones Black Lightweight, Adjustable Headband, AUX Cord",
+          "brand": "onn",
+          "price": 9.1,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009581",
+          "item": "JBL Tune 510BT - Wireless on-ear headphones - Pure Bass. Zero Cables. - White",
+          "brand": "JBL",
+          "price": 39.95,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009595",
+          "item": "JBL Vibe Flex 2 - True Wireless Earbuds - White",
+          "brand": "JBL",
+          "price": 39.88,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009602",
+          "item": "Altec Lansing Hydra Jolt 2.0 Everything Proof Wireless Magnetic Portable Bluetooth Speaker, Periwinkle Blue White, IMW1202-PERIWT",
+          "brand": "Altec Lansing",
+          "price": 29.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009728",
+          "item": "Great Value 100% Whole Wheat Round Top Bread, 20 oz",
+          "brand": "Great Value",
+          "price": 1.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009739",
           "item": "Great Value Concord Grape Jelly, 18 oz",
           "brand": "Great Value",
           "price": 1.98,
@@ -1142,18 +1110,50 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821253",
-          "item": "Pen+Gear 3-Inch by 3-Inch Sustainable Yellow Sticky Notes, 100 Sheets",
-          "brand": "Pen+Gear",
-          "price": 0.67,
+          "id": "Walmart-1027009755",
+          "item": "Capri Sun Flavored with Other Natural Flavor Juice Drink Blend, 10 Pouches, for School Lunches and On-the-Go Hydration, Fruit Punch, All Natural Ingredients, 6 fl oz",
+          "brand": "Capri Sun",
+          "price": 2.98,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1026821254",
-          "item": "Pen+Gear 12\" Plastic Ruler – Clear, Bulk pack Available , recommend for Middle School, High School, College,",
-          "brand": "Pen+Gear",
-          "price": 0.94,
+          "id": "Walmart-1027009761",
+          "item": "Frito Lay Simply NKD No Dyes No Artificial Flavors Variety pack Snack Mix, 9.625 oz (10 pack)",
+          "brand": "Frito Lay",
+          "price": 5.97,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009744",
+          "item": "Great Value Colby & Monterey Jack Cheese Snack, 9 oz Bag, 12 Cheese Sticks",
+          "brand": "Great Value",
+          "price": 2.56,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009733",
+          "item": "Great Value Natural No Stir Creamy Peanut Butter, 16 oz",
+          "brand": "Great Value",
+          "price": 1.98,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009765",
+          "item": "Crunch Pak Snack Featuring Bluey with Fresh Sliced Peeled Apples, Pretzels, and Cheese, 2.5oz Tray",
+          "brand": "Crunch Pak",
+          "price": 1.47,
+          "validFrom": "2026-07-15T00:00:00-04:00",
+          "validTo": "2026-07-21T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1027009750",
+          "item": "Fresh Banana, Each",
+          "brand": "Unbranded",
+          "price": 0.2,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         }
@@ -5240,10 +5240,10 @@
       "validTo": "2026-07-21T23:59:59-04:00",
       "deals": [
         {
-          "id": "Aldi-1025492440",
-          "item": "Boulder Heavy Duty Coated Paper Plates",
-          "brand": "Boulder",
-          "price": 3.39,
+          "id": "Aldi-1025470730",
+          "item": "Seasoned Chicken Skewers",
+          "brand": null,
+          "price": 7.49,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
@@ -5328,14 +5328,6 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1025491080",
-          "item": "Choeur Dark Chocolate Assortment",
-          "brand": "Choeur",
-          "price": 1.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1025492029",
           "item": "KIRKTON HOUSE 2-Piece Washable Rug Set",
           "brand": "KIRKTON HOUSE",
@@ -5380,14 +5372,6 @@
           "item": "MSC Certified Sockeye Salmon",
           "brand": null,
           "price": 13.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025470730",
-          "item": "Seasoned Chicken Skewers",
-          "brand": null,
-          "price": 7.49,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
@@ -5480,14 +5464,6 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1025491175",
-          "item": "Friendly Farms Lactose Free Whole or 2% Milk",
-          "brand": "Friendly Farms",
-          "price": 2.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1025489394",
           "item": "Farmer Focus Fresh Antibiotic Free Family Pack Whole Chicken Wings",
           "brand": "Farmer Focus Fresh",
@@ -5504,14 +5480,6 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1025490693",
-          "item": "Elevation Functional Protein Bars",
-          "brand": "Elevation",
-          "price": 3.69,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1025490795",
           "item": "Morton's of Omaha Fresh Rosemary or Steakhouse Petite Beef Tender",
           "brand": "Morton's of Omaha",
@@ -5520,58 +5488,10 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1025490682",
-          "item": "Fresh Organic 85/15 Grass-Fed Ground Beef",
-          "brand": "Simply Nature",
-          "price": 5.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025490941",
-          "item": "Barissimo Coconut Crème or Cinnamon Roll Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025490960",
-          "item": "Barissimo Caramel Macchiato Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025490717",
-          "item": "Breakfast Best Breakfast Bowl",
-          "brand": "Breakfast Best",
-          "price": 1.85,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025491146",
-          "item": "Clancy's Kettle Chips",
-          "brand": "Clancy's",
-          "price": 1.89,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1025490657",
           "item": "LIVE IN STYLE Premium Kids' Backpack",
           "brand": "LIVE IN STYLE",
           "price": 16.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025491143",
-          "item": "Barissimo Italian Sweet Cream Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
@@ -5588,22 +5508,6 @@
           "item": "Heart to Tail Pet Splash Pad",
           "brand": "Heart to Tail",
           "price": 9.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492415",
-          "item": "VitaLife Organic Kombucha",
-          "brand": "VitaLife",
-          "price": 1.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492527",
-          "item": "Simply Nature Fair Trade Organic Whole Bean Coffee",
-          "brand": "Simply Nature",
-          "price": 7.99,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
@@ -5712,86 +5616,6 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1025492558",
-          "item": "Simply Nature Organic Fruit Snacks",
-          "brand": "Simply Nature",
-          "price": 4.95,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492426",
-          "item": "PurAqua Belle Vie 12-Pack",
-          "brand": "PurAqua",
-          "price": 3.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492611",
-          "item": "Friendly Farms Nonfat Greek Yogurt",
-          "brand": "Friendly Farms",
-          "price": 2.79,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492496",
-          "item": "Specially Selected Brioche Burger Buns",
-          "brand": "Specially Selected",
-          "price": 3.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492468",
-          "item": "Choeur Chocolate Assortment",
-          "brand": "Choeur",
-          "price": 1.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492513",
-          "item": "PurAqua Sparkling Frost Water",
-          "brand": "PurAqua",
-          "price": 0.59,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492573",
-          "item": "Specially Selected Sliced Sourdough Round",
-          "brand": "Specially Selected",
-          "price": 3.49,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492483",
-          "item": "PurAqua Italian Mineral Water",
-          "brand": "PurAqua",
-          "price": 4.69,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492585",
-          "item": "Barissimo Flavored Iced Coffee",
-          "brand": "Barissimo",
-          "price": 3.89,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492599",
-          "item": "Specially Selected Everything Sourdough",
-          "brand": "Specially Selected",
-          "price": 3.49,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1025488437",
           "item": "Earthly Grains Couscous",
           "brand": "Earthly Grains",
@@ -5880,42 +5704,10 @@
           "validTo": "2026-07-21T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1025490962",
-          "item": "L'oven Fresh Keto Friendly Bread",
-          "brand": "L'oven Fresh",
-          "price": 4.49,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1025492147",
           "item": "SOHL Couch Table",
           "brand": "SOHL",
           "price": 14.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025490729",
-          "item": "Park Street Deli Cranberry Almond Chicken Salad",
-          "brand": "Park Street Deli",
-          "price": 4.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025490783",
-          "item": "Simms Multipack Meat Snack Sticks",
-          "brand": "Simms",
-          "price": 3.89,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492453",
-          "item": "Barissimo Zero Sugar Coffee Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
@@ -5932,14 +5724,6 @@
           "item": "Kirkwood Fresh Chicken Tenderloins",
           "brand": "Kirkwood",
           "price": 3.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025490980",
-          "item": "Friendly Farms Unsweetened Vanilla or Sweetened Almondmilk",
-          "brand": "Friendly Farms",
-          "price": 2.29,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         },
@@ -5972,14 +5756,6 @@
           "item": "Easy Home Pack & Go Trolley",
           "brand": "Easy Home",
           "price": 19.99,
-          "validFrom": "2026-07-15T00:00:00-04:00",
-          "validTo": "2026-07-21T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1025492541",
-          "item": "Specially Selected Seeded Brioche Burger Buns",
-          "brand": "Specially Selected",
-          "price": 3.99,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-21T23:59:59-04:00"
         }
