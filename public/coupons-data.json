@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-17T09:40:23.285Z",
+  "lastUpdated": "2026-07-18T09:35:59.782Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -164,15 +164,6 @@
         "description": "Save $6.00 on any TWO (2) AXE Body Sprays or Sticks (excludes twin packs, trial and travel sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633707",
-        "brand": "Baby Dove",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Hair Products (Excludes: Dove Men+ Care products, twin packs, regimen packs, trial and travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -764,7 +755,7 @@
         "id": "flipp-4633846",
         "brand": "Degree",
         "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Degree Whole Body Deodorant product or Degree Clinical Protection Deodorant product (excludes T&T, twin packs, invisible solid sticks 0.5oz, 1.0oz sizes)",
+        "description": "Save $3.00 on any ONE (1) Degree Whole Body Deodorant product or Degree Clinical Protection Deodorant product (excludes Trial / Travel, twin packs, invisible solid sticks 0.5oz, 1.0oz sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-07-25T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -833,12 +824,30 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4652622",
+        "brand": "Dove",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on Any ONE (1) Dove Deodorant Product (excludes Trial & Trial, Twin Packs, Invisible Solids and Dove Men+Care)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4608308",
         "brand": "Dove",
         "discount": "Save $4.00",
         "description": "Save $4.00 on any TWO (2) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-07-19T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4608307",
+        "brand": "Dove",
+        "discount": "SAVE $5.00",
+        "description": "SAVE $5.00 on select TWO (2) Dove Body Washes (10.3oz+), Bars (4ct+), Scrubs (15oz) (excludes items and sizes not listed)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1199,15 +1208,6 @@
         "description": "Save $2.00 on any ONE (1) Frito-Lay Party Size (8.12-17 oz)",
         "category": "Grocery",
         "validTo": "2026-07-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-79292",
-        "brand": "Gain",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
-        "category": "Other",
-        "validTo": "2026-07-17T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1913,15 +1913,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634818",
-        "brand": "Neutrogena",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) NEUTROGENA® Facial Moisturizer, Serum or Treatment (excludes Acne, Clearance, Masks, & Trial & Travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634802",
         "brand": "Neutrogena",
         "discount": "Save $4.00",
@@ -1964,6 +1955,15 @@
         "description": "Save $2.50 on any ONE (1) NEUTROGENA® Liquid Cleanser (excludes Acne Cleansers, Bars, Concentrate Refill Packs, Trial/Travel sizes & Wipes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-15T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4634818",
+        "brand": "Neutrogena",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) NEUTROGENA® Facial Moisturizer, Serum or Treatment (excludes Acne, Clearance, Masks, & Trial & Travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2777,15 +2777,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4607759",
-        "brand": "Sparkle",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any ONE (1) package of any Sparkle® Paper Towels",
-        "category": "Other",
-        "validTo": "2026-08-09T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4605638",
         "brand": "STEM™",
         "discount": "Save $5.00",
@@ -2939,15 +2930,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634828",
-        "brand": "Tylenol",
-        "discount": "Save $3.50",
-        "description": "Save $3.50 on any ONE (1) TYLENOL® PRECISE ™ Pain Relieving Patches or Cream Products (Excludes Adult TYLENOL®, TYLENOL® PM, TYLENOL® Cold & Sinus, and travel & trial sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654487",
         "brand": "Tylenol",
         "discount": "Save $4.00",
@@ -2957,12 +2939,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634867",
-        "brand": "TYLENOL®",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any ONE (1) Adult TYLENOL® 200ct or larger (Excludes travel & trial sizes)",
+        "id": "flipp-4634828",
+        "brand": "Tylenol",
+        "discount": "Save $3.50",
+        "description": "Save $3.50 on any ONE (1) TYLENOL® PRECISE ™ Pain Relieving Patches or Cream Products (Excludes Adult TYLENOL®, TYLENOL® PM, TYLENOL® Cold & Sinus, and travel & trial sizes)",
         "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:00.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2970,6 +2952,15 @@
         "brand": "TYLENOL®",
         "discount": "Save $3.00",
         "description": "Save $3.00 on any ONE (1) TYLENOL® or TYLENOL® PM (Excludes 200 ct. or larger, TYLENOL® Precise, TYLENOL® Proactive, TYLENOL® Cold & Sinus and travel & trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4634867",
+        "brand": "TYLENOL®",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 on any ONE (1) Adult TYLENOL® 200ct or larger (Excludes travel & trial sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
@@ -3539,13 +3530,6 @@
         "title": "Free Original or Spicy Chick Fil A Sandwich with Survey",
         "url": "https://slickdeals.net/f/19591479-free-original-or-spicy-chick-fil-a-sandwich-with-survey?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-03T19:13:20.000Z"
-      },
-      {
-        "id": "sd-19586358",
-        "place": "Taco Bell",
-        "title": "Taco Bell Rewards Drop: $1 Cheesy Gordita Crunch at 2pm Today (6/2)",
-        "url": "https://slickdeals.net/f/19586358-taco-bell-rewards-drop-1-cheesy-gordita-crunch-at-2pm-today-6-2?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-02T12:21:45.000Z"
       }
     ]
   }
