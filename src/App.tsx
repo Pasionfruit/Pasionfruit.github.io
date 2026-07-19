@@ -455,7 +455,7 @@ function SiteLayout({
           <span className="brand-mark">{brandMark}</span>
           <span className="brand-copy">
             <strong>{brandName}</strong>
-            <small>Another Vibe Coded Site</small>
+            <small>Living with Passion</small>
           </span>
         </Link>
 
@@ -2541,6 +2541,8 @@ function SectionPage({
           <p>{child.summary}</p>
         </Link>
       ))}
+
+      {sectionId === 'gaming' ? <PersonalGamesCard title="Personally Developed Games" /> : null}
     </PageFrame>
   )
 }
@@ -11099,6 +11101,42 @@ function GamesCarouselCard({ title }: { title: string }) {
         </div>
         <button className="game-carousel-arrow right" onClick={() => scroll('right')} aria-label="Next">&#8250;</button>
       </div>
+    </article>
+  )
+}
+
+const PERSONAL_GAMES = [
+  {
+    name: 'Type-to-beat',
+    url: 'https://texthero.onrender.com/',
+    description: 'A rhythm game — type along to the beat.',
+    note: 'Hosted on Render, so it may take up to 5 minutes to load and import songs. Legal disclaimer: I do not claim any of the songs as my own.',
+  },
+  {
+    name: 'Game Night',
+    url: 'https://mahjong-xmhv.onrender.com/',
+    description:
+      'Published with some games and still in development — the goal is a hybrid of phone games and a personal board game.',
+    note: '',
+  },
+]
+
+function PersonalGamesCard({ title }: { title: string }) {
+  return (
+    <article className="info-card section-page-card personal-games-card">
+      <h3>{title}</h3>
+      <ul className="personal-games-list">
+        {PERSONAL_GAMES.map((game) => (
+          <li key={game.name} className="personal-games-item">
+            <a href={game.url} target="_blank" rel="noopener noreferrer" className="personal-games-link">
+              {game.name}
+              <span aria-hidden="true"> ↗</span>
+            </a>
+            <p className="personal-games-desc">{game.description}</p>
+            {game.note ? <p className="personal-games-note">{game.note}</p> : null}
+          </li>
+        ))}
+      </ul>
     </article>
   )
 }
