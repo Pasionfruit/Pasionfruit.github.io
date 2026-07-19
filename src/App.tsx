@@ -98,7 +98,6 @@ import {
   createRecipeStep,
   updateRecipeStep,
   deleteRecipeStep,
-  logMcServerStart,
   getMcPlayerStats,
 } from './data/sheets/repositories'
 import type {
@@ -126,6 +125,7 @@ import { warmupAppsScript } from './data/sheets/client'
 import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 import { importRecipeFromUrl, type ImportedIngredient } from './recipeImport'
+import { getServerStatus } from './minecraft/api'
 
 type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
@@ -11244,23 +11244,10 @@ function PersonalGamesCard({ title }: { title: string }) {
 }
 
 const MC_DOC_URL    = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
-// Replace XXXXX with the port shown in your Aternos panel (e.g. 25565 or a 5-digit port)
-const MC_SERVER_ADDR = 'pasionabe.aternos.me:46705'
-
-const MC_PLAYERS = [
-  'azulfrog', 'Bacono', 'Bfyce', 'Contrulwhy', 'Contrulzee',
-  'CrimsonKing7585', 'Jnson_tm', 'MoinstzMomo', 'MrPasionfruit',
-  'ninja_penguinfl', 'Shoot5193', 'theboss920',
-]
 
 type McServerStatus = { online: boolean; players?: { online: number; max: number }; version?: string }
 
 function GamingServerPage() {
-  const [playerName, setPlayerName] = useState('')
-  const [status,     setStatus]     = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [errorMsg,   setErrorMsg]   = useState('')
-  const [autoStarted, setAutoStarted] = useState(false)
-
   const [srvStatus,      setSrvStatus]      = useState<McServerStatus | null>(null)
   const [srvChecking,    setSrvChecking]    = useState(true)
   const [srvLastChecked, setSrvLastChecked] = useState<Date | null>(null)
@@ -11270,22 +11257,15 @@ function GamingServerPage() {
   async function checkServerStatus() {
     setSrvChecking(true)
     try {
-      const localApi = (import.meta.env.VITE_MC_LOCAL_API as string | undefined)?.replace(/\/$/, '')
-      if (localApi) {
-        const token = import.meta.env.VITE_MC_API_TOKEN as string | undefined
-        const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
-        const res  = await fetch(`${localApi}/status`, { headers })
-        const data = await res.json()
-        setSrvStatus({ online: !!data.online })
-      } else {
-        const res  = await fetch(`https://api.mcstatus.io/v2/status/java/${MC_SERVER_ADDR}`)
-        const data = await res.json()
-        setSrvStatus({
-          online:  !!data.online,
-          players: data.players,
-          version: data.version?.name_clean ?? data.version,
-        })
-      }
+      const data = await getServerStatus()
+      setSrvStatus({
+        online: data.online,
+        players:
+          typeof data.players === 'number'
+            ? { online: data.players, max: data.maxPlayers ?? 0 }
+            : undefined,
+        version: data.version,
+      })
     } catch {
       setSrvStatus({ online: false })
     } finally {
@@ -11299,26 +11279,11 @@ function GamingServerPage() {
     getMcPlayerStats().then(setPlayerStats).catch(() => {})
   }, [])
 
-  async function handleStart() {
-    const name = playerName.trim()
-    if (!name) return
-    setStatus('loading')
-    setErrorMsg('')
-    try {
-      const result = await logMcServerStart(name)
-      setAutoStarted(result.serverStarted)
-      setStatus('success')
-    } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : 'Something went wrong')
-      setStatus('error')
-    }
-  }
-
   return (
     <PageFrame
       eyebrow="Minecraft"
       title="Minecraft Server"
-      summary="Start the Aternos server and get connection instructions."
+      summary="Check server status, get connection instructions, and open the control dashboard."
       accent="#7e22ce"
       backLink="/gaming"
       backLabel="Back to Gaming"
@@ -11373,55 +11338,25 @@ function GamingServerPage() {
           </div>
         ) : null}
 
-        <p className="mc-card-body mc-srv-address">
-          <code>pasionabe.aternos.me</code>
-          {srvLastChecked && (
-            <span className="mc-srv-checked"> · checked {srvLastChecked.toLocaleTimeString()}</span>
-          )}
-        </p>
+        {srvLastChecked ? (
+          <p className="mc-card-body mc-srv-address">
+            <span className="mc-srv-checked">Checked {srvLastChecked.toLocaleTimeString()}</span>
+          </p>
+        ) : null}
 
         <hr className="mc-divider" />
 
-        {/* Start form */}
-        <h3>Start the Server</h3>
         <p className="mc-card-body">
           {srvStatus?.online
-            ? 'The server is already online — join now!'
-            : <>Enter your name and click <strong>Start Server</strong>. It may take up to 2 minutes to come online.</>}
+            ? 'The server is online — join now!'
+            : 'Start, stop, and monitor the server from the control dashboard.'}
         </p>
 
-        <div className="mc-start-form">
-          <select
-            className="mc-name-input mc-name-select"
-            value={playerName}
-            onChange={e => {
-              setPlayerName(e.target.value)
-              if (status !== 'idle') { setStatus('idle'); setAutoStarted(false) }
-            }}
-            disabled={status === 'loading' || !!srvStatus?.online}
-          >
-            <option value="">Select your name…</option>
-            {MC_PLAYERS.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-          <button
-            className="primary-action mc-start-btn"
-            onClick={handleStart}
-            disabled={!playerName.trim() || status === 'loading' || !!srvStatus?.online}
-          >
-            {status === 'loading' ? 'Starting…' : 'Start Server'}
-          </button>
+        <div className="mc-doc-footer">
+          <a href="/minecraft.html" className="secondary-action mc-doc-link">
+            Open Control Dashboard
+          </a>
         </div>
-
-        {status === 'success' && (
-          <p className="mc-status mc-status--ok">
-            {autoStarted
-              ? `Server is starting, ${playerName}! Give it 1–2 minutes to come online.`
-              : `Got it, ${playerName}! A notification was sent to the owner's phone — the server will be up shortly.`}
-          </p>
-        )}
-        {status === 'error' && (
-          <p className="mc-status mc-status--err">{errorMsg}</p>
-        )}
       </div>
 
       {/* ── Player Insights ── */}

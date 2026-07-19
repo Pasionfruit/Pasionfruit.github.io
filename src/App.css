@@ -5196,6 +5196,8 @@
 
 .mc-doc-footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   justify-content: flex-end;
 }
 

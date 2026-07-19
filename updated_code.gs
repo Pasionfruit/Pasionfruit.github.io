@@ -34,31 +34,6 @@ function doPost(e) {
       }
       mcSheet.appendRow([timestamp, playerName])
 
-      // Send push notification via ntfy.sh
-      // Set NTFY_TOPIC in Apps Script → Project Settings → Script Properties
-      var props     = PropertiesService.getScriptProperties()
-      var ntfyTopic = String(props.getProperty('NTFY_TOPIC') || '').trim()
-
-      if (ntfyTopic) {
-        UrlFetchApp.fetch('https://ntfy.sh/' + ntfyTopic, {
-          method: 'post',
-          payload: playerName + ' wants to play — tap to open Aternos and start the server.',
-          headers: {
-            'Title': 'MC Server Start Request',
-            'Priority': 'high',
-            'Tags': 'video_game,bell',
-            'Click': 'https://aternos.org/server/',
-          },
-          muteHttpExceptions: true,
-        })
-      }
-
-      MailApp.sendEmail({
-        to: 'pasionabe@gmail.com',
-        subject: 'MC Server Start Request',
-        body: playerName + ' wants to play!\n\nStart the server on Aternos:\nhttps://aternos.org/server/',
-      })
-
       return jsonResponse_({ ok: true, serverStarted: false })
     }
 

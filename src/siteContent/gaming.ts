@@ -30,7 +30,7 @@ export const gamingDetailPages: Record<string, SubpageContent> = {
   '/gaming/server': {
     eyebrow: 'Minecraft',
     title: 'Server',
-    summary: 'Start the Aternos server and get connection instructions.',
+    summary: 'Start the server and get connection instructions.',
     accent: '#7e22ce',
     cards: [],
     note: '',

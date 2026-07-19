@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => {
   const todoistToken = env.VITE_TODOIST_API_TOKEN?.trim()
 
   return {
+    build: {
+      rollupOptions: {
+        input: {
+          main: 'index.html',
+          minecraft: 'minecraft.html',
+        },
+      },
+    },
     plugins: [
       react(),
       VitePWA({
