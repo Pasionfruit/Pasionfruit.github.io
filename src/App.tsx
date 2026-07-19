@@ -10611,6 +10611,17 @@ function WeeklyResetPage({ profile, googleIdToken }: { profile: UserProfile; goo
 
 type WeeklyWorkoutDraft = { morning: string; evening: string }
 
+// Default training split applied by "Reset week", keyed by Date.getDay() (0 = Sunday).
+const WEEKLY_WORKOUT_DEFAULTS: Record<number, WeeklyWorkoutDraft> = {
+  0: { morning: 'Rest: —', evening: 'Rest: —' },
+  1: { morning: 'Chest & Tri', evening: 'Swim' },
+  2: { morning: 'Sprints', evening: 'Back & Bi' },
+  3: { morning: 'Bike', evening: 'Legs' },
+  4: { morning: 'Progressive Run', evening: 'Chest & Tri' },
+  5: { morning: 'Arms', evening: 'Swim' },
+  6: { morning: 'Easy Run', evening: 'Mobility' },
+}
+
 function WeeklyWorkoutResetCard({
   title,
   canWrite,
@@ -10628,6 +10639,8 @@ function WeeklyWorkoutResetCard({
   const [saveMessage, setSaveMessage] = useState('')
   const [drafts, setDrafts] = useState<Record<string, WeeklyWorkoutDraft>>({})
   const [savedDrafts, setSavedDrafts] = useState<Record<string, WeeklyWorkoutDraft>>({})
+  const [isExpanded, setIsExpanded] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
 
   async function loadWeek() {
     try {
@@ -10664,11 +10677,12 @@ function WeeklyWorkoutResetCard({
   }
 
   function handleClearAll() {
-    setDrafts((current) => {
+    setDrafts(() => {
       const next: Record<string, WeeklyWorkoutDraft> = {}
-      for (const key of Object.keys(current)) {
-        next[key] = { morning: '', evening: '' }
-      }
+      weekDates.forEach((date) => {
+        const key = toDateOnlyKey(date.toISOString())
+        next[key] = { ...WEEKLY_WORKOUT_DEFAULTS[date.getDay()] }
+      })
       return next
     })
   }
@@ -10702,6 +10716,7 @@ function WeeklyWorkoutResetCard({
       )
 
       await loadWeek()
+      setIsEditing(false)
       setSaveMessage(changedDates.length > 0 ? 'Workouts updated for this week.' : 'No workout changes to save.')
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update workouts')
@@ -10712,11 +10727,42 @@ function WeeklyWorkoutResetCard({
 
   return (
     <article className="info-card section-page-card sheets-card">
-      <h3>{title}</h3>
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              title="Edit values"
+              onClick={() => {
+                if (isEditing) {
+                  setDrafts(savedDrafts)
+                  setIsEditing(false)
+                } else {
+                  setIsExpanded(true)
+                  setIsEditing(true)
+                }
+              }}
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded((value) => !value)}
+          >
+            {isExpanded ? '▾' : '▸'}
+          </button>
+        </div>
+      </div>
 
       {isLoading ? <p className="sheets-meta">Loading workouts...</p> : null}
 
-      {!isLoading ? (
+      {!isLoading && isExpanded ? (
         <>
           <div className="sheets-table-shell">
             <table className="sheets-table weekly-reset-table">
@@ -10742,22 +10788,30 @@ function WeeklyWorkoutResetCard({
                         </span>
                       </td>
                       <td data-label="Morning workout">
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={draft.morning}
-                          onChange={(event) => setDraftValue(key, 'morning', event.target.value)}
-                          disabled={!canWrite || !idToken || isWriting}
-                        />
+                        {isEditing ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={draft.morning}
+                            onChange={(event) => setDraftValue(key, 'morning', event.target.value)}
+                            disabled={!canWrite || !idToken || isWriting}
+                          />
+                        ) : (
+                          <span>{draft.morning || '—'}</span>
+                        )}
                       </td>
                       <td data-label="Evening workout">
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={draft.evening}
-                          onChange={(event) => setDraftValue(key, 'evening', event.target.value)}
-                          disabled={!canWrite || !idToken || isWriting}
-                        />
+                        {isEditing ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={draft.evening}
+                            onChange={(event) => setDraftValue(key, 'evening', event.target.value)}
+                            disabled={!canWrite || !idToken || isWriting}
+                          />
+                        ) : (
+                          <span>{draft.evening || '—'}</span>
+                        )}
                       </td>
                     </tr>
                   )
@@ -10766,24 +10820,26 @@ function WeeklyWorkoutResetCard({
             </table>
           </div>
 
-          <div className="weekly-reset-actions">
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={handleClearAll}
-              disabled={!canWrite || !idToken || isWriting}
-            >
-              Clear week
-            </button>
-            <button
-              type="button"
-              className="primary-action"
-              onClick={() => void handleSaveAll()}
-              disabled={!canWrite || !idToken || isWriting}
-            >
-              {isWriting ? 'Saving...' : 'Save workouts'}
-            </button>
-          </div>
+          {isEditing ? (
+            <div className="weekly-reset-actions">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={handleClearAll}
+                disabled={!canWrite || !idToken || isWriting}
+              >
+                Reset week
+              </button>
+              <button
+                type="button"
+                className="primary-action"
+                onClick={() => void handleSaveAll()}
+                disabled={!canWrite || !idToken || isWriting}
+              >
+                {isWriting ? 'Saving...' : 'Save workouts'}
+              </button>
+            </div>
+          ) : null}
 
           {canWrite && !idToken ? (
             <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
@@ -10815,6 +10871,8 @@ function WeeklyStudyResetCard({
   const [saveMessage, setSaveMessage] = useState('')
   const [drafts, setDrafts] = useState<Record<string, WeeklyStudyDraft>>({})
   const [savedDrafts, setSavedDrafts] = useState<Record<string, WeeklyStudyDraft>>({})
+  const [isExpanded, setIsExpanded] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
 
   async function loadWeek() {
     try {
@@ -10888,6 +10946,7 @@ function WeeklyStudyResetCard({
       )
 
       await loadWeek()
+      setIsEditing(false)
       setSaveMessage(changedDates.length > 0 ? 'Study plan updated for this week.' : 'No study changes to save.')
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update study plan')
@@ -10898,11 +10957,42 @@ function WeeklyStudyResetCard({
 
   return (
     <article className="info-card section-page-card sheets-card">
-      <h3>{title}</h3>
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <div className="section-card-actions">
+          {canWrite ? (
+            <button
+              type="button"
+              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
+              aria-pressed={isEditing}
+              title="Edit values"
+              onClick={() => {
+                if (isEditing) {
+                  setDrafts(savedDrafts)
+                  setIsEditing(false)
+                } else {
+                  setIsExpanded(true)
+                  setIsEditing(true)
+                }
+              }}
+            >
+              ✎
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded((value) => !value)}
+          >
+            {isExpanded ? '▾' : '▸'}
+          </button>
+        </div>
+      </div>
 
       {isLoading ? <p className="sheets-meta">Loading study plan...</p> : null}
 
-      {!isLoading ? (
+      {!isLoading && isExpanded ? (
         <>
           <div className="sheets-table-shell">
             <table className="sheets-table weekly-reset-table">
@@ -10928,22 +11018,30 @@ function WeeklyStudyResetCard({
                         </span>
                       </td>
                       <td data-label="Related exam">
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={draft.relatedExam}
-                          onChange={(event) => setDraftValue(key, 'relatedExam', event.target.value)}
-                          disabled={!canWrite || !idToken || isWriting}
-                        />
+                        {isEditing ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={draft.relatedExam}
+                            onChange={(event) => setDraftValue(key, 'relatedExam', event.target.value)}
+                            disabled={!canWrite || !idToken || isWriting}
+                          />
+                        ) : (
+                          <span>{draft.relatedExam || '—'}</span>
+                        )}
                       </td>
                       <td data-label="Topic">
-                        <input
-                          className="sheets-input sheets-table-input"
-                          type="text"
-                          value={draft.topic}
-                          onChange={(event) => setDraftValue(key, 'topic', event.target.value)}
-                          disabled={!canWrite || !idToken || isWriting}
-                        />
+                        {isEditing ? (
+                          <input
+                            className="sheets-input sheets-table-input"
+                            type="text"
+                            value={draft.topic}
+                            onChange={(event) => setDraftValue(key, 'topic', event.target.value)}
+                            disabled={!canWrite || !idToken || isWriting}
+                          />
+                        ) : (
+                          <span>{draft.topic || '—'}</span>
+                        )}
                       </td>
                     </tr>
                   )
@@ -10952,28 +11050,32 @@ function WeeklyStudyResetCard({
             </table>
           </div>
 
-          <div className="weekly-reset-actions">
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={handleClearAll}
-              disabled={!canWrite || !idToken || isWriting}
-            >
-              Clear week
-            </button>
-            <button
-              type="button"
-              className="primary-action"
-              onClick={() => void handleSaveAll()}
-              disabled={!canWrite || !idToken || isWriting}
-            >
-              {isWriting ? 'Saving...' : 'Save study plan'}
-            </button>
-          </div>
+          {isEditing ? (
+            <div className="weekly-reset-actions">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={handleClearAll}
+                disabled={!canWrite || !idToken || isWriting}
+              >
+                Clear week
+              </button>
+              <button
+                type="button"
+                className="primary-action"
+                onClick={() => void handleSaveAll()}
+                disabled={!canWrite || !idToken || isWriting}
+              >
+                {isWriting ? 'Saving...' : 'Save study plan'}
+              </button>
+            </div>
+          ) : null}
 
-          <p className="sheets-meta">
-            Saving a day replaces all of that day's study rows; leave the topic empty to clear the day.
-          </p>
+          {isEditing ? (
+            <p className="sheets-meta">
+              Saving a day replaces all of that day's study rows; leave the topic empty to clear the day.
+            </p>
+          ) : null}
           {canWrite && !idToken ? (
             <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
           ) : null}
