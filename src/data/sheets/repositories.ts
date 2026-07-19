@@ -412,6 +412,32 @@ export async function setTrainingWorkoutCompleted(
   })
 }
 
+export async function upsertTrainingRecord(
+  idToken: string,
+  input: { date: string; morningWorkout: string; eveningWorkout: string },
+) {
+  await runWrite({
+    action: 'upsertTrainingRecord',
+    idToken,
+    date: input.date,
+    morning_workout: input.morningWorkout,
+    evening_workout: input.eveningWorkout,
+  })
+}
+
+export async function replaceCurrentStudyForDate(
+  idToken: string,
+  input: { date: string; relatedExam: string; topic: string },
+) {
+  await runWrite({
+    action: 'replaceCurrentStudyForDate',
+    idToken,
+    date: input.date,
+    related_exam: input.relatedExam,
+    topic: input.topic,
+  })
+}
+
 export async function createEvent(
   idToken: string,
   payload: {

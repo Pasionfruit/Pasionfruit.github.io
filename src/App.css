@@ -68,6 +68,7 @@
 }
 
 .login-link,
+.reset-link,
 .theme-toggle,
 .menu-toggle,
 .menu-close,
@@ -94,6 +95,7 @@
 
 @media (hover: hover) {
   .login-link:hover,
+  .reset-link:hover,
   .theme-toggle:hover,
   .menu-toggle:hover,
   .menu-close:hover,
@@ -112,6 +114,7 @@
 }
 
 .login-link:active,
+.reset-link:active,
 .theme-toggle:active,
 .menu-toggle:active,
 .menu-close:active,
@@ -164,6 +167,7 @@
 }
 
 .login-link,
+.reset-link,
 .theme-toggle,
 .menu-toggle {
   width: 2.65rem;
@@ -172,6 +176,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.weekly-reset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.weekly-reset-table .weekly-reset-day {
+  display: block;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.weekly-reset-table .weekly-reset-date {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .theme-toggle {

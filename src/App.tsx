@@ -1,5 +1,5 @@
 import React, { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, ShoppingCart, SquareCheck, Utensils } from 'lucide-react'
+import { BookOpen, RotateCcw, ShoppingCart, SquareCheck, Utensils } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
@@ -76,6 +76,8 @@ import {
   setBackpackPacked,
   updateGroceryListItem,
   updateMealPlan,
+  upsertTrainingRecord,
+  replaceCurrentStudyForDate,
   votePoll,
   getBudgetTargets,
   saveBudgetTarget,
@@ -263,7 +265,7 @@ function App() {
         <GoogleAutoSignIn onToken={handleAutoSignInToken} />
       )}
       <Routes>
-      <Route element={<SiteLayout canViewFinances={canViewPrivateFinances} googleIdToken={googleIdToken} />}>
+      <Route element={<SiteLayout canViewFinances={canViewPrivateFinances} googleIdToken={googleIdToken} profile={profile} />}>
         <Route
           index
           element={(
@@ -348,6 +350,16 @@ function App() {
           element={<SectionPage sectionId="gaming" profile={profile} googleIdToken={googleIdToken} />}
         />
         <Route path="gaming/server" element={<GamingServerPage />} />
+        <Route
+          path="weekly-reset"
+          element={
+            profile === 'admin' ? (
+              <WeeklyResetPage profile={profile} googleIdToken={googleIdToken} />
+            ) : (
+              <Navigate replace to="/" />
+            )
+          }
+        />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>
     </Routes>
@@ -360,7 +372,15 @@ const EMAIL_INITIALS: Record<string, string> = {
   'pixielee1000@gmail.com': 'CL',
 }
 
-function SiteLayout({ canViewFinances, googleIdToken }: { canViewFinances: boolean; googleIdToken: string }) {
+function SiteLayout({
+  canViewFinances,
+  googleIdToken,
+  profile,
+}: {
+  canViewFinances: boolean
+  googleIdToken: string
+  profile: UserProfile
+}) {
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const brandMark = EMAIL_INITIALS[googleEmail] ?? 'PF'
   const brandName = googleEmail.split('@')[0] || 'Pasionfruit'
@@ -440,6 +460,16 @@ function SiteLayout({ canViewFinances, googleIdToken }: { canViewFinances: boole
         </Link>
 
         <div className="topbar-actions">
+          {profile === 'admin' ? (
+            <NavLink
+              to="/weekly-reset"
+              className="reset-link"
+              aria-label="Weekly reset"
+              title="Weekly reset"
+            >
+              <RotateCcw size={18} strokeWidth={1.8} aria-hidden="true" />
+            </NavLink>
+          ) : null}
           <button
             type="button"
             className="theme-toggle"
@@ -10530,6 +10560,426 @@ function DetailPage({
         }
       })}
     </PageFrame>
+  )
+}
+
+function getResetWeekDates() {
+  // Saturday-through-Friday week containing today, matching the meal plan's day ordering.
+  const start = new Date()
+  start.setHours(0, 0, 0, 0)
+  start.setDate(start.getDate() - ((start.getDay() + 1) % 7))
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(start)
+    date.setDate(start.getDate() + index)
+    return date
+  })
+}
+
+function toSheetDateString(date: Date) {
+  // M/D/YYYY parses as local time everywhere the app reads sheet dates back.
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+}
+
+function WeeklyResetPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+  const canWrite = profile === 'admin'
+
+  return (
+    <PageFrame
+      eyebrow="Admin tools"
+      title="Weekly Reset"
+      summary="One place to set this week's meal plan, workouts, and study plan."
+      accent="#f97316"
+      backLink="/"
+      backLabel="Back to home"
+      note=""
+    >
+      <MealPlanCard
+        title="Meal Plan for the Week"
+        fallbackBody="No meal plan rows found."
+        canWrite={canWrite}
+        idToken={googleIdToken}
+        showTodaySummary={false}
+      />
+      <WeeklyWorkoutResetCard title="Workouts for the Week" canWrite={canWrite} idToken={googleIdToken} />
+      <WeeklyStudyResetCard title="Study Plan for the Week" canWrite={canWrite} idToken={googleIdToken} />
+    </PageFrame>
+  )
+}
+
+type WeeklyWorkoutDraft = { morning: string; evening: string }
+
+function WeeklyWorkoutResetCard({
+  title,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const weekDates = useMemo(() => getResetWeekDates(), [])
+  const [rows, setRows] = useState<TrainingRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [saveMessage, setSaveMessage] = useState('')
+  const [drafts, setDrafts] = useState<Record<string, WeeklyWorkoutDraft>>({})
+  const [savedDrafts, setSavedDrafts] = useState<Record<string, WeeklyWorkoutDraft>>({})
+
+  async function loadWeek() {
+    try {
+      const data = await getTrainingRecords()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadWeek()
+  }, [])
+
+  useEffect(() => {
+    const byDate = new Map(rows.map((row) => [toDateOnlyKey(row.date), row]))
+    const next: Record<string, WeeklyWorkoutDraft> = {}
+    weekDates.forEach((date) => {
+      const key = toDateOnlyKey(date.toISOString())
+      const row = byDate.get(key)
+      next[key] = { morning: row?.morning_workout ?? '', evening: row?.evening_workout ?? '' }
+    })
+    setDrafts(next)
+    setSavedDrafts(next)
+  }, [rows, weekDates])
+
+  function setDraftValue(key: string, field: keyof WeeklyWorkoutDraft, value: string) {
+    setDrafts((current) => ({
+      ...current,
+      [key]: { ...(current[key] ?? { morning: '', evening: '' }), [field]: value },
+    }))
+  }
+
+  function handleClearAll() {
+    setDrafts((current) => {
+      const next: Record<string, WeeklyWorkoutDraft> = {}
+      for (const key of Object.keys(current)) {
+        next[key] = { morning: '', evening: '' }
+      }
+      return next
+    })
+  }
+
+  async function handleSaveAll() {
+    if (!canWrite || !idToken || isWriting) return
+    setIsWriting(true)
+    setWriteError('')
+    setSaveMessage('')
+    try {
+      const changedDates = weekDates.filter((date) => {
+        const key = toDateOnlyKey(date.toISOString())
+        const draft = drafts[key]
+        const saved = savedDrafts[key]
+        if (!draft) return false
+        return (
+          draft.morning.trim() !== (saved?.morning ?? '').trim() ||
+          draft.evening.trim() !== (saved?.evening ?? '').trim()
+        )
+      })
+
+      await Promise.all(
+        changedDates.map((date) => {
+          const draft = drafts[toDateOnlyKey(date.toISOString())]
+          return upsertTrainingRecord(idToken, {
+            date: toSheetDateString(date),
+            morningWorkout: draft.morning.trim(),
+            eveningWorkout: draft.evening.trim(),
+          })
+        }),
+      )
+
+      await loadWeek()
+      setSaveMessage(changedDates.length > 0 ? 'Workouts updated for this week.' : 'No workout changes to save.')
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update workouts')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <h3>{title}</h3>
+
+      {isLoading ? <p className="sheets-meta">Loading workouts...</p> : null}
+
+      {!isLoading ? (
+        <>
+          <div className="sheets-table-shell">
+            <table className="sheets-table weekly-reset-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Morning workout</th>
+                  <th>Evening workout</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weekDates.map((date) => {
+                  const key = toDateOnlyKey(date.toISOString())
+                  const draft = drafts[key] ?? { morning: '', evening: '' }
+                  return (
+                    <tr key={key}>
+                      <td data-label="Day">
+                        <span className="weekly-reset-day">
+                          {date.toLocaleDateString('en-US', { weekday: 'long' })}
+                        </span>
+                        <span className="weekly-reset-date">
+                          {date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                        </span>
+                      </td>
+                      <td data-label="Morning workout">
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={draft.morning}
+                          onChange={(event) => setDraftValue(key, 'morning', event.target.value)}
+                          disabled={!canWrite || !idToken || isWriting}
+                        />
+                      </td>
+                      <td data-label="Evening workout">
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={draft.evening}
+                          onChange={(event) => setDraftValue(key, 'evening', event.target.value)}
+                          disabled={!canWrite || !idToken || isWriting}
+                        />
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="weekly-reset-actions">
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={handleClearAll}
+              disabled={!canWrite || !idToken || isWriting}
+            >
+              Clear week
+            </button>
+            <button
+              type="button"
+              className="primary-action"
+              onClick={() => void handleSaveAll()}
+              disabled={!canWrite || !idToken || isWriting}
+            >
+              {isWriting ? 'Saving...' : 'Save workouts'}
+            </button>
+          </div>
+
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+          {saveMessage ? <p className="sheets-meta">{saveMessage}</p> : null}
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : null}
+    </article>
+  )
+}
+
+type WeeklyStudyDraft = { relatedExam: string; topic: string }
+
+function WeeklyStudyResetCard({
+  title,
+  canWrite,
+  idToken,
+}: {
+  title: string
+  canWrite: boolean
+  idToken: string
+}) {
+  const weekDates = useMemo(() => getResetWeekDates(), [])
+  const [rows, setRows] = useState<CurrentStudyRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isWriting, setIsWriting] = useState(false)
+  const [writeError, setWriteError] = useState('')
+  const [saveMessage, setSaveMessage] = useState('')
+  const [drafts, setDrafts] = useState<Record<string, WeeklyStudyDraft>>({})
+  const [savedDrafts, setSavedDrafts] = useState<Record<string, WeeklyStudyDraft>>({})
+
+  async function loadWeek() {
+    try {
+      const data = await getCurrentStudy()
+      setRows(data)
+    } catch {
+      setRows([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadWeek()
+  }, [])
+
+  useEffect(() => {
+    const next: Record<string, WeeklyStudyDraft> = {}
+    weekDates.forEach((date) => {
+      const key = toDateOnlyKey(date.toISOString())
+      const row = rows.find((candidate) => toDateOnlyKey(candidate.date) === key)
+      next[key] = { relatedExam: row?.related_exam ?? '', topic: row?.topic ?? '' }
+    })
+    setDrafts(next)
+    setSavedDrafts(next)
+  }, [rows, weekDates])
+
+  function setDraftValue(key: string, field: keyof WeeklyStudyDraft, value: string) {
+    setDrafts((current) => ({
+      ...current,
+      [key]: { ...(current[key] ?? { relatedExam: '', topic: '' }), [field]: value },
+    }))
+  }
+
+  function handleClearAll() {
+    setDrafts((current) => {
+      const next: Record<string, WeeklyStudyDraft> = {}
+      for (const key of Object.keys(current)) {
+        next[key] = { relatedExam: '', topic: '' }
+      }
+      return next
+    })
+  }
+
+  async function handleSaveAll() {
+    if (!canWrite || !idToken || isWriting) return
+    setIsWriting(true)
+    setWriteError('')
+    setSaveMessage('')
+    try {
+      const changedDates = weekDates.filter((date) => {
+        const key = toDateOnlyKey(date.toISOString())
+        const draft = drafts[key]
+        const saved = savedDrafts[key]
+        if (!draft) return false
+        return (
+          draft.relatedExam.trim() !== (saved?.relatedExam ?? '').trim() ||
+          draft.topic.trim() !== (saved?.topic ?? '').trim()
+        )
+      })
+
+      await Promise.all(
+        changedDates.map((date) => {
+          const draft = drafts[toDateOnlyKey(date.toISOString())]
+          return replaceCurrentStudyForDate(idToken, {
+            date: toSheetDateString(date),
+            relatedExam: draft.relatedExam.trim(),
+            topic: draft.topic.trim(),
+          })
+        }),
+      )
+
+      await loadWeek()
+      setSaveMessage(changedDates.length > 0 ? 'Study plan updated for this week.' : 'No study changes to save.')
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to update study plan')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  return (
+    <article className="info-card section-page-card sheets-card">
+      <h3>{title}</h3>
+
+      {isLoading ? <p className="sheets-meta">Loading study plan...</p> : null}
+
+      {!isLoading ? (
+        <>
+          <div className="sheets-table-shell">
+            <table className="sheets-table weekly-reset-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Related exam</th>
+                  <th>Topic</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weekDates.map((date) => {
+                  const key = toDateOnlyKey(date.toISOString())
+                  const draft = drafts[key] ?? { relatedExam: '', topic: '' }
+                  return (
+                    <tr key={key}>
+                      <td data-label="Day">
+                        <span className="weekly-reset-day">
+                          {date.toLocaleDateString('en-US', { weekday: 'long' })}
+                        </span>
+                        <span className="weekly-reset-date">
+                          {date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                        </span>
+                      </td>
+                      <td data-label="Related exam">
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={draft.relatedExam}
+                          onChange={(event) => setDraftValue(key, 'relatedExam', event.target.value)}
+                          disabled={!canWrite || !idToken || isWriting}
+                        />
+                      </td>
+                      <td data-label="Topic">
+                        <input
+                          className="sheets-input sheets-table-input"
+                          type="text"
+                          value={draft.topic}
+                          onChange={(event) => setDraftValue(key, 'topic', event.target.value)}
+                          disabled={!canWrite || !idToken || isWriting}
+                        />
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="weekly-reset-actions">
+            <button
+              type="button"
+              className="secondary-action"
+              onClick={handleClearAll}
+              disabled={!canWrite || !idToken || isWriting}
+            >
+              Clear week
+            </button>
+            <button
+              type="button"
+              className="primary-action"
+              onClick={() => void handleSaveAll()}
+              disabled={!canWrite || !idToken || isWriting}
+            >
+              {isWriting ? 'Saving...' : 'Save study plan'}
+            </button>
+          </div>
+
+          <p className="sheets-meta">
+            Saving a day replaces all of that day's study rows; leave the topic empty to clear the day.
+          </p>
+          {canWrite && !idToken ? (
+            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
+          ) : null}
+          {saveMessage ? <p className="sheets-meta">{saveMessage}</p> : null}
+          {writeError ? <p className="sheets-error">{writeError}</p> : null}
+        </>
+      ) : null}
+    </article>
   )
 }
 

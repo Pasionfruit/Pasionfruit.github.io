@@ -114,6 +114,12 @@ function doPost(e) {
       case 'setTrainingWorkoutCompleted':
         return jsonResponse_(setTrainingWorkoutCompleted_(payload))
 
+      case 'upsertTrainingRecord':
+        return jsonResponse_(upsertTrainingRecord_(payload))
+
+      case 'replaceCurrentStudyForDate':
+        return jsonResponse_(replaceCurrentStudyForDate_(payload))
+
       case 'createPoll':
         return jsonResponse_(createPoll_(payload))
 
@@ -549,6 +555,112 @@ function setCurrentStudyCompleted_(payload) {
   if (row < 0) return { ok: false, error: 'Study row not found' }
 
   sheet.getRange(row, requireHeader_(h, 'completed')).setValue(completed)
+
+  return { ok: true }
+}
+
+// Normalize a sheet cell value or payload string to a yyyy-MM-dd key so
+// dates can be matched whether the cell holds a Date or a text value.
+function dateKey_(value) {
+  if (!value) return ''
+
+  var d
+  if (Object.prototype.toString.call(value) === '[object Date]') {
+    d = value
+  } else {
+    var s = String(value).trim()
+    if (!s) return ''
+    var isoMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})/)
+    if (isoMatch) return isoMatch[1] + '-' + isoMatch[2] + '-' + isoMatch[3]
+    d = new Date(s)
+  }
+
+  if (isNaN(d.getTime())) return ''
+  return Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd')
+}
+
+function findRowByDateKey_(sheet, dateCol, targetKey) {
+  var lastRow = sheet.getLastRow()
+  if (lastRow < 2) return -1
+
+  var values = sheet.getRange(2, dateCol, lastRow - 1, 1).getValues()
+  for (var i = 0; i < values.length; i += 1) {
+    if (dateKey_(values[i][0]) === targetKey) {
+      return i + 2
+    }
+  }
+
+  return -1
+}
+
+function upsertTrainingRecord_(payload) {
+  var date = String(payload.date || '').trim()
+  var morning = String(payload.morning_workout || '').trim()
+  var evening = String(payload.evening_workout || '').trim()
+  if (!date) return { ok: false, error: 'date is required' }
+
+  var targetKey = dateKey_(date)
+  if (!targetKey) return { ok: false, error: 'Invalid date: ' + date }
+
+  var sheet = getSheet_('training_records')
+  var h = headerMap_(sheet)
+  var row = findRowByDateKey_(sheet, requireHeader_(h, 'date'), targetKey)
+
+  if (row < 0) {
+    // Nothing planned and no existing row: nothing to do.
+    if (!morning && !evening) return { ok: true }
+
+    appendByHeaders_(sheet, h, {
+      training_id: Utilities.getUuid(),
+      date: date,
+      morning_workout: morning,
+      evening_workout: evening,
+      completed_morning: false,
+      completed_evening: false,
+    })
+    return { ok: true }
+  }
+
+  sheet.getRange(row, requireHeader_(h, 'morning_workout')).setValue(morning)
+  sheet.getRange(row, requireHeader_(h, 'evening_workout')).setValue(evening)
+  return { ok: true }
+}
+
+function replaceCurrentStudyForDate_(payload) {
+  var date = String(payload.date || '').trim()
+  var relatedExam = String(payload.related_exam || '').trim()
+  var topic = String(payload.topic || '').trim()
+  if (!date) return { ok: false, error: 'date is required' }
+
+  var targetKey = dateKey_(date)
+  if (!targetKey) return { ok: false, error: 'Invalid date: ' + date }
+
+  var sheet = getSheet_('current_study')
+  var h = headerMap_(sheet)
+  var dateCol = requireHeader_(h, 'date')
+
+  // Remove every existing row for that date (iterate bottom-up so
+  // deletions do not shift the rows still being checked).
+  var lastRow = sheet.getLastRow()
+  if (lastRow > 1) {
+    var values = sheet.getRange(2, dateCol, lastRow - 1, 1).getValues()
+    for (var i = values.length - 1; i >= 0; i -= 1) {
+      if (dateKey_(values[i][0]) === targetKey) {
+        sheet.deleteRow(i + 2)
+      }
+    }
+  }
+
+  // An empty topic clears the day instead of writing a blank row.
+  if (topic) {
+    appendByHeaders_(sheet, h, {
+      study_id: Utilities.getUuid(),
+      related_exam: relatedExam,
+      topic: topic,
+      date: date,
+      completed: false,
+    })
+  }
 
   return { ok: true }
 }
