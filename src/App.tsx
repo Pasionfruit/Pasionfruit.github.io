@@ -2480,10 +2480,6 @@ function SectionPage({
           return <CollapsibleTextCard key={card.title} title={card.title} body={card.body} />
         }
 
-        if (sectionId === 'experiences' && card.title === 'Actuary Exams') {
-          return <ActuaryExamsCard key={card.title} title={card.title} />
-        }
-
         if (sectionId === 'experiences' && card.title === 'Education') {
           return <EducationCard key={card.title} title={card.title} />
         }
@@ -10389,6 +10385,10 @@ function DetailPage({
       note={page.note}
     >
       {page.cards.map((card) => {
+        if (path === '/experiences/studying' && card.title === 'Actuary Exams') {
+          return <ActuaryExamsCard key={card.title} title={card.title} />
+        }
+
         if (path === '/experiences/studying' && card.title === 'Current Study Plan') {
           return (
             <CurrentStudyPlanCard

@@ -29,10 +29,6 @@ export const experiencesSectionPage: PageContent = {
   accent: '#000080',
   cards: [
     {
-      title: 'Actuary Exams',
-      body: 'Structured list of actuarial exam milestones and timelines.',
-    },
-    {
       title: 'Education',
       body: 'Structured list of education details and completion dates.',
     },
@@ -58,6 +54,10 @@ export const experiencesDetailPages: Record<string, SubpageContent> = {
     accent: '#7a62ff',
     cards: [
       {
+        title: 'Actuary Exams',
+        body: 'Structured list of actuarial exam milestones and timelines.',
+      },
+      {
         title: 'Current Study Plan',
         body: 'Keep track of the classes or topics that matter this term., link to study plan here',
       },
@@ -75,17 +75,7 @@ export const actuaryExamEntries: ActuaryExamEntry[] = [
   {
     exam: 'Exam P',
     topic: 'Probability',
-    status: 'Sitting: July 2026',
-  },
-  {
-    exam: 'Exam FM',
-    topic: 'Financial Mathematics',
-    status: 'Planned: October 2026',
-  },
-  {
-    exam: 'Exam SRM',
-    topic: 'Statistics for Risk Modeling',
-    status: 'Planned: Jan 2027',
+    status: 'Pending',
   },
 ]
 
