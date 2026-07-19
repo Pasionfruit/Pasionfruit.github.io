@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-18T09:35:59.782Z",
+  "lastUpdated": "2026-07-19T09:38:58.498Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -32,21 +32,30 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654970",
+        "brand": "Air Wick",
+        "discount": "Save $6.00",
+        "description": "Save $6.00 on any ONE (1) AIR WICK® Essential Mist® Starter Kit",
+        "category": "Household",
+        "validTo": "2026-08-16T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654954",
+        "brand": "Air Wick",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AIR WICK® Scented Oil Starter Kit",
+        "category": "Household",
+        "validTo": "2026-08-16T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4661302",
         "brand": "Align",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) Align Probiotic Supplement Product (excludes trial/travel size)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4613995",
-        "brand": "ALMAY",
-        "discount": "$5.00 OFF",
-        "description": "$5.00 OFF on ANY TWO (2) ALMAY Products",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -113,6 +122,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4674004",
+        "brand": "Anbesol",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Anbesol product",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4607758",
         "brand": "Angel Soft",
         "discount": "Save $0.50",
@@ -140,48 +158,129 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608332",
-        "brand": "Aussie",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 TWO Aussie Total Core Shampoo and Conditioner, Stylers and Treatment (excludes Ultra tier, trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633710",
-        "brand": "Axe",
-        "discount": "Save $6.00",
-        "description": "Save $6.00 on any TWO (2) AXE Body Sprays or Sticks (excludes trial and travel sizes and 1.7oz sticks)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608313",
-        "brand": "Axe",
-        "discount": "Save $6.00",
-        "description": "Save $6.00 on any TWO (2) AXE Body Sprays or Sticks (excludes twin packs, trial and travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633705",
-        "brand": "Baby Dove",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Dove Serum+ Oil Body Wash 15.3oz, Serum Body Wash 18.5oz, Plant Milk Body Wash 17.5oz, Shower Mousse 10.3oz, Plant Milk Scrub 15oz",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633708",
-        "brand": "Baby Dove",
+        "id": "flipp-4674028",
+        "brand": "AVEENO",
         "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Body Wash (20oz+), Bar (4ct+), or Scrub (15oz) (excludes Plant Milk Scrubs, items and sizes not listed)",
+        "description": "Save $2.00 on any ONE (1) AVEENO® Baby or AVEENO® Kids Product (excludes gift sets, trial/travel sizes, & wipes)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674057",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Body Moisturizer (excludes Anti-Itch, travel & trial sizes except 2oz ointment, single-use masks and gift sets)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674055",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz and shave)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674059",
+        "brand": "AVEENO",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) AVEENO® Facial Moisturizer, Serum or Treatment (excludes trial/travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674061",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674127",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654927",
+        "brand": "AVEENO®",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 on any ONE (1) AVEENO® Body Moisturizer (excludes Anti-Itch, travel & trial sizes except 2oz ointment, single-use masks and gift sets)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654914",
+        "brand": "AVEENO®",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654921",
+        "brand": "AVEENO®",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654913",
+        "brand": "AVEENO®",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz, shave and scrubs)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654918",
+        "brand": "AVEENO®",
+        "discount": "SAVE $5.00",
+        "description": "SAVE $5.00 on any ONE (1) AVEENO® Facial Moisturizer, Serum or Treatment (excludes trial/travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654923",
+        "brand": "AVEENO®",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 on any ONE (1) AVEENO® Baby or AVEENO® Kids product (excludes gift sets, trial/travel sizes, & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4671112",
+        "brand": "Axe",
+        "discount": "SAVE $7.00",
+        "description": "SAVE $7.00 on TWO (2) Axe Deodorant Products.",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654965",
+        "brand": "Axe",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any TWO (2) AXE Body Wash 16oz+ (excludes trial and travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -203,12 +302,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4644551",
+        "id": "flipp-4654979",
         "brand": "Banana Boat",
         "discount": "SAVE $4.00",
         "description": "SAVE $4.00 on TWO (2) Banana Boat® or Hawaiian Tropic® Sun Care Product (excludes 1 oz., 1.8 oz., 2 oz., lip balm & trial sizes)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -248,24 +347,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633768",
-        "brand": "Boost",
-        "discount": "Save $6.00",
-        "description": "Save $6.00 on any TWO (2) BOOST® Nutritional Shake Multipack, 4-pack or larger",
-        "category": "Grocery",
-        "validTo": "2026-08-03T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608285",
-        "brand": "Boost",
-        "discount": "SAVE $6.00",
-        "description": "SAVE $6.00 on TWO (2) Boost® Nutritional Drinks, 4-pack or larger​",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608258",
         "brand": "Bounty",
         "discount": "Save $2.00",
@@ -302,6 +383,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654960",
+        "brand": "Bulldog",
+        "discount": "SAVE $4.00",
+        "description": "SAVE $4.00 on ONE (1) Bulldog® Skin Care Product or Bulldog® Bamboo Razor or Steel Blades Refill (excludes lip balm & trial size)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4661262",
         "brand": "Campbell's",
         "discount": "Save $1.00",
@@ -317,6 +407,24 @@
         "description": "Save $2.00 on any ONE (1) Carando® Italian Sausage, Meatball, or Pepperoni Item",
         "category": "Grocery",
         "validTo": "2026-08-19T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674023",
+        "brand": "Carefree",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Carefree® Liners 36ct. or Larger",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654963",
+        "brand": "Carefree®",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 on any ONE (1) Carefree® Liners 36ct. or Larger",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -365,15 +473,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4661249",
-        "brand": "Chips Ahoy",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 when you buy ONE (1) Limited Edition CHIPS AHOY! Cookies or RITZ Crackers",
-        "category": "Grocery",
-        "validTo": "2026-07-28T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634862",
         "brand": "Chobani",
         "discount": "Save $1.00",
@@ -410,12 +509,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608329",
+        "id": "flipp-4654974",
         "brand": "Clairol®",
-        "discount": "$9.00 OFF",
-        "description": "$9.00 OFF ANY TWO (2) boxes of CLAIROL® Hair Color Product (Excludes Professional)",
+        "discount": "$2.00 OFF",
+        "description": "$2.00 OFF ANY ONE (1) box of CLAIROL® Hair Color Product (Excludes Professional)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
+        "validTo": "2026-08-03T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -500,30 +599,48 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4652645",
+        "id": "flipp-4654986",
         "brand": "Colgate",
-        "discount": "SAVE $6.00",
-        "description": "SAVE $6.00 On any TWO (2) Colgate Optic White Advanced, Purple, Charcoal, Sensitivity Relief, Total Gum Protect, Plaque Cleanse, Sensitivity Mineral Shield, Colgate Sensitive, Tom's of Maine or hello Adult Toothpastes",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 On any ONE (1) Colgate Total (3.3oz or 5.1oz), Optic White Stain Fighter or Max Fresh Toothpaste (excluding 3pack Toothpastes)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608323",
+        "id": "flipp-4654984",
         "brand": "Colgate",
-        "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 On any TWO (2) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrushes, Mouthwashes or Mouth Rinses (16oz or larger)",
+        "discount": "SAVE $5.00",
+        "description": "SAVE $5.00 On any TWO (2) Colgate Optic White Advanced , Purple, Charcoal, Sensitivity Relief, Total Gum Protect, Plaque Cleanse, Sensitivity Mineral Shield, Colgate Sensitive, Tom's of Maine or hello Adult Toothpastes",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608320",
+        "id": "flipp-4654983",
         "brand": "Colgate",
-        "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 On any TWO (2) Colgate Total (3.3oz or 5.1oz), Optic White Stain Fighter or Max Fresh Toothpastes (excluding 3pack Toothpastes)",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 On any ONE (1) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654982",
+        "brand": "Colgate",
+        "discount": "SAVE $5.00",
+        "description": "SAVE $5.00 On any TWO (2) Colgate 360° Advanced, Gum Health or Optic White Manual Toothbrushes",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654971",
+        "brand": "Colgate",
+        "discount": "SAVE $5.00",
+        "description": "SAVE $5.00 On any ONE (1) Colgate Optic White Pro Series Toothpaste",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -563,24 +680,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4607776",
-        "brand": "Cortizone-10",
-        "discount": "Save $1.25",
-        "description": "Save $1.25 on any ONE (1) Cortizone product (excludes trial/travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4584264",
-        "brand": "Cortizone-10®",
-        "discount": "Save $1.25",
-        "description": "Save $1.25 on any ONE (1) Cortizone-10® (excluding Trial/Travel Sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634853",
         "brand": "Cottonelle",
         "discount": "Save $2.00",
@@ -599,21 +698,30 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634864",
-        "brand": "COVERGIRL®",
-        "discount": "$2.00 OFF",
-        "description": "$2.00 OFF ONE (1) COVERGIRL® Face Product (excludes Cheekers, accessories and travel/trial size)",
+        "id": "flipp-4654947",
+        "brand": "Crest",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 ONE Crest 3DWhite Brilliance Stain Prevention 473mL or 3DWhite Clean, 3DWhite Fresh or 3DWhite Strength or Pro-Health Extra Whitening or Gum Detoxify or Gum Restore or Clinical Deep Clean or All Day Clean Breath or Nightly Bacteri",
         "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634863",
-        "brand": "COVERGIRL®",
-        "discount": "$2.00 OFF",
-        "description": "$2.00 OFF ONE (1) COVERGIRL® Eye Product (excludes Eye Enhancer Palettes, Easy Breezy Brow Fill + Define, Perfect Blend, accessories and travel/trial size)",
+        "id": "flipp-4654948",
+        "brand": "Crest",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, a",
         "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654949",
+        "brand": "Crest",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Ma",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -689,105 +797,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608252",
-        "brand": "Crest",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 TWO Crest MULTI-PACK Toothpaste 2.7 oz or more (excludes Crest Cavity, Regular, Base Baking Soda, Tartar Control/Protection, F&W Pep Gleem and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608249",
-        "brand": "Crest",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 ONE Crest 3DWhitestrips (excludes Noticeably White, Classic White and any Crest 3DWhitestrips product with 5 or less treatments).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608257",
-        "brand": "Crest",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 ONE Crest Toothpaste 2.4 oz or more (excludes Crest Cavity, Baking Soda, Tartar Control/Protection, Brilliance, Gum, Densify, Aligner Care, Kids, More Free packs, and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608248",
-        "brand": "Crest",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 TWO Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, a",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608261",
-        "brand": "Crest",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 ONE Crest OR Scope Mouthwash 473mL (16 oz) or larger (excludes 3DWhite, Pro-Health Extra Whitening, Gum Detoxify, Gum Restore, Clinical Deep Clean, All Day Clean Breath or Nightly Bacteria Shield or larger or trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4643944",
-        "brand": "Dawn",
-        "discount": "Save $1.00",
-        "description": "ONE Dawn Ultra 38-67oz, Dawn Plat 30oz-51.5oz, Dawn Plat Plus 21.6oz-38oz, or Dawn Powerwash Starter Kit or Single Refill.",
-        "category": "Other",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608277",
-        "brand": "Dawn",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 ONE Dawn Ultra 38-67oz, Dawn Plat 30oz-51.5oz, Dawn Plat Plus 21.6oz-38oz, or Dawn Powerwash Starter Kit or Single Refill.",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633846",
-        "brand": "Degree",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Degree Whole Body Deodorant product or Degree Clinical Protection Deodorant product (excludes Trial / Travel, twin packs, invisible solid sticks 0.5oz, 1.0oz sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633844",
-        "brand": "Degree",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any TWO (2) Degree Body Heat Activated or Ultraclear Antiperspirant Stick or Dry Spray (excludes Clinical Protection Deodorant, Whole Body Deodorant product, twin packs, 0.5oz, 1.0oz sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4605658",
-        "brand": "Degree",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any TWO (2) Degree Body Heat Activated or Ultraclear Antiperspirant Stick or Dry Spray  (excludes Degree Clinical Protection , Whole Body, twin packs, 0.5oz, 1.0oz sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608228",
-        "brand": "Degree",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Degree Whole Body Deodorant product or  Degree Clinical Protection Deodorant product (excludes T&T, twin packs, invisible solid sticks 0.5oz, 1.0oz sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4633848",
         "brand": "Depend",
         "discount": "Save $2.50",
@@ -815,15 +824,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633840",
-        "brand": "Dove",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4652622",
         "brand": "Dove",
         "discount": "Save $2.00",
@@ -833,57 +833,39 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608308",
-        "brand": "Dove",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any TWO (2) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608307",
-        "brand": "Dove",
-        "discount": "SAVE $5.00",
-        "description": "SAVE $5.00 on select TWO (2) Dove Body Washes (10.3oz+), Bars (4ct+), Scrubs (15oz) (excludes items and sizes not listed)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608299",
-        "brand": "Dove",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 off any TWO (2) Dove Hair Products (Excludes: Dove Men+ Care products, twin packs, regimen packs, trial and travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608226",
-        "brand": "Dove",
+        "id": "flipp-4674047",
+        "brand": "Dove Men+Care",
         "discount": "Save $5.00",
-        "description": "Save $5.00 on Any ONE (1) Dove Clinical Deodorant (excludes Trial & Travel and Dove Men+Care)",
+        "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633713",
+        "id": "flipp-4674062",
         "brand": "Dove Men+Care",
         "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Dove Men+Care Body Wash 18oz+ (incl. Plant Powered varieties) or Bars 4ct+",
+        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
         "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608305",
+        "id": "flipp-4654968",
         "brand": "Dove Men+Care",
-        "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 on any ONE (1) Dove Men+Care Body Wash 18oz+ (incl. Plant Powered varieties) or Bars 4ct+",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
         "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654967",
+        "brand": "Dove Men+Care",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -911,24 +893,6 @@
         "description": "Save $3.00 ONE Downy or Tide Rinse 48 oz (excludes travel size).",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608281",
-        "brand": "Downy",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Downy In-Wash Scent Boosters 24 oz (includes Downy Light, Unstopables, April Fresh, Cool Cotton and Infusions), (excludes travel size).",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4616981",
-        "brand": "Dulcolax®",
-        "discount": "$8.00 OFF",
-        "description": "$8.00 OFF any ONE (1) Dulcolax 50ct or larger Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -968,12 +932,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4584246",
+        "id": "flipp-4654910",
         "brand": "DUREX®",
-        "discount": "Save $7.00",
-        "description": "Save $7.00 on any ONE (1) DUREX® Product, 24ct or larger",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) DUREX® Product, 10ct or larger",
         "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "validTo": "2026-09-06T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -983,24 +947,6 @@
         "description": "Save $2.00 on any ONE (1) El Monterey Mas Bold Taquitos",
         "category": "Grocery",
         "validTo": "2026-08-11T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4646426",
-        "brand": "ENSURE®",
-        "discount": "Save $7.00",
-        "description": "Save $7.00 on any TWO (2) Ensure® products (valid on 4-count packs or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608310",
-        "brand": "​essie®",
-        "discount": "$3.00 OFF",
-        "description": "$3.00 OFF ANY ONE (1) ​essie® Nail Product (Excluding Kits)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1049,30 +995,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4643947",
+        "id": "flipp-4654953",
         "brand": "Febreze",
-        "discount": "Save $3.50",
-        "description": "TWO Febreze Products (excludes Febreze Plug Scent Booster, Febreze Plug Scent Booster Starter Kit, trial/travel size).",
-        "category": "Other",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608263",
-        "brand": "Febreze",
-        "discount": "Save $3.50",
-        "description": "Save $3.50 TWO Febreze Products (excludes Febreze Plug Scent Booster, Febreze Plug Scent Booster Starter Kit, trial/travel size).",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 ONE Febreze Plug Dual, Triple Refills, or Quad Refills (excludes trial/travel size).",
         "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608227",
-        "brand": "Finish®",
-        "discount": "Buy One, Get One",
-        "description": "Buy One, Get One Buy Any ONE (1) Finish® Dishwasher Detergent (Ultimate 28ct.) and Receive One (1) Free (Max Savings Value $12.99)",
-        "category": "Household",
-        "validTo": "2026-08-16T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1148,15 +1076,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633718",
-        "brand": "Follow Your Heart Vegenaise",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Follow Your Heart Item",
-        "category": "Grocery",
-        "validTo": "2026-08-09T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4594896",
         "brand": "Fresh Press Farms",
         "discount": "Save $1.50",
@@ -1211,6 +1130,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-79292",
+        "brand": "Gain",
+        "discount": "save $2.00",
+        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
+        "category": "Other",
+        "validTo": "2026-07-19T20:00:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4608276",
         "brand": "Gain",
         "discount": "Save $3.00",
@@ -1229,42 +1157,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608319",
-        "brand": "Gain",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Gain In-Wash Scent Boosters 24 oz (excludes Gain Liquid/Powder Laundry Detergent, Gain Sheets and trial/travel size).",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608274",
-        "brand": "Gain",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 ONE Gain Liquid Laundry Detergent 81-88 oz (excludes Gain Rinse, Gain Flings, Gain Liquid Fabric Softeners, Gain Fireworks, Gain Sheets and trial/travel size).",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608264",
-        "brand": "Gain",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Gain Liquid Laundry Detergent 132 oz OR 144 oz (excludes Gain Rinse, Gain Flings, Gain Liquid Fabric Softeners, Gain Fireworks, Gain Sheets and trial/travel size).",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608265",
-        "brand": "Gain",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Gain Flings Laundry Detergent 60 ct (excludes Gain Liquid/Powder Laundry Detergent, Gain Liquid Fabric Softeners, Gain Fireworks, Gain Sheets, Gain Flings 9 ct and below and travel size).",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661267",
         "brand": "Garden of Life",
         "discount": "Save $3.00",
@@ -1274,12 +1166,39 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634847",
-        "brand": "garnier nutrisse",
-        "discount": "$5.00 OFF",
-        "description": "$5.00 OFF ANY TWO (2) Garnier® Nutrisse®, or Olia® Hair Color Products",
+        "id": "flipp-4654964",
+        "brand": "Garnier",
+        "discount": "$3.00 OFF",
+        "description": "$3.00 OFF on ANY TWO (2) Garnier Whole Blends® hair care products (excludes: 3oz sizes, 40oz sizes, twin & value packs)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654969",
+        "brand": "Garnier",
+        "discount": "$3.00 OFF",
+        "description": "$3.00 OFF ANY ONE (1) Garnier® SkinActive Product (excludes 100mL and 200mL Micellar Water, trial, travel size and sheet masks)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674025",
+        "brand": "Garnier Fructis",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any TWO (2) Garnier® Fructis® hair care products (excludes: 3oz trial & travel sizes, 40oz sizes, twin & value packs, Hair Filler)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654950",
+        "brand": "Garnier® Fructis®",
+        "discount": "$3.00 OFF",
+        "description": "$3.00 OFF ANY TWO (2) Garnier® Fructis® hair care products (excludes: 3oz trial & travel sizes, 40oz sizes, twin & value packs, Hair Filler)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1454,48 +1373,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608262",
-        "brand": "Gillette",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Gillette Razor OR ONE Cartridge Refill pack 4ct or larger (excludes 1-3ct cartridge refills, Mach3 Razor with 1ct refill, Fusion Razor with 1ct refill, Mach3 Razor with 10ct refill, FusionProglide Razor with 6ct refill, King C",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633858",
-        "brand": "Glade",
-        "discount": "Save $1.75",
-        "description": "Save $1.75 on any ONE (1) Glade Warmer",
-        "category": "Other",
-        "validTo": "2026-07-21T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608225",
-        "brand": "Glade",
-        "discount": "Save $1.75",
-        "description": "Save $1.75 on any ONE (1) Glade® Warmer",
-        "category": "Household",
-        "validTo": "2026-07-22T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4584258",
-        "brand": "Gold Bond",
-        "discount": "$1.50 OFF",
-        "description": "$1.50 OFF on ONE (1) Gold Bond® Powder, Foot Cream or First Aid Product (Excluding travel/trial size)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4619922",
         "brand": "Gold Peak",
         "discount": "Save $5.00",
         "description": "Save $5.00 when you spend $25.00 on Participating Coca-Cola Products (scan QR code for participating items) (excludes Dr Pepper & Schweppes)",
         "category": "Grocery",
         "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4671739",
+        "brand": "Goody's",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 when you buy ONE (1) Goody’s Max Triple Action Pain Relief",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-01T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1544,42 +1436,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608331",
-        "brand": "Head & Shoulders",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Head & Shoulders BARE Shampoo (Excludes Classic Collections, Clinical, Supreme, Treatments and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608334",
-        "brand": "Head & Shoulders",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Head & Shoulders CLINICAL Shampoo 13.5oz or higher (Excludes Classic Collections, Supreme, Bare and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608330",
-        "brand": "Head & Shoulders",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 TWO Head & Shoulders Products (Excludes Supreme, Clinical, Bare, and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608325",
-        "brand": "Head & Shoulders",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 ONE Head & Shoulders Bare Treatment (excludes Classic Collections, Clinical, Supreme, Bare Shampoos, Bare 2 in 1 Shampoo and Conditioner, and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661297",
         "brand": "Herbal Essences",
         "discount": "Save $7.00",
@@ -1589,38 +1445,20 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633850",
-        "brand": "Huggies",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Pack of Huggies® Diapers, Little Movers®, Little Movers® HuggFit™ 360, Little Snugglers®, Overnites, Snug & Dry™, and Skin Essentials™ (Valid only on 10ct. or larger.)",
-        "category": "Baby",
-        "validTo": "2026-08-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633854",
-        "brand": "Huggies",
-        "discount": "Save $0.25",
-        "description": "Save $0.25 on any ONE (1) Pack of Huggies® Baby Wipes, Natural Care®, Simply Clean®, Skin Essentials™, Extra Large, Calm or Nourish (valid on 42ct. to 168 ct. and 24ct Natural Care® Extra Sensitive Wipes)",
-        "category": "Baby",
-        "validTo": "2026-08-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608288",
-        "brand": "Huggies",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any TWO (2) Packages of Huggies® Diapers, Little Movers®, Little Movers® HuggFit™ 360, Little Snugglers®, Overnites, Snug & Dry™, and Skin Essentials™ (Valid only on 10ct. or larger.)",
-        "category": "Baby",
+        "id": "flipp-4654981",
+        "brand": "Herbal Essences",
+        "discount": "Save $6.00",
+        "description": "Save $6.00 THREE Herbal Essences, Native, AND/OR Aussie Hair Care Products",
+        "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608286",
-        "brand": "Huggies",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 off TWO (2) packages of Huggies® Baby Wipes, Natural Care®, Simply Clean®, Skin Essentials™, Extra Large, Calm or Nourish (valid on 42ct. to 168 ct. and 24ct Natural Care® Extra Sensitive Wipes)",
-        "category": "Baby",
+        "id": "flipp-4654966",
+        "brand": "Hero",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) full size Hero product (excludes trial and travel)",
+        "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -1658,6 +1496,15 @@
         "description": "SAVE $1.00 On any ONE (1) Irish Spring or Softsoap Body Wash (12oz or larger), Softsoap Liquid Foaming Hand Soap Pump (9oz ONLY), Softsoap Liquid Hand Soap Pump (11.25oz ONLY) or Irish Spring Bar Soap Multipack (3ct or larger)",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654975",
+        "brand": "Irish Spring",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 On any ONE (1) Irish Spring Bar Soap Multipack (6ct or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1706,39 +1553,21 @@
         "redemption": "print"
       },
       {
-        "id": "flipp-4633847",
-        "brand": "Kleenex",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Kleenex® facial tissue bundle pack (3 ct or larger), 4 ct Snap & Go™ pack, or 4 ct Perfect Fit (not valid on any size On-The-Go™)",
-        "category": "Other",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608303",
-        "brand": "Kleenex®",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any one (1) Kleenex® facial tissue bundle pack (3 ct or larger), one 4-count Snap & Go™ pack, or one 4-count Perfect Fit (not valid on any size On-The-Go™)",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633842",
+        "id": "flipp-4674063",
         "brand": "Kotex",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) pack of Kotex® Pads or Liners or U by Kotex® Tampons (Not valid on Liv by Kotex® products, Kotex Liners 16ct or trial/travel packs.)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608284",
+        "id": "flipp-4654951",
         "brand": "Kotex®",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) package of Kotex® Pads or Liners or U by Kotex® Tampons (Not valid on Liv by Kotex® products, Kotex Liners 16ct or trial/travel packs.)",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1748,6 +1577,33 @@
         "description": "Save $3.00 on any ONE (1) Lil' Critters Supplement",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654985",
+        "brand": "L'oreal Paris Elvive",
+        "discount": "$6.00 OFF",
+        "description": "$6.00 OFF ANY TWO (2) L’Oréal Paris® Hair Color Products",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674008",
+        "brand": "L’Oreal Paris Elvive",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any TWO (2) L'ORÉAL PARIS™ Elvive® shampoo, conditioner or treatment (excludes 2.5 oz., twin & value packs)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654952",
+        "brand": "L'ORÉAL PARIS™",
+        "discount": "$3.00 OFF",
+        "description": "$3.00 OFF ANY TWO (2) L'ORÉAL PARIS™ Elvive® shampoo, conditioner or treatment (excludes 2.5 oz., twin & value packs)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1778,6 +1634,33 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654972",
+        "brand": "Listerine",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 on any ONE (1) LISTERINE® Mouthwash product (500 mL or larger), POCKETPAKS® product (72ct. or larger), POCKETMIST® product (2ct. or larger) or single use liquid packs (15ct. or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674036",
+        "brand": "LUBRIDERM",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) LUBRIDERM® Product (16 fl. oz. or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654911",
+        "brand": "LUBRIDERM®",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 ON any ONE (1) LUBRIDERM® Product (16 fl. oz. or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4537189",
         "brand": "Luvs",
         "discount": "Save $10.00",
@@ -1787,30 +1670,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608297",
-        "brand": "Maybelline",
-        "discount": "$3.00 OFF",
-        "description": "$3.00 OFF ANY ONE (1) Maybelline® New York Product  (Excludes Expert Wear® Eye Shadow Monos)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661283",
         "brand": "Mielle Organics",
         "discount": "Save $3.00",
         "description": "Save $3.00 on any ONE (1) Mielle Shampoo, Conditioner, Treatment OR Styling Product (excludes trial/travel size)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608250",
-        "brand": "Mielle Organics",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Mielle Shampoo, Conditioner, Treatment, OR Styling Products (entire Mielle portfolio).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1859,39 +1724,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633993",
+        "id": "flipp-4654942",
         "brand": "Native",
-        "discount": "Save $1.00",
-        "description": "ONE Native Body Lotion Product (excludes trial/travel size)",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 ONE Native Toothpaste 4.1oz.",
         "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633776",
+        "id": "flipp-4654946",
         "brand": "Native",
-        "discount": "Save $1.00",
-        "description": "ONE Native Deodorant Products (excludes Deodorant Spray and trial/travel size).",
+        "discount": "Save $7.00",
+        "description": "Save $7.00 TWO Native Deodorant Spray Products (excludes trial/travel size).",
         "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608254",
-        "brand": "Native",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 TWO Native Products (excludes Deodorant Spray, Liquid Hand Soap, Grooming, Toothpaste, and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633769",
-        "brand": "Native",
-        "discount": "Save $1.00",
-        "description": "ONE Native Body Wash Product (excludes trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
+        "validTo": "2026-08-09T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1994,21 +1841,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633765",
+        "id": "flipp-4654977",
         "brand": "Nexxus",
-        "discount": "Save $4.50",
-        "description": "Save $4.50 on any ONE (1) Nexxus Product (excludes Trial & Travel sizes, 8.5oz, masks, clubs, 16.5oz)",
+        "discount": "SAVE $9.00",
+        "description": "SAVE $9.00 on TWO (2) Nexxus Hair Products.",
         "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608295",
-        "brand": "Nexxus®",
-        "discount": "Save $4.50",
-        "description": "Save $4.50 off any ONE (1) Nexxus® Hair Care Products (excludes Trial & Travel sizes, 8.5oz, masks, clubs, 16.5oz)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2021,21 +1859,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4616975",
-        "brand": "Nivea®",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Nivea® Body Product. Excludes body products under 3 oz and trial and travel sizes",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661272",
         "brand": "OGX",
         "discount": "Save $4.00",
         "description": "Save $4.00 on any TWO (2) OGX® Hair products (excludes ProGrowth and trial/travel sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654912",
+        "brand": "OGX",
+        "discount": "SAVE $4.00",
+        "description": "SAVE $4.00 on any TWO (2) OGX® Hair products (excludes trial/travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2048,33 +1886,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633781",
-        "brand": "Olay",
-        "discount": "Save $5.00",
-        "description": "TWO Olay Body Wash 28oz, Body Wash 26oz, Body Wash 20oz OR Olay Hand & Body Lotion 17oz (excludes Indulgent Moisture Body Wash 20oz and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633783",
-        "brand": "Olay",
-        "discount": "Save $7.00",
-        "description": "TWO Olay Super Serum 20oz Body Wash, Super Serum Hand & Body Lotion 18.5oz OR Super Serum Cream 10oz (excludes trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633785",
-        "brand": "Olay",
-        "discount": "Save $5.00",
-        "description": "THREE Olay Body Wash 18oz, Body Wash 22oz, Body Wash 27oz, Body Wash 29oz, Body Wash 33oz, Body Wash 35oz OR Olay Bar 4ct or larger OR Olay Hand and Body Lotion 18oz (excludes trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634843",
         "brand": "Olay",
         "discount": "Save $2.00",
@@ -2084,30 +1895,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608316",
-        "brand": "Olay",
-        "discount": "Save $7.00",
-        "description": "Save $7.00 TWO Olay Super Serum 20oz Body Wash, Super Serum Hand & Body Lotion 18.5oz OR Super Serum Cream 10oz (excludes trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608315",
+        "id": "flipp-4654980",
         "brand": "Olay",
         "discount": "Save $5.00",
-        "description": "Save $5.00 TWO Olay Body Wash 28oz, Body Wash 26oz, Body Wash 20oz OR Olay Hand & Body Lotion 17oz (excludes Indulgent Moisture Body Wash 20oz and trial/travel size).",
+        "description": "Save $5.00 THREE Olay Body Wash 22 oz AND/OR Olay Ribbons 18 oz",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608314",
-        "brand": "Olay",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 THREE Olay Body Wash 18oz, Body Wash 22oz, Body Wash 27oz, Body Wash 29oz, Body Wash 33oz, Body Wash 35oz OR Olay Bar 4ct or larger OR Olay Hand and Body Lotion 18oz (excludes trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
+        "validTo": "2026-07-26T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2237,15 +2030,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608290",
-        "brand": "Olly",
-        "discount": "SAVE $4.00",
-        "description": "SAVE $4.00 on any ONE (1) Olly Body Wash or Serum product (excludes Olly products 3oz and smaller)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4663648",
         "brand": "One4All",
         "discount": "Save $10.00",
@@ -2261,15 +2045,6 @@
         "description": "ONE Oral-B iO Rechargeable Electric Toothbrush AND ONE Oral-B iO or non-iO Replacement Brush Heads (excludes travel/trial size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4646427",
-        "brand": "Oral-B",
-        "discount": "Save $10.00",
-        "description": "Save $10.00 ONE Oral-B iO Rechargeable Electric Toothbrush AND ONE Oral-B iO or non-iO Replacement Brush Heads (excludes travel/trial size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2291,29 +2066,38 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608246",
-        "brand": "Oral-B",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 ONE Oral-B Adult Manual Toothbrush (excludes Oral-B Dual Clean, Oral-B Advanced Clean, Oral-B Essential and Oral-B Pulsar toothbrushes).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608235",
-        "brand": "Oral-B",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 ONE Oral-B Glide Manual Floss OR Oral-B Expanding Floss OR Oral-B Glide Floss Picks (Excludes Essential Floss, Satin Floss, Oral-B Fresh Mint Picks and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608230",
         "brand": "PainQuil",
         "discount": "Save $2.00",
         "description": "Save $2.00 ONE PainQuil Liquid product (excludes trial/travel size).",
         "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654955",
+        "brand": "Pampers Easy Ups Training wear",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 TWO Jumbo BAGS Pampers Easy Ups Training Underwear.",
+        "category": "Baby",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654959",
+        "brand": "Pampers Splashers",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 TWO BAGS Pampers Splashers Diapers (excludes trial/travel size).",
+        "category": "Baby",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654962",
+        "brand": "Pampers Swaddlers",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 TWO Jumbo BAGS Pampers Swaddlers Diapers (excludes Swaddlers360).",
+        "category": "Baby",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
@@ -2336,12 +2120,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608324",
+        "id": "flipp-4654978",
         "brand": "Pantene",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 THREE Pantene Products including Pantene Pro-V, Gold Series, and Stylers (excludes trial/travel size, Nutrient Blends, Miracle Rescue, Pro-V Miracles, and Abundant & Strong).",
+        "discount": "Save $9.00",
+        "description": "Save $9.00 THREE Pantene Products; including Abundant & Strong, Pro V Miracles, Miracle Rescue, Nutrient Blends AND/OR Select Pantene Styling Products",
         "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2363,12 +2147,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633788",
-        "brand": "Pepto-Bismol",
-        "discount": "Save $0.50",
-        "description": "ONE Pepto Bismol Nausea Relief Tablet (excludes trial/travel size).",
+        "id": "flipp-4654956",
+        "brand": "playtex clean comfort",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 on any ONE (1) Playtex® Sport® 46ct. - 48ct.",
         "category": "Health & Beauty",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
+        "validTo": "2026-08-02T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654958",
+        "brand": "playtex clean comfort",
+        "discount": "SAVE $1.50",
+        "description": "SAVE $1.50 on any ONE (1) Playtex® Sport® 14ct-36ct or o.b.® Tampons 40ct.",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2507,6 +2300,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654973",
+        "brand": "Raid®",
+        "discount": "Save $0.75",
+        "description": "Save $0.75 on any ONE (1) Raid® Product",
+        "category": "Household",
+        "validTo": "2026-08-12T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4592590",
         "brand": "Refresh",
         "discount": "$5.00 OFF",
@@ -2525,21 +2327,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4671735",
+        "brand": "Refresh",
+        "discount": "$8.00 OFF",
+        "description": "$8.00 OFF on TWO (2) packages of Refresh® Eye Drops (excludes Refresh Tears® 15mL, Refresh Plus® 30ct, and Refresh Contacts® 12mL)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4664181",
         "brand": "Replenza",
         "discount": "Save $10.00",
         "description": "Save $10.00 when you buy ONE (1) Replenza Supplement",
         "category": "Health & Beauty",
         "validTo": "2026-08-15T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608302",
-        "brand": "Revlon",
-        "discount": "$3.00 OFF",
-        "description": "$3.00 OFF any ONE (1) Revlon Color Cosmetics (Excl. Beauty Tools, Nail Polish, and Kiss Balms)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2561,55 +2363,10 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634850",
+        "id": "flipp-4654961",
         "brand": "Schick",
         "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 on ONE (1) Schick® Men's or Women's or Skintimate® Disposable Razor Pack (excl. Schick® Xtreme® & Skintimate® 1 & 2 ct. Disposable & Hydro Silk® Touch Up)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634848",
-        "brand": "Schick",
-        "discount": "SAVE $2.00",
-        "description": "SAVE $2.00 on ONE (1) Schick® Hydro® or Schick® Quattro® Titanium* Razor or Refill (excludes Schick® Disposables) *coated blades",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654448",
-        "brand": "Schick",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Schick® Hydro Silk®, Intuition® or Quattro for Women® Razor or Refill or Schick Hydro Silk® Wax or Dermaplaning Wand or Refill (excl. Schick® Disposables)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654449",
-        "brand": "Schick",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Schick® Men's or Women's or Skintimate® Disposable Razor Pack (excl. Schick® Xtreme® & Skintimate® 1 & 2 ct. Disposable & Hydro Silk® Touch Up)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654445",
-        "brand": "Schick",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Schick® Hydro® or Schick® Quattro® Titanium* Razor or Refill (excludes Schick® Disposables) *coated blades",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634849",
-        "brand": "Schick Hydro silk",
-        "discount": "SAVE $2.00",
-        "description": "SAVE $2.00 on ONE (1) Schick® Hydro Silk®, Intuition® or Quattro for Women® Razor or Refill or Schick Hydro Silk® Wax or Dermaplaning Wand or Refill (excl. Schick® Disposables)",
+        "description": "SAVE $3.00 on ONE (1) Schick® Men's or Women's or Skintimate® Disposable Razor Pack (excl. Schick® Xtreme® & Skintimate® 1 & 2 ct. Disposable)",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
@@ -2732,33 +2489,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608292",
-        "brand": "SheaMoisture",
-        "discount": "SAVE $5.00",
-        "description": "SAVE $5.00 on any ONE (1) SheaMoisture Body Wash (18oz) (Excludes: trial and travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608296",
-        "brand": "SheaMoisture",
-        "discount": "Save $2.50",
-        "description": "Save $2.50 off any ONE (1) SheaMoisture Hair Product (excludes: single-use packettes, trial and travel size)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608306",
-        "brand": "SheaMoisture®",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any ONE (1) SheaMoisture® 2.6oz Deodorant, 2.6oz Antiperspirant or Whole Body item",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661258",
         "brand": "Softsoap",
         "discount": "Save $1.00",
@@ -2777,6 +2507,33 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654957",
+        "brand": "Stayfree",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 on any ONE (1) Stayfree® Pads 28ct. or Larger",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674019",
+        "brand": "STAYFREE",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Stayfree® Pads 28ct. or Larger",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674056",
+        "brand": "STEM",
+        "discount": "Save $2.00",
+        "description": "Save $2 on any ONE (1) STEM Products and Refills",
+        "category": "Other",
+        "validTo": "2026-08-11T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4605638",
         "brand": "STEM™",
         "discount": "Save $5.00",
@@ -2786,21 +2543,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633732",
-        "brand": "Swiffer",
-        "discount": "Save $10.00",
-        "description": "TWO Swiffer PowerMop, Sweeper Deluxe, Sweeper, Sweeper XL, 3ft or 6ft Duster Starter Kits OR Swiffer Refill (includes 20ct or larger Dry and Wet cloth refills, 10ct or larger XL Dry and Wet cloth refills, PowerMop and WetJet pad refills, PowerMop and WetJet 2ct solution refills, and 6ct or larger Duster refills).",
+        "id": "flipp-4654933",
+        "brand": "STEM™",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) STEM™ Product or Refill Pack",
         "category": "Household",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608266",
-        "brand": "Swiffer",
-        "discount": "Save $10.00",
-        "description": "Save $10.00 TWO Swiffer PowerMop, Sweeper Deluxe, Sweeper, Sweeper XL, 3ft or 6ft Duster Starter Kits OR Swiffer Refill (includes 20ct or larger Dry and Wet cloth refills, 10ct or larger XL Dry and Wet cloth refills, PowerMop and WetJet pad r",
-        "category": "Household",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
+        "validTo": "2026-08-12T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2912,6 +2660,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654976",
+        "brand": "TRESemmé",
+        "discount": "SAVE $4.00",
+        "description": "SAVE $4.00 on TWO (2) TRESemme Hair Products.",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4661312",
         "brand": "Tylenol",
         "discount": "Save $3.00",
@@ -3002,24 +2759,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608260",
-        "brand": "Venus",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Venus Razor OR ONE Cartridge Refill pack 4ct or larger (excludes 1-3ct cartridge refills with exception of SensitiveGlide 3ct cartridge refills, Smooth 4ct cartridge refills, Smooth handle with 4ct and 6ct refills, ComfortGlid",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608247",
-        "brand": "Venus",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Venus Pubic Hair & Skin Razor OR Care Item (excludes Gillette Products, and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-19T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4633809",
         "brand": "Vicks",
         "discount": "Save $3.00",
@@ -3089,15 +2828,6 @@
         "description": "Save $1.50 on any ONE (1) Whole Fruit",
         "category": "Grocery",
         "validTo": "2026-07-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4633831",
-        "brand": "Zevo",
-        "discount": "Save $1.50",
-        "description": "TWO Zevo Flying Insect Trap Full Size Refill Cartridges - 2 Count.",
-        "category": "Other",
-        "validTo": "2026-07-18T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3523,13 +3253,6 @@
         "title": "[SnS, AC] $1.55* | 12-Oz Taco Bell Creamy Sauce (Chipotle) at Amazon",
         "url": "https://slickdeals.net/f/19597917-sns-ac-1-55-12-oz-taco-bell-creamy-sauce-chipotle-at-amazon?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-05T16:56:44.000Z"
-      },
-      {
-        "id": "sd-19591479",
-        "place": "Chick-fil-A",
-        "title": "Free Original or Spicy Chick Fil A Sandwich with Survey",
-        "url": "https://slickdeals.net/f/19591479-free-original-or-spicy-chick-fil-a-sandwich-with-survey?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-03T19:13:20.000Z"
       }
     ]
   }
