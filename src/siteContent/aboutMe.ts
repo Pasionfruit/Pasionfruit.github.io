@@ -5,7 +5,7 @@ export const aboutMeNavSection: NavSection = {
   title: 'About Me',
   path: '/mrpasionfruit',
   summary: 'Personal identity, interests, and the Oreo gang corner',
-  accent: '#00CCCC',
+  accent: '#06b6d4',
   children: [],
 }
 
@@ -14,7 +14,7 @@ export const aboutMeSectionPage: PageContent = {
   title: 'Abe Pasion',
   summary:
     'MBTI: ISFJ || Enneagram: Type 5 || DISC: C / D || D.O.V.E: Owl-Eagle || Cat dad\n• Spotify: https://open.spotify.com/user/de0y0osvptr9ac25r3pxaq9j0?si=d61248cfae5742a8',
-  accent: '#ff7a59',
+  accent: '#ff5c38',
   cards: [
     {
       title: 'Meet the Oreo Gang',
@@ -47,7 +47,7 @@ export const aboutMeDetailPages: Record<string, SubpageContent> = {
     title: 'Oreo Gang',
     summary:
       'A place for group memories, story snippets, and anything else that deserves its own playful corner.',
-    accent: '#ff7a59',
+    accent: '#ff5c38',
     cards: [
       {
         title: 'Community',
@@ -68,7 +68,7 @@ export const aboutMeDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'What I like',
     title: 'Interests',
     summary: 'A shortlist of the subjects, media, and ideas I keep coming back to.',
-    accent: '#ff7a59',
+    accent: '#ff5c38',
     cards: [
       { title: 'Reading', body: 'Books, articles, and notes that shaped how I think this month.' },
       {

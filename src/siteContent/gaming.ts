@@ -19,7 +19,7 @@ export const gamingSectionPage: PageContent = {
   eyebrow: 'Game hub',
   title: 'Gaming',
   summary: 'A hub for my favorite games and gaming servers',
-  accent: '#7e22ce',
+  accent: '#9333ea',
   cards: [
     { title: 'Games I Like to Play', body: '' },
   ],
@@ -31,7 +31,7 @@ export const gamingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Minecraft',
     title: 'Server',
     summary: 'Start the server and get connection instructions.',
-    accent: '#7e22ce',
+    accent: '#9333ea',
     cards: [],
     note: '',
   },

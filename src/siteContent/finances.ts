@@ -5,7 +5,7 @@ export const financesNavSection: NavSection = {
   title: 'Finances',
   path: '/finances',
   summary: 'Private budget, savings, and spending overview for approved accounts',
-  accent: '#1f8f3a',
+  accent: '#16a34a',
   children: [
     {
       label: 'Points Conversion',
@@ -19,7 +19,7 @@ export const financesSectionPage: PageContent = {
   eyebrow: 'Private snapshot',
   title: 'Finances',
   summary: 'A private view of budget, savings, and purchases for approved Google accounts only.',
-  accent: '#1f8f3a',
+  accent: '#16a34a',
   cards: [
     {
       title: 'Dashboard',

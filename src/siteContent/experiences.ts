@@ -12,7 +12,7 @@ export const experiencesNavSection: NavSection = {
   title: 'Experiences',
   path: '/experiences',
   summary: 'Professional experiences, education, and the practical things I\'ve learned along the way',
-  accent: '#000080',
+  accent: '#2563eb',
   children: [
     {
       label: 'Studying',
@@ -26,7 +26,7 @@ export const experiencesSectionPage: PageContent = {
   eyebrow: 'Work and study',
   title: 'Experiences',
   summary: '• Florida || pasionabe@gmail.com\n• LinkedIn: abe-pasion\n• GitHub: Pasionfruit',
-  accent: '#000080',
+  accent: '#2563eb',
   cards: [
     {
       title: 'Education',

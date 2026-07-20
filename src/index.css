@@ -2,24 +2,24 @@
   font-family: 'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #342f28;
-  background: #e6e3d5;
+  color: #382e20;
+  background: #f2e9d4;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --surface: #f5f3eb;
-  --surface-muted: #e6e3d5;
-  --border: #d3cdc3;
-  --border-strong: #c0bab0;
-  --text-strong: #2f2a24;
-  --text-muted: #6d6458;
-  --text-accent: #2f2a24;
-  --accent: #3c342c;
-  --shadow: 0 1px 2px rgba(60, 52, 44, 0.06);
-  --backdrop: rgba(49, 43, 36, 0.22);
-  --header-bg: rgba(230, 227, 213, 0.92);
+  --surface: #fbf6e9;
+  --surface-muted: #f2e9d4;
+  --border: #e3d6b6;
+  --border-strong: #d0bf97;
+  --text-strong: #33291c;
+  --text-muted: #7a6b4f;
+  --text-accent: #9333ea;
+  --accent: #9333ea;
+  --shadow: 0 1px 2px rgba(94, 70, 32, 0.08);
+  --backdrop: rgba(64, 48, 22, 0.24);
+  --header-bg: rgba(242, 233, 212, 0.92);
 }
 
 :root[data-theme='dark'] {
@@ -31,8 +31,8 @@
   --border-strong: #5a5f66;
   --text-strong: #f1f3f5;
   --text-muted: #c2c7cd;
-  --text-accent: #f1f3f5;
-  --accent: #e8eaed;
+  --text-accent: #c084fc;
+  --accent: #c084fc;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
   --backdrop: rgba(0, 0, 0, 0.4);
   --header-bg: rgba(30, 32, 32, 0.92);

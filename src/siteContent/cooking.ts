@@ -34,7 +34,7 @@ export const cookingSectionPage: PageContent = {
   eyebrow: 'Kitchen hub',
   title: 'Cooking',
   summary: '',
-  accent: '#e0a800',
+  accent: '#f59e0b',
   cards: [
     {
       title: 'Meal Plan for the Day',
@@ -49,7 +49,7 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Repeatable meals',
     title: 'Recipes',
     summary: 'A collection of meals I want to keep around because they are good, practical, or both',
-    accent: '#e0a800',
+    accent: '#f59e0b',
     cards: [
       { title: 'Favorites', body: 'If account exists, favorite recipes will be saved here.' },
       {
@@ -64,7 +64,7 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Weekly prep',
     title: 'Meal Plan',
     summary: 'A simple plan for what to cook, what to buy, and when to prep it.',
-    accent: '#e0a800',
+    accent: '#f59e0b',
     cards: [
       { title: 'Receipt', body: 'Cost and nutrition for the week' },
       { title: 'Grocery list', body: 'Admin' },
@@ -77,7 +77,7 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Kitchen skills',
     title: 'Cooking Learn',
     summary: 'Technique notes, ingredient discoveries, and the experiments worth trying again.',
-    accent: '#e0a800',
+    accent: '#f59e0b',
     cards: [
       { title: 'Technique Tips', body: 'Techniques to improve cooking skills' },
       { title: 'Flavor Maxing', body: "How each ingredient actuary changes the dish's flavor" },
@@ -94,7 +94,7 @@ export const cookingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Value watch',
     title: 'Cooking Deals',
     summary: 'One day if dynamic grocery pricing exist, the grocery stores will be a stock market',
-    accent: '#e0a800',
+    accent: '#f59e0b',
     cards: [
       {
         title: 'Cost Analysis',

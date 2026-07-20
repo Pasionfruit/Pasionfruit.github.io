@@ -30,7 +30,7 @@ export const trainingSectionPage: PageContent = {
   title: 'Training',
   summary:
     'Stats of the slow times and weak lifts\n• Strava: https://www.strava.com/athletes/116157184\n• Instagram: @mrpasionfruit',
-  accent: '#2c9c8f',
+  accent: '#14b8a6',
   cards: [
     {
       title: 'Next Event Countdown',
@@ -50,7 +50,7 @@ export const trainingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Session log',
     title: 'Training Records',
     summary: 'Day 1 or 1 Day',
-    accent: '#2c9c8f',
+    accent: '#14b8a6',
     cards: [
       { title: 'Consistency', body: 'Github chart of training over time' },
       { title: 'Milestones', body: 'Track the lifts or benchmarks that matter most over time.' },
@@ -64,7 +64,7 @@ export const trainingDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Numbers and trends',
     title: 'Training Data Analysis',
     summary: 'Charts and metrics that make the overall trend easy to understand at a glance.',
-    accent: '#2c9c8f',
+    accent: '#14b8a6',
     cards: [
       { title: 'Health Data', body: 'Ingested data from Garmin, Ringconn, and Apple Health' },
       { title: 'Health Data Terms', body: 'Filterable list of health data terms and their definitions' },
@@ -77,7 +77,7 @@ export const trainingDetailPages: Record<string, SubpageContent> = {
   //     eyebrow: 'Technique notes',
   //     title: 'Training Learn',
   //     summary: 'A notebook for what I am learning, what failed, and what to try differently next.',
-  //     accent: '#2c9c8f',
+  //     accent: '#14b8a6',
   //     cards: [
   //       { title: 'Cues', body: 'Capture short reminders that help during the next session.' },
   //       { title: 'Mistakes', body: 'List the things that went wrong so the next cycle starts sharper.' },
