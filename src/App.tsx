@@ -10617,7 +10617,7 @@ const WEEKLY_WORKOUT_DEFAULTS: Record<number, WeeklyWorkoutDraft> = {
   1: { morning: 'Chest & Tri', evening: 'Swim' },
   2: { morning: 'Sprints', evening: 'Back & Bi' },
   3: { morning: 'Bike', evening: 'Legs' },
-  4: { morning: 'Progressive Run', evening: 'Chest & Tri' },
+  4: { morning: 'Progressive Run', evening: 'Back & Chest' },
   5: { morning: 'Arms', evening: 'Swim' },
   6: { morning: 'Easy Run', evening: 'Mobility' },
 }
