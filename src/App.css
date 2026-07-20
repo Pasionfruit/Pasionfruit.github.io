@@ -3278,6 +3278,37 @@
   margin-top: 0.1rem;
 }
 
+/* Home compact summary — read-and-complete only; full editor lives on /tasks. */
+.todoist-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.todoist-summary-alert {
+  color: #d1453b;
+  font-weight: 700;
+}
+
+.todoist-summary-overdue {
+  margin: 0.1rem 0 0;
+  font-size: 0.75rem;
+  color: #d1453b;
+}
+
+.todoist-summary-link {
+  align-self: flex-start;
+  margin-top: 0.15rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.todoist-summary-link:hover {
+  text-decoration: underline;
+}
+
 .grocery-catalog,
 .grocery-list-view {
   display: grid;

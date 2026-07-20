@@ -1,14 +1,21 @@
 const audioCache = new Map<string, HTMLAudioElement>()
 
 function play(src: string) {
-  let audio = audioCache.get(src)
-  if (!audio) {
-    audio = new Audio(src)
-    audioCache.set(src, audio)
-  } else {
-    audio.currentTime = 0
+  // Playback is decorative — never let an unavailable audio stack (jsdom, older
+  // browsers where play() returns undefined instead of a promise, autoplay
+  // blocking) throw into the caller's action handler.
+  try {
+    let audio = audioCache.get(src)
+    if (!audio) {
+      audio = new Audio(src)
+      audioCache.set(src, audio)
+    } else {
+      audio.currentTime = 0
+    }
+    void audio.play()?.catch(() => undefined)
+  } catch {
+    // ignore
   }
-  audio.play().catch(() => undefined)
 }
 
 export const sounds = {

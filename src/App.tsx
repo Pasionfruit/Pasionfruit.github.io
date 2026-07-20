@@ -27,6 +27,8 @@ import {
 import 'chartjs-adapter-date-fns'
 import './App.css'
 import { sounds } from './sounds'
+import { TasksPage } from './tasks/TasksPage'
+import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   actuaryExamEntries,
   detailPages,
@@ -122,7 +124,7 @@ import type {
   TripRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
-import { closeTask, createTask, getTasksOfTheDay, updateTask } from './data/todoist/repositories'
+import { closeTask, getTasksOfTheDay } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 import { importRecipeFromUrl, type ImportedIngredient } from './recipeImport'
 import { getServerStatus } from './minecraft/api'
@@ -350,6 +352,16 @@ function App() {
           element={<SectionPage sectionId="gaming" profile={profile} googleIdToken={googleIdToken} />}
         />
         <Route path="gaming/server" element={<GamingServerPage />} />
+        <Route
+          path="tasks"
+          element={(
+            <TasksPage
+              canEdit={profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL}
+              configured={isTodoistConfigured()}
+              editorEmail={TODOIST_EDITOR_EMAIL}
+            />
+          )}
+        />
         <Route
           path="weekly-reset"
           element={
@@ -986,24 +998,6 @@ function HomePage({
   )
 }
 
-function dateForInput(value?: string | null) {
-  if (!value) {
-    return ''
-  }
-
-  const datePart = value.split('T')[0]
-  if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
-    return datePart
-  }
-
-  const parsed = new Date(value)
-  if (Number.isNaN(parsed.getTime())) {
-    return ''
-  }
-
-  return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`
-}
-
 
 function normalizePriority(value: number) {
   if (!Number.isFinite(value)) {
@@ -1013,36 +1007,10 @@ function normalizePriority(value: number) {
   return Math.min(4, Math.max(1, Math.round(value)))
 }
 
-function getTodayDateInputValue() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
 
-const TASK_ORDER_KEY = 'todoist-task-order'
+/** Rows shown on the home summary card before it collapses to a "+N more" line. */
+const SUMMARY_TASK_LIMIT = 8
 
-function getSavedTaskOrder(): string[] {
-  try {
-    const raw = window.localStorage.getItem(TASK_ORDER_KEY)
-    return raw ? (JSON.parse(raw) as string[]) : []
-  } catch {
-    return []
-  }
-}
-
-function saveTaskOrder(ids: string[]) {
-  window.localStorage.setItem(TASK_ORDER_KEY, JSON.stringify(ids))
-}
-
-function applyTaskOrder(tasks: TodoistTask[], savedIds: string[]): TodoistTask[] {
-  if (!savedIds.length) return tasks
-  const byId = new Map(tasks.map((t) => [t.id, t]))
-  const ordered = savedIds.flatMap((id) => { const t = byId.get(id); return t ? [t] : [] })
-  const seen = new Set(savedIds)
-  return [...ordered, ...tasks.filter((t) => !seen.has(t.id))]
-}
 
 function TodoistTasksCard({
   title,
@@ -1076,25 +1044,7 @@ function TodoistTasksCard({
   const [isMealPlanLoading, setIsMealPlanLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
-  const [newTaskContent, setNewTaskContent] = useState('')
-  const [newTaskDueDate, setNewTaskDueDate] = useState(() => getTodayDateInputValue())
-  const [newTaskPriority, setNewTaskPriority] = useState(1)
-  const [editedRows, setEditedRows] = useState<Record<string, { content: string; description: string; dueDate: string; priority: number }>>({})
   const [newCustomGroceryItem, setNewCustomGroceryItem] = useState('')
-  const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
-  const [dropInsertIndex, setDropInsertIndex] = useState<number | null>(null)
-  const draggingIndexRef = useRef<number | null>(null)
-  const touchDropInsertRef = useRef<number | null>(null)
-  const draggingElRef = useRef<HTMLDivElement | null>(null)
-  const taskListRef = useRef<HTMLDivElement>(null)
-  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null)
-  const [longPressingIndex, setLongPressingIndex] = useState<number | null>(null)
-  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
-  const [collapsedParentIds, setCollapsedParentIds] = useState<string[]>([])
-  const [isAddingTask, setIsAddingTask] = useState(false)
-  const [addingSubtaskParentId, setAddingSubtaskParentId] = useState<string | null>(null)
-  const [newSubtaskContent, setNewSubtaskContent] = useState('')
 
   const todayKey = toDateOnlyKey(new Date().toISOString())
 
@@ -1109,18 +1059,8 @@ function TodoistTasksCard({
       .sort((a, b) => a.topic.localeCompare(b.topic))
   }, [studyRows, todayKey])
 
-  const topLevelTasks = useMemo(() => rows.filter((r) => !r.parent_id), [rows])
-
-  const subtasksByParentId = useMemo(() => {
-    const map: Record<string, TodoistTask[]> = {}
-    for (const r of rows) {
-      if (r.parent_id) {
-        if (!map[r.parent_id]) map[r.parent_id] = []
-        map[r.parent_id].push(r)
-      }
-    }
-    return map
-  }, [rows])
+  const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
+  const summaryTodayCount = rows.length - summaryOverdueCount
 
   async function loadDailyData() {
     try {
@@ -1135,106 +1075,10 @@ function TodoistTasksCard({
     }
   }
 
-  function performDrop(from: number, to: number) {
-    setRows((prev) => {
-      const topLevel = prev.filter((r) => !r.parent_id)
-      const subtasks = prev.filter((r) => Boolean(r.parent_id))
-      const next = [...topLevel]
-      const [moved] = next.splice(from, 1)
-      next.splice(to > from ? to - 1 : to, 0, moved)
-      saveTaskOrder(next.map((t) => t.id))
-      return [...next, ...subtasks]
-    })
-    draggingIndexRef.current = null
-    touchDropInsertRef.current = null
-    draggingElRef.current = null
-    setDraggingIndex(null)
-    setDropInsertIndex(null)
-  }
-
-  function handleTaskDragStart(index: number) {
-    draggingIndexRef.current = index
-    setDraggingIndex(index)
-  }
-
-  function handleTaskDragOver(e: React.DragEvent, index: number) {
-    e.preventDefault()
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-    const insertAfter = e.clientY > rect.top + rect.height / 2
-    setDropInsertIndex(insertAfter ? index + 1 : index)
-  }
-
-  function handleTaskDrop() {
-    if (draggingIndex !== null && dropInsertIndex !== null) {
-      performDrop(draggingIndex, dropInsertIndex)
-    } else {
-      setDraggingIndex(null)
-      setDropInsertIndex(null)
-    }
-  }
-
-  function handleTouchDrop() {
-    const from = draggingIndexRef.current
-    const to = touchDropInsertRef.current
-    if (from !== null && to !== null) {
-      performDrop(from, to)
-    } else {
-      draggingIndexRef.current = null
-      touchDropInsertRef.current = null
-      draggingElRef.current = null
-      setDraggingIndex(null)
-      setDropInsertIndex(null)
-    }
-  }
-
-  function handleTaskDragEnd() {
-    draggingIndexRef.current = null
-    touchDropInsertRef.current = null
-    draggingElRef.current = null
-    setDraggingIndex(null)
-    setDropInsertIndex(null)
-  }
-
-  useEffect(() => {
-    const container = taskListRef.current
-    if (!container) return
-    const onTouchMove = (e: TouchEvent) => {
-      if (draggingIndexRef.current === null) return
-      e.preventDefault()
-      const touch = e.touches[0]
-      const el = draggingElRef.current
-      if (el) el.style.pointerEvents = 'none'
-      const target = document.elementFromPoint(touch.clientX, touch.clientY)
-      if (el) el.style.pointerEvents = ''
-      if (!target) return
-      const taskRow = target.closest('[data-task-index]') as HTMLElement | null
-      if (taskRow) {
-        const idx = parseInt(taskRow.dataset.taskIndex ?? '-1', 10)
-        if (idx !== -1) {
-          const rect = taskRow.getBoundingClientRect()
-          const ins = touch.clientY > rect.top + rect.height / 2 ? idx + 1 : idx
-          touchDropInsertRef.current = ins
-          setDropInsertIndex(ins)
-        }
-      } else {
-        const allRows = container.querySelectorAll('[data-task-index]')
-        if (allRows.length > 0) {
-          const lastRect = (allRows[allRows.length - 1] as HTMLElement).getBoundingClientRect()
-          if (touch.clientY > lastRect.bottom) {
-            touchDropInsertRef.current = allRows.length
-            setDropInsertIndex(allRows.length)
-          }
-        }
-      }
-    }
-    container.addEventListener('touchmove', onTouchMove, { passive: false })
-    return () => container.removeEventListener('touchmove', onTouchMove)
-  }, [])
-
   async function loadTasks() {
     try {
       const data = await getTasksOfTheDay()
-      setRows(applyTaskOrder(data, getSavedTaskOrder()))
+      setRows(data)
       setWriteError('')
     } catch (error) {
       setRows([])
@@ -1279,101 +1123,6 @@ function TodoistTasksCard({
 
     void loadTasks()
   }, [])
-
-  useEffect(() => {
-    const next: Record<string, { content: string; description: string; dueDate: string; priority: number }> = {}
-    rows.forEach((row) => {
-      next[row.id] = {
-        content: row.content,
-        description: row.description ?? '',
-        dueDate: dateForInput(row.due?.date ?? row.due?.datetime ?? ''),
-        priority: normalizePriority(row.priority),
-      }
-    })
-    setEditedRows(next)
-  }, [rows])
-
-  async function handleCreateTask() {
-    if (isWriting || !todoistConfigured || !canEditTodoist) {
-      return
-    }
-
-    const content = newTaskContent.trim()
-    if (!content) {
-      setWriteError('Task content is required.')
-      return
-    }
-
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await createTask(content, newTaskDueDate || undefined, normalizePriority(newTaskPriority))
-      setNewTaskContent('')
-      setNewTaskDueDate(getTodayDateInputValue())
-      setNewTaskPriority(1)
-      setIsAddingTask(false)
-      await loadTasks()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to create task')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  async function handleSaveTask(task: TodoistTask) {
-    if (isWriting || !todoistConfigured || !canEditTodoist) {
-      return
-    }
-
-    const draft = editedRows[task.id]
-    const content = (draft?.content ?? task.content).trim()
-    const description = (draft?.description ?? task.description ?? '').trim()
-    const dueDate = draft?.dueDate ?? ''
-    const priority = normalizePriority(draft?.priority ?? task.priority)
-
-    if (!content) {
-      setWriteError('Task content is required.')
-      return
-    }
-
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await updateTask(task.id, {
-        content,
-        description,
-        dueDate: dueDate || undefined,
-        priority,
-      })
-      await loadTasks()
-      setEditingTaskId(null)
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update task')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  async function handleCreateSubTask(parentId: string) {
-    if (isWriting || !todoistConfigured || !canEditTodoist) return
-    const content = newSubtaskContent.trim()
-    if (!content) {
-      setWriteError('Subtask content is required.')
-      return
-    }
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await createTask(content, undefined, 1, parentId)
-      setNewSubtaskContent('')
-      setAddingSubtaskParentId(null)
-      await loadTasks()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to create subtask')
-    } finally {
-      setIsWriting(false)
-    }
-  }
 
   async function handleToggleTrainingWorkout(period: 'morning' | 'evening') {
     if (!canWrite || !googleIdToken || !todaysTrainingRecord || isWriting) return
@@ -1780,112 +1529,24 @@ function TodoistTasksCard({
             <p className="sheets-meta">Edit access restricted to approved admin Google accounts.</p>
           ) : null}
 
-          {view === 'todoist' && todoistConfigured && (rows.length > 0 || (canEditTodoist && !isLoading)) ? (
-            <div className="todoist-task-list" ref={taskListRef}>
-              {topLevelTasks.map((row, topLevelIndex) => {
-                const isTaskEditing = editingTaskId === row.id
-                const taskSubtasks = subtasksByParentId[row.id] ?? []
-                const isParentCollapsed = collapsedParentIds.includes(row.id)
-                const draft = editedRows[row.id]
-                return (
-                  <React.Fragment key={`summary-${row.id}`}>
-                    {draggingIndex !== null && dropInsertIndex === topLevelIndex && draggingIndex !== topLevelIndex && draggingIndex !== topLevelIndex - 1 ? (
-                      <div className="todoist-drop-indicator" />
-                    ) : null}
+          {view === 'todoist' && todoistConfigured && !isLoading ? (
+            <div className="todoist-summary">
+              <p className="sheets-meta">
+                {summaryOverdueCount > 0 ? (
+                  <span className="todoist-summary-alert">{summaryOverdueCount} overdue</span>
+                ) : null}
+                {summaryOverdueCount > 0 ? ' · ' : ''}
+                {summaryTodayCount} due today
+              </p>
+
+              {rows.length > 0 ? (
+                <div className="todoist-task-list">
+                  {rows.slice(0, SUMMARY_TASK_LIMIT).map((row) => (
                     <div
-                      className={[
-                        'todoist-task-row',
-                        row.is_completed ? 'is-completed' : '',
-                        draggingIndex === topLevelIndex ? 'is-dragging' : '',
-                        longPressingIndex === topLevelIndex ? 'is-long-pressing' : '',
-                        isTaskEditing ? 'is-editing' : '',
-                      ].filter(Boolean).join(' ')}
-                      data-task-index={topLevelIndex}
+                      key={`summary-${row.id}`}
+                      className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}`}
                       data-priority={normalizePriority(row.priority)}
-                      draggable={!isTaskEditing}
-                      onDragStart={() => { if (!isTaskEditing) handleTaskDragStart(topLevelIndex) }}
-                      onDragOver={(e) => handleTaskDragOver(e, topLevelIndex)}
-                      onDrop={handleTaskDrop}
-                      onDragEnd={handleTaskDragEnd}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onTouchStart={(e) => {
-                        if (isTaskEditing) return
-                        const touch = e.touches[0]
-                        touchStartPosRef.current = { x: touch.clientX, y: touch.clientY }
-                        const rowEl = e.currentTarget as HTMLDivElement
-                        setLongPressingIndex(topLevelIndex)
-                        longPressTimerRef.current = setTimeout(() => {
-                          longPressTimerRef.current = null
-                          setLongPressingIndex(null)
-                          draggingElRef.current = rowEl
-                          draggingIndexRef.current = topLevelIndex
-                          setDraggingIndex(topLevelIndex)
-                          if (typeof navigator.vibrate === 'function') navigator.vibrate(30)
-                        }, 450)
-                      }}
-                      onTouchMove={(e) => {
-                        if (longPressTimerRef.current !== null && touchStartPosRef.current) {
-                          const touch = e.touches[0]
-                          const dx = Math.abs(touch.clientX - touchStartPosRef.current.x)
-                          const dy = Math.abs(touch.clientY - touchStartPosRef.current.y)
-                          if (dx > 8 || dy > 8) {
-                            clearTimeout(longPressTimerRef.current)
-                            longPressTimerRef.current = null
-                            setLongPressingIndex(null)
-                          }
-                        }
-                      }}
-                      onTouchEnd={() => {
-                        if (longPressTimerRef.current !== null) {
-                          clearTimeout(longPressTimerRef.current)
-                          longPressTimerRef.current = null
-                          setLongPressingIndex(null)
-                        }
-                        if (draggingIndexRef.current !== null) {
-                          handleTouchDrop()
-                        }
-                      }}
-                      onTouchCancel={() => {
-                        if (longPressTimerRef.current !== null) {
-                          clearTimeout(longPressTimerRef.current)
-                          longPressTimerRef.current = null
-                          setLongPressingIndex(null)
-                        }
-                        handleTaskDragEnd()
-                      }}
                     >
-                      <span className="todoist-drag-handle" aria-hidden="true">⠿</span>
-                      <div
-                        className="todoist-task-content"
-                        onClick={() => {
-                          if (canEditTodoist && draggingIndex === null) {
-                            setEditingTaskId(isTaskEditing ? null : row.id)
-                            setAddingSubtaskParentId(null)
-                          }
-                        }}
-                        role={canEditTodoist ? 'button' : undefined}
-                        tabIndex={canEditTodoist ? 0 : undefined}
-                        onKeyDown={(e) => {
-                          if (canEditTodoist && (e.key === 'Enter' || e.key === ' ')) {
-                            setEditingTaskId(isTaskEditing ? null : row.id)
-                          }
-                        }}
-                      >
-                        <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
-                        {row.description && !isTaskEditing ? <p className="sheets-meta">{row.description}</p> : null}
-                      </div>
-                      {taskSubtasks.length > 0 ? (
-                        <button
-                          type="button"
-                          className="todoist-subtask-toggle"
-                          onClick={() => setCollapsedParentIds((prev) =>
-                            prev.includes(row.id) ? prev.filter((id) => id !== row.id) : [...prev, row.id]
-                          )}
-                          aria-label={isParentCollapsed ? 'Show subtasks' : 'Hide subtasks'}
-                        >
-                          {isParentCollapsed ? '▸' : '▾'}{taskSubtasks.length}
-                        </button>
-                      ) : null}
                       <button
                         type="button"
                         className="todoist-complete-btn"
@@ -1895,203 +1556,26 @@ function TodoistTasksCard({
                         title={canEditTodoist ? 'Mark complete' : undefined}
                         aria-label={`Complete: ${row.content}`}
                       />
-                    </div>
-                    {isTaskEditing && canEditTodoist ? (
-                      <div className="todoist-inline-edit">
-                        <input
-                          className="sheets-input"
-                          type="text"
-                          placeholder="Task name"
-                          value={draft?.content ?? row.content}
-                          onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], content: e.target.value } }))}
-                          autoFocus
-                          disabled={isWriting}
-                          onKeyDown={(e) => { if (e.key === 'Enter') void handleSaveTask(row) }}
-                        />
-                        <textarea
-                          className="sheets-input todoist-inline-edit-desc"
-                          placeholder="Description (optional)"
-                          value={draft?.description ?? row.description ?? ''}
-                          onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], description: e.target.value } }))}
-                          rows={2}
-                          disabled={isWriting}
-                        />
-                        <div className="todoist-inline-edit-row">
-                          <input
-                            className="sheets-input"
-                            type="date"
-                            value={draft?.dueDate ?? dateForInput(row.due?.date ?? row.due?.datetime ?? '')}
-                            onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], dueDate: e.target.value } }))}
-                            disabled={isWriting}
-                          />
-                          <select
-                            className="sheets-input"
-                            value={String(draft?.priority ?? normalizePriority(row.priority))}
-                            onChange={(e) => setEditedRows((curr) => ({ ...curr, [row.id]: { ...curr[row.id], priority: normalizePriority(Number(e.target.value)) } }))}
-                            disabled={isWriting}
-                          >
-                            <option value="1">P1</option>
-                            <option value="2">P2</option>
-                            <option value="3">P3</option>
-                            <option value="4">P4</option>
-                          </select>
-                        </div>
-                        <div className="todoist-inline-edit-actions">
-                          <button type="button" className="secondary-action" onClick={() => void handleSaveTask(row)} disabled={isWriting}>Save</button>
-                          <button type="button" className="secondary-action" onClick={() => setEditingTaskId(null)} disabled={isWriting}>Cancel</button>
-                          {addingSubtaskParentId !== row.id ? (
-                            <button type="button" className="secondary-action" onClick={() => setAddingSubtaskParentId(row.id)} disabled={isWriting}>
-                              + Subtask
-                            </button>
-                          ) : null}
-                        </div>
-                        {addingSubtaskParentId === row.id ? (
-                          <div className="todoist-subtask-add-form">
-                            <input
-                              className="sheets-input"
-                              type="text"
-                              placeholder="Subtask name"
-                              value={newSubtaskContent}
-                              onChange={(e) => setNewSubtaskContent(e.target.value)}
-                              onKeyDown={(e) => { if (e.key === 'Enter') void handleCreateSubTask(row.id) }}
-                              autoFocus
-                              disabled={isWriting}
-                            />
-                            <div className="todoist-inline-edit-row">
-                              <button type="button" className="secondary-action" onClick={() => void handleCreateSubTask(row.id)} disabled={isWriting || !newSubtaskContent.trim()}>Add</button>
-                              <button type="button" className="secondary-action" onClick={() => { setAddingSubtaskParentId(null); setNewSubtaskContent('') }} disabled={isWriting}>Cancel</button>
-                            </div>
-                          </div>
+                      <div className="todoist-task-content">
+                        <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
+                        {isOverdue(row) ? (
+                          <p className="todoist-summary-overdue">{formatDayLabel(dueDateKey(row))}</p>
                         ) : null}
                       </div>
-                    ) : null}
-                    {!isParentCollapsed && taskSubtasks.length > 0 ? (
-                      <ul className="todoist-subtask-list">
-                        {taskSubtasks.map((subtask) => {
-                          const isEditingSubtask = editingTaskId === subtask.id
-                          const subtaskDraft = editedRows[subtask.id]
-                          return (
-                            <li key={subtask.id} className={`todoist-subtask-row${isEditingSubtask ? ' is-editing' : ''}`}>
-                              {isEditingSubtask ? (
-                                <div className="todoist-inline-edit todoist-subtask-inline-edit">
-                                  <input
-                                    className="sheets-input"
-                                    type="text"
-                                    placeholder="Subtask name"
-                                    value={subtaskDraft?.content ?? subtask.content}
-                                    onChange={(e) => setEditedRows((curr) => ({ ...curr, [subtask.id]: { ...curr[subtask.id], content: e.target.value } }))}
-                                    autoFocus
-                                    disabled={isWriting}
-                                    onKeyDown={(e) => { if (e.key === 'Enter') void handleSaveTask(subtask) }}
-                                  />
-                                  <div className="todoist-inline-edit-row">
-                                    <input
-                                      className="sheets-input"
-                                      type="date"
-                                      value={subtaskDraft?.dueDate ?? dateForInput(subtask.due?.date ?? subtask.due?.datetime ?? '')}
-                                      onChange={(e) => setEditedRows((curr) => ({ ...curr, [subtask.id]: { ...curr[subtask.id], dueDate: e.target.value } }))}
-                                      disabled={isWriting}
-                                    />
-                                    <select
-                                      className="sheets-input"
-                                      value={String(subtaskDraft?.priority ?? normalizePriority(subtask.priority))}
-                                      onChange={(e) => setEditedRows((curr) => ({ ...curr, [subtask.id]: { ...curr[subtask.id], priority: normalizePriority(Number(e.target.value)) } }))}
-                                      disabled={isWriting}
-                                    >
-                                      <option value="1">P1</option>
-                                      <option value="2">P2</option>
-                                      <option value="3">P3</option>
-                                      <option value="4">P4</option>
-                                    </select>
-                                  </div>
-                                  <div className="todoist-inline-edit-actions">
-                                    <button type="button" className="secondary-action" onClick={() => void handleSaveTask(subtask)} disabled={isWriting}>Save</button>
-                                    <button type="button" className="secondary-action" onClick={() => setEditingTaskId(null)} disabled={isWriting}>Cancel</button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  <div
-                                    className="todoist-subtask-content"
-                                    onClick={() => { if (canEditTodoist) setEditingTaskId(subtask.id) }}
-                                    role={canEditTodoist ? 'button' : undefined}
-                                    tabIndex={canEditTodoist ? 0 : undefined}
-                                    onKeyDown={(e) => { if (canEditTodoist && (e.key === 'Enter' || e.key === ' ')) setEditingTaskId(subtask.id) }}
-                                  >
-                                    <span className={subtask.is_completed ? 'todoist-task-done' : ''}>{subtask.content}</span>
-                                    {subtask.description ? <span className="sheets-meta todoist-subtask-desc">{subtask.description}</span> : null}
-                                  </div>
-                                  <button
-                                    type="button"
-                                    className="todoist-complete-btn"
-                                    data-priority={normalizePriority(subtask.priority)}
-                                    onClick={() => void handleCompleteTask(subtask)}
-                                    disabled={isWriting || subtask.is_completed || !canEditTodoist}
-                                    title={canEditTodoist ? 'Mark complete' : undefined}
-                                    aria-label={`Complete: ${subtask.content}`}
-                                  />
-                                </>
-                              )}
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    ) : null}
-                  </React.Fragment>
-                )
-              })}
-              {draggingIndex !== null && dropInsertIndex === topLevelTasks.length && draggingIndex !== topLevelTasks.length - 1 ? (
-                <div className="todoist-drop-indicator" />
-              ) : null}
-              <div
-                className="todoist-drop-tail"
-                onDragOver={(e) => { e.preventDefault(); setDropInsertIndex(topLevelTasks.length) }}
-                onDrop={handleTaskDrop}
-              />
-              {canEditTodoist ? (
-                isAddingTask ? (
-                  <div className="todoist-add-form">
-                    <input
-                      className="sheets-input"
-                      type="text"
-                      placeholder="Task name"
-                      value={newTaskContent}
-                      onChange={(e) => setNewTaskContent(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') void handleCreateTask() }}
-                      autoFocus
-                      disabled={isWriting}
-                    />
-                    <div className="todoist-inline-edit-row">
-                      <input
-                        className="sheets-input"
-                        type="date"
-                        value={newTaskDueDate}
-                        onChange={(e) => setNewTaskDueDate(e.target.value)}
-                        disabled={isWriting}
-                      />
-                      <select
-                        className="sheets-input"
-                        value={String(newTaskPriority)}
-                        onChange={(e) => setNewTaskPriority(normalizePriority(Number(e.target.value)))}
-                        disabled={isWriting}
-                      >
-                        <option value="1">P1</option>
-                        <option value="2">P2</option>
-                        <option value="3">P3</option>
-                        <option value="4">P4</option>
-                      </select>
                     </div>
-                    <div className="todoist-inline-edit-actions">
-                      <button type="button" className="secondary-action" onClick={() => void handleCreateTask()} disabled={isWriting}>Add task</button>
-                      <button type="button" className="secondary-action" onClick={() => { setIsAddingTask(false); setNewTaskContent('') }} disabled={isWriting}>Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <button type="button" className="todoist-add-task-btn" onClick={() => setIsAddingTask(true)}>
-                    + Add task
-                  </button>
-                )
+                  ))}
+                </div>
+              ) : (
+                <p className="sheets-meta">No tasks due today or overdue.</p>
+              )}
+
+              {rows.length > SUMMARY_TASK_LIMIT ? (
+                <p className="sheets-meta">+{rows.length - SUMMARY_TASK_LIMIT} more</p>
               ) : null}
+
+              <Link to="/tasks" className="todoist-summary-link">
+                Open all tasks →
+              </Link>
             </div>
           ) : null}
 

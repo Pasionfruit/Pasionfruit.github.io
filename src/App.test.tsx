@@ -41,9 +41,15 @@ const repoMocks = vi.hoisted(() => ({
 
 const todoistMocks = vi.hoisted(() => ({
   getTasksOfTheDay: vi.fn(),
+  getActiveTasks: vi.fn(),
+  getProjects: vi.fn(),
+  getSections: vi.fn(),
   createTask: vi.fn(),
+  createTaskDetailed: vi.fn(),
   updateTask: vi.fn(),
+  rescheduleTask: vi.fn(),
   closeTask: vi.fn(),
+  deleteTask: vi.fn(),
 }))
 
 vi.mock('./data/sheets/repositories', () => repoMocks)
@@ -461,9 +467,15 @@ beforeEach(() => {
       due: { date: '2026-05-20' },
     },
   ])
+  todoistMocks.getActiveTasks.mockResolvedValue([])
+  todoistMocks.getProjects.mockResolvedValue([])
+  todoistMocks.getSections.mockResolvedValue([])
   todoistMocks.createTask.mockResolvedValue(undefined)
+  todoistMocks.createTaskDetailed.mockResolvedValue(undefined)
   todoistMocks.updateTask.mockResolvedValue(undefined)
+  todoistMocks.rescheduleTask.mockResolvedValue(undefined)
   todoistMocks.closeTask.mockResolvedValue(undefined)
+  todoistMocks.deleteTask.mockResolvedValue(undefined)
 })
 
 afterEach(() => {
@@ -882,7 +894,7 @@ describe('admin about me page', () => {
     })
   })
 
-  it('shows Home Todoist tasks and supports add, edit, and complete', async () => {
+  it('shows the Home Todoist summary with overdue counts and supports completing a task', async () => {
     const user = userEvent.setup()
     localStorage.setItem('demo-profile', 'admin')
     localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
@@ -894,69 +906,17 @@ describe('admin about me page', () => {
       throw new Error('Todoist card not found')
     }
 
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
+    expect(await within(card).findByText('Submit dashboard update')).toBeTruthy()
+    expect(within(card).getByText('Review overdue notes')).toBeTruthy()
 
-    expect(within(card).getByText('Submit dashboard update')).toBeTruthy()
-    expect(within(card).getByText('Include KPI updates and rollout notes')).toBeTruthy()
+    // The summary is read-and-complete only; editing lives on /tasks now.
+    expect(within(card).queryByPlaceholderText('Task name')).toBeNull()
+    expect(within(card).getByRole('link', { name: /Open all tasks/ })).toBeTruthy()
 
-    const summaryCompleteButton = within(card).getAllByRole('button', { name: 'Complete' })[0]
-    await user.click(summaryCompleteButton)
+    await user.click(within(card).getByRole('button', { name: 'Complete: Submit dashboard update' }))
 
     await waitFor(() => {
       expect(todoistMocks.closeTask).toHaveBeenCalledWith('todo-1')
-    })
-
-    await user.click(within(card).getByTitle('Edit values'))
-
-    expect(within(card).getByDisplayValue('Submit dashboard update')).toBeTruthy()
-
-    await user.type(within(card).getByPlaceholderText('New task'), 'Plan weekend run')
-    await user.selectOptions(within(card).getAllByRole('combobox')[0], '3')
-    await user.click(within(card).getByRole('button', { name: 'Add Task' }))
-
-    const todayDate = (() => {
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const day = String(now.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    })()
-
-    await waitFor(() => {
-      expect(todoistMocks.createTask).toHaveBeenCalledWith('Plan weekend run', todayDate, 3)
-    })
-
-    const firstTaskInput = within(card).getByDisplayValue('Submit dashboard update') as HTMLInputElement
-    await user.clear(firstTaskInput)
-    await user.type(firstTaskInput, 'Submit dashboard update v2')
-
-    const descriptionInput = within(card).getByDisplayValue('Include KPI updates and rollout notes') as HTMLTextAreaElement
-    await user.clear(descriptionInput)
-    await user.type(descriptionInput, 'Include KPI updates, rollout notes, and blockers')
-
-    const row = firstTaskInput.closest('tr')
-    if (!row) {
-      throw new Error('Task row not found')
-    }
-
-    const dateInput = within(row).getByDisplayValue('2026-05-21')
-    await user.clear(dateInput)
-    await user.type(dateInput, '2026-05-22')
-    await user.click(within(row).getByRole('button', { name: 'Save' }))
-
-    await waitFor(() => {
-      expect(todoistMocks.updateTask).toHaveBeenCalledWith('todo-1', {
-        content: 'Submit dashboard update v2',
-        description: 'Include KPI updates, rollout notes, and blockers',
-        dueDate: '2026-05-22',
-        priority: 2,
-      })
-    })
-
-    await user.click(within(row).getByRole('button', { name: 'Complete' }))
-
-    await waitFor(() => {
-      expect(todoistMocks.closeTask).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -1044,9 +1004,10 @@ describe('admin about me page', () => {
   })
 
   it('shows missing token guidance when Todoist env token is not set', async () => {
-    const user = userEvent.setup()
     vi.unstubAllEnvs()
     vi.stubEnv('VITE_TODOIST_API_TOKEN', '')
+    localStorage.setItem('demo-profile', 'admin')
+    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
 
     renderHomePage()
 
@@ -1056,10 +1017,9 @@ describe('admin about me page', () => {
       throw new Error('Todoist card not found')
     }
 
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
-
+    // The card opens on the Todoist tab for admins; the guidance shows without interaction.
     expect(
-      await screen.findByText('Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.'),
+      await within(card).findByText('Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.'),
     ).toBeTruthy()
 
     vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
