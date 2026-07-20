@@ -28,6 +28,12 @@
   flex: 1;
 }
 
+.weather-pager .experience-toggle-btn.active {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
 /* ── Pages fill the card's fixed body height ── */
 
 .weather-page {
