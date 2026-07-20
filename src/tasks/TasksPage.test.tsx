@@ -47,7 +47,7 @@ function task(overrides: Record<string, unknown>) {
 function renderTasksPage(canEdit = true) {
   return render(
     <MemoryRouter initialEntries={['/tasks']}>
-      <TasksPage canEdit={canEdit} configured editorEmail="pasionabe@gmail.com" />
+      <TasksPage canEdit={canEdit} configured />
     </MemoryRouter>,
   )
 }

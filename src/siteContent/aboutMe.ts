@@ -5,7 +5,7 @@ export const aboutMeNavSection: NavSection = {
   title: 'About Me',
   path: '/mrpasionfruit',
   summary: 'Personal identity, interests, and the Oreo gang corner',
-  accent: '#06b6d4',
+  accent: '#ff5c38',
   children: [],
 }
 

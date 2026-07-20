@@ -2041,7 +2041,8 @@
 }
 
 .home-todoist-card .experience-toggle-btn.active {
-  box-shadow: inset 0 -2px 0 var(--accent);
+  /* Robin egg blue — Tasks of the Day's own accent, distinct from the site purple. */
+  box-shadow: inset 0 -2px 0 #00cccc;
 }
 
 /* Compound selector so this wins over the later `.sheets-card { display: grid }`

@@ -20,11 +20,9 @@ const VIEWS: { id: TaskView; label: string }[] = [
 export function TasksPage({
   canEdit,
   configured,
-  editorEmail,
 }: {
   canEdit: boolean
   configured: boolean
-  editorEmail: string
 }) {
   const [view, setView] = useState<TaskView>('today')
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
@@ -103,7 +101,7 @@ export function TasksPage({
       ) : null}
 
       {configured && !canEdit ? (
-        <p className="sheets-meta">Edit access restricted to Admin profile signed in as {editorEmail}.</p>
+        <p className="sheets-meta">Edit access restricted to admin.</p>
       ) : null}
 
       {store.loadError ? <p className="sheets-error">{store.loadError}</p> : null}

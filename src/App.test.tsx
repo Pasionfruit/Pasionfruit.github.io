@@ -610,7 +610,7 @@ describe('admin about me page', () => {
 
     expect(within(card).queryByTitle('Edit values')).toBeNull()
     expect(
-      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+      within(card).getByText('Edit access restricted to admin.'),
     ).toBeTruthy()
   })
 
@@ -853,7 +853,7 @@ describe('admin about me page', () => {
 
     expect(within(card).queryByTitle('Edit values')).toBeNull()
     expect(
-      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+      within(card).getByText('Edit access restricted to admin.'),
     ).toBeTruthy()
   })
 
@@ -1000,7 +1000,7 @@ describe('admin about me page', () => {
     renderHomePage()
 
     expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
-    expect(screen.queryByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.')).toBeNull()
+    expect(screen.queryByText('Edit access restricted to admin.')).toBeNull()
   })
 
   it('shows missing token guidance when Todoist env token is not set', async () => {
@@ -1132,7 +1132,7 @@ describe('admin about me page', () => {
 
     expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
     expect(
-      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+      within(card).getByText('Edit access restricted to admin.'),
     ).toBeTruthy()
   })
 
@@ -1414,7 +1414,7 @@ describe('admin about me page', () => {
 
     expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
     expect(
-      within(card).getByText('Edit access restricted to Admin profile signed in as pasionabe@gmail.com.'),
+      within(card).getByText('Edit access restricted to admin.'),
     ).toBeTruthy()
   })
 })

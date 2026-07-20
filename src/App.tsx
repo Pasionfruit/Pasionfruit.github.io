@@ -359,7 +359,6 @@ function App() {
             <TasksPage
               canEdit={profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL}
               configured={isTodoistConfigured()}
-              editorEmail={TODOIST_EDITOR_EMAIL}
             />
           )}
         />
@@ -1509,7 +1508,7 @@ function TodoistTasksCard({
           ) : null}
 
           {(view === 'training' || view === 'studying') && !canWrite ? (
-            <p className="sheets-meta">Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.</p>
+            <p className="sheets-meta">Edit access restricted to admin.</p>
           ) : null}
 
           {view === 'todoist' && !todoistConfigured ? (
@@ -1524,7 +1523,7 @@ function TodoistTasksCard({
 
           {view === 'todoist' && !canEditTodoist ? (
             <p className="sheets-meta">
-              Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+              Edit access restricted to admin.
             </p>
           ) : null}
 
@@ -5727,7 +5726,7 @@ function BackpackCard({
 
           {!canWrite ? (
             <p className="sheets-meta">
-              Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+              Edit access restricted to admin.
             </p>
           ) : null}
 
@@ -6369,7 +6368,7 @@ function MealPlanCard({
 
       {!canWrite ? (
         <p className="sheets-meta">
-          Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+          Edit access restricted to admin.
         </p>
       ) : null}
 
@@ -7270,7 +7269,7 @@ function TrainingLogCard({
 
             {!canWrite ? (
               <p className="sheets-meta">
-                Edit access restricted to Admin profile signed in as {TODOIST_EDITOR_EMAIL}.
+                Edit access restricted to admin.
               </p>
             ) : null}
 

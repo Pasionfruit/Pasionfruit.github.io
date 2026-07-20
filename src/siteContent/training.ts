@@ -5,7 +5,7 @@ export const trainingNavSection: NavSection = {
   title: 'Training',
   path: '/training',
   summary: 'Records, data, and learning resources to understand and track progress ',
-  accent: '#FC5200',
+  accent: '#14b8a6',
   children: [
     {
       label: 'Records',
