@@ -1560,10 +1560,10 @@ function TodoistTasksCard({
                       />
                       <div className="todoist-task-content">
                         <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
-                        {isOverdue(row) ? (
-                          <p className="todoist-summary-overdue">{formatDayLabel(dueDateKey(row))}</p>
-                        ) : null}
                       </div>
+                      {isOverdue(row) ? (
+                        <p className="todoist-summary-overdue">{formatDayLabel(dueDateKey(row))}</p>
+                      ) : null}
                     </div>
                   ))}
                 </div>

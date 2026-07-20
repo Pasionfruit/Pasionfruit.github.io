@@ -75,9 +75,5 @@ a {
 }
 
 #root {
-  height: 100svh;
-}
-
-body {
-  overflow: hidden;
+  min-height: 100svh;
 }

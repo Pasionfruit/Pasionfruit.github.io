@@ -1,9 +1,5 @@
-/* App shell: the viewport is the frame; pages scroll inside .page-shell. */
 .app-shell {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  min-height: 100svh;
 }
 
 .topbar {
@@ -448,10 +444,7 @@
 .page-shell {
   width: min(72rem, calc(100% - 1rem));
   margin: 0 auto;
-  padding: 1rem 0;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+  padding: 1rem 0 3rem;
 }
 
 .page {
@@ -2052,17 +2045,6 @@
   border-left: 1px solid var(--border);
 }
 
-.home-todoist-card .experience-toggle-btn.active {
-  /* Robin egg blue — Tasks of the Day's own accent, distinct from the site purple. */
-  background: color-mix(in srgb, #00cccc 20%, var(--surface));
-  color: #007f7f;
-  box-shadow: inset 0 -2px 0 #00cccc;
-}
-
-:root[data-theme='dark'] .home-todoist-card .experience-toggle-btn.active {
-  background: color-mix(in srgb, #00cccc 26%, var(--surface));
-  color: #6ee7e7;
-}
 
 /* Compound selector so this wins over the later `.sheets-card { display: grid }`
    rule — grid's stretched rows were centering the header and tab selector. */
@@ -2107,9 +2089,16 @@
   font-size: 0.84rem;
 }
 
+/* Robin egg blue active state for every filter/tab selector. */
 .experience-toggle-btn.active {
-  background: var(--surface);
-  color: var(--text-strong);
+  background: color-mix(in srgb, #00cccc 20%, var(--surface));
+  color: #007f7f;
+  box-shadow: inset 0 -2px 0 #00cccc;
+}
+
+:root[data-theme='dark'] .experience-toggle-btn.active {
+  background: color-mix(in srgb, #00cccc 26%, var(--surface));
+  color: #6ee7e7;
 }
 
 .oreo-gang-card {
@@ -3005,10 +2994,11 @@
   }
 
   /* Static card size on desktop — tab/page switches scroll inside instead of
-     resizing the row. */
+     resizing the row. Kept short enough that the section tiles below fit
+     on screen without scrolling. */
   .home-top-row > .home-todoist-card,
   .home-top-row > .weather-card {
-    height: 30rem;
+    height: 24rem;
   }
 }
 
@@ -3411,7 +3401,9 @@
 }
 
 .todoist-summary-overdue {
-  margin: 0.1rem 0 0;
+  margin: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 0.75rem;
   color: #d1453b;
 }
@@ -4657,34 +4649,6 @@
   gap: 0.85rem;
 }
 
-/* Fit each page to the viewport on desktop: the hero stays pinned and the
-   card grid becomes the internal scroll region, so the page itself never
-   scrolls. Mobile keeps natural page flow. */
-@media (min-width: 900px) {
-  .page-frame {
-    height: 100%;
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .page-frame .page-grid {
-    min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    align-content: start;
-  }
-
-  .page.home-page {
-    height: 100%;
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .home-page .section-block {
-    min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    align-content: start;
-  }
-}
 
 
 .login-card {
