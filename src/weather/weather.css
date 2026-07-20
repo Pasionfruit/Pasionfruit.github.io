@@ -6,10 +6,82 @@
   gap: 0.75rem;
 }
 
+/* Scrollable body below the pinned header, so the card keeps a static size. */
 .weather-collapsible {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.weather-pager {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.weather-pager .experience-toggle-btn {
+  flex: 1;
+}
+
+/* ── Pages fill the card's fixed body height ── */
+
+.weather-page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Now page: hero centers in the upper half, metric tiles stretch below. */
+.weather-page--now .weather-now {
+  flex: 1;
+  justify-content: center;
+}
+
+.weather-page--now .weather-metrics {
+  flex: 1;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.weather-page--now .weather-metric {
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .weather-page--now .weather-now-icon {
+    font-size: 3.6rem;
+  }
+
+  .weather-page--now .weather-now-temp {
+    font-size: 3rem;
+  }
+}
+
+/* Radar page: the map grows to whatever height the card allows. */
+.weather-page--radar .weather-radar {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-page--radar .weather-radar-map {
+  height: auto;
+  flex: 1;
+  min-height: 200px;
+}
+
+/* Hourly page: the chart grows the same way. */
+.weather-page--hourly .weather-hourly-chart {
+  height: auto;
+  flex: 1;
+  min-height: 170px;
 }
 
 /* The collapse toggle is a mobile-only affordance. */

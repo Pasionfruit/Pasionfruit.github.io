@@ -1314,7 +1314,7 @@ function TodoistTasksCard({
   }
 
   return (
-    <article className="info-card home-todoist-card sheets-card">
+    <article className={`info-card home-todoist-card sheets-card${isCollapsed ? ' is-collapsed' : ''}`}>
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
@@ -1331,7 +1331,7 @@ function TodoistTasksCard({
           ) : null}
           <button
             type="button"
-            className="section-collapse-btn"
+            className="section-collapse-btn home-todoist-collapse-btn"
             aria-expanded={!isCollapsed}
             onClick={() => setIsCollapsed((value) => !value)}
           >
@@ -1340,8 +1340,7 @@ function TodoistTasksCard({
         </div>
       </div>
 
-      {!isCollapsed ? (
-        <>
+      <div className="home-todoist-collapsible">
           <div className="experience-toggle" role="tablist" aria-label="Tasks of the Day filter">
             {canViewOriginalTabs ? (
               <>
@@ -1865,8 +1864,7 @@ function TodoistTasksCard({
           ) : null}
 
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
-        </>
-      ) : null}
+      </div>
     </article>
   )
 }
