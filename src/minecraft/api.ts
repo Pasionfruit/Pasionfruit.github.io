@@ -1,26 +1,30 @@
 // Centralized Minecraft Server Manager API client.
 //
 // Configuration comes from env vars so no key ever lands in committed source:
-//   VITE_API_URL — base URL of the server manager (default: https://api.abepasion.com)
-//   VITE_API_KEY — X-API-Key value; leave empty once a Cloudflare Worker proxy
-//                  handles auth server-side (the header is simply omitted).
+//   VITE_API_URL — base URL of the server manager proxy
+//                  (default: the Cloudflare Worker, which holds the API key)
+//   VITE_API_KEY — X-API-Key value; empty in normal use since the Worker
+//                  injects auth server-side (the header is omitted when blank).
 //
-// The UI only ever calls the exported functions, so swapping the backend for a
-// proxy later is a config change, not a rewrite.
+// The UI only ever calls the exported functions, so swapping the backend is a
+// config change, not a rewrite.
 
 const API_BASE =
   (import.meta.env.VITE_API_URL as string | undefined)?.trim().replace(/\/$/, '') ||
-  'https://api.abepasion.com'
+  'https://cloudflare-worker.abepasion.workers.dev'
 const API_KEY = (import.meta.env.VITE_API_KEY as string | undefined)?.trim() ?? ''
 
 const GET_TIMEOUT_MS = 10_000
 const ACTION_TIMEOUT_MS = 30_000
+
+export type ServerState = 'starting' | 'online' | 'stopping' | 'offline'
 
 export type ServerStatus = {
   online: boolean
   players?: number
   maxPlayers?: number
   version?: string
+  state?: ServerState
 }
 
 export type ServerMetrics = {

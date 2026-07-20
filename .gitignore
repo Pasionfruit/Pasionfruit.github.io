@@ -23,3 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.*
+!.env.example
+
+# Secrets / credentials — never commit
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+scripts/gaming/mc_server.env
+scripts/health-ingestion/config.env

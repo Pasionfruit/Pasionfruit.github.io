@@ -67,6 +67,13 @@ function renderStatus() {
     return
   }
 
+  if (lastStatus?.state === 'stopping') {
+    statusEl.textContent = '🟡 Stopping...'
+    playersEl.textContent = '— / —'
+    versionEl.textContent = '—'
+    return
+  }
+
   if (lastStatus?.online) {
     statusEl.textContent = '🟢 Online'
     playersEl.textContent = `${lastStatus.players ?? 0} / ${lastStatus.maxPlayers ?? '—'}`
@@ -107,13 +114,14 @@ function renderConsole(lines: string[]) {
 
 function renderButtons() {
   const online = Boolean(lastStatus?.online)
+  const transitioning = isStarting || lastStatus?.state === 'starting' || lastStatus?.state === 'stopping'
   const blocked = !backendReachable || activeAction !== null
 
   // Start stays available while the server is offline; Stop/Restart need a
-  // running server to act on.
-  startBtn.disabled = blocked || isStarting || online
-  restartBtn.disabled = blocked || !online
-  stopBtn.disabled = blocked || !online
+  // running server to act on. Nothing is actionable mid-transition.
+  startBtn.disabled = blocked || transitioning || online
+  restartBtn.disabled = blocked || transitioning || !online
+  stopBtn.disabled = blocked || transitioning || !online
 
   const buttons: Array<[ActionName, HTMLButtonElement]> = [
     ['start', startBtn],
@@ -128,7 +136,10 @@ function renderButtons() {
 function describeError(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.kind === 'timeout') return '⚠ Request timed out — please try again.'
-    if (error.kind === 'http') return `⚠ Server manager returned an error (${error.status ?? 'unknown'}).`
+    if (error.kind === 'http') {
+      if (error.status === 429) return '⚠ Please wait 30 seconds between server actions.'
+      return `⚠ Server manager returned an error (${error.status ?? 'unknown'}).`
+    }
     return '⚠ Server manager unavailable.'
   }
   return '⚠ Request failed — please try again.'
@@ -140,7 +151,10 @@ async function refreshStatus() {
   try {
     const status = await getServerStatus()
     lastStatus = status
-    if (status.online) {
+    if (status.state) {
+      // Backend tracks transitions authoritatively once it reports a state.
+      isStarting = status.state === 'starting'
+    } else if (status.online) {
       isStarting = false
     }
     setBackendReachable(true)
