@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-19T09:38:58.498Z",
+  "lastUpdated": "2026-07-20T10:08:03.921Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -11,15 +11,6 @@
         "description": "$10 off the purchase of one (1) $50 Gas Card with a grocery purchase of $100 or more",
         "category": "Other",
         "validTo": "2026-07-22T23:59:59.000-04:00",
-        "redemption": "print"
-      },
-      {
-        "id": "flipp-4651621",
-        "brand": null,
-        "discount": "Coupon",
-        "description": "$10 off the purchase of one (1) $50 Gas Card with a grocery purchase of $100 or more.",
-        "category": "Grocery",
-        "validTo": "2026-07-19T23:59:59.000-04:00",
         "redemption": "print"
       },
       {
@@ -122,15 +113,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4674004",
-        "brand": "Anbesol",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Anbesol product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4607758",
         "brand": "Angel Soft",
         "discount": "Save $0.50",
@@ -158,6 +140,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4674127",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4674028",
         "brand": "AVEENO",
         "discount": "Save $2.00",
@@ -167,19 +158,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4674057",
+        "id": "flipp-4674055",
         "brand": "AVEENO",
         "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) AVEENO® Body Moisturizer (excludes Anti-Itch, travel & trial sizes except 2oz ointment, single-use masks and gift sets)",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz and shave)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4674055",
+        "id": "flipp-4674057",
         "brand": "AVEENO",
         "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz and shave)",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Body Moisturizer (excludes Anti-Itch, travel & trial sizes except 2oz ointment, single-use masks and gift sets)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -198,15 +189,6 @@
         "brand": "AVEENO",
         "discount": "Save $3.00",
         "description": "Save $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674127",
-        "brand": "AVEENO",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -398,15 +380,6 @@
         "description": "Save $1.00 on any TWO (2) Campbell's® Condensed Soups 10.5-11.5 oz cans",
         "category": "Grocery",
         "validTo": "2026-08-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4663649",
-        "brand": "Carando®",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Carando® Italian Sausage, Meatball, or Pepperoni Item",
-        "category": "Grocery",
-        "validTo": "2026-08-19T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -833,24 +806,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4674047",
-        "brand": "Dove Men+Care",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674062",
-        "brand": "Dove Men+Care",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654968",
         "brand": "Dove Men+Care",
         "discount": "Save $5.00",
@@ -866,6 +821,24 @@
         "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
         "category": "Health & Beauty",
         "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674062",
+        "brand": "Dove Men+Care",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674047",
+        "brand": "Dove Men+Care",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -938,15 +911,6 @@
         "description": "Save $3.00 on any ONE (1) DUREX® Product, 10ct or larger",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4542351",
-        "brand": "El Monterey",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) El Monterey Mas Bold Taquitos",
-        "category": "Grocery",
-        "validTo": "2026-08-11T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1040,42 +1004,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634856",
-        "brand": "Flonase",
-        "discount": "Save $8.00",
-        "description": "Save $8.00 on any ONE (1) Flonase Spray 120ct or larger",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-03T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654466",
-        "brand": "Flonase",
-        "discount": "Save $8.00",
-        "description": "Save $8.00 on any ONE (1) Flonase Spray (120ct or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634858",
-        "brand": "Flonase",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any ONE (1) Flonase Spray 60ct to 90ct",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-03T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654426",
-        "brand": "FLONASE",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any ONE (1) Flonase Spray (60-90ct only)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4594896",
         "brand": "Fresh Press Farms",
         "discount": "Save $1.50",
@@ -1135,7 +1063,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
         "category": "Other",
-        "validTo": "2026-07-19T20:00:00.000-04:00",
+        "validTo": "2026-07-20T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1487,15 +1415,6 @@
         "description": "Save $2.00 on any ONE (1) Irish Spring Bar Soap Multipack (6ct or larger)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634865",
-        "brand": "Irish Spring",
-        "discount": "SAVE $1.00",
-        "description": "SAVE $1.00 On any ONE (1) Irish Spring or Softsoap Body Wash (12oz or larger), Softsoap Liquid Foaming Hand Soap Pump (9oz ONLY), Softsoap Liquid Hand Soap Pump (11.25oz ONLY) or Irish Spring Bar Soap Multipack (3ct or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2237,24 +2156,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4583668",
-        "brand": "Publix",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 Off  The Purchase of One (1) Publix Baby Wipes Unscented, 216-ct. pkg.",
-        "category": "Baby",
-        "validTo": "2026-07-26T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4583671",
-        "brand": "Publix",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 Off The Purchase of One (1) Publix Entertaining Dinnerware Combo Pack 192-ct. cont.",
-        "category": "Other",
-        "validTo": "2026-07-26T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4633852",
         "brand": "Pull-Ups",
         "discount": "Save $1.50",
@@ -2480,15 +2381,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4631317",
-        "brand": "Sensodyne",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Sensodyne or Pronamel product (excl 0.8oz)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-13T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661258",
         "brand": "Softsoap",
         "discount": "Save $1.00",
@@ -2696,15 +2588,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634828",
-        "brand": "Tylenol",
-        "discount": "Save $3.50",
-        "description": "Save $3.50 on any ONE (1) TYLENOL® PRECISE ™ Pain Relieving Patches or Cream Products (Excludes Adult TYLENOL®, TYLENOL® PM, TYLENOL® Cold & Sinus, and travel & trial sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634866",
         "brand": "TYLENOL®",
         "discount": "Save $3.00",
@@ -2890,6 +2773,13 @@
     "source": "Slickdeals",
     "error": null,
     "coupons": [
+      {
+        "id": "sd-19780953",
+        "place": "Wendy's",
+        "title": "Wendy's- $1 Small Frosty  (National Ice Cream Day)",
+        "url": "https://slickdeals.net/f/19780953-wendy-s-1-small-frosty-national-ice-cream-day?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-19T12:04:45.000Z"
+      },
       {
         "id": "sd-19770321",
         "place": "Chipotle",

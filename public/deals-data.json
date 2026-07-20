@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-19T09:38:53.719Z",
+  "lastUpdated": "2026-07-20T10:07:58.046Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-07-15T00:00:00-04:00",
@@ -1228,22 +1228,6 @@
           "validTo": "2026-07-25T23:59:59-04:00"
         },
         {
-          "id": "Target-1024464556",
-          "item": "Select Kevin's ready-to-heat meals",
-          "brand": "Kevin's",
-          "price": 8.99,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1024464155",
-          "item": "Purina Fancy Feast 30-ct. 3-oz. variety pack wet cat food",
-          "brand": "Purina",
-          "price": 28.49,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
           "id": "Target-1024464585",
           "item": "Select Marie Callender's & Healthy Choice single-serve meals",
           "brand": "Marie Callender's | Healthy Choice",
@@ -1296,14 +1280,6 @@
           "item": "Hooray House golf clubs dog toy",
           "brand": "Hooray House",
           "price": 24.99,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1024464747",
-          "item": "Select 12-pk. craft beer.",
-          "brand": null,
-          "price": 18.99,
           "validFrom": "2026-07-19T00:00:00-04:00",
           "validTo": "2026-07-25T23:59:59-04:00"
         },
@@ -1700,14 +1676,6 @@
           "validTo": "2026-07-25T23:59:59-04:00"
         },
         {
-          "id": "Target-1027032078",
-          "item": "UNO Pop card game.",
-          "brand": "UNO",
-          "price": 6.99,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
           "id": "Target-1027031874",
           "item": "50\" | • Roku TV",
           "brand": "Roku",
@@ -2068,34 +2036,10 @@
           "validTo": "2026-07-25T23:59:59-04:00"
         },
         {
-          "id": "Target-1027054872",
-          "item": "First Response Comfort Check 8-ct. pregnancy tests.",
-          "brand": "First Response",
-          "price": 17.39,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
           "id": "Target-1027054900",
           "item": "Flonase 72-spray non-drowsy allergy relief",
           "brand": "Flonase",
           "price": 17.49,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1027054888",
-          "item": "Moon Juice Magnesi-Om",
-          "brand": null,
-          "price": 43.99,
-          "validFrom": "2026-07-19T00:00:00-04:00",
-          "validTo": "2026-07-25T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1027054896",
-          "item": "Cetaphil vitamin C serum",
-          "brand": "Cetaphil",
-          "price": 19.99,
           "validFrom": "2026-07-19T00:00:00-04:00",
           "validTo": "2026-07-25T23:59:59-04:00"
         },
@@ -2168,6 +2112,62 @@
           "item": "Blue Buffalo Tastefuls",
           "brand": "Blue Buffalo",
           "price": 22.99,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027032078",
+          "item": "UNO Pop card game.",
+          "brand": "UNO",
+          "price": 6.99,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1024464155",
+          "item": "Purina Fancy Feast 30-ct. 3-oz. variety pack wet cat food",
+          "brand": "Purina",
+          "price": 28.49,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027054896",
+          "item": "Cetaphil vitamin C serum",
+          "brand": "Cetaphil",
+          "price": 19.99,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027054872",
+          "item": "First Response Comfort Check 8-ct. pregnancy tests.",
+          "brand": "First Response",
+          "price": 17.39,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027054888",
+          "item": "Moon Juice Magnesi-Om",
+          "brand": null,
+          "price": 43.99,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1024464556",
+          "item": "Select Kevin's ready-to-heat meals",
+          "brand": "Kevin's",
+          "price": 8.99,
+          "validFrom": "2026-07-19T00:00:00-04:00",
+          "validTo": "2026-07-25T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1024464747",
+          "item": "Select 12-pk. craft beer.",
+          "brand": null,
+          "price": 18.99,
           "validFrom": "2026-07-19T00:00:00-04:00",
           "validTo": "2026-07-25T23:59:59-04:00"
         },
