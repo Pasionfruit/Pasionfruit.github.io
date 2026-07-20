@@ -28,6 +28,7 @@ import 'chartjs-adapter-date-fns'
 import './App.css'
 import { sounds } from './sounds'
 import { TasksPage } from './tasks/TasksPage'
+import { WeatherCard } from './weather/WeatherCard'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   actuaryExamEntries,
@@ -942,7 +943,10 @@ function HomePage({
 
   return (
     <div className="page home-page">
-      <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+      <div className="home-top-row">
+        <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+        <WeatherCard />
+      </div>
       <section id="sections" className="section-block">
         <div className="section-grid">
           {navSections.map((section) =>

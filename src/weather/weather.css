@@ -1,0 +1,247 @@
+/* Home weather card — sits to the right of Tasks of the Day on desktop. */
+
+.weather-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.weather-collapsible {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* The collapse toggle is a mobile-only affordance. */
+.weather-collapse-btn {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .weather-collapse-btn {
+    display: inline-flex;
+  }
+
+  .weather-card.is-collapsed .weather-collapsible {
+    display: none;
+  }
+}
+
+.weather-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.weather-place {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.weather-refresh {
+  font-size: 1rem;
+}
+
+.weather-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+/* ── Current conditions ── */
+
+.weather-now {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.weather-now-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.weather-now-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.weather-now-temp {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-strong);
+}
+
+.weather-now-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ── Metric grid: Humidity · Air Quality · UV Index · Feels Like ── */
+
+.weather-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.weather-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--surface-muted, color-mix(in srgb, var(--surface) 70%, var(--border)));
+}
+
+.weather-metric-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.weather-metric-value {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.weather-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* AQI severity (US EPA scale) */
+.weather-badge--aqi-0 { background: #009966; }
+.weather-badge--aqi-1 { background: #cc9900; }
+.weather-badge--aqi-2 { background: #ff7e00; }
+.weather-badge--aqi-3 { background: #d13438; }
+.weather-badge--aqi-4 { background: #8f3f97; }
+.weather-badge--aqi-5 { background: #7e0023; }
+
+/* UV severity */
+.weather-badge--uv-0 { background: #009966; }
+.weather-badge--uv-1 { background: #cc9900; }
+.weather-badge--uv-2 { background: #ff7e00; }
+.weather-badge--uv-3 { background: #d13438; }
+.weather-badge--uv-4 { background: #8f3f97; }
+
+/* ── Sections (radar, chart) ── */
+
+.weather-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.weather-section-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Radar ── */
+
+.weather-radar {
+  position: relative;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.weather-radar-map {
+  height: 220px;
+  width: 100%;
+  background: var(--surface-muted, #e5e7eb);
+}
+
+/* Keep Leaflet controls legible and on-brand. */
+.weather-radar-map .leaflet-control-attribution {
+  font-size: 0.62rem;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text-muted);
+}
+
+.weather-radar-map .leaflet-control-attribution a {
+  color: var(--text-muted);
+}
+
+.weather-radar-controls {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.weather-radar-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent, #2563eb);
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.weather-radar-time {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  padding-right: 0.2rem;
+}
+
+.weather-radar-empty {
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Hourly chart ── */
+
+.weather-hourly-chart {
+  position: relative;
+  height: 170px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .weather-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weather-radar-map {
+    height: 190px;
+  }
+}

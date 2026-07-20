@@ -2899,6 +2899,26 @@
   margin-bottom: 0.9rem;
 }
 
+/* Home top row: Tasks of the Day (left) + Weather (right), equal size on
+   desktop; stacked with a collapsible Weather card on mobile. */
+.home-top-row {
+  display: grid;
+  gap: 0.9rem;
+  align-items: stretch;
+}
+
+.home-top-row > .home-todoist-card,
+.home-top-row > .weather-card {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .home-top-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
 .home-daily-focus-card {
   margin-bottom: 0.9rem;
 }
