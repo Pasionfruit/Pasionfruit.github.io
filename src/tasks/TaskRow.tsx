@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { RotateCw } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
 
@@ -199,7 +200,11 @@ export function TaskRow({
                 {timeLabel ? ` · ${timeLabel}` : ''}
               </span>
             ) : null}
-            {task.due?.is_recurring ? <span className="task-chip task-recurring">↻</span> : null}
+            {task.due?.is_recurring ? (
+              <span className="task-chip task-recurring" title="Recurring">
+                <RotateCw size={11} aria-hidden="true" />
+              </span>
+            ) : null}
             {showProject && projectName ? <span className="task-chip task-project">{projectName}</span> : null}
             {(task.labels ?? []).map((label) => (
               <span key={label} className="task-chip task-label">

@@ -1,9 +1,38 @@
 import { useState } from 'react'
+import {
+  Cloud,
+  CloudDrizzle,
+  CloudFog,
+  CloudLightning,
+  CloudRain,
+  CloudSnow,
+  CloudSun,
+  Moon,
+  RotateCcw,
+  Snowflake,
+  Sun,
+  Thermometer,
+  type LucideIcon,
+} from 'lucide-react'
 import { HourlyChart } from './HourlyChart'
 import { RadarMap } from './RadarMap'
 import { useWeather } from './useWeather'
-import { aqiCategory, describeWeather, uvCategory } from './openMeteo'
+import { aqiCategory, describeWeather, uvCategory, type WeatherIcon } from './openMeteo'
 import './weather.css'
+
+const WEATHER_ICONS: Record<WeatherIcon, LucideIcon> = {
+  sun: Sun,
+  moon: Moon,
+  'cloud-sun': CloudSun,
+  cloud: Cloud,
+  fog: CloudFog,
+  drizzle: CloudDrizzle,
+  rain: CloudRain,
+  snow: CloudSnow,
+  snowflake: Snowflake,
+  storm: CloudLightning,
+  thermometer: Thermometer,
+}
 
 export function WeatherCard() {
   const weather = useWeather()
@@ -33,7 +62,7 @@ export function WeatherCard() {
             aria-label="Refresh weather"
             title="Refresh weather"
           >
-            ↺
+            <RotateCcw size={14} aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -96,7 +125,10 @@ export function WeatherCard() {
             <div className="weather-page weather-page--now">
               <div className="weather-now">
                 <span className="weather-now-icon" aria-hidden="true">
-                  {condition?.icon}
+                  {condition ? (() => {
+                    const ConditionIcon = WEATHER_ICONS[condition.icon]
+                    return <ConditionIcon strokeWidth={1.5} />
+                  })() : null}
                 </span>
                 <div className="weather-now-main">
                   <span className="weather-now-temp">{Math.round(data.current.temperature)}°</span>

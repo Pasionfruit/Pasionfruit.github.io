@@ -886,7 +886,7 @@ describe('admin about me page', () => {
       throw new Error('Bayes Rule row not found')
     }
 
-    const markIncompleteButton = within(bayesRow).getByRole('button', { name: '✓ Completed' })
+    const markIncompleteButton = within(bayesRow).getByRole('button', { name: 'Completed' })
     await user.click(markIncompleteButton)
 
     await waitFor(() => {

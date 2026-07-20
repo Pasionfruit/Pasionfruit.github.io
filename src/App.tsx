@@ -1,5 +1,28 @@
 import React, { type CSSProperties, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, RotateCcw, ShoppingCart, SquareCheck, Utensils } from 'lucide-react'
+import {
+  BookOpen,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  ExternalLink,
+  Flame,
+  Hotel,
+  LayoutGrid,
+  Link2,
+  List,
+  Pencil,
+  Plane,
+  Play,
+  RotateCcw,
+  Route as RouteIcon,
+  Settings,
+  ShoppingCart,
+  SquareCheck,
+  Utensils,
+  UtensilsCrossed,
+  X,
+} from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
   Link,
@@ -1325,7 +1348,7 @@ function TodoistTasksCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -1435,10 +1458,10 @@ function TodoistTasksCard({
                             onClick={() => void handleToggleTrainingWorkout('morning')}
                             disabled={!googleIdToken || isWriting}
                           >
-                            {todaysTrainingRecord.completed_morning ? '✓ Completed' : 'Mark Complete'}
+                            {todaysTrainingRecord.completed_morning ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
                           </button>
                         ) : (
-                          <span>{todaysTrainingRecord.completed_morning ? '✓ Yes' : 'No'}</span>
+                          <span>{todaysTrainingRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
                         )}
                       </td>
                     </tr>
@@ -1452,10 +1475,10 @@ function TodoistTasksCard({
                             onClick={() => void handleToggleTrainingWorkout('evening')}
                             disabled={!googleIdToken || isWriting}
                           >
-                            {todaysTrainingRecord.completed_evening ? '✓ Completed' : 'Mark Complete'}
+                            {todaysTrainingRecord.completed_evening ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
                           </button>
                         ) : (
-                          <span>{todaysTrainingRecord.completed_evening ? '✓ Yes' : 'No'}</span>
+                          <span>{todaysTrainingRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
                         )}
                       </td>
                     </tr>
@@ -1489,10 +1512,10 @@ function TodoistTasksCard({
                               onClick={() => void handleToggleStudyLesson(row)}
                               disabled={!googleIdToken || isWriting}
                             >
-                              {row.completed ? '✓ Completed' : 'Mark Complete'}
+                              {row.completed ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
                             </button>
                           ) : row.completed ? (
-                            '✓'
+                            <Check size={14} aria-hidden="true" />
                           ) : (
                             ''
                           )}
@@ -3078,7 +3101,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
                       aria-label={`Delete ${trip.name}`}
                       onClick={() => { void handleDeleteTrip(trip.trip_id) }}
                     >
-                      ✕
+                      <X size={14} aria-hidden="true" />
                     </button>
                   </div>
 
@@ -3186,20 +3209,20 @@ function MakeRecipePopup({
       <p className="recipe-popup-meta">
         {recipe.category ? <span>{recipe.category}</span> : null}
         {recipe.cook_time ? <span>⏱ {recipe.cook_time}</span> : null}
-        {recipe.servings ? <span>🍽 {recipe.servings} servings</span> : null}
-        {recipe.calories ? <span>🔥 {recipe.calories} cal</span> : null}
+        {recipe.servings ? <span><Utensils size={12} aria-hidden="true" /> {recipe.servings} servings</span> : null}
+        {recipe.calories ? <span><Flame size={12} aria-hidden="true" /> {recipe.calories} cal</span> : null}
       </p>
 
       {(recipe.video_link || recipe.website_link) ? (
         <div className="recipe-popup-links">
           {recipe.video_link ? (
             <a href={recipe.video_link} target="_blank" rel="noopener noreferrer" className="recipe-popup-link">
-              ▶ Video
+              <Play size={12} aria-hidden="true" /> Video
             </a>
           ) : null}
           {recipe.website_link ? (
             <a href={recipe.website_link} target="_blank" rel="noopener noreferrer" className="recipe-popup-link">
-              🔗 Recipe source
+              <Link2 size={12} aria-hidden="true" /> Recipe source
             </a>
           ) : null}
         </div>
@@ -3414,13 +3437,20 @@ function RecipesCard({
     setEditDrafts(next)
   }, [recipes])
 
+  // Normalize user-entered recipe text: first letter capitalized, rest lowercase.
+  function toSentenceCase(value: string) {
+    const trimmed = value.trim()
+    if (!trimmed) return trimmed
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+  }
+
   async function handleCreateRecipe() {
     if (!idToken || isWriting || !draftName.trim()) return
     setIsWriting(true)
     setWriteError('')
     try {
       await createRecipe(idToken, {
-        recipeName: draftName.trim(),
+        recipeName: toSentenceCase(draftName),
         category: draftCategory.trim(),
         calories: draftCalories.trim(),
         servings: draftServings.trim(),
@@ -3446,7 +3476,7 @@ function RecipesCard({
     setWriteError('')
     try {
       await updateRecipe(idToken, recipe.recipe_id, {
-        recipeName: String(draft.recipe_name ?? recipe.recipe_name).trim(),
+        recipeName: toSentenceCase(String(draft.recipe_name ?? recipe.recipe_name)),
         category: String(draft.category ?? recipe.category).trim(),
         calories: String(draft.calories ?? recipe.calories).trim(),
         servings: String(draft.servings ?? recipe.servings).trim(),
@@ -3524,7 +3554,7 @@ function RecipesCard({
     try {
       const previousIds = new Set(recipes.map((r) => r.recipe_id))
       await createRecipe(idToken, {
-        recipeName: importName.trim(),
+        recipeName: toSentenceCase(importName),
         category: importCategory.trim(),
         calories: importCalories.trim(),
         servings: importServings.trim(),
@@ -3540,7 +3570,7 @@ function RecipesCard({
           await createRecipeComponent(idToken, {
             recipeId: newRecipe.recipe_id,
             type: 'ingredient',
-            name: ing.name.trim(),
+            name: toSentenceCase(ing.name),
             quantity: ing.quantity.trim(),
             unit: ing.unit.trim(),
             note: ing.note.trim(),
@@ -3551,7 +3581,7 @@ function RecipesCard({
           await createRecipeStep(idToken, {
             recipeId: newRecipe.recipe_id,
             stepNumber: i + 1,
-            instruction: validSteps[i].trim(),
+            instruction: toSentenceCase(validSteps[i]),
           })
         }
       }
@@ -3573,7 +3603,7 @@ function RecipesCard({
       await createRecipeComponent(idToken, {
         recipeId,
         type: draftCompType,
-        name: draftCompName.trim(),
+        name: toSentenceCase(draftCompName),
         quantity: draftCompQty.trim(),
         unit: draftCompUnit.trim(),
         note: draftCompNote.trim(),
@@ -3595,7 +3625,7 @@ function RecipesCard({
     try {
       await updateRecipeComponent(idToken, c.component_id, {
         type: c.type,
-        name: String(editCompDraft.name ?? c.name).trim(),
+        name: toSentenceCase(String(editCompDraft.name ?? c.name)),
         quantity: String(editCompDraft.quantity ?? c.quantity).trim(),
         unit: String(editCompDraft.unit ?? c.unit).trim(),
         note: String(editCompDraft.note ?? c.note).trim(),
@@ -3631,7 +3661,7 @@ function RecipesCard({
     try {
       await updateRecipeStep(idToken, s.step_id, {
         stepNumber: s.step_number,
-        instruction: editStepDraft.trim(),
+        instruction: toSentenceCase(editStepDraft),
       })
       setEditingStepId(null)
       setEditStepDraft('')
@@ -3653,7 +3683,7 @@ function RecipesCard({
       await createRecipeStep(idToken, {
         recipeId,
         stepNumber: nextStepNumber,
-        instruction: draftStepInstruction.trim(),
+        instruction: toSentenceCase(draftStepInstruction),
       })
       setDraftStepInstruction('')
       await loadAll()
@@ -3695,7 +3725,7 @@ function RecipesCard({
             onClick={() => setViewMode((v) => v === 'grid' ? 'list' : 'grid')}
             title={viewMode === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
           >
-            {viewMode === 'grid' ? '☰' : '⊞'}
+            {viewMode === 'grid' ? <List size={15} aria-hidden="true" /> : <LayoutGrid size={15} aria-hidden="true" />}
           </button>
           {canWrite ? (
             <>
@@ -3706,7 +3736,7 @@ function RecipesCard({
                 onClick={() => { setIsImporting((v) => !v); if (isImporting) resetImportState() }}
                 title="Import recipe from URL"
               >
-                ⬇
+                <Download size={14} aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -3715,7 +3745,7 @@ function RecipesCard({
                 onClick={() => { setIsEditing((v) => !v); setEditingRecipeId(null) }}
                 title="Edit recipes"
               >
-                ✎
+                <Pencil size={14} aria-hidden="true" />
               </button>
             </>
           ) : null}
@@ -3753,11 +3783,11 @@ function RecipesCard({
             <div className="recipe-import-preview">
               {importStatus === 'preview' && importPlatform !== 'web' ? (
                 <p className="sheets-meta recipe-import-notice">
-                  {importPlatform === 'tiktok' ? '🎵 TikTok' : '📸 Instagram'} link detected — auto-extraction isn't possible. The link has been saved; please fill in the recipe details below.
+                  {importPlatform === 'tiktok' ? 'TikTok' : 'Instagram'} link detected — auto-extraction isn't possible. The link has been saved; please fill in the recipe details below.
                 </p>
               ) : importStatus === 'preview' && importAutoExtracted ? (
                 <p className="sheets-meta recipe-import-notice">
-                  ✓ Recipe extracted from {(() => { try { return new URL(importUrl).hostname } catch { return importUrl } })()} — review and confirm below.
+                  Recipe extracted from {(() => { try { return new URL(importUrl).hostname } catch { return importUrl } })()} — review and confirm below.
                 </p>
               ) : null}
 
@@ -3828,7 +3858,7 @@ function RecipesCard({
                         disabled={isWriting}
                         aria-label="Remove ingredient"
                       >
-                        ✕
+                        <X size={14} aria-hidden="true" />
                       </button>
                     </li>
                   ))}
@@ -3864,7 +3894,7 @@ function RecipesCard({
                         disabled={isWriting}
                         aria-label="Remove step"
                       >
-                        ✕
+                        <X size={14} aria-hidden="true" />
                       </button>
                     </li>
                   ))}
@@ -3986,7 +4016,7 @@ function RecipesCard({
             <li key={recipe.recipe_id} className="recipe-list-item">
               <span className="recipe-list-name">{recipe.recipe_name}</span>
               <span className="recipe-list-meta">
-                {[recipe.category, recipe.cook_time ? `⏱ ${recipe.cook_time}` : null, recipe.calories ? `🔥 ${recipe.calories} cal` : null]
+                {[recipe.category, recipe.cook_time || null, recipe.calories ? `${recipe.calories} cal` : null]
                   .filter(Boolean).join(' · ')}
               </span>
               <button type="button" className="secondary-action recipe-list-make-btn" onClick={() => setMakingRecipe(recipe)}>Make</button>
@@ -4023,9 +4053,9 @@ function RecipesCard({
                     <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.video_link ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], video_link: e.target.value } }))} disabled={isWriting} /></td>
                     <td><input className="sheets-input sheets-table-input" type="text" value={String(draft.website_link ?? '')} onChange={(e) => setEditDrafts((p) => ({ ...p, [recipe.recipe_id]: { ...p[recipe.recipe_id], website_link: e.target.value } }))} disabled={isWriting} /></td>
                     <td className="recipe-edit-table-actions">
-                      <button type="button" className="secondary-action" onClick={() => setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id)} disabled={isWriting} title="Ingredients & Steps">⚙</button>
-                      <button type="button" className="secondary-action recipe-save-btn" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting} title="Save">✓</button>
-                      <button type="button" className="secondary-action recipe-delete-btn" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting} title="Delete">✕</button>
+                      <button type="button" className="secondary-action" onClick={() => setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id)} disabled={isWriting} title="Ingredients & Steps"><Settings size={14} aria-hidden="true" /></button>
+                      <button type="button" className="secondary-action recipe-save-btn" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting} title="Save"><Check size={14} aria-hidden="true" /></button>
+                      <button type="button" className="secondary-action recipe-delete-btn" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting} title="Delete"><X size={14} aria-hidden="true" /></button>
                     </td>
                   </tr>
                 )
@@ -4086,7 +4116,7 @@ function RecipesCard({
                     <div className="recipe-edit-mobile-actions">
                       <button type="button" className="secondary-action recipe-delete-btn" onClick={() => void handleDeleteRecipe(recipe.recipe_id)} disabled={!idToken || isWriting}>Delete</button>
                       <button type="button" className="secondary-action" onClick={() => { setEditingRecipeId(editingRecipeId === recipe.recipe_id ? null : recipe.recipe_id) }} disabled={isWriting}>
-                        {editingRecipeId === recipe.recipe_id ? 'Done' : '⚙ Ingredients & Steps'}
+                        {editingRecipeId === recipe.recipe_id ? 'Done' : 'Ingredients & Steps'}
                       </button>
                       <button type="button" className="secondary-action recipe-save-btn" onClick={() => void handleUpdateRecipe(recipe)} disabled={!idToken || isWriting}>Save</button>
                     </div>
@@ -4106,7 +4136,7 @@ function RecipesCard({
                 <>
                   <p className="recipe-card-title">{recipe.recipe_name}</p>
                   <p className="recipe-card-meta">
-                    {[recipe.category, recipe.cook_time ? `⏱ ${recipe.cook_time}` : null, recipe.calories ? `🔥 ${recipe.calories} cal` : null, recipe.servings ? `${recipe.servings} srv` : null]
+                    {[recipe.category, recipe.cook_time || null, recipe.calories ? `${recipe.calories} cal` : null, recipe.servings ? `${recipe.servings} srv` : null]
                       .filter(Boolean).join(' · ')}
                   </p>
                   <div className="recipe-card-actions">
@@ -4128,7 +4158,7 @@ function RecipesCard({
             disabled={currentPage === 1}
             aria-label="Previous page"
           >
-            ←
+            <ChevronLeft size={15} aria-hidden="true" />
           </button>
           <span className="recipe-pagination-info">
             {currentPage} / {totalPages}
@@ -4140,7 +4170,7 @@ function RecipesCard({
             disabled={currentPage === totalPages}
             aria-label="Next page"
           >
-            →
+            <ChevronRight size={15} aria-hidden="true" />
           </button>
         </div>
       ) : null}
@@ -4186,7 +4216,7 @@ function RecipesCard({
                         </div>
                         <div className="recipe-comp-edit-actions">
                           <button type="button" className="secondary-action" onClick={() => void handleUpdateComponent(c)} disabled={isWriting}>Save</button>
-                          <button type="button" className="recipe-comp-delete" onClick={() => { setEditingCompId(null); setEditCompDraft({}) }}>✕</button>
+                          <button type="button" className="recipe-comp-delete" onClick={() => { setEditingCompId(null); setEditCompDraft({}) }}><X size={14} aria-hidden="true" /></button>
                         </div>
                       </>
                     ) : (
@@ -4196,8 +4226,8 @@ function RecipesCard({
                           <span className="recipe-comp-qty">{[c.quantity, c.unit].filter(Boolean).join(' ')}</span>
                         ) : null}
                         {c.note ? <span className="recipe-comp-note">{c.note}</span> : null}
-                        <button type="button" className="recipe-comp-edit-btn" aria-label={`Edit ${c.name}`} onClick={() => { setEditingCompId(c.component_id); setEditCompDraft({}) }}>✎</button>
-                        <button type="button" className="recipe-comp-delete" aria-label={`Remove ${c.name}`} onClick={() => void handleDeleteComponent(c.component_id)} disabled={!idToken || isWriting}>✕</button>
+                        <button type="button" className="recipe-comp-edit-btn" aria-label={`Edit ${c.name}`} onClick={() => { setEditingCompId(c.component_id); setEditCompDraft({}) }}><Pencil size={14} aria-hidden="true" /></button>
+                        <button type="button" className="recipe-comp-delete" aria-label={`Remove ${c.name}`} onClick={() => void handleDeleteComponent(c.component_id)} disabled={!idToken || isWriting}><X size={14} aria-hidden="true" /></button>
                       </>
                     )}
                   </li>
@@ -4252,13 +4282,13 @@ function RecipesCard({
                       <>
                         <input className="sheets-input recipe-step-edit-input" type="text" value={editStepDraft} onChange={(e) => setEditStepDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void handleUpdateStep(s); if (e.key === 'Escape') { setEditingStepId(null); setEditStepDraft('') } }} disabled={isWriting} autoFocus />
                         <button type="button" className="secondary-action" onClick={() => void handleUpdateStep(s)} disabled={isWriting || !editStepDraft.trim()}>Save</button>
-                        <button type="button" className="recipe-comp-delete" onClick={() => { setEditingStepId(null); setEditStepDraft('') }}>✕</button>
+                        <button type="button" className="recipe-comp-delete" onClick={() => { setEditingStepId(null); setEditStepDraft('') }}><X size={14} aria-hidden="true" /></button>
                       </>
                     ) : (
                       <>
                         <span className="recipe-step-edit-text">{s.instruction}</span>
-                        <button type="button" className="recipe-comp-edit-btn" aria-label="Edit step" onClick={() => { setEditingStepId(s.step_id); setEditStepDraft(s.instruction) }}>✎</button>
-                        <button type="button" className="recipe-comp-delete" aria-label="Remove step" onClick={() => void handleDeleteStep(s.step_id)} disabled={!idToken || isWriting}>✕</button>
+                        <button type="button" className="recipe-comp-edit-btn" aria-label="Edit step" onClick={() => { setEditingStepId(s.step_id); setEditStepDraft(s.instruction) }}><Pencil size={14} aria-hidden="true" /></button>
+                        <button type="button" className="recipe-comp-delete" aria-label="Remove step" onClick={() => void handleDeleteStep(s.step_id)} disabled={!idToken || isWriting}><X size={14} aria-hidden="true" /></button>
                       </>
                     )}
                   </li>
@@ -4618,7 +4648,7 @@ function PollCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -4924,7 +4954,7 @@ function BucketListCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -5383,7 +5413,7 @@ function CountriesCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -5704,7 +5734,7 @@ function BackpackCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit values"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -6040,8 +6070,8 @@ function RecipeRandomizerCard({ title }: { title: string }) {
                   {(result.cook_time || result.calories || result.servings) ? (
                     <div className="recipe-randomizer-meta">
                       {result.cook_time ? <span>⏱ {result.cook_time}</span> : null}
-                      {result.calories ? <span>🔥 {result.calories} cal</span> : null}
-                      {result.servings ? <span>🍽 {result.servings}</span> : null}
+                      {result.calories ? <span><Flame size={12} aria-hidden="true" /> {result.calories} cal</span> : null}
+                      {result.servings ? <span><Utensils size={12} aria-hidden="true" /> {result.servings}</span> : null}
                     </div>
                   ) : null}
                   {(result.video_link || result.website_link) ? (
@@ -6323,7 +6353,7 @@ function MealPlanCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsWeeklyExpanded(true); return !value })}
               title="Edit values"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           {!showTodaySummary ? (
@@ -6760,7 +6790,7 @@ function GroceryListCard({
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
               title="Edit grocery list"
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -6888,7 +6918,7 @@ function GroceryListCard({
           ) : null}
 
           {!isEditing && !isLoading && includedRows.length === 0 && rows.length > 0 ? (
-            <p className="sheets-meta">No items added to this week&apos;s list. Tap ✎ to add items.</p>
+            <p className="sheets-meta">No items added to this week&apos;s list. Tap Edit to add items.</p>
           ) : null}
 
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
@@ -7236,10 +7266,10 @@ function TrainingLogCard({
                             onClick={() => void handleToggleWorkout('morning')}
                             disabled={!idToken || isWriting}
                           >
-                            {todaysRecord.completed_morning ? '✓ Completed' : 'Mark Complete'}
+                            {todaysRecord.completed_morning ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
                           </button>
                         ) : (
-                          <span>{todaysRecord.completed_morning ? '✓ Yes' : 'No'}</span>
+                          <span>{todaysRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
                         )}
                       </td>
                     </tr>
@@ -7253,10 +7283,10 @@ function TrainingLogCard({
                             onClick={() => void handleToggleWorkout('evening')}
                             disabled={!idToken || isWriting}
                           >
-                            {todaysRecord.completed_evening ? '✓ Completed' : 'Mark Complete'}
+                            {todaysRecord.completed_evening ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
                           </button>
                         ) : (
-                          <span>{todaysRecord.completed_evening ? '✓ Yes' : 'No'}</span>
+                          <span>{todaysRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
                         )}
                       </td>
                     </tr>
@@ -7551,7 +7581,7 @@ function NextEventCountdownCard({
               aria-pressed={isEditing}
               onClick={() => setIsEditing((value) => { if (!value) setIsCollapsed(false); return !value })}
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -8656,10 +8686,10 @@ function CurrentStudyPlanCard({
                             onClick={() => void handleToggleCompleted(row)}
                             disabled={!idToken || isWriting}
                           >
-                            {row.completed ? '✓ Completed' : 'Mark Complete'}
+                            {row.completed ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
                           </button>
                         ) : row.completed ? (
-                          '✓'
+                          <Check size={14} aria-hidden="true" />
                         ) : (
                           ''
                         )}
@@ -9158,10 +9188,10 @@ function HealthDataCard({ title }: { title: string }) {
 
 function PointsConversionPage() {
   const categories = [
-    { label: 'Trips', icon: '✈️', description: 'Convert points into flights, travel credits, and vacation packages.' },
-    { label: 'Miles', icon: '🛣️', description: 'See how far your points take you in airline miles and rewards.' },
-    { label: 'Food', icon: '🍽️', description: 'Redeem points for dining credits, delivery, and restaurant rewards.' },
-    { label: 'Hotel', icon: '🏨', description: 'Turn points into hotel nights, upgrades, and loyalty rewards.' },
+    { label: 'Trips', icon: Plane, description: 'Convert points into flights, travel credits, and vacation packages.' },
+    { label: 'Miles', icon: RouteIcon, description: 'See how far your points take you in airline miles and rewards.' },
+    { label: 'Food', icon: UtensilsCrossed, description: 'Redeem points for dining credits, delivery, and restaurant rewards.' },
+    { label: 'Hotel', icon: Hotel, description: 'Turn points into hotel nights, upgrades, and loyalty rewards.' },
   ]
 
   return (
@@ -9176,7 +9206,7 @@ function PointsConversionPage() {
     >
       {categories.map((cat) => (
         <article key={cat.label} className="info-card section-page-card points-conversion-card">
-          <div className="points-conversion-icon">{cat.icon}</div>
+          <div className="points-conversion-icon"><cat.icon size={30} strokeWidth={1.6} aria-hidden="true" /></div>
           <h3>{cat.label}</h3>
           <p>{cat.description}</p>
           <p className="points-conversion-badge">Coming soon</p>
@@ -10231,7 +10261,7 @@ function WeeklyWorkoutResetCard({
                 }
               }}
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -10317,7 +10347,7 @@ function WeeklyWorkoutResetCard({
               </button>
               <button
                 type="button"
-                className="primary-action"
+                className="secondary-action"
                 onClick={() => void handleSaveAll()}
                 disabled={!canWrite || !idToken || isWriting}
               >
@@ -10461,7 +10491,7 @@ function WeeklyStudyResetCard({
                 }
               }}
             >
-              ✎
+              <Pencil size={14} aria-hidden="true" />
             </button>
           ) : null}
           <button
@@ -10547,7 +10577,7 @@ function WeeklyStudyResetCard({
               </button>
               <button
                 type="button"
-                className="primary-action"
+                className="secondary-action"
                 onClick={() => void handleSaveAll()}
                 disabled={!canWrite || !idToken || isWriting}
               >
@@ -10717,7 +10747,7 @@ function PersonalGamesCard({ title }: { title: string }) {
           <li key={game.name} className="personal-games-item">
             <a href={game.url} target="_blank" rel="noopener noreferrer" className="personal-games-link">
               {game.name}
-              <span aria-hidden="true"> ↗</span>
+              <ExternalLink size={13} aria-hidden="true" />
             </a>
             <p className="personal-games-desc">{game.description}</p>
             {game.note ? <p className="personal-games-note">{game.note}</p> : null}
@@ -10802,7 +10832,7 @@ function GamingServerPage() {
             disabled={srvChecking}
             title="Refresh status"
           >
-            {srvChecking ? '…' : '↺ Refresh'}
+            {srvChecking ? '…' : <><RotateCcw size={13} aria-hidden="true" /> Refresh</>}
           </button>
         </div>
 

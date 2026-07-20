@@ -59,29 +59,44 @@ function setBackendReachable(reachable: boolean) {
   bannerEl.hidden = reachable
 }
 
+function setStatusValue(kind: 'online' | 'busy' | 'offline' | null, label: string) {
+  statusEl.textContent = ''
+  if (kind !== null) {
+    const dot = document.createElement('span')
+    dot.className = `status-dot status-dot--${kind}`
+    dot.setAttribute('aria-hidden', 'true')
+    statusEl.append(dot)
+  }
+  statusEl.append(label)
+}
+
 function renderStatus() {
   if (!backendReachable) {
-    statusEl.textContent = '—'
+    setStatusValue(null, '—')
     playersEl.textContent = '— / —'
     versionEl.textContent = '—'
     return
   }
 
   if (lastStatus?.state === 'stopping') {
-    statusEl.textContent = '🟡 Stopping...'
+    setStatusValue('busy', 'Stopping...')
     playersEl.textContent = '— / —'
     versionEl.textContent = '—'
     return
   }
 
   if (lastStatus?.online) {
-    statusEl.textContent = '🟢 Online'
+    setStatusValue('online', 'Online')
     playersEl.textContent = `${lastStatus.players ?? 0} / ${lastStatus.maxPlayers ?? '—'}`
     versionEl.textContent = lastStatus.version || '—'
     return
   }
 
-  statusEl.textContent = isStarting ? '🟡 Starting...' : '🔴 Server Offline'
+  if (isStarting) {
+    setStatusValue('busy', 'Starting...')
+  } else {
+    setStatusValue('offline', 'Server Offline')
+  }
   playersEl.textContent = '— / —'
   versionEl.textContent = '—'
 }
@@ -135,14 +150,14 @@ function renderButtons() {
 
 function describeError(error: unknown): string {
   if (error instanceof ApiError) {
-    if (error.kind === 'timeout') return '⚠ Request timed out — please try again.'
+    if (error.kind === 'timeout') return 'Request timed out — please try again.'
     if (error.kind === 'http') {
-      if (error.status === 429) return '⚠ Please wait 30 seconds between server actions.'
-      return `⚠ Server manager returned an error (${error.status ?? 'unknown'}).`
+      if (error.status === 429) return 'Please wait 30 seconds between server actions.'
+      return `Server manager returned an error (${error.status ?? 'unknown'}).`
     }
-    return '⚠ Server manager unavailable.'
+    return 'Server manager unavailable.'
   }
-  return '⚠ Request failed — please try again.'
+  return 'Request failed — please try again.'
 }
 
 // ── Refresh loop ──────────────────────────────────────────────────────────

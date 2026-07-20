@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Pause, Play } from 'lucide-react'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { Coords } from './openMeteo'
@@ -202,7 +203,7 @@ export function RadarMap({ coords }: { coords: Coords }) {
             onClick={togglePlay}
             aria-label={isPlaying ? 'Pause radar animation' : 'Play radar animation'}
           >
-            {isPlaying ? '❚❚' : '▶'}
+            {isPlaying ? <Pause size={11} aria-hidden="true" /> : <Play size={11} aria-hidden="true" />}
           </button>
           {frameLabel ? <span className="weather-radar-time">{frameLabel}</span> : null}
         </div>

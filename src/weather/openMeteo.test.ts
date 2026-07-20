@@ -46,9 +46,9 @@ describe('uvCategory', () => {
 })
 
 describe('describeWeather', () => {
-  it('picks the day or night glyph for a WMO code', () => {
-    expect(describeWeather(0, true)).toEqual({ label: 'Clear', icon: '☀️' })
-    expect(describeWeather(0, false).icon).toBe('🌙')
+  it('picks the day or night icon for a WMO code', () => {
+    expect(describeWeather(0, true)).toEqual({ label: 'Clear', icon: 'sun' })
+    expect(describeWeather(0, false).icon).toBe('moon')
     expect(describeWeather(95, true).label).toBe('Thunderstorm')
   })
 

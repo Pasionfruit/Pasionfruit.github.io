@@ -161,41 +161,54 @@ export async function reverseGeocode(coords: Coords): Promise<string> {
   }
 }
 
-// ── WMO weather code → label + emoji ────────────────────────────────────────
+// ── WMO weather code → label + icon key (rendered as a lucide icon) ─────────
 
-const WEATHER_CODES: Record<number, { label: string; day: string; night: string }> = {
-  0: { label: 'Clear', day: '☀️', night: '🌙' },
-  1: { label: 'Mainly clear', day: '🌤️', night: '🌙' },
-  2: { label: 'Partly cloudy', day: '⛅', night: '☁️' },
-  3: { label: 'Overcast', day: '☁️', night: '☁️' },
-  45: { label: 'Fog', day: '🌫️', night: '🌫️' },
-  48: { label: 'Rime fog', day: '🌫️', night: '🌫️' },
-  51: { label: 'Light drizzle', day: '🌦️', night: '🌧️' },
-  53: { label: 'Drizzle', day: '🌦️', night: '🌧️' },
-  55: { label: 'Heavy drizzle', day: '🌧️', night: '🌧️' },
-  56: { label: 'Freezing drizzle', day: '🌧️', night: '🌧️' },
-  57: { label: 'Freezing drizzle', day: '🌧️', night: '🌧️' },
-  61: { label: 'Light rain', day: '🌦️', night: '🌧️' },
-  63: { label: 'Rain', day: '🌧️', night: '🌧️' },
-  65: { label: 'Heavy rain', day: '🌧️', night: '🌧️' },
-  66: { label: 'Freezing rain', day: '🌧️', night: '🌧️' },
-  67: { label: 'Freezing rain', day: '🌧️', night: '🌧️' },
-  71: { label: 'Light snow', day: '🌨️', night: '🌨️' },
-  73: { label: 'Snow', day: '🌨️', night: '🌨️' },
-  75: { label: 'Heavy snow', day: '❄️', night: '❄️' },
-  77: { label: 'Snow grains', day: '🌨️', night: '🌨️' },
-  80: { label: 'Rain showers', day: '🌦️', night: '🌧️' },
-  81: { label: 'Rain showers', day: '🌦️', night: '🌧️' },
-  82: { label: 'Violent showers', day: '⛈️', night: '⛈️' },
-  85: { label: 'Snow showers', day: '🌨️', night: '🌨️' },
-  86: { label: 'Snow showers', day: '❄️', night: '❄️' },
-  95: { label: 'Thunderstorm', day: '⛈️', night: '⛈️' },
-  96: { label: 'Thunderstorm', day: '⛈️', night: '⛈️' },
-  99: { label: 'Hailstorm', day: '⛈️', night: '⛈️' },
+export type WeatherIcon =
+  | 'sun'
+  | 'moon'
+  | 'cloud-sun'
+  | 'cloud'
+  | 'fog'
+  | 'drizzle'
+  | 'rain'
+  | 'snow'
+  | 'snowflake'
+  | 'storm'
+  | 'thermometer'
+
+const WEATHER_CODES: Record<number, { label: string; day: WeatherIcon; night: WeatherIcon }> = {
+  0: { label: 'Clear', day: 'sun', night: 'moon' },
+  1: { label: 'Mainly clear', day: 'cloud-sun', night: 'moon' },
+  2: { label: 'Partly cloudy', day: 'cloud-sun', night: 'cloud' },
+  3: { label: 'Overcast', day: 'cloud', night: 'cloud' },
+  45: { label: 'Fog', day: 'fog', night: 'fog' },
+  48: { label: 'Rime fog', day: 'fog', night: 'fog' },
+  51: { label: 'Light drizzle', day: 'drizzle', night: 'rain' },
+  53: { label: 'Drizzle', day: 'drizzle', night: 'rain' },
+  55: { label: 'Heavy drizzle', day: 'rain', night: 'rain' },
+  56: { label: 'Freezing drizzle', day: 'rain', night: 'rain' },
+  57: { label: 'Freezing drizzle', day: 'rain', night: 'rain' },
+  61: { label: 'Light rain', day: 'drizzle', night: 'rain' },
+  63: { label: 'Rain', day: 'rain', night: 'rain' },
+  65: { label: 'Heavy rain', day: 'rain', night: 'rain' },
+  66: { label: 'Freezing rain', day: 'rain', night: 'rain' },
+  67: { label: 'Freezing rain', day: 'rain', night: 'rain' },
+  71: { label: 'Light snow', day: 'snow', night: 'snow' },
+  73: { label: 'Snow', day: 'snow', night: 'snow' },
+  75: { label: 'Heavy snow', day: 'snowflake', night: 'snowflake' },
+  77: { label: 'Snow grains', day: 'snow', night: 'snow' },
+  80: { label: 'Rain showers', day: 'drizzle', night: 'rain' },
+  81: { label: 'Rain showers', day: 'drizzle', night: 'rain' },
+  82: { label: 'Violent showers', day: 'storm', night: 'storm' },
+  85: { label: 'Snow showers', day: 'snow', night: 'snow' },
+  86: { label: 'Snow showers', day: 'snowflake', night: 'snowflake' },
+  95: { label: 'Thunderstorm', day: 'storm', night: 'storm' },
+  96: { label: 'Thunderstorm', day: 'storm', night: 'storm' },
+  99: { label: 'Hailstorm', day: 'storm', night: 'storm' },
 }
 
-export function describeWeather(code: number, isDay: boolean): { label: string; icon: string } {
-  const entry = WEATHER_CODES[code] ?? { label: 'Unknown', day: '🌡️', night: '🌡️' }
+export function describeWeather(code: number, isDay: boolean): { label: string; icon: WeatherIcon } {
+  const entry = WEATHER_CODES[code] ?? { label: 'Unknown', day: 'thermometer' as WeatherIcon, night: 'thermometer' as WeatherIcon }
   return { label: entry.label, icon: isDay ? entry.day : entry.night }
 }
 

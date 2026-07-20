@@ -579,13 +579,62 @@
 }
 
 @media (max-width: 640px) {
+  .tasks-tabs {
+    margin: 0.6rem 0 0.9rem;
+    gap: 0.25rem;
+  }
+
+  .tasks-tab {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.84rem;
+  }
+
+  .tasks-view {
+    gap: 1.1rem;
+  }
+
+  /* Bigger touch targets */
+  .task-row {
+    padding: 0.7rem 0.25rem;
+    gap: 0.6rem;
+  }
+
+  .task-check {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .task-quick-action {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .task-item[data-depth='1'] {
+    margin-left: 1rem;
+  }
+
   .tasks-calendar-day {
     min-height: 2.6rem;
   }
 
+  /* Stack edit-form fields; stretch action buttons across the row. */
   .task-edit,
   .task-add-form {
     padding-left: 0.5rem;
+  }
+
+  .task-edit-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .task-edit-row .task-input {
+    width: 100%;
+  }
+
+  .task-edit-actions .task-btn {
+    flex: 1;
+    padding: 0.5rem 0.7rem;
   }
 
   .task-btn.is-danger {

@@ -54,8 +54,9 @@
 }
 
 @media (min-width: 900px) {
-  .weather-page--now .weather-now-icon {
-    font-size: 3.6rem;
+  .weather-page--now .weather-now-icon svg {
+    width: 3.4rem;
+    height: 3.4rem;
   }
 
   .weather-page--now .weather-now-temp {
@@ -133,8 +134,14 @@
 }
 
 .weather-now-icon {
-  font-size: 2.4rem;
+  display: inline-flex;
   line-height: 1;
+  color: var(--text-strong);
+}
+
+.weather-now-icon svg {
+  width: 2.6rem;
+  height: 2.6rem;
 }
 
 .weather-now-main {
