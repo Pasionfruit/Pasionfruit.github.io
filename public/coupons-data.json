@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-20T10:08:03.921Z",
+  "lastUpdated": "2026-07-21T09:54:42.781Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -20,6 +20,24 @@
         "description": "Save $2.00 ONE Gain Sheets 240 ct (excludes Gain Rinse, Gain Flings, Gain Liquid/Powder Laundry Detergent and trial/travel size).",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674039",
+        "brand": "Air Wick",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) AIR WICK® Essential Mist® Starter Kit",
+        "category": "Other",
+        "validTo": "2026-08-15T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674042",
+        "brand": "Air Wick",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AIR WICK® Scented Oil Starter Kit",
+        "category": "Other",
+        "validTo": "2026-08-15T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -140,15 +158,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4674127",
-        "brand": "AVEENO",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4674028",
         "brand": "AVEENO",
         "discount": "Save $2.00",
@@ -189,6 +198,15 @@
         "brand": "AVEENO",
         "discount": "Save $3.00",
         "description": "Save $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674127",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -290,15 +308,6 @@
         "description": "SAVE $4.00 on TWO (2) Banana Boat® or Hawaiian Tropic® Sun Care Product (excludes 1 oz., 1.8 oz., 2 oz., lip balm & trial sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4607875",
-        "brand": "Band-Aid",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) BAND-AID® Brand Adhesive Bandages, BAND-AID® Brand of First Aid or NEOSPORIN® product (excludes trial and travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -443,6 +452,15 @@
         "description": "Save $1.00 ONE Charmin Ultra Toilet paper product 4 roll count or larger (excluding 9 MEGA Roll, 12 MEGA, 6 MEGA XL Roll, 8 MEGA XL Roll, 9 MEGA XL Roll, 12 MEGA XL,16 MEGA XL Roll,18 MEGA XL, 24 MEGA XL Roll, 6 MEGA XXL Roll, 9MEGA XXL Roll",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4661249",
+        "brand": "Chips Ahoy",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 when you buy ONE (1) Limited Edition CHIPS AHOY! Cookies or RITZ Crackers",
+        "category": "Grocery",
+        "validTo": "2026-07-28T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -626,15 +644,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4583559",
-        "brand": "Coppertone",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Coppertone® (4 oz. or larger) or Coppertone® Face Product (exclude travel/trial sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634868",
         "brand": "Coppertone®",
         "discount": "SAVE $4.00",
@@ -671,19 +680,10 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654947",
-        "brand": "Crest",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Crest 3DWhite Brilliance Stain Prevention 473mL or 3DWhite Clean, 3DWhite Fresh or 3DWhite Strength or Pro-Health Extra Whitening or Gum Detoxify or Gum Restore or Clinical Deep Clean or All Day Clean Breath or Nightly Bacteri",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654948",
         "brand": "Crest",
         "discount": "Save $4.00",
-        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, a",
+        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
@@ -692,7 +692,16 @@
         "id": "flipp-4654949",
         "brand": "Crest",
         "discount": "Save $5.00",
-        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Ma",
+        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Manual Brush, Expandable/Oral-B Glide Floss OR Interdental Picks/Brush,(excludes Crest Cavity, Baking Soda, Tartar, other Kids Variants, Oral-B Essential toothbrushes, Daily Clean, Complete 1ct brushes, Essential/Satin Floss, Oral-B Fresh Mint Picks, trial/travel sizes).",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654947",
+        "brand": "Crest",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 ONE Crest 3DWhite Brilliance Stain Prevention 473mL or 3DWhite Clean, 3DWhite Fresh or 3DWhite Strength or Pro-Health Extra Whitening or Gum Detoxify or Gum Restore or Clinical Deep Clean or All Day Clean Breath or Nightly Bacteri",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
@@ -788,12 +797,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4537651",
-        "brand": "Differin®",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on ONE (1) Differin® acne product",
+        "id": "flipp-4674064",
+        "brand": "Dove",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Dove Deodorant Product (excludes Trial & Travel, Twin Packs, Invisible Solids and Dove Men+Care)",
         "category": "Health & Beauty",
-        "validTo": "2026-08-04T02:59:59.000-04:00",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -803,24 +812,6 @@
         "description": "Save $2.00 on Any ONE (1) Dove Deodorant Product (excludes Trial & Trial, Twin Packs, Invisible Solids and Dove Men+Care)",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654968",
-        "brand": "Dove Men+Care",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654967",
-        "brand": "Dove Men+Care",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -839,6 +830,24 @@
         "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
         "category": "Health & Beauty",
         "validTo": "2026-08-08T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654968",
+        "brand": "Dove Men+Care",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) Dove Men+Care Whole Body Deodorant Spray",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654967",
+        "brand": "Dove Men+Care",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -923,15 +932,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608219",
-        "brand": "EXCEDRIN",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Excedrin 20ct or larger",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4569202",
         "brand": "Fancy Feast",
         "discount": "SAVE $1.50",
@@ -956,6 +956,33 @@
         "description": "Save $1.50 on any ONE (1) 12 ct package (3 oz cans) of Fancy Feast® Wet Cat Food",
         "category": "Pets",
         "validTo": "2026-08-04T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674066",
+        "brand": "Febreze",
+        "discount": "Save $3.00",
+        "description": "ONE Febreze Plug Dual, Triple Refills, or Quad Refills (excludes trial/travel size).",
+        "category": "Other",
+        "validTo": "2026-07-31T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674069",
+        "brand": "Febreze",
+        "discount": "Save $2.00",
+        "description": "ONE Febreze Fabric Spray (excludes trial/travel size).",
+        "category": "Other",
+        "validTo": "2026-07-31T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674068",
+        "brand": "Febreze",
+        "discount": "Save $2.00",
+        "description": "ONE Febreze Trash product (excludes trial/travel size)",
+        "category": "Other",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1058,15 +1085,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-79292",
-        "brand": "Gain",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
-        "category": "Other",
-        "validTo": "2026-07-20T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608276",
         "brand": "Gain",
         "discount": "Save $3.00",
@@ -1091,6 +1109,15 @@
         "description": "Save $3.00 on any ONE (1) Garden of Life Product",
         "category": "Health & Beauty",
         "validTo": "2026-08-06T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674006",
+        "brand": "Garnier",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any TWO (2) Garnier Whole Blends® hair care products (excludes: 3oz sizes, 40oz sizes, twin & value packs)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1127,15 +1154,6 @@
         "description": "$3.00 OFF ANY TWO (2) Garnier® Fructis® hair care products (excludes: 3oz trial & travel sizes, 40oz sizes, twin & value packs, Hair Filler)",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634837",
-        "brand": "Gatorade",
-        "discount": "$1.00 OFF",
-        "description": "$1.00 OFF WHEN YOU BUY ONE (1) GATORADE®, PROPEL®, or GATORADE WATER MULTIPACK",
-        "category": "Grocery",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1310,21 +1328,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4671739",
-        "brand": "Goody's",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 when you buy ONE (1) Goody’s Max Triple Action Pain Relief",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-01T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4661260",
         "brand": "Greenfield",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) Greenfield Protein Kit",
         "category": "Other",
         "validTo": "2026-08-11T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4679250",
+        "brand": "GreenWise",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 Off The Purchase of Four (4)  GreenWise Organic Baby Food Banana, Apple & Butternut Squash, 4-oz pouch",
+        "category": "Baby",
+        "validTo": "2026-08-23T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2066,6 +2084,24 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4674030",
+        "brand": "playtex clean comfort",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Playtex® Sport® 46ct. - 48ct.",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674031",
+        "brand": "playtex clean comfort",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Playtex® Sport® 14ct-36ct or o.b.® Tampons 40ct",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654956",
         "brand": "playtex clean comfort",
         "discount": "SAVE $1.00",
@@ -2108,6 +2144,15 @@
         "description": "Save $1.00 Off The Purchase of One (1)  Publix Kettle Chips Original, Sea Salt, 8-oz bag",
         "category": "Grocery",
         "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4679249",
+        "brand": "Publix",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 Off The Purchase of One (1)   Publix Original Charcoal Briquets  16-lb bag or Instant Light, 12-lb bag",
+        "category": "Other",
+        "validTo": "2026-08-23T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2189,15 +2234,6 @@
         "description": "Save $2.00 on any ONE (1) package of Quilted Northern® Bath Tissue, 8 Super Mega or 12 Mega roll or larger",
         "category": "Household",
         "validTo": "2026-08-23T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4625523",
-        "brand": "QUNOL®",
-        "discount": "$5.00 Off",
-        "description": "$5.00 Off Any ONE (1) Qunol® Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2774,6 +2810,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19787931",
+        "place": "Domino's",
+        "title": "$19.89 | Front Porch Classics | Mexican Train Domino Set in Wooden Collector Box at Amazon",
+        "url": "https://slickdeals.net/f/19787931-19-89-front-porch-classics-mexican-train-domino-set-in-wooden-collector-box-at-amazon?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-20T20:50:56.000Z"
+      },
+      {
         "id": "sd-19780953",
         "place": "Wendy's",
         "title": "Wendy's- $1 Small Frosty  (National Ice Cream Day)",
@@ -2991,13 +3034,6 @@
         "postedAt": "2026-06-23T07:07:17.000Z"
       },
       {
-        "id": "sd-19659933",
-        "place": "Domino's",
-        "title": "Free Dominos Pizza Soccer Kit on FC26",
-        "url": "https://slickdeals.net/f/19659933-free-dominos-pizza-soccer-kit-on-fc26?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-22T19:42:01.000Z"
-      },
-      {
         "id": "sd-19658847",
         "place": "Subway",
         "title": "Costco Members $80:  5-Pack $20 Subway eGift Cards ($100 Total) (Email Delivery)",
@@ -3129,20 +3165,6 @@
         "title": "Wendys- $0.99 any size soft drink with purchase",
         "url": "https://slickdeals.net/f/19606800-wendys-0-99-any-size-soft-drink-with-purchase?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-08T17:55:06.000Z"
-      },
-      {
-        "id": "sd-19598301",
-        "place": "Subway",
-        "title": "Subway coupons",
-        "url": "https://slickdeals.net/f/19598301-subway-coupons?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-05T18:44:57.000Z"
-      },
-      {
-        "id": "sd-19597917",
-        "place": "Taco Bell",
-        "title": "[SnS, AC] $1.55* | 12-Oz Taco Bell Creamy Sauce (Chipotle) at Amazon",
-        "url": "https://slickdeals.net/f/19597917-sns-ac-1-55-12-oz-taco-bell-creamy-sauce-chipotle-at-amazon?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-05T16:56:44.000Z"
       }
     ]
   }
