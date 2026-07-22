@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-21T09:54:42.781Z",
+  "lastUpdated": "2026-07-22T09:53:04.757Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -293,15 +293,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4661252",
-        "brand": "Ball",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any TWO (2) Ball Jar 12-Packs",
-        "category": "Other",
-        "validTo": "2026-08-26T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654979",
         "brand": "Banana Boat",
         "discount": "SAVE $4.00",
@@ -392,6 +383,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4663649",
+        "brand": "Carando®",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Carando® Italian Sausage, Meatball, or Pepperoni Item",
+        "category": "Grocery",
+        "validTo": "2026-08-19T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4674023",
         "brand": "Carefree",
         "discount": "Save $1.00",
@@ -419,15 +419,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4592626",
-        "brand": "Cetaphil®",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on ONE (1) Cetaphil® product (excludes 4 oz. or less–Daily Facial Cleanser, Gentle Skin Cleanser, Moisturizing Lotion or Moisturizing Cream; Single Bars; 10 ct. Gentle Skin Cleansing Cloths; Cetaphil Kits)",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-22T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608238",
         "brand": "Charmin",
         "discount": "Save $1.00",
@@ -452,15 +443,6 @@
         "description": "Save $1.00 ONE Charmin Ultra Toilet paper product 4 roll count or larger (excluding 9 MEGA Roll, 12 MEGA, 6 MEGA XL Roll, 8 MEGA XL Roll, 9 MEGA XL Roll, 12 MEGA XL,16 MEGA XL Roll,18 MEGA XL, 24 MEGA XL Roll, 6 MEGA XXL Roll, 9MEGA XXL Roll",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4661249",
-        "brand": "Chips Ahoy",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 when you buy ONE (1) Limited Edition CHIPS AHOY! Cookies or RITZ Crackers",
-        "category": "Grocery",
-        "validTo": "2026-07-28T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -635,15 +617,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4645983",
-        "brand": "Combat",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Combat Ant or Roach Bait or Roach Gel",
-        "category": "Other",
-        "validTo": "2026-08-05T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4634868",
         "brand": "Coppertone®",
         "discount": "SAVE $4.00",
@@ -680,19 +653,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654948",
+        "id": "flipp-4654949",
         "brand": "Crest",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Manual Brush, Expandable/Oral-B Glide Floss OR Interdental Picks/Brush,(excludes Crest Cavity, Baking Soda, Tartar, other Kids Variants, Oral-B Essential toothbrushes, Daily Clean, Complete 1ct brushes, Essential/Satin Floss, Oral-B Fresh Mint Picks, trial/travel sizes).",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654949",
+        "id": "flipp-4654948",
         "brand": "Crest",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Manual Brush, Expandable/Oral-B Glide Floss OR Interdental Picks/Brush,(excludes Crest Cavity, Baking Soda, Tartar, other Kids Variants, Oral-B Essential toothbrushes, Daily Clean, Complete 1ct brushes, Essential/Satin Floss, Oral-B Fresh Mint Picks, trial/travel sizes).",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
@@ -923,21 +896,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4633856",
-        "brand": "Excedrin",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Excedrin 20ct or larger",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4569202",
+        "id": "flipp-4663146",
         "brand": "Fancy Feast",
-        "discount": "SAVE $1.50",
-        "description": "SAVE $1.50 on ONE (1) 12 ct package (3 oz cans) of Fancy Feast® Wet Cat Food",
+        "discount": "SAVE 50¢",
+        "description": "SAVE 50¢ on SEVEN (7) 3 oz cans of Fancy Feast® Wet Cat Food",
         "category": "Pets",
-        "validTo": "2026-07-22T02:59:59.000-04:00",
+        "validTo": "2026-09-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -947,15 +911,6 @@
         "description": "Save $0.50 on any TWO (2) 2.8 oz packages of Fancy Feast® Petites Wet Cat Food",
         "category": "Pets",
         "validTo": "2026-08-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4591783",
-        "brand": "Fancy Feast",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) 12 ct package (3 oz cans) of Fancy Feast® Wet Cat Food",
-        "category": "Pets",
-        "validTo": "2026-08-04T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1607,6 +1562,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4681169",
+        "brand": "Marzetti",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Marzetti® Simply Dressed Produce Dressing",
+        "category": "Other",
+        "validTo": "2026-09-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4661283",
         "brand": "Mielle Organics",
         "discount": "Save $3.00",
@@ -1742,15 +1706,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634818",
-        "brand": "Neutrogena",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) NEUTROGENA® Facial Moisturizer, Serum or Treatment (excludes Acne, Clearance, Masks, & Trial & Travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654460",
         "brand": "Neutrogena",
         "discount": "Save $4.00",
@@ -1793,6 +1748,15 @@
         "description": "SAVE $2.00 on any* ONE (1) NIVEA® Shower Product *Excludes trial and travel sizes",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4681185",
+        "brand": "Nutella",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Nutella Peanut 13oz",
+        "category": "Grocery",
+        "validTo": "2026-09-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2000,6 +1964,15 @@
         "description": "ONE Oral-B Glide Manual Floss OR Oral-B Expanding Floss OR Oral-B Glide Floss Picks (Excludes Essential Floss, Satin Floss, Oral-B Fresh Mint Picks and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4681178",
+        "brand": "Outshine",
+        "discount": "Save $1.70",
+        "description": "Save $1.70 on any ONE (1) Outshine® Fruit Bars 6-12 ct.",
+        "category": "Grocery",
+        "validTo": "2026-08-19T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2255,15 +2228,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4643942",
-        "brand": "Refresh",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) Refresh Mega 3 or Relieva Xtra Eye Drops",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-04T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4671735",
         "brand": "Refresh",
         "discount": "$8.00 OFF",
@@ -2462,15 +2426,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4605638",
-        "brand": "STEM™",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) STEM™ Devices",
-        "category": "Household",
-        "validTo": "2026-07-22T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654933",
         "brand": "STEM™",
         "discount": "Save $2.00",
@@ -2576,6 +2531,15 @@
         "description": "Save $2.00 ONE Tide EVO Laundry Detergent 16 ct (excludes trial and travel size).",
         "category": "Household",
         "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4681176",
+        "brand": "Tostitos",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Tostitos 8-13 oz",
+        "category": "Grocery",
+        "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2809,6 +2773,34 @@
     "source": "Slickdeals",
     "error": null,
     "coupons": [
+      {
+        "id": "sd-19793817",
+        "place": "Taco Bell",
+        "title": "Taco Bell Enchiritos $1 (get up to five), Add Nacho Fries for $1 for Rewards Members In-App 7/22/26 Only",
+        "url": "https://slickdeals.net/f/19793817-taco-bell-enchiritos-1-get-up-to-five-add-nacho-fries-for-1-for-rewards-members-in-app-7-22-26-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-22T03:43:08.000Z"
+      },
+      {
+        "id": "sd-19792185",
+        "place": "Chick-fil-A",
+        "title": "FREE Chick-fil-A Chicken Sandwich at Select Locations - July 24",
+        "url": "https://slickdeals.net/f/19792185-free-chick-fil-a-chicken-sandwich-at-select-locations-july-24?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-21T18:05:53.000Z"
+      },
+      {
+        "id": "sd-19791426",
+        "place": "Taco Bell",
+        "title": "Taco Bell Enchirito $1 + Free Pickup (Today Only)",
+        "url": "https://slickdeals.net/f/19791426-taco-bell-enchirito-1-free-pickup-today-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-21T15:25:26.000Z"
+      },
+      {
+        "id": "sd-19790598",
+        "place": "Popeyes",
+        "title": "Popeyes Restaurant Offer: 12-Piece Popeyes Wings (Boneless or Bone-In) or Chicken Tenders (3 Flavors w/ Sauces) for $12 via Popeyes (Valid thru 7/26)",
+        "url": "https://slickdeals.net/f/19790598-popeyes-restaurant-offer-12-piece-popeyes-wings-boneless-or-bone-in-or-chicken-tenders-3-flavors-w-sauces-for-12-via-popeyes-valid-thru-7-26?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-21T12:16:04.000Z"
+      },
       {
         "id": "sd-19787931",
         "place": "Domino's",
