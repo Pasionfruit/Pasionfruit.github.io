@@ -17,21 +17,22 @@ describe('WeatherCard collapse toggle', () => {
     const user = userEvent.setup()
     render(<WeatherCard />)
 
-    const toggle = screen.getByRole('button', { name: 'Collapse weather' })
-    const card = toggle.closest('article')
+    // Starts collapsed so it doesn't dominate a phone screen.
+    const expandToggle = screen.getByRole('button', { name: 'Expand weather' })
+    const card = expandToggle.closest('article')
     if (!card) throw new Error('weather card not found')
 
-    expect(toggle).toHaveProperty('ariaExpanded', 'true')
-    expect(card.className).not.toContain('is-collapsed')
-
-    await user.click(toggle)
-
-    const expandToggle = screen.getByRole('button', { name: 'Expand weather' })
     expect(expandToggle).toHaveProperty('ariaExpanded', 'false')
     expect(card.className).toContain('is-collapsed')
 
     await user.click(expandToggle)
-    expect(screen.getByRole('button', { name: 'Collapse weather' })).toBeTruthy()
+
+    const collapseToggle = screen.getByRole('button', { name: 'Collapse weather' })
+    expect(collapseToggle).toHaveProperty('ariaExpanded', 'true')
     expect(card.className).not.toContain('is-collapsed')
+
+    await user.click(collapseToggle)
+    expect(screen.getByRole('button', { name: 'Expand weather' })).toBeTruthy()
+    expect(card.className).toContain('is-collapsed')
   })
 })

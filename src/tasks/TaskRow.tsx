@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RotateCw } from 'lucide-react'
+import { GripVertical, RotateCw } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
 
@@ -136,6 +136,9 @@ export type TaskRowProps = {
   showDate?: boolean
   showProject?: boolean
   depth?: number
+  canReorder?: boolean
+  reorderIndex?: number
+  isDragging?: boolean
   onEditToggle: (taskId: string | null) => void
   onComplete: (taskId: string) => void
   onSave: (taskId: string, update: TodoistTaskUpdate) => void
@@ -153,6 +156,9 @@ export function TaskRow({
   showDate = true,
   showProject = true,
   depth = 0,
+  canReorder = false,
+  reorderIndex,
+  isDragging = false,
   onEditToggle,
   onComplete,
   onSave,
@@ -166,8 +172,17 @@ export function TaskRow({
   const priorityValue = normalizePriority(task.priority)
 
   return (
-    <div className="task-item" data-depth={depth}>
+    <div
+      className={`task-item${isDragging ? ' is-dragging' : ''}`}
+      data-depth={depth}
+      data-reorder-index={reorderIndex}
+    >
       <div className={`task-row${isEditing ? ' is-editing' : ''}`} data-priority={priorityValue}>
+        {canReorder ? (
+          <span className="task-drag-handle" aria-hidden="true" title="Drag to reorder">
+            <GripVertical size={15} />
+          </span>
+        ) : null}
         <button
           type="button"
           className="task-check"

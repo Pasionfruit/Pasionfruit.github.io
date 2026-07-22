@@ -65,6 +65,7 @@ export function TodayView({ store, canEdit, editingTaskId, onEditToggle }: ViewP
             canEdit={canEdit}
             editingTaskId={editingTaskId}
             onEditToggle={onEditToggle}
+            orderKey="overdue"
           />
         </section>
       ) : null}
@@ -84,6 +85,7 @@ export function TodayView({ store, canEdit, editingTaskId, onEditToggle }: ViewP
           onEditToggle={onEditToggle}
           showDate={false}
           emptyMessage="Nothing due today. Enjoy it."
+          orderKey="today"
         />
         <AddTaskForm store={store} canEdit={canEdit} defaultDueDate={today} />
       </section>

@@ -4577,29 +4577,13 @@ button svg,
 .page-hero {
   position: relative;
   overflow: hidden;
-  /* Soft accent wash so every page carries its section color. */
+  /* Clean diagonal accent wash: section color at the top-left, fading out
+     toward the bottom-right. */
   background-image: linear-gradient(
-    140deg,
+    135deg,
     color-mix(in srgb, var(--page-accent, var(--accent)) 16%, transparent),
-    transparent 55%
-  );
-}
-
-/* Accent glow in the hero's top-right corner. */
-.page-hero::before {
-  content: '';
-  position: absolute;
-  top: -3.5rem;
-  right: -3.5rem;
-  width: 10rem;
-  height: 10rem;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--page-accent, var(--accent)) 30%, transparent),
     transparent 70%
   );
-  pointer-events: none;
 }
 
 /* Accent underline beneath the page title. */

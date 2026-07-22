@@ -29,6 +29,7 @@ export function TomorrowView({ store, canEdit, editingTaskId, onEditToggle }: Vi
           onEditToggle={onEditToggle}
           showDate={false}
           emptyMessage="Nothing scheduled for tomorrow yet."
+          orderKey="tomorrow"
         />
         <AddTaskForm store={store} canEdit={canEdit} defaultDueDate={tomorrow} />
       </section>

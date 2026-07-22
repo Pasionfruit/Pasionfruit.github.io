@@ -75,6 +75,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup()
+  localStorage.clear()
 })
 
 describe('TasksPage', () => {
@@ -172,6 +173,33 @@ describe('TasksPage', () => {
     await user.click(screen.getByRole('button', { name: /Home/ }))
     expect(await screen.findByText('Water plants')).toBeTruthy()
     expect(screen.queryByText('Undated idea')).toBeNull()
+  })
+
+  it('navigates projects via the mobile picker', async () => {
+    const user = userEvent.setup()
+    renderTasksPage()
+
+    await screen.findByText('Standup notes')
+    await user.click(screen.getByRole('button', { name: /^Projects/ }))
+
+    const picker = await screen.findByLabelText('Choose a project')
+    expect(picker).toHaveProperty('value', 'proj-1')
+    expect(await screen.findByText('Undated idea')).toBeTruthy()
+
+    await user.selectOptions(picker, 'proj-2')
+    expect(await screen.findByText('Water plants')).toBeTruthy()
+    expect(screen.queryByText('Undated idea')).toBeNull()
+  })
+
+  it('shows drag handles for reordering only when editable', async () => {
+    const { container, unmount } = renderTasksPage(true)
+    await screen.findByText('Standup notes')
+    expect(container.querySelectorAll('.task-drag-handle').length).toBeGreaterThan(0)
+    unmount()
+
+    const readOnly = renderTasksPage(false)
+    await screen.findByText('Standup notes')
+    expect(readOnly.container.querySelectorAll('.task-drag-handle').length).toBe(0)
   })
 
   it('creates a task into the selected day', async () => {

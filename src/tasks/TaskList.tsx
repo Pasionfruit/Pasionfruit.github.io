@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import { TaskRow } from './TaskRow'
 import { buildTaskTree } from './grouping'
+import { useReorder } from './useReorder'
+import { applySavedOrder, arrayMove, saveOrder } from './taskOrder'
 import { addDaysToKey, todayKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
 import type { TodoistStore } from './useTodoistData'
@@ -14,6 +16,8 @@ export type TaskListProps = {
   showDate?: boolean
   showProject?: boolean
   emptyMessage?: string
+  /** Stable id for this list; enables hold-and-drag reordering when set. */
+  orderKey?: string
 }
 
 export function TaskList({
@@ -25,35 +29,82 @@ export function TaskList({
   showDate = true,
   showProject = true,
   emptyMessage = 'Nothing here.',
+  orderKey,
 }: TaskListProps) {
+  // Bumped after a drag so the memo re-reads the freshly saved order.
+  const [orderVersion, setOrderVersion] = useState(0)
+
   // Scoped to this view's tasks — the store-wide subtask map would leak in
   // children that the current filter excluded.
-  const { roots, childrenOf } = useMemo(() => buildTaskTree(tasks), [tasks])
+  const { roots, childrenOf } = useMemo(() => {
+    const tree = buildTaskTree(tasks)
+    if (orderKey) {
+      tree.roots = applySavedOrder(tree.roots, orderKey)
+    }
+    return tree
+    // orderVersion is intentionally a dependency: it re-applies saved order.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks, orderKey, orderVersion])
+
+  const reorderEnabled = canEdit && Boolean(orderKey)
+
+  const handleReorder = useCallback(
+    (from: number, to: number) => {
+      if (!orderKey) return
+      const nextIds = arrayMove(roots.map((task) => task.id), from, to)
+      saveOrder(orderKey, nextIds)
+      setOrderVersion((version) => version + 1)
+    },
+    [orderKey, roots],
+  )
+
+  const { containerRef, dragIndex, overIndex, isDragging, handlers } = useReorder({
+    enabled: reorderEnabled,
+    count: roots.length,
+    onReorder: handleReorder,
+  })
 
   if (tasks.length === 0) {
     return <p className="tasks-empty">{emptyMessage}</p>
   }
 
   return (
-    <div className="task-list">
-      {roots.map((task) => (
-        <TaskRow
-          key={task.id}
-          task={task}
-          subtasks={childrenOf.get(task.id) ?? []}
-          projectName={task.project_id ? store.projectsById.get(task.project_id)?.name : undefined}
-          canEdit={canEdit}
-          isWriting={store.isWriting}
-          editingTaskId={editingTaskId}
-          showDate={showDate}
-          showProject={showProject}
-          onEditToggle={onEditToggle}
-          onComplete={store.complete}
-          onSave={store.save}
-          onReschedule={store.reschedule}
-          onDelete={store.remove}
-        />
-      ))}
+    <div
+      className={`task-list${isDragging ? ' is-reordering' : ''}`}
+      ref={containerRef}
+      {...(reorderEnabled ? handlers : {})}
+    >
+      {roots.map((task, index) => {
+        // Skip the drop line right where the dragged row already sits.
+        const showDropLine =
+          isDragging && overIndex === index && dragIndex !== index && dragIndex !== index - 1
+        return (
+          <Fragment key={task.id}>
+            {showDropLine ? <div className="task-drop-line" aria-hidden="true" /> : null}
+            <TaskRow
+              task={task}
+              subtasks={childrenOf.get(task.id) ?? []}
+              projectName={task.project_id ? store.projectsById.get(task.project_id)?.name : undefined}
+              canEdit={canEdit}
+              isWriting={store.isWriting}
+              editingTaskId={editingTaskId}
+              showDate={showDate}
+              showProject={showProject}
+              canReorder={reorderEnabled}
+              reorderIndex={reorderEnabled ? index : undefined}
+              isDragging={dragIndex === index}
+              onEditToggle={onEditToggle}
+              onComplete={store.complete}
+              onSave={store.save}
+              onReschedule={store.reschedule}
+              onDelete={store.remove}
+            />
+          </Fragment>
+        )
+      })}
+      {isDragging && overIndex === roots.length && dragIndex !== roots.length - 1 ? (
+        <div className="task-drop-line" aria-hidden="true" />
+      ) : null}
     </div>
   )
 }

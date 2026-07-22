@@ -47,6 +47,7 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
 
   return (
     <div className="tasks-view tasks-projects">
+      {/* Desktop: a horizontally scrollable chip rail. */}
       <nav className="tasks-project-rail" aria-label="Projects">
         {store.projects.map((project) => {
           const count = (tasksByProject.get(project.id) ?? []).length
@@ -66,6 +67,30 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
         })}
       </nav>
 
+      {/* Mobile: a native picker so every project is one tap away. */}
+      <div className="tasks-project-select">
+        <span
+          className="tasks-project-select-dot"
+          style={{ background: colorFor(activeProject?.color) }}
+          aria-hidden="true"
+        />
+        <select
+          className="tasks-project-select-input"
+          aria-label="Choose a project"
+          value={activeProjectId ?? ''}
+          onChange={(event) => setSelectedProjectId(event.target.value)}
+        >
+          {store.projects.map((project) => {
+            const count = (tasksByProject.get(project.id) ?? []).length
+            return (
+              <option key={project.id} value={project.id}>
+                {project.name} ({count})
+              </option>
+            )
+          })}
+        </select>
+      </div>
+
       <div className="tasks-project-body">
         <header className="tasks-group-header">
           <h2>
@@ -82,6 +107,7 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
           onEditToggle={onEditToggle}
           showProject={false}
           emptyMessage={projectSections.length > 0 ? '' : 'No tasks in this project.'}
+          orderKey={activeProjectId ? `project:${activeProjectId}` : undefined}
         />
         <AddTaskForm
           store={store}
@@ -111,6 +137,7 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
                 onEditToggle={onEditToggle}
                 showProject={false}
                 emptyMessage="No tasks in this section."
+                orderKey={activeProjectId ? `project:${activeProjectId}:section:${section.id}` : undefined}
               />
               <AddTaskForm
                 store={store}
