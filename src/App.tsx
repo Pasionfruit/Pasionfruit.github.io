@@ -3400,9 +3400,12 @@ function RecipesCard({
     })
   }, [recipes, components, searchQuery, durationFilter, equipmentFilter])
 
-  async function loadAll() {
+  // `fresh` bypasses the service-worker read cache — used after writes so the
+  // reloaded state reflects the change (e.g. correct next step number).
+  async function loadAll(fresh = false) {
     try {
-      const [r, c, s] = await Promise.all([getRecipes(), getRecipeComponents(), getRecipeSteps()])
+      const opts = fresh ? { fresh: true } : undefined
+      const [r, c, s] = await Promise.all([getRecipes(opts), getRecipeComponents(opts), getRecipeSteps(opts)])
       setRecipes(r)
       setComponents(c)
       setSteps(s)
@@ -3449,7 +3452,7 @@ function RecipesCard({
       })
       setDraftName(''); setDraftCategory(''); setDraftCalories(''); setDraftServings('')
       setDraftVideoLink(''); setDraftWebsiteLink(''); setDraftCookTime('')
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to create recipe')
     } finally {
@@ -3473,7 +3476,7 @@ function RecipesCard({
         websiteLink: String(draft.website_link ?? recipe.website_link).trim(),
         cookTime: String(draft.cook_time ?? recipe.cook_time).trim(),
       })
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update recipe')
     } finally {
@@ -3488,7 +3491,7 @@ function RecipesCard({
     try {
       await deleteRecipe(idToken, recipeId)
       if (editingRecipeId === recipeId) setEditingRecipeId(null)
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to delete recipe')
     } finally {
@@ -3551,30 +3554,41 @@ function RecipesCard({
         websiteLink: importWebsiteLink.trim(),
         cookTime: importCookTime.trim(),
       })
-      const freshRecipes = await getRecipes()
-      const newRecipe = freshRecipes.find((r) => !previousIds.has(r.recipe_id))
-      if (newRecipe) {
-        const validIngredients = importIngredients.filter((i) => i.name.trim())
-        for (const ing of validIngredients) {
-          await createRecipeComponent(idToken, {
-            recipeId: newRecipe.recipe_id,
-            type: 'ingredient',
-            name: toSentenceCase(ing.name),
-            quantity: ing.quantity.trim(),
-            unit: ing.unit.trim(),
-            note: ing.note.trim(),
-          })
-        }
-        const validSteps = importSteps.filter((s) => s.trim())
-        for (let i = 0; i < validSteps.length; i++) {
-          await createRecipeStep(idToken, {
-            recipeId: newRecipe.recipe_id,
-            stepNumber: i + 1,
-            instruction: toSentenceCase(validSteps[i]),
-          })
-        }
+      // Read back the freshly created recipe to get its id. Uses fresh reads to
+      // skip the SW cache, and retries briefly in case the Sheets read lags the
+      // write, so ingredients/steps are never silently dropped.
+      let newRecipe: RecipeRecord | undefined
+      for (let attempt = 0; attempt < 4 && !newRecipe; attempt++) {
+        if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 700))
+        const freshRecipes = await getRecipes({ fresh: true })
+        newRecipe = freshRecipes.find((r) => !previousIds.has(r.recipe_id))
       }
-      await loadAll()
+      if (!newRecipe) {
+        throw new Error(
+          'Recipe saved, but it could not be confirmed in time to attach ingredients and steps. Open it in edit mode to add them.',
+        )
+      }
+
+      const validIngredients = importIngredients.filter((i) => i.name.trim())
+      for (const ing of validIngredients) {
+        await createRecipeComponent(idToken, {
+          recipeId: newRecipe.recipe_id,
+          type: 'ingredient',
+          name: toSentenceCase(ing.name),
+          quantity: ing.quantity.trim(),
+          unit: ing.unit.trim(),
+          note: ing.note.trim(),
+        })
+      }
+      const validSteps = importSteps.filter((s) => s.trim())
+      for (let i = 0; i < validSteps.length; i++) {
+        await createRecipeStep(idToken, {
+          recipeId: newRecipe.recipe_id,
+          stepNumber: i + 1,
+          instruction: toSentenceCase(validSteps[i]),
+        })
+      }
+      await loadAll(true)
       setIsImporting(false)
       resetImportState()
     } catch (error) {
@@ -3598,7 +3612,7 @@ function RecipesCard({
         note: draftCompNote.trim(),
       })
       setDraftCompName(''); setDraftCompQty(''); setDraftCompUnit(''); setDraftCompNote('')
-      await loadAll()
+      await loadAll(true)
       compNameInputRef.current?.focus()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to add component')
@@ -3621,7 +3635,7 @@ function RecipesCard({
       })
       setEditingCompId(null)
       setEditCompDraft({})
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update component')
     } finally {
@@ -3635,7 +3649,7 @@ function RecipesCard({
     setWriteError('')
     try {
       await deleteRecipeComponent(idToken, componentId)
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to delete component')
     } finally {
@@ -3654,7 +3668,7 @@ function RecipesCard({
       })
       setEditingStepId(null)
       setEditStepDraft('')
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update step')
     } finally {
@@ -3675,7 +3689,7 @@ function RecipesCard({
         instruction: toSentenceCase(draftStepInstruction),
       })
       setDraftStepInstruction('')
-      await loadAll()
+      await loadAll(true)
       stepInputRef.current?.focus()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to add step')
@@ -3690,7 +3704,7 @@ function RecipesCard({
     setWriteError('')
     try {
       await deleteRecipeStep(idToken, stepId)
-      await loadAll()
+      await loadAll(true)
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to delete step')
     } finally {

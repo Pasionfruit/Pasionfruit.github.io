@@ -674,8 +674,8 @@ export async function updateGroceryListItem(
   })
 }
 
-export async function getRecipes(): Promise<RecipeRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('recipes')
+export async function getRecipes(opts?: { fresh?: boolean }): Promise<RecipeRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('recipes', opts)
   return rows
     .map((row) => ({
       recipe_id: String(row.recipe_id ?? ''),
@@ -690,8 +690,8 @@ export async function getRecipes(): Promise<RecipeRecord[]> {
     .filter((row) => row.recipe_id)
 }
 
-export async function getRecipeComponents(): Promise<RecipeComponentRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('recipe_components')
+export async function getRecipeComponents(opts?: { fresh?: boolean }): Promise<RecipeComponentRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('recipe_components', opts)
   return rows
     .map((row) => ({
       component_id: String(row.component_id ?? ''),
@@ -705,8 +705,8 @@ export async function getRecipeComponents(): Promise<RecipeComponentRecord[]> {
     .filter((row) => row.component_id)
 }
 
-export async function getRecipeSteps(): Promise<RecipeStepRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('recipe_steps')
+export async function getRecipeSteps(opts?: { fresh?: boolean }): Promise<RecipeStepRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('recipe_steps', opts)
   return rows
     .map((row) => ({
       step_id: String(row.step_id ?? ''),

@@ -57,7 +57,10 @@ interface SheetsApiResponse {
  * Fetch data from Google Sheets using the Sheets API v4 with public API key.
  * This bypasses Apps Script and works for public read-only access.
  */
-export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
+export async function fetchSheetTable<T>(
+  tableName: string,
+  opts: { fresh?: boolean } = {},
+): Promise<T[]> {
   const { spreadsheetId, apiKey } = getGoogleSheetsConfig()
   
   // Map table names to sheet ranges (all columns, up to 10000 rows)
@@ -94,7 +97,13 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
   const url = new URL('https://sheets.googleapis.com/v4/spreadsheets')
   url.pathname = `/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}`
   url.searchParams.set('key', apiKey)
-  
+  if (opts.fresh) {
+    // Cache-buster: a unique URL sidesteps the service worker's
+    // stale-while-revalidate cache so a read taken right after a write reflects
+    // it, instead of returning the pre-write snapshot.
+    url.searchParams.set('_cb', String(Date.now()))
+  }
+
   const result = await fetchJson<SheetsApiResponse>(url.toString())
   
   if (!result.values || result.values.length === 0) {
