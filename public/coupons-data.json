@@ -1,18 +1,9 @@
 {
-  "lastUpdated": "2026-07-22T09:53:04.757Z",
+  "lastUpdated": "2026-07-23T09:52:43.534Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
     "coupons": [
-      {
-        "id": "flipp-4649919",
-        "brand": null,
-        "discount": "Coupon",
-        "description": "$10 off the purchase of one (1) $50 Gas Card with a grocery purchase of $100 or more",
-        "category": "Other",
-        "validTo": "2026-07-22T23:59:59.000-04:00",
-        "redemption": "print"
-      },
       {
         "id": "flipp-4608270",
         "brand": "Against the Grain",
@@ -56,6 +47,24 @@
         "description": "Save $3.00 on any ONE (1) AIR WICK® Scented Oil Starter Kit",
         "category": "Household",
         "validTo": "2026-08-16T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683843",
+        "brand": "Ajax",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Ajax Ultra Dish Liquid (28oz ONLY)",
+        "category": "Other",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683838",
+        "brand": "Ajax",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Ajax Ultra Dish Liquid (90oz ONLY)",
+        "category": "Other",
+        "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -617,6 +626,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4583559",
+        "brand": "Coppertone",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Coppertone® (4 oz. or larger) or Coppertone® Face Product (exclude travel/trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4634868",
         "brand": "Coppertone®",
         "discount": "SAVE $4.00",
@@ -824,24 +842,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608322",
-        "brand": "Downy",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 ONE Downy In-Wash Scent Boosters Unlimited 4.8 oz OR Downy In-Wash Scent Boosters Boutique Botanicals 4.8 oz (excludes travel size).",
-        "category": "Household",
-        "validTo": "2026-07-23T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4608311",
-        "brand": "Downy",
-        "discount": "Save $6.00",
-        "description": "Save $6.00 ONE Downy In-Wash Scent Boosters Boutique Botanicals 21.1 oz (excludes travel size).",
-        "category": "Household",
-        "validTo": "2026-07-23T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608267",
         "brand": "Downy",
         "discount": "Save $3.00",
@@ -896,6 +896,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4681170",
+        "brand": "Fancy Feast",
+        "discount": "Save $0.50",
+        "description": "Save $0.50 on any SEVEN (7) 3 oz cans of Fancy Feast® Wet Cat Food",
+        "category": "Pets",
+        "validTo": "2026-09-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4663146",
         "brand": "Fancy Feast",
         "discount": "SAVE 50¢",
@@ -947,6 +956,15 @@
         "description": "Save $3.00 ONE Febreze Plug Dual, Triple Refills, or Quad Refills (excludes trial/travel size).",
         "category": "Household",
         "validTo": "2026-08-02T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4656965",
+        "brand": "Feel Good Foods",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Feel Good Foods Mozzarella Sticks, Crispy Jalapeño Bites or Crispy Chicken Bites",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1031,12 +1049,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4643938",
-        "brand": "Frito-Lay",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Frito-Lay Party Size (8.12-17 oz)",
-        "category": "Grocery",
-        "validTo": "2026-07-22T19:59:59.000-04:00",
+        "id": "flipp-79292",
+        "brand": "Gain",
+        "discount": "save $2.00",
+        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
+        "category": "Other",
+        "validTo": "2026-07-23T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1508,21 +1526,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4681173",
+        "brand": "Lay's",
+        "discount": "Save $1.79",
+        "description": "Save $1.79 on any ONE (1) Lays XL 4.75 - 8oz or Lays Kettle Cooked 7.75-8 oz",
+        "category": "Grocery",
+        "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4663662",
         "brand": "Liquid Death",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any TWO (2) Liquid Death Still Water 12oz 12pks",
         "category": "Grocery",
         "validTo": "2026-08-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4645982",
-        "brand": "Liquid Death",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any TWO (2) Liquid Death 12oz 6pks",
-        "category": "Grocery",
-        "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1566,7 +1584,7 @@
         "brand": "Marzetti",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) Marzetti® Simply Dressed Produce Dressing",
-        "category": "Other",
+        "category": "Grocery",
         "validTo": "2026-09-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -1748,6 +1766,15 @@
         "description": "SAVE $2.00 on any* ONE (1) NIVEA® Shower Product *Excludes trial and travel sizes",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4681184",
+        "brand": "NOW Foods Canada",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) NOW Supplement",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-31T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2102,6 +2129,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4681183",
+        "brand": "Premier Protein",
+        "discount": "Save $2.50",
+        "description": "Save $2.50 on any ONE (1) Premier Protein 4ct shakes",
+        "category": "Grocery",
+        "validTo": "2026-09-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654422",
         "brand": "Propel",
         "discount": "Save $2.00",
@@ -2399,6 +2435,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4607759",
+        "brand": "Sparkle",
+        "discount": "Save $0.50",
+        "description": "Save $0.50 on any ONE (1) package of any Sparkle® Paper Towels",
+        "category": "Other",
+        "validTo": "2026-08-09T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654957",
         "brand": "Stayfree",
         "discount": "SAVE $1.00",
@@ -2498,21 +2543,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608272",
+        "id": "flipp-4664179",
         "brand": "Tide",
         "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Tide Liquid Laundry Detergent 73-84 oz (excludes Tide EVO, Tide Rinse, Tide purclean, Tide PODS, Tide Simply Laundry Detergent and trial/travel size).",
+        "description": "Save $3.00 ONE Tide PODS Laundry Detergent 42 ct (excludes 35 ct) OR Tide Power PODS 25 ct (excludes Tide Rinse, Tide Liquid/Powder Laundry Detergent, Tide Simply and trial/travel size).",
         "category": "Household",
-        "validTo": "2026-07-23T02:59:00.000-04:00",
+        "validTo": "2026-08-30T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4608268",
+        "id": "flipp-4664180",
         "brand": "Tide",
         "discount": "Save $3.00",
-        "description": "Save $3.00 ONE Tide PODS Laundry Detergent 42 ct (excludes 35 ct) OR Tide Power PODS 25 ct (excludes Tide EVO, Tide Rinse, Tide Liquid/Powder Laundry Detergent, Tide Simply, and trial/travel size).",
+        "description": "Save $3.00 ONE Tide Liquid Laundry Detergent 73 oz - 84 oz (excludes Tide Rinse, Tide purclean, Tide PODS, Tide Simply Laundry Detergent, Tide Detergent 10 oz and trial/travel size).",
         "category": "Household",
-        "validTo": "2026-07-23T02:59:00.000-04:00",
+        "validTo": "2026-08-30T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2774,6 +2819,27 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19797816",
+        "place": "Subway",
+        "title": "Select Subway Buy One Footlong Get One Free $10",
+        "url": "https://slickdeals.net/f/19797816-select-subway-buy-one-footlong-get-one-free-10?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-23T02:01:13.000Z"
+      },
+      {
+        "id": "sd-19796775",
+        "place": "Taco Bell",
+        "title": "[Select Accounts] 12-Oz Taco Bell Creamy Avocado Ranch Sauce $1.55 w/ S&S + Free Shipping w/ Prime or on $35+",
+        "url": "https://slickdeals.net/f/19796775-select-accounts-12-oz-taco-bell-creamy-avocado-ranch-sauce-1-55-w-s-s-free-shipping-w-prime-or-on-35?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-22T19:01:13.000Z"
+      },
+      {
+        "id": "sd-19795053",
+        "place": "KFC",
+        "title": "T-Mobile Customers T Life App * Starts 7/28/26 * KFC Free Snacker, more",
+        "url": "https://slickdeals.net/f/19795053-t-mobile-customers-t-life-app-starts-7-28-26-kfc-free-snacker-more?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-22T12:06:37.000Z"
+      },
+      {
         "id": "sd-19793817",
         "place": "Taco Bell",
         "title": "Taco Bell Enchiritos $1 (get up to five), Add Nacho Fries for $1 for Rewards Members In-App 7/22/26 Only",
@@ -2998,13 +3064,6 @@
         "postedAt": "2026-06-24T20:52:57.000Z"
       },
       {
-        "id": "sd-19676979",
-        "place": "Taco Bell",
-        "title": "$40.00: Taco Bell eGift Card (In App Redemption Only)",
-        "url": "https://slickdeals.net/f/19676979-40-00-taco-bell-egift-card-in-app-redemption-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-24T15:02:05.000Z"
-      },
-      {
         "id": "sd-19676625",
         "place": "Subway",
         "title": "$42.50 | $50 Subway eGift Card at Amazon",
@@ -3143,13 +3202,6 @@
         "title": "Select SoCal Chick-fil-A Residents Rewards Offer: 2-Pc Chick-fil-A Chick-n-Strip Free to Claim & More (Valid Select Dates in June/July)",
         "url": "https://slickdeals.net/f/19610796-select-socal-chick-fil-a-residents-rewards-offer-2-pc-chick-fil-a-chick-n-strip-free-to-claim-more-valid-select-dates-in-june-july?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-09T19:01:52.000Z"
-      },
-      {
-        "id": "sd-19607637",
-        "place": "KFC",
-        "title": "KFC - 24pc Nuggets for $10 Only on Mondays and Fridays! $10",
-        "url": "https://slickdeals.net/f/19607637-kfc-24pc-nuggets-for-10-only-on-mondays-and-fridays-10?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-08T23:42:22.000Z"
       },
       {
         "id": "sd-19606800",
