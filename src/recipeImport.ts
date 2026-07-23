@@ -43,7 +43,7 @@ function parseIsoDuration(iso: string): string {
 
 function parseIngredientString(str: string): ImportedIngredient {
   // Try "2 cups flour" → { quantity: '2', unit: 'cups', name: 'flour' }
-  const match = str.trim().match(/^([\d\/.,]+(?:\s+\d+\/\d+)?)\s*([a-zA-Z]+(?:\.|s)?)?\s+(.+)$/)
+  const match = str.trim().match(/^([\d/.,]+(?:\s+\d+\/\d+)?)\s*([a-zA-Z]+(?:\.|s)?)?\s+(.+)$/)
   if (match && match[3]) {
     return {
       quantity: match[1].trim(),
@@ -136,11 +136,46 @@ function parseSchemaOrg(html: string): Partial<ImportedRecipeDraft> | null {
   return null
 }
 
-async function tryFetch(proxyUrl: string, timeoutMs = 8000): Promise<string | null> {
+type ProxyCandidate = {
+  name: string
+  buildUrl: (encodedUrl: string, rawUrl: string) => string
+  headers?: Record<string, string>
+  timeoutMs: number
+}
+
+// Ordered by reliability. Jina AI Reader renders the target in a real browser
+// and returns full HTML (recipe JSON-LD included), so it works even on sites
+// that serve bot-challenge pages to the simple passthrough proxies — those stay
+// on as quick fallbacks for pages Jina can't reach. corsproxy.io was dropped
+// because it now blocks unregistered origins (403).
+const PROXIES: ProxyCandidate[] = [
+  {
+    name: 'jina',
+    buildUrl: (_encoded, raw) => `https://r.jina.ai/${raw}`,
+    headers: { 'x-return-format': 'html' },
+    timeoutMs: 20000,
+  },
+  {
+    name: 'allorigins',
+    buildUrl: (encoded) => `https://api.allorigins.win/raw?url=${encoded}`,
+    timeoutMs: 10000,
+  },
+  {
+    name: 'codetabs',
+    buildUrl: (encoded) => `https://api.codetabs.com/v1/proxy?quest=${encoded}`,
+    timeoutMs: 10000,
+  },
+]
+
+async function tryFetch(
+  proxyUrl: string,
+  headers: Record<string, string> | undefined,
+  timeoutMs: number,
+): Promise<string | null> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
   try {
-    const res = await fetch(proxyUrl, { signal: controller.signal })
+    const res = await fetch(proxyUrl, { signal: controller.signal, headers })
     clearTimeout(timer)
     if (!res.ok) return null
     const text = await res.text()
@@ -151,22 +186,27 @@ async function tryFetch(proxyUrl: string, timeoutMs = 8000): Promise<string | nu
   }
 }
 
-async function fetchViaProxy(url: string): Promise<string> {
+/**
+ * Walks the proxy list until one returns HTML that parses into a recipe, and
+ * returns that draft. If none parse, `reachable` reports whether any proxy at
+ * least returned a page — so the caller can tell "no recipe schema on the page"
+ * (fall back to manual entry) apart from "couldn't fetch it at all" (error).
+ */
+async function fetchAndParse(
+  url: string,
+): Promise<{ parsed: Partial<ImportedRecipeDraft> | null; reachable: boolean }> {
   const encoded = encodeURIComponent(url)
+  let reachable = false
 
-  // Try proxies in order; each has an 8-second timeout
-  const candidates = [
-    `https://corsproxy.io/?url=${encoded}`,
-    `https://api.allorigins.win/raw?url=${encoded}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encoded}`,
-  ]
-
-  for (const proxyUrl of candidates) {
-    const result = await tryFetch(proxyUrl)
-    if (result) return result
+  for (const proxy of PROXIES) {
+    const html = await tryFetch(proxy.buildUrl(encoded, url), proxy.headers, proxy.timeoutMs)
+    if (!html) continue
+    reachable = true
+    const parsed = parseSchemaOrg(html)
+    if (parsed) return { parsed, reachable: true }
   }
 
-  throw new Error('Could not reach the page — all proxies failed or the site blocks external access.')
+  return { parsed: null, reachable }
 }
 
 export async function importRecipeFromUrl(url: string): Promise<ImportedRecipeDraft> {
@@ -189,11 +229,14 @@ export async function importRecipeFromUrl(url: string): Promise<ImportedRecipeDr
     return base
   }
 
-  const html = await fetchViaProxy(url)
-  const parsed = parseSchemaOrg(html)
+  const { parsed, reachable } = await fetchAndParse(url)
   if (parsed) {
     return { ...base, ...parsed, auto_extracted: true }
   }
+  if (!reachable) {
+    throw new Error('Could not reach the page — all proxies failed or the site blocks external access.')
+  }
 
+  // Page loaded but had no recipe schema — hand back an empty draft to fill in.
   return base
 }

@@ -2,8 +2,6 @@ import React, { type CSSProperties, type MouseEvent, type ReactNode, useEffect, 
 import {
   BookOpen,
   Check,
-  ChevronLeft,
-  ChevronRight,
   Download,
   ExternalLink,
   Flame,
@@ -3349,7 +3347,7 @@ function RecipesCard({
   const compNameInputRef = useRef<HTMLInputElement>(null)
   const stepInputRef = useRef<HTMLInputElement>(null)
 
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [mobileEditRecipeId, setMobileEditRecipeId] = useState<string | null>(null)
 
   // Import state
@@ -3373,10 +3371,6 @@ function RecipesCard({
   const [searchQuery, setSearchQuery] = useState('')
   const [durationFilter, setDurationFilter] = useState('')
   const [equipmentFilter, setEquipmentFilter] = useState('')
-
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1)
-  const PAGE_SIZE = 6
 
   const equipmentOptions = useMemo(() => {
     const names = components
@@ -3405,11 +3399,6 @@ function RecipesCard({
       return true
     })
   }, [recipes, components, searchQuery, durationFilter, equipmentFilter])
-
-  useEffect(() => { setCurrentPage(1) }, [searchQuery, durationFilter, equipmentFilter, isEditing, viewMode])
-
-  const totalPages = Math.max(1, Math.ceil(filteredRecipes.length / PAGE_SIZE))
-  const pagedRecipes = filteredRecipes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   async function loadAll() {
     try {
@@ -4012,7 +4001,7 @@ function RecipesCard({
 
       {recipes.length > 0 && viewMode === 'list' && !isEditing ? (
         <ul className="recipe-list-view">
-          {pagedRecipes.map((recipe) => (
+          {filteredRecipes.map((recipe) => (
             <li key={recipe.recipe_id} className="recipe-list-item">
               <span className="recipe-list-name">{recipe.recipe_name}</span>
               <span className="recipe-list-meta">
@@ -4041,7 +4030,7 @@ function RecipesCard({
               </tr>
             </thead>
             <tbody>
-              {pagedRecipes.map((recipe) => {
+              {filteredRecipes.map((recipe) => {
                 const draft = editDrafts[recipe.recipe_id] ?? recipe
                 return (
                   <tr key={recipe.recipe_id}>
@@ -4067,7 +4056,7 @@ function RecipesCard({
 
       {isEditing && canWrite && filteredRecipes.length > 0 ? (
         <ul className="recipe-edit-mobile-list">
-          {pagedRecipes.map((recipe) => {
+          {filteredRecipes.map((recipe) => {
             const draft = editDrafts[recipe.recipe_id] ?? recipe
             const expanded = mobileEditRecipeId === recipe.recipe_id
             return (
@@ -4130,7 +4119,7 @@ function RecipesCard({
 
       {recipes.length > 0 && viewMode === 'grid' && !isEditing ? (
         <div className="recipe-cards-grid">
-          {pagedRecipes.map((recipe) => {
+          {filteredRecipes.map((recipe) => {
             return (
               <div key={recipe.recipe_id} className="recipe-card">
                 <>
@@ -4146,32 +4135,6 @@ function RecipesCard({
               </div>
             )
           })}
-        </div>
-      ) : null}
-
-      {filteredRecipes.length > 0 && totalPages > 1 ? (
-        <div className="recipe-pagination">
-          <button
-            type="button"
-            className="secondary-action recipe-pagination-btn"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            aria-label="Previous page"
-          >
-            <ChevronLeft size={15} aria-hidden="true" />
-          </button>
-          <span className="recipe-pagination-info">
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            type="button"
-            className="secondary-action recipe-pagination-btn"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            aria-label="Next page"
-          >
-            <ChevronRight size={15} aria-hidden="true" />
-          </button>
         </div>
       ) : null}
 
