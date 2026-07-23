@@ -5,7 +5,7 @@ import { precacheAndRoute, cleanupOutdatedCaches, createHandlerBoundToURL } from
 import { NavigationRoute, registerRoute } from 'workbox-routing'
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 import { ExpirationPlugin } from 'workbox-expiration'
-import { NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies'
+import { NetworkFirst, NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies'
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -44,10 +44,14 @@ registerRoute(
   }),
 )
 
+// Network-first (not stale-while-revalidate) so a read taken right after a
+// write reflects it — the app reloads data immediately after every mutation.
+// Falls back to cache only when the network is unavailable/slow (offline).
 registerRoute(
   ({ request, url }) => request.method === 'GET' && url.origin === 'https://sheets.googleapis.com',
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: 'google-sheets-read-v1',
+    networkTimeoutSeconds: 6,
     plugins: [
       new CacheableResponsePlugin({ statuses: [0, 200] }),
       new ExpirationPlugin({ maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 }),
