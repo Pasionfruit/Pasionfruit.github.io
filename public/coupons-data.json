@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-23T09:52:43.534Z",
+  "lastUpdated": "2026-07-24T09:52:16.923Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -54,7 +54,7 @@
         "brand": "Ajax",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) Ajax Ultra Dish Liquid (28oz ONLY)",
-        "category": "Other",
+        "category": "Household",
         "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -63,7 +63,7 @@
         "brand": "Ajax",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) Ajax Ultra Dish Liquid (90oz ONLY)",
-        "category": "Other",
+        "category": "Household",
         "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -302,6 +302,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4661252",
+        "brand": "Ball",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any TWO (2) Ball Jar 12-Packs",
+        "category": "Other",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654979",
         "brand": "Banana Boat",
         "discount": "SAVE $4.00",
@@ -416,6 +425,15 @@
         "description": "SAVE $1.00 on any ONE (1) Carefree® Liners 36ct. or Larger",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683780",
+        "brand": "Cascade",
+        "discount": "Save $4.00",
+        "description": "ONE Cascade Platinum Plus 47ct or greater, Platinum 59ct or greater, OR Complete 78ct or greater Dishwasher Detergent (exclude travel/trial size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -671,19 +689,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654949",
+        "id": "flipp-4654948",
         "brand": "Crest",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Manual Brush, Expandable/Oral-B Glide Floss OR Interdental Picks/Brush,(excludes Crest Cavity, Baking Soda, Tartar, other Kids Variants, Oral-B Essential toothbrushes, Daily Clean, Complete 1ct brushes, Essential/Satin Floss, Oral-B Fresh Mint Picks, trial/travel sizes).",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654948",
+        "id": "flipp-4654949",
         "brand": "Crest",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 THREE Adult Crest Paste 2.4oz or more, Crest 3DW Deep Stain Remover, Crest Clean Breath, Crest Kids Advanced OR Burt's Bees Adult Paste 4.0oz or more, Crest, Scope OR Oral-B Mouthwash 473mL or larger, Scope Squeez, Oral-B Adult Manual Brush, Expandable/Oral-B Glide Floss OR Interdental Picks/Brush,(excludes Crest Cavity, Baking Soda, Tartar, other Kids Variants, Oral-B Essential toothbrushes, Daily Clean, Complete 1ct brushes, Essential/Satin Floss, Oral-B Fresh Mint Picks, trial/travel sizes).",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
@@ -770,6 +788,24 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4683754",
+        "brand": "Dawn",
+        "discount": "Save $2.00",
+        "description": "ONE Dawn Powerwash Starter Kit (excludes travel/trial size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683741",
+        "brand": "Dawn",
+        "discount": "Save $2.00",
+        "description": "ONE Dawn Ultra 30.8oz or larger, Platinum 24oz or larger OR Platinum Plus PowerSuds 17.4oz or larger (excludes travel/trial size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4633848",
         "brand": "Depend",
         "discount": "Save $2.50",
@@ -839,6 +875,15 @@
         "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
         "category": "Health & Beauty",
         "validTo": "2026-08-09T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4684300",
+        "brand": "Downy",
+        "discount": "Save $6.00",
+        "description": "Save $6.00 ONE Downy In-Wash Scent Boosters Boutique Botanicals 21.1 oz (excludes travel size)",
+        "category": "Household",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -920,6 +965,33 @@
         "description": "Save $0.50 on any TWO (2) 2.8 oz packages of Fancy Feast® Petites Wet Cat Food",
         "category": "Pets",
         "validTo": "2026-08-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683789",
+        "brand": "Febreze",
+        "discount": "Save $3.00",
+        "description": "ONE Febreze Car 2-CT/3-CT (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683746",
+        "brand": "Febreze",
+        "discount": "Save $5.00",
+        "description": "ONE Febreze Plug Scent Booster OR Febreze Scent Booster Starter Kit (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683750",
+        "brand": "Febreze",
+        "discount": "Save $3.00",
+        "description": "ONE Febreze Bathroom 2ct or 3cts (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1009,7 +1081,7 @@
         "discount": "Save $1.50",
         "description": "Save $1.50 on any ONE (1) Fresh Press Farms Extra Virgin Olive Oil",
         "category": "Grocery",
-        "validTo": "2026-07-24T19:59:59.000-04:00",
+        "validTo": "2026-08-09T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1018,7 +1090,7 @@
         "discount": "Save $1.50",
         "description": "Save $1.50 on any ONE (1) Fresh Press Farms Organic Peach Cider Vinegar, 485ml",
         "category": "Grocery",
-        "validTo": "2026-07-24T19:59:59.000-04:00",
+        "validTo": "2026-08-09T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1054,7 +1126,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
         "category": "Other",
-        "validTo": "2026-07-23T20:00:00.000-04:00",
+        "validTo": "2026-07-24T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1391,15 +1463,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634831",
-        "brand": "IMODIUM",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE(1) PEPCID® (20ct or higher), IMODIUM® (excluding 6ct) or LACTAID® Supplement product (excluding trial and travel).",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4663659",
         "brand": "Irish Spring",
         "discount": "Save $2.00",
@@ -1613,6 +1676,24 @@
         "description": "Save $2.00 on any ONE (1) Adult MOTRIN® Product (excludes trial & travel sizes).",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683784",
+        "brand": "Mr. Clean",
+        "discount": "Save $2.00",
+        "description": "ONE Mr. Clean Multi-Surface Cleaner 41oz or 64oz (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683743",
+        "brand": "Mr. Clean",
+        "discount": "Save $2.00",
+        "description": "ONE Mr. Clean Clean Freak Starter Kit (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2012,6 +2093,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4683815",
+        "brand": "Palmolive",
+        "discount": "Save $0.75",
+        "description": "Save $0.75 on any ONE (1) Palmolive Ultra Dish Liquid (18oz or larger)",
+        "category": "Household",
+        "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654955",
         "brand": "Pampers Easy Ups Training wear",
         "discount": "Save $3.00",
@@ -2081,6 +2171,15 @@
         "description": "SAVE $2.00 ON ANY ONE (1) 12OZ 12PK PEPSI, MOUNTAIN DEW, STARRY OR MUG",
         "category": "Grocery",
         "validTo": "2026-07-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683816",
+        "brand": "Planet Oat",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Planet Oat Oatmilk 52oz or Planet Oat Creamer 32oz",
+        "category": "Grocery",
+        "validTo": "2026-08-19T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2480,6 +2579,51 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4689442",
+        "brand": "Suavitel",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Suavitel Liquid Fabric Conditioner (46oz or larger) or Suavitel Refresher Fabric Rinse (25.5oz ONLY)",
+        "category": "Other",
+        "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683764",
+        "brand": "Swiffer",
+        "discount": "Save $5.00",
+        "description": "ONE Swiffer Sweeper Deluxe, or 6ft Duster Starter Kits (excludes 3ft Dusters, short handle Dusters, 1-2ct Dusters and trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683772",
+        "brand": "Swiffer",
+        "discount": "Save $10.00",
+        "description": "ONE Swiffer PowerMop Starter Kit (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683768",
+        "brand": "Swiffer",
+        "discount": "Save $2.00",
+        "description": "ONE Swiffer Refill Product OR 3ft Duster Starter Kit (includes 20ct or Larger Dry and Wet cloth refills, 10ct or Larger XL Dry and Wet cloth refills, 5ct or Larger PowerMop pad refills, 12 or Larger WetJet pad refills, 2ct or Larger PowerMop and WetJet solution refills, and 6ct or larger Duster refills).",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4683776",
+        "brand": "Swiffer",
+        "discount": "Save $3.00",
+        "description": "ONE Swiffer WetJet Starter Kit (excludes trial/travel size)",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654412",
         "brand": "Systane",
         "discount": "Save $3.00",
@@ -2863,8 +3007,8 @@
       {
         "id": "sd-19790598",
         "place": "Popeyes",
-        "title": "Popeyes Restaurant Offer: 12-Piece Popeyes Wings (Boneless or Bone-In) or Chicken Tenders (3 Flavors w/ Sauces) for $12 via Popeyes (Valid thru 7/26)",
-        "url": "https://slickdeals.net/f/19790598-popeyes-restaurant-offer-12-piece-popeyes-wings-boneless-or-bone-in-or-chicken-tenders-3-flavors-w-sauces-for-12-via-popeyes-valid-thru-7-26?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Popeyes: 12-Pc Wings (Boneless or Bone-In) or 12-Pc Tenders (3 Flavors) $12 + Free Pickup",
+        "url": "https://slickdeals.net/f/19790598-popeyes-12-pc-wings-boneless-or-bone-in-or-12-pc-tenders-3-flavors-12-free-pickup?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-21T12:16:04.000Z"
       },
       {
@@ -3202,13 +3346,6 @@
         "title": "Select SoCal Chick-fil-A Residents Rewards Offer: 2-Pc Chick-fil-A Chick-n-Strip Free to Claim & More (Valid Select Dates in June/July)",
         "url": "https://slickdeals.net/f/19610796-select-socal-chick-fil-a-residents-rewards-offer-2-pc-chick-fil-a-chick-n-strip-free-to-claim-more-valid-select-dates-in-june-july?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-09T19:01:52.000Z"
-      },
-      {
-        "id": "sd-19606800",
-        "place": "Wendy's",
-        "title": "Wendys- $0.99 any size soft drink with purchase",
-        "url": "https://slickdeals.net/f/19606800-wendys-0-99-any-size-soft-drink-with-purchase?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-08T17:55:06.000Z"
       }
     ]
   }
