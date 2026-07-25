@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-24T09:52:11.825Z",
+  "lastUpdated": "2026-07-25T09:37:27.984Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-07-22T00:00:00-04:00",
@@ -2743,7 +2743,7 @@
     },
     "Publix": {
       "validFrom": "2026-07-15T00:00:00-04:00",
-      "validTo": "2026-07-29T23:59:59-04:00",
+      "validTo": "2026-08-07T23:59:59-04:00",
       "deals": [
         {
           "id": "Publix-1025238213",
@@ -2968,6 +2968,30 @@
           "price": 4.99,
           "validFrom": "2026-07-15T00:00:00-04:00",
           "validTo": "2026-07-28T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1026687084",
+          "item": "Playtex Sport Tampons 36-48-ct. or Stayfree Pads 36-48-ct.",
+          "brand": "Playtex | Stayfree",
+          "price": 15,
+          "validFrom": "2026-07-25T00:00:00-04:00",
+          "validTo": "2026-08-07T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1026686994",
+          "item": "Cape Cod, Late July or Kettle Brand 13-15-oz OR Snyder's of Hanover 18-oz or Gluten Free 14-oz your choice",
+          "brand": "Cape Cod | Late July | Kettle Brand | Snyder's",
+          "price": 10,
+          "validFrom": "2026-07-25T00:00:00-04:00",
+          "validTo": "2026-08-07T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1026687035",
+          "item": "Cortizone-10",
+          "brand": "Cortizone-10",
+          "price": 5.49,
+          "validFrom": "2026-07-25T00:00:00-04:00",
+          "validTo": "2026-08-07T23:59:59-04:00"
         },
         {
           "id": "Publix-1026854808",

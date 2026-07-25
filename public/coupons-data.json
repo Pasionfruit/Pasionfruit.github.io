@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-24T09:52:16.923Z",
+  "lastUpdated": "2026-07-25T09:37:34.847Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -545,6 +545,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4662783",
+        "brand": "Coca-Cola",
+        "discount": "Coupon",
+        "description": "Buy Any 1 Coca-Cola 20-oz Product and Get Any 1 Coke Zero Sugar 20-oz Free WITH MFR DIGITAL COUPON",
+        "category": "Grocery",
+        "validTo": "2026-08-07T23:59:59.000-04:00",
+        "redemption": "print"
+      },
+      {
         "id": "flipp-4663653",
         "brand": "Colgate",
         "discount": "Save $1.00",
@@ -579,6 +588,15 @@
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
         "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4662404",
+        "brand": "Colgate",
+        "discount": "$5 off",
+        "description": "Colgate Optic White Pro Series",
+        "category": "Grocery",
+        "validTo": "2026-08-07T23:59:59.000-04:00",
+        "redemption": "print"
       },
       {
         "id": "flipp-4644627",
@@ -653,15 +671,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634868",
-        "brand": "Coppertone®",
-        "discount": "SAVE $4.00",
-        "description": "SAVE $4.00 on any ONE (1) Coppertone® or Coppertone® Face Product, 4 oz or larger. Excludes travel and trial sizes",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-09T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4560457",
         "brand": "Coppertone®",
         "discount": "SAVE $2.00",
@@ -689,15 +698,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654948",
-        "brand": "Crest",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654949",
         "brand": "Crest",
         "discount": "Save $5.00",
@@ -711,6 +711,15 @@
         "brand": "Crest",
         "discount": "Save $3.00",
         "description": "Save $3.00 ONE Crest 3DWhite Brilliance Stain Prevention 473mL or 3DWhite Clean, 3DWhite Fresh or 3DWhite Strength or Pro-Health Extra Whitening or Gum Detoxify or Gum Restore or Clinical Deep Clean or All Day Clean Breath or Nightly Bacteri",
+        "category": "Health & Beauty",
+        "validTo": "2026-07-26T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654948",
+        "brand": "Crest",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 ONE Crest 3DWhite Brilliance, 3DWhite Whitening Therapy Charcoal, Crest Gum Detoxify, Crest Clean Breath, Gum & Whitening, Gum & Enamel Restore, Gum & Sensitive, Gum Recession 3.0 oz or larger (excludes all other variants, kids, and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-07-26T02:59:00.000-04:00",
         "redemption": "savetocard"
@@ -1076,33 +1085,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4594896",
-        "brand": "Fresh Press Farms",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Fresh Press Farms Extra Virgin Olive Oil",
-        "category": "Grocery",
-        "validTo": "2026-08-09T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4594900",
-        "brand": "Fresh Press Farms",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Fresh Press Farms Organic Peach Cider Vinegar, 485ml",
-        "category": "Grocery",
-        "validTo": "2026-08-09T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4616066",
-        "brand": "Friskies",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any TWO (2) 3 lb - 3.15 lb bags of Friskies® Dry Cat Food",
-        "category": "Pets",
-        "validTo": "2026-08-14T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4616060",
         "brand": "Friskies",
         "discount": "Save $1.00",
@@ -1121,13 +1103,13 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-79292",
+        "id": "flipp-4686998",
         "brand": "Gain",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on ONE Gain Liquid Fabric Enhancer/Softener 41oz or higher OR Dryer Sheets 60ct or higher (excludes Gain Fireworks).",
-        "category": "Other",
-        "validTo": "2026-07-24T20:00:00.000-04:00",
-        "redemption": "savetocard"
+        "discount": "$3 off",
+        "description": "Gain Liquid 132 oz., Liquid Fabric Softener 140 oz., Flings 60 ct., or Scent Boosters 24 oz.",
+        "category": "Household",
+        "validTo": "2026-08-01T23:59:59.000-04:00",
+        "redemption": "print"
       },
       {
         "id": "flipp-4608276",
@@ -1715,15 +1697,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4652274",
-        "brand": "Native",
-        "discount": "Save $1.00",
-        "description": "ONE Native Shampoo or Conditioner Product (excludes trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-24T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654942",
         "brand": "Native",
         "discount": "Save $2.00",
@@ -1832,15 +1805,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654977",
-        "brand": "Nexxus",
-        "discount": "SAVE $9.00",
-        "description": "SAVE $9.00 on TWO (2) Nexxus Hair Products.",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4608301",
         "brand": "Nivea",
         "discount": "SAVE $2.00",
@@ -1919,15 +1883,6 @@
         "description": "Save $3.00 on any ONE (1) Old Spice Styling Product (excludes Holiday Packs, High Endurance, Twin Packs and trial/travel size)",
         "category": "Health & Beauty",
         "validTo": "2026-07-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4652273",
-        "brand": "Old Spice",
-        "discount": "Save $1.00",
-        "description": "ONE Old Spice 2-in-1 Shampoo & Conditioner 21.9oz OR Shampoo 21.9oz (excludes Holiday Packs, High Endurance, Twin Packs and trial/travel size).",
-        "category": "Health & Beauty",
-        "validTo": "2026-07-24T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2525,6 +2480,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4662784",
+        "brand": "Softsoap | Irish Spring",
+        "discount": "Get it for $5.00",
+        "description": "Softsoap Velvet Silk Foaming Hand Soap 9-oz or Liquid Hand Soap 11.25-oz or Irish Spring Bar Soap 3-ct.",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-07T23:59:59.000-04:00",
+        "redemption": "print"
+      },
+      {
         "id": "flipp-4586892",
         "brand": "Sour Punch",
         "discount": "SAVE $1.00",
@@ -2583,7 +2547,7 @@
         "brand": "Suavitel",
         "discount": "Save $1.50",
         "description": "Save $1.50 on any ONE (1) Suavitel Liquid Fabric Conditioner (46oz or larger) or Suavitel Refresher Fabric Rinse (25.5oz ONLY)",
-        "category": "Other",
+        "category": "Household",
         "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -3339,13 +3303,6 @@
         "title": "KFC- Free Fries with $1 min",
         "url": "https://slickdeals.net/f/19615254-kfc-free-fries-with-1-min?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-10T19:39:15.000Z"
-      },
-      {
-        "id": "sd-19610796",
-        "place": "Chick-fil-A",
-        "title": "Select SoCal Chick-fil-A Residents Rewards Offer: 2-Pc Chick-fil-A Chick-n-Strip Free to Claim & More (Valid Select Dates in June/July)",
-        "url": "https://slickdeals.net/f/19610796-select-socal-chick-fil-a-residents-rewards-offer-2-pc-chick-fil-a-chick-n-strip-free-to-claim-more-valid-select-dates-in-june-july?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-09T19:01:52.000Z"
       }
     ]
   }
