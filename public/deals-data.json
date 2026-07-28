@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-27T10:24:25.903Z",
+  "lastUpdated": "2026-07-28T09:56:36.790Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-07-22T00:00:00-04:00",
@@ -1508,14 +1508,6 @@
           "validTo": "2026-08-01T23:59:59-04:00"
         },
         {
-          "id": "Target-1028824069",
-          "item": "Ariana Grande, petal",
-          "brand": null,
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
           "id": "Target-1028824347",
           "item": "Select Lay's Kettle & Simply snacks",
           "brand": "Lay's",
@@ -1612,14 +1604,6 @@
           "validTo": "2026-08-01T23:59:59-04:00"
         },
         {
-          "id": "Target-1028825047",
-          "item": "Murder Phone party game",
-          "brand": null,
-          "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
           "id": "Target-1028824079",
           "item": "Ariana Grande, petal",
           "brand": "ARIANA GRANDE",
@@ -1708,14 +1692,6 @@
           "validTo": "2026-08-01T23:59:59-04:00"
         },
         {
-          "id": "Target-1025526935",
-          "item": "Lysol 3-pk. 240-ct. disinfecting wipes",
-          "brand": "Lysol",
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
           "id": "Target-1025526907",
           "item": "Clorox 3-pk. 225-ct. disinfecting wipes.",
           "brand": "Clorox",
@@ -1728,14 +1704,6 @@
           "item": "BOUNTY 6-pk. select-a-size triple-roll paper towels.",
           "brand": null,
           "price": 16.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528124",
-          "item": "Totino's 50 ct. frozen pizza rolls",
-          "brand": "Totino's",
-          "price": 4.49,
           "validFrom": "2026-07-26T00:00:00-04:00",
           "validTo": "2026-08-01T23:59:59-04:00"
         },
@@ -2324,14 +2292,6 @@
           "validTo": "2026-08-01T23:59:59-04:00"
         },
         {
-          "id": "Target-1028834870",
-          "item": "Our Generation arts & crafts activity doll.",
-          "brand": "Our Generation",
-          "price": 39.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
           "id": "Target-1028834873",
           "item": "PeachyBbies 12-ct. slime.",
           "brand": null,
@@ -2388,26 +2348,10 @@
           "validTo": "2026-08-01T23:59:59-04:00"
         },
         {
-          "id": "Target-1028827538",
-          "item": "Command 8-ct. X-Large damage-free hanging strips",
-          "brand": "Command",
-          "price": 9.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
           "id": "Target-1028827569",
           "item": "up&up 4-pk. 60-watt LED lightbulbs",
           "brand": "up & up",
           "price": 5.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028827600",
-          "item": "Brightroom 2.2-bushel flexible laundry hamper",
-          "brand": "Brightroom™",
-          "price": 8,
           "validFrom": "2026-07-26T00:00:00-04:00",
           "validTo": "2026-08-01T23:59:59-04:00"
         },
@@ -2520,6 +2464,62 @@
           "item": "Select Stouffer's frozen meals",
           "brand": "Stouffer's",
           "price": 9,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1028824069",
+          "item": "Ariana Grande, petal",
+          "brand": null,
+          "price": 12.99,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1028825047",
+          "item": "Murder Phone party game",
+          "brand": null,
+          "price": 24.99,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1025528124",
+          "item": "Totino's 50 ct. frozen pizza rolls",
+          "brand": "Totino's",
+          "price": 4.49,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1028827600",
+          "item": "Brightroom 2.2-bushel flexible laundry hamper",
+          "brand": "Brightroom™",
+          "price": 8,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1025526935",
+          "item": "Lysol 3-pk. 240-ct. disinfecting wipes",
+          "brand": "Lysol",
+          "price": 12.99,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1028827538",
+          "item": "Command 8-ct. X-Large damage-free hanging strips",
+          "brand": "Command",
+          "price": 9.49,
+          "validFrom": "2026-07-26T00:00:00-04:00",
+          "validTo": "2026-08-01T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1028834870",
+          "item": "Our Generation arts & crafts activity doll.",
+          "brand": "Our Generation",
+          "price": 39.99,
           "validFrom": "2026-07-26T00:00:00-04:00",
           "validTo": "2026-08-01T23:59:59-04:00"
         },
