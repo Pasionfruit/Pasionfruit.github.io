@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-30T09:54:12.117Z",
+  "lastUpdated": "2026-07-31T09:58:26.197Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -10,7 +10,7 @@
         "discount": "Save $1.00",
         "description": "Save $1.00 on any TWO (2) 4505 Chicharrones 2.7-3-oz of your choice",
         "category": "Other",
-        "validTo": "2026-08-11T19:59:59.000-04:00",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -36,6 +36,15 @@
         "brand": "Air Wick",
         "discount": "Save $6.00",
         "description": "Save $6.00 on any ONE (1) AIR WICK® Essential Mist® Starter Kit",
+        "category": "Household",
+        "validTo": "2026-08-16T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654954",
+        "brand": "Air Wick",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AIR WICK® Scented Oil Starter Kit",
         "category": "Household",
         "validTo": "2026-08-16T02:59:00.000-04:00",
         "redemption": "savetocard"
@@ -437,15 +446,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4689471",
-        "brand": "Colgate",
-        "discount": "SAVE $5.00",
-        "description": "SAVE $5.00 On any TWO (2) Colgate Optic White Advanced , Purple, Charcoal, Sensitivity Relief, Total Gum Protect, Plaque Cleanse, Sensitivity Mineral Shield, Colgate Sensitive, Tom's of Maine or hello Adult Toothpastes",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654986",
         "brand": "Colgate",
         "discount": "SAVE $2.00",
@@ -695,15 +695,6 @@
         "description": "Save $3.00 on any ONE (1) Dove Men+Care Body Wash 18oz, Plant Powered Body Wash 18oz+ or Bar 4-6ct (excludes items and sizes not listed)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674062",
-        "brand": "Dove Men+Care",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1022,15 +1013,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4661267",
-        "brand": "Garden of Life",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Garden of Life Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-06T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4674405",
         "brand": "Garnier",
         "discount": "SAVE $6.00",
@@ -1310,6 +1292,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4704488",
+        "brand": "Irish Spring",
+        "discount": "Save $3.50",
+        "description": "Save $3.50 on any TWO (2) Irish Spring or Softsoap Body Washes (20oz or larger), Irish Spring Bar Soap Multipacks (6ct or larger) or Softsoap Liquid Hand Soap Refills (50oz ONLY)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4674418",
         "brand": "Ivory",
         "discount": "Save $0.50",
@@ -1373,12 +1364,30 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4704490",
+        "brand": "Land O'Frost",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Wellshire Lunchmeat",
+        "category": "Grocery",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4681173",
         "brand": "Lay's",
         "discount": "Save $1.79",
         "description": "Save $1.79 on any ONE (1) Lays XL 4.75 - 8oz or Lays Kettle Cooked 7.75-8 oz",
         "category": "Grocery",
         "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4654972",
+        "brand": "Listerine",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 on any ONE (1) LISTERINE® Mouthwash product (500 mL or larger), POCKETPAKS® product (72ct. or larger), POCKETMIST® product (2ct. or larger) or single use liquid packs (15ct. or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-02T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1778,15 +1787,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4605010",
-        "brand": "Old Wisconsin",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Old Wisconsin Snack Sticks or Bites",
-        "category": "Grocery",
-        "validTo": "2026-07-30T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695013",
         "brand": "Oral-B",
         "discount": "Save $10.00",
@@ -1949,15 +1949,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4694741",
-        "brand": "Pledge",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any ONE (1) Pledge® Product",
-        "category": "Other",
-        "validTo": "2026-08-07T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4674471",
         "brand": "Pledge®",
         "discount": "Save $0.50",
@@ -2036,6 +2027,15 @@
         "description": "Save $.50 Off The Purchase of One (1) Publix Southwest-Style Salmon Burgers Fresh, Ready for the Grill, 5.5-oz each",
         "category": "Grocery",
         "validTo": "2026-08-07T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4704487",
+        "brand": "Publix",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) IceBlox Slow Melting Cocktail Cubes",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2147,15 +2147,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4674469",
-        "brand": "Scrubbing Bubbles®",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 any ONE (1) Scrubbing Bubbles® Product",
-        "category": "Household",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4702299",
         "brand": "Secret",
         "discount": "Save $3.00",
@@ -2198,15 +2189,6 @@
         "description": "SAVE $0.75 on any ONE (1) Shamrock Farms 12oz RTD Milk",
         "category": "Grocery",
         "validTo": "2026-09-26T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4694738",
-        "brand": "Shout",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any ONE (1) Shout® Product",
-        "category": "Other",
-        "validTo": "2026-08-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2570,21 +2552,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4704490",
-        "brand": "Wellshire",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Wellshire Lunchmeat",
-        "category": "Grocery",
-        "validTo": "2026-08-26T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4702257",
         "brand": "Windex",
         "discount": "Save $0.50",
         "description": "Save $0.50 on any ONE (1) Windex® Product",
         "category": "Other",
         "validTo": "2026-08-07T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4709350",
+        "brand": "Wonder",
+        "discount": "Save $0.25",
+        "description": "Save $0.25 on any ONE (1) Wonder® Classic Loaf Bread",
+        "category": "Grocery",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3002,13 +2984,6 @@
         "title": "YMMV Postmates/UberEats KFC 5 pc. Tenders Big Box $6.53",
         "url": "https://slickdeals.net/f/19641243-ymmv-postmates-ubereats-kfc-5-pc-tenders-big-box-6-53?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-17T20:02:25.000Z"
-      },
-      {
-        "id": "sd-19633278",
-        "place": "McDonald's",
-        "title": "Mcdonald's- $3 10 pc chicken mcnuggets (ymmv)",
-        "url": "https://slickdeals.net/f/19633278-mcdonald-s-3-10-pc-chicken-mcnuggets-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-15T20:35:46.000Z"
       }
     ]
   }
