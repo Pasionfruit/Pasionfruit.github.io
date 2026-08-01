@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-31T09:58:26.197Z",
+  "lastUpdated": "2026-08-01T09:43:46.507Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -146,6 +146,24 @@
         "description": "Save $0.50 off any ONE (1) Package of Angel Soft® Bath Tissue, any size",
         "category": "Household",
         "validTo": "2026-08-09T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711653",
+        "brand": "Annie's",
+        "discount": "Save $1.00",
+        "description": "when you buy ONE BOX any flavor/size Annie’s™ Nature Pals™ Fruit Snacks OR any flavor/variety Annie's™ Fruit Snack Variety or Value Packs",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4692871",
+        "brand": "Arm & Hammer",
+        "discount": "SAVE $1.50",
+        "description": "SAVE $1.50 any ONE (1) ARM & HAMMER™ Adult Toothpaste. Excludes Clean & Fresh, Cavity Protection, and trial/travel sizes.",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-13T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -302,12 +320,39 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4592629",
-        "brand": "Blue Buffalo",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 when you buy ONE (1) bag of BLUE Life Protection Formula Dry Dog Food (5lb+)",
-        "category": "Pets",
-        "validTo": "2026-08-15T02:59:59.000-04:00",
+        "id": "flipp-4692868",
+        "brand": "Betty Crocker",
+        "discount": "$0.50 OFF",
+        "description": "$0.50 OFF When you buy ONE(1) BOX any flavor/variety Betty Crocker™ Brownie Mix (Excludes Brownie Pouches)",
+        "category": "Grocery",
+        "validTo": "2026-09-15T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711658",
+        "brand": "Betty Crocker",
+        "discount": "Save $0.50",
+        "description": "when you buy ONE BOX any flavor/variety Betty Crocker™ Brownie Mix (Excludes Brownie Pouches)",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711668",
+        "brand": "BODYARMOR",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any TWO (2) BODYARMOR FIT",
+        "category": "Grocery",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4692873",
+        "brand": "Booster",
+        "discount": "Buy One, Get One",
+        "description": "Buy One, Get One Buy any ONE (1) Because Booster Pads or Underwear and Receive ONE (1) Because Booster Pads or Underwear Free (Max Savings Value Up to $17.49)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-31T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -539,7 +584,7 @@
         "id": "flipp-4702315",
         "brand": "Crush",
         "discount": "Save $1.50",
-        "description": "Save $1.50 on any TWO (2) 12pk 12oz Crush, Schweppes, Starry, Mug",
+        "description": "Save $1.50 on any TWO (2) 12pk 12oz Crush, Schweppes, Starry, Mug, and Brisk",
         "category": "Grocery",
         "validTo": "2026-08-25T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -605,6 +650,15 @@
         "description": "Save $3.00 on any TWO (2) Degree Body Heat Activated or Ultraclear Antiperspirant Stick or Dry Spray or Degree Clinical Protection Deodorant or Whole Body Deodorant product (excludes twin packs, 0.5oz, 1.0oz sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4692850",
+        "brand": "Degree",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any TWO (2) Degree Body Heat Activated or Ultraclear Antiperspirant Stick or Dry Spray or Degree Clinical Protection Deodorant or Whole Body Deodorant product (excludes twin packs, 0.5oz, 1.0oz sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -716,6 +770,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4674062",
+        "brand": "Dove Men+Care",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Dove Men+Care Maximum Protection Stick or Spray",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4700119",
         "brand": "Downy",
         "discount": "Save $3.00",
@@ -740,15 +803,6 @@
         "description": "Save $3.00 ONE Downy or Tide Rinse 48 oz (excludes travel size).",
         "category": "Household",
         "validTo": "2026-08-16T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4694734",
-        "brand": "Drano",
-        "discount": "Save $1.00",
-        "description": "Save $1 on any ONE (1) Drano® Product",
-        "category": "Other",
-        "validTo": "2026-08-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -812,6 +866,33 @@
         "description": "Save $5.00 on any ONE (1) Energizer Ultimate Lithium AA or AAA 4-pack or 9V 1-pack",
         "category": "Other",
         "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711647",
+        "brand": "Ensure",
+        "discount": "Save $8.00",
+        "description": "Save $8.00 on any THREE (3) Ensure® products (valid on 4-count packs or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-28T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711644",
+        "brand": "Ensure",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Ensure® Max Protein 42g Single Shake or Ensure® Max Protein 2-in-1 multi-pack",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-28T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711651",
+        "brand": "Famous Amos",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Famous Amos On-the-Go Cookies, 10pk or larger",
+        "category": "Grocery",
+        "validTo": "2026-09-15T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -893,24 +974,6 @@
         "description": "Save $5.00 ONE Febreze Plug Scent Booster OR Febreze Scent Booster Starter Kit (excludes trial/travel size).",
         "category": "Household",
         "validTo": "2026-08-30T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674066",
-        "brand": "Febreze",
-        "discount": "Save $3.00",
-        "description": "ONE Febreze Plug Dual, Triple Refills, or Quad Refills (excludes trial/travel size).",
-        "category": "Other",
-        "validTo": "2026-07-31T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674069",
-        "brand": "Febreze",
-        "discount": "Save $2.00",
-        "description": "ONE Febreze Fabric Spray (excludes trial/travel size).",
-        "category": "Other",
-        "validTo": "2026-07-31T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1085,48 +1148,57 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4592606",
-        "brand": "General Mills",
-        "discount": "$0.50 OFF",
-        "description": "$0.50 OFF When you buy TWO(2) BOXES any flavor/variety 6 COUNT OR LARGER Betty Crocker™ Fruit Shapes, Fruit by the Foot™, Gushers™, Fruit Roll-Ups™ Fruit Flavored Snacks OR Mott’s® Fruit Flavored Snacks",
-        "category": "Grocery",
-        "validTo": "2026-08-15T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4592617",
+        "id": "flipp-4692867",
         "brand": "General Mills",
         "discount": "$1.00 OFF",
         "description": "$1.00 OFF When you buy TWO(2) PACKAGES any flavor General Mills cereal or granola listed: Cheerios™, Cinnamon Toast Crunch™, Lucky Charms™, Reese’s Puffs, Chex™, Cocoa Puffs™, Trix™, Cookie Crisp™,",
         "category": "Grocery",
-        "validTo": "2026-08-15T02:59:59.000-04:00",
+        "validTo": "2026-09-15T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4616082",
+        "id": "flipp-4692869",
+        "brand": "General Mills",
+        "discount": "$0.50 OFF",
+        "description": "$0.50 OFF When you buy TWO(2) BOXES any flavor/variety 4 COUNT OR LARGER Nature Valley™, Fiber One™, Protein One, General Mills Cereal Bars, Mott’s Bars, Chex Mix™ Bars, LÄRABAR™ Bars, GHOST Bars OR EPIC™ Bars or Strips",
+        "category": "Grocery",
+        "validTo": "2026-09-15T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4692870",
+        "brand": "General Mills",
+        "discount": "$0.50 OFF",
+        "description": "$0.50 OFF When you buy TWO(2) BOXES any flavor/variety 6 COUNT OR LARGER Betty Crocker™ Fruit Shapes, Fruit by the Foot™, Gushers™, Fruit Roll-Ups™ Fruit Flavored Snacks OR Mott’s® Fruit Flavored Snacks",
+        "category": "Grocery",
+        "validTo": "2026-09-15T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711657",
         "brand": "General Mills",
         "discount": "Save $0.50",
         "description": "when you buy TWO BOXES any flavor/variety 6 COUNT OR LARGER Betty Crocker™ Fruit Shapes, Fruit by the Foot™, Gushers™, Fruit Roll-Ups™ Fruit Flavored Snacks OR Mott’s® Fruit Flavored Snacks",
         "category": "Grocery",
-        "validTo": "2026-08-14T19:59:59.000-04:00",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4616077",
+        "id": "flipp-4711661",
         "brand": "General Mills",
         "discount": "Save $1.00",
-        "description": "when you buy TWO PACKAGES any flavor General Mills cereal or granola listed: Cheerios™, Cinnamon Toast Crunch™, Lucky Charms™, Reese’s Puffs, Chex™, Cocoa Puffs™, Trix™, Cookie Crisp™, Golden Grahams™, Kix™, Fiber One™, Wheaties™, Raisin Nut Bran, Total™, Basic 4™, Oatmeal Crisp™, Ghost™, Motts™, Nature Valley™, :ratio™, Wilde Terra™",
+        "description": "when you buy TWO PACKAGES any flavor General Mills cereal or granola listed: Cheerios™, Cinnamon Toast Crunch™, Lucky Charms™, Reese’s Puffs, Chex™, Cocoa Puffs™, Trix™, Cookie Crisp™, Golden Grahams™, Kix™, Fiber One™, Wheaties™, Raisin Nut Bran, Total™, Basic 4™, Oatmeal Crisp™, Ghost™, Motts™, Nature Valley™, :ratio™, Wilde Terra™ (excludes cereal cups and bag cereal)",
         "category": "Grocery",
-        "validTo": "2026-08-14T19:59:59.000-04:00",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4616072",
+        "id": "flipp-4711654",
         "brand": "General Mills",
         "discount": "Save $0.50",
         "description": "when you buy TWO BOXES any flavor/variety 4 COUNT OR LARGER Nature Valley™, Fiber One™, Protein One, General Mills Cereal Bars, Mott’s® Bars, Chex Mix™ Bars, LÄRABAR™ Bars, GHOST® Bars OR EPIC™ Bars or Strips",
         "category": "Grocery",
-        "validTo": "2026-08-14T19:59:59.000-04:00",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1598,6 +1670,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4711646",
+        "brand": "Noosa",
+        "discount": "Save $0.50",
+        "description": "Save $0.50 on any ONE (1) Noosa 8oz Yoghurt",
+        "category": "Grocery",
+        "validTo": "2026-09-30T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4676949",
         "brand": "Not Your Mother's",
         "discount": "$1.00 OFF",
@@ -1733,6 +1814,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4711650",
+        "brand": "Old El Paso",
+        "discount": "Save $1.00",
+        "description": "when you buy TWO Old El Paso™ products listed: Hard Shells • Kits • Sauce • Tortillas • Pockets • Bowls • Beans • Rice • Chiles • Soup • Broth",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4702344",
         "brand": "Old Spice",
         "discount": "Save $3.00",
@@ -1823,6 +1913,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4692875",
+        "brand": "Osteo Bi-Flex®",
+        "discount": "SAVE $7.00",
+        "description": "SAVE $7.00 On ONE (1) Osteo Bi-Flex® Item 28ct-180ct",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-12T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4681178",
         "brand": "Outshine",
         "discount": "Save $1.70",
@@ -1847,15 +1946,6 @@
         "description": "Save $3.00 ONE PainQuil product (excludes trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4681939",
-        "brand": "Palmolive",
-        "discount": "SAVE $0.75",
-        "description": "SAVE $0.75 On any ONE (1) Palmolive Ultra Dish Liquid (18oz or larger)",
-        "category": "Household",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1940,21 +2030,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4711652",
+        "brand": "Pillsbury",
+        "discount": "Save $1.00",
+        "description": "when you buy TWO any flavor/variety Pillsbury™ Refrigerated Canned Dough Products (Excludes 5CT Biscuits and 4CT Crescents)",
+        "category": "Other",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4683816",
         "brand": "Planet Oat",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) Planet Oat Oatmilk 52oz or Planet Oat Creamer 32oz",
         "category": "Grocery",
         "validTo": "2026-08-19T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674471",
-        "brand": "Pledge®",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any ONE (1) Pledge® Product",
-        "category": "Household",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1985,6 +2075,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4711649",
+        "brand": "President",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) President® Butter product, any variety",
+        "category": "Grocery",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4702285",
         "brand": "Propel",
         "discount": "Save $2.00",
@@ -2012,30 +2111,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4616104",
-        "brand": "Publix",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 Off The Purchase of One (1) Publix Pistachio Crusted Cod  With Creamed Spinach, 12-oz pkg.",
-        "category": "Grocery",
-        "validTo": "2026-08-07T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4616101",
-        "brand": "Publix",
-        "discount": "Save $0.50",
-        "description": "Save $.50 Off The Purchase of One (1) Publix Southwest-Style Salmon Burgers Fresh, Ready for the Grill, 5.5-oz each",
-        "category": "Grocery",
-        "validTo": "2026-08-07T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4704487",
         "brand": "Publix",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) IceBlox Slow Melting Cocktail Cubes",
         "category": "Grocery",
         "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711640",
+        "brand": "Publix",
+        "discount": "Save $0.50",
+        "description": "Save $.50 Off The Purchase of One (1) Publix Mini Crab Cakes With Sweet Heat Dipping Sauce, Perfect for the Air Fryer, each tray",
+        "category": "Grocery",
+        "validTo": "2026-09-07T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2066,6 +2156,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4700294",
+        "brand": "Pulsin",
+        "discount": "$2 off",
+        "description": "HERO MIGHTY PATCH™M, SIMPLY SALINETM DAILY CARE NASAL SPRAY, SIMPLY SALINETM WOUND WASH, THERABREATH™M HEALTHY GUMS ORAL RINSE, OR ZICAM® RAPID MELTS",
+        "category": "Other",
+        "validTo": "2026-08-31T23:59:59.000-04:00",
+        "redemption": "print"
+      },
+      {
         "id": "flipp-4702287",
         "brand": "Quaker",
         "discount": "Save $1.00",
@@ -2093,6 +2192,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4692876",
+        "brand": "Qunol",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 When you buy ONE (1) Qunol Tumeric Product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-14T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4704489",
         "brand": "Raid",
         "discount": "Save $0.75",
@@ -2111,21 +2219,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4592590",
+        "id": "flipp-4692838",
         "brand": "Refresh",
-        "discount": "$5.00 OFF",
-        "description": "$5.00 OFF on ONE (1) Refresh Optive Mega-3® or Refresh® Relieva® PF Xtra product",
+        "discount": "$8.00 OFF",
+        "description": "$8.00 OFF on TWO (2) packages of Refresh® Eye Drops (excludes Refresh Tears® 15mL, Refresh Plus® 30ct, and Refresh Contacts® 12mL)",
         "category": "Health & Beauty",
-        "validTo": "2026-08-15T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4664181",
-        "brand": "Replenza",
-        "discount": "Save $10.00",
-        "description": "Save $10.00 when you buy ONE (1) Replenza Supplement",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-15T02:59:59.000-04:00",
+        "validTo": "2026-09-15T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2183,12 +2282,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4676948",
-        "brand": "Shamrock Farms",
-        "discount": "SAVE $0.75",
-        "description": "SAVE $0.75 on any ONE (1) Shamrock Farms 12oz RTD Milk",
-        "category": "Grocery",
-        "validTo": "2026-09-26T02:59:00.000-04:00",
+        "id": "flipp-4692863",
+        "brand": "Seventh Generation®",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 any ONE (1) Seventh Generation® Dish Soap, Foaming Dish Spray, Refill, or Dishwasher Detergent Packs or Gel, Household Cleaner or Disinfectant Product",
+        "category": "Household",
+        "validTo": "2026-08-16T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4692866",
+        "brand": "Seventh Generation®",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Seventh Generation® Liquid Laundry Detergent, Packs, Laundry Detergent Sheets, or EasyDose™",
+        "category": "Household",
+        "validTo": "2026-08-16T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2219,12 +2327,30 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4692874",
+        "brand": "Suave",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 off THREE (3) Evermark Products (Suave, Pond's, Caress, ChapStick, Q-Tip, St. Ives, Noxzema)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4689442",
         "brand": "Suavitel",
         "discount": "Save $1.50",
         "description": "Save $1.50 on any ONE (1) Suavitel Liquid Fabric Conditioner (46oz or larger) or Suavitel Refresher Fabric Rinse (25.5oz ONLY)",
         "category": "Household",
         "validTo": "2026-08-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711642",
+        "brand": "Sweet Loren's",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Sweet Loren's Breakfast Biscuits",
+        "category": "Grocery",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2399,21 +2525,30 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4616081",
-        "brand": "Totino's",
-        "discount": "Save $0.50",
-        "description": "when you buy ONE PACKAGE any flavor 50 COUNT OR LARGER Totino's™ Pizza Rolls™ Snacks, 40 COUNT OR LARGER Old El Paso™ Frozen Stuffed Nachos, 4 PACK any variety Totino's™ Pizzas, OR SINGLE Totino's™ Ultimate Pizza",
-        "category": "Grocery",
-        "validTo": "2026-08-14T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654976",
         "brand": "TRESemmé",
         "discount": "SAVE $4.00",
         "description": "SAVE $4.00 on TWO (2) TRESemme Hair Products.",
         "category": "Health & Beauty",
         "validTo": "2026-08-02T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4692872",
+        "brand": "TruSkin®",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on ONE (1) TruSkin® 1 oz or Larger Product.",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-01T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4710291",
+        "brand": "Truvia",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 On ONE (1) Truvia Item (Excld. 40ct) or Allulose Product",
+        "category": "Grocery",
+        "validTo": "2026-08-29T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2435,30 +2570,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634866",
-        "brand": "TYLENOL®",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) TYLENOL® or TYLENOL® PM (Excludes 200 ct. or larger, TYLENOL® Precise, TYLENOL® Proactive, TYLENOL® Cold & Sinus and travel & trial sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4702303",
         "brand": "Unilever",
         "discount": "Save $5.00",
         "description": "Save $5.00 on any THREE (3) Axe, Dove, Dove Men+Care, Degree, Nexxus, Tresemme, Schmidt's, Shea Moisture or Vaseline",
         "category": "Health & Beauty",
         "validTo": "2026-08-19T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4661304",
-        "brand": "Vanity Fair",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 off any ONE (1) Vanity Fair Napkins",
-        "category": "Other",
-        "validTo": "2026-08-21T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2657,6 +2774,27 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19830705",
+        "place": "Subway",
+        "title": "Subway Bogo Footlong Deal  $5",
+        "url": "https://slickdeals.net/f/19830705-subway-bogo-footlong-deal-5?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-01T03:09:19.000Z"
+      },
+      {
+        "id": "sd-19829337",
+        "place": "Chipotle",
+        "title": "Chipotle $25 Gift card (Email Delivery) $20 eGifter",
+        "url": "https://slickdeals.net/f/19829337-chipotle-25-gift-card-email-delivery-20-egifter?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-31T16:47:37.000Z"
+      },
+      {
+        "id": "sd-19829205",
+        "place": "Domino's",
+        "title": "CVS B&M 8/2-8/8: Buy $50 Door Dash, Dominos, Fandango and other participating GC's get $10 Extra Bucks limit 1 per card",
+        "url": "https://slickdeals.net/f/19829205-cvs-b-m-8-2-8-8-buy-50-door-dash-dominos-fandango-and-other-participating-gc-s-get-10-extra-bucks-limit-1-per-card?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-07-31T16:04:04.000Z"
+      },
+      {
         "id": "sd-19823922",
         "place": "Taco Bell",
         "title": "Taco Bell Meximelt $1 / Nacho Fries $1 Tuesday August 4th Only + Free Pickup",
@@ -2839,25 +2977,11 @@
         "postedAt": "2026-07-07T01:54:14.000Z"
       },
       {
-        "id": "sd-19729518",
-        "place": "Chipotle",
-        "title": "DashPass Members: 15% Off Select e-Gift Cards (Chipotle, Ulta Beauty, & More), 20% off Dave & Buster's",
-        "url": "https://slickdeals.net/f/19729518-dashpass-members-15-off-select-e-gift-cards-chipotle-ulta-beauty-more-20-off-dave-buster-s?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-06T22:12:51.000Z"
-      },
-      {
         "id": "sd-19727103",
         "place": "Domino's",
         "title": "Domino's - $50 Gift Card [Digital], $42.50, Best Buy",
         "url": "https://slickdeals.net/f/19727103-domino-s-50-gift-card-digital-42-50-best-buy?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-06T11:23:23.000Z"
-      },
-      {
-        "id": "sd-19726485",
-        "place": "Domino's",
-        "title": "Domino's $50 Gift Card (Email Delivery) $42.5 at Newegg, Limit 3 per customer.",
-        "url": "https://slickdeals.net/f/19726485-domino-s-50-gift-card-email-delivery-42-5-at-newegg-limit-3-per-customer?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-06T07:10:09.000Z"
       },
       {
         "id": "sd-19711134",
