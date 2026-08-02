@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-01T09:43:41.290Z",
+  "lastUpdated": "2026-08-02T09:43:52.259Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-07-29T00:00:00-04:00",
@@ -1160,1400 +1160,1648 @@
       ]
     },
     "Target": {
-      "validFrom": "2026-07-26T00:00:00-04:00",
-      "validTo": "2026-08-01T23:59:59-04:00",
+      "validFrom": "2026-08-02T00:00:00-04:00",
+      "validTo": "2026-08-08T23:59:59-04:00",
       "deals": [
         {
-          "id": "Target-1025529701",
-          "item": "Cascade Platinum Plus 62 Ct. Dishwasher Detergent Pacs",
-          "brand": "Cascade",
-          "price": 25.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1030246044",
+          "item": "Purina Friskies Party Mix 30-oz. cat treats.",
+          "brand": "Purina",
+          "price": 12.89,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527618",
-          "item": "Select Annie's boxed macaroni & cheese",
-          "brand": "Annie's",
-          "price": 1.39,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529581",
-          "item": "Cottonelle Ultra Clean 12-pk. mega-roll toilet paper.",
-          "brand": "Cottonelle",
-          "price": 11.69,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527560",
-          "item": "Select Hillshire Snacking Small Plates",
-          "brand": "Hillshire",
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529720",
-          "item": "Scrubbing Bubbles Fresh Brush toilet bowl cleaner starter kit.",
-          "brand": "Scrubbing Bubbles",
-          "price": 9.79,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529756",
-          "item": "Kleenex Ultra Soft 4-pk. 120-ct. back-to-school facial tissue.",
-          "brand": "Kleenex",
+          "id": "Target-1027362488",
+          "item": "Gatorade sports drinks",
+          "brand": "Gatorade",
           "price": 6.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529255",
-          "item": "Emergen-C 30-ct. vitamin C drink mix packets",
-          "brand": "Emergen-C",
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529457",
-          "item": "up&up 150 CT sandwich food storage bags",
-          "brand": "up&up",
-          "price": 3.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529485",
-          "item": "up&up™ 4-pk. 110-ct. ultra soft facial tissue",
-          "brand": "up&up",
-          "price": 5.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530243",
-          "item": "Yoplait 6-oz. single-serve yogurt",
-          "brand": "Yoplait",
-          "price": 3,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529175",
-          "item": "Premier Protein 12-pk. 11-oz. protein shakes.",
-          "brand": "Premier Protein",
-          "price": 26.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530287",
-          "item": "Select MUSH single-serve overnight oats",
-          "brand": "Mush",
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824351",
-          "item": "Select PopCorners, SunChips & Smartfood snacks",
-          "brand": "PopCorners | SunChips | Smartfood",
-          "price": 7,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028823884",
-          "item": "JanSport Cross Town Plus backpack, JanSport Cool Student backpack",
-          "brand": "Jansport",
-          "price": 44.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824020",
-          "item": "Paperback",
-          "brand": null,
-          "price": 15.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824061",
-          "item": "Paperback",
-          "brand": null,
-          "price": 14.39,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824339",
-          "item": "Select Talenti ice cream",
-          "brand": "Talenti",
-          "price": 9,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824024",
-          "item": "Hardcover",
-          "brand": null,
-          "price": 20.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824033",
-          "item": "Pokemon Trading Card Game Mega Evolution Chaos Rising Booster Box Bundle",
-          "brand": "Pokémon",
-          "price": 31.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824103",
-          "item": "LEGO Marvel Spider-Man",
-          "brand": "LEGO®",
-          "price": 99.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529602",
-          "item": "Dixie Ultra 130 ct. paper plates",
-          "brand": "Dixie",
-          "price": 18.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028823870",
-          "item": "Owala 24-oz. stainless steel FreeSip water bottle.",
-          "brand": "Owala",
-          "price": 29.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824015",
-          "item": "GETTING AWAY WITH MURDER",
-          "brand": null,
-          "price": 21.7,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824055",
-          "item": "Hardcover",
-          "brand": null,
-          "price": 23.8,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824099",
-          "item": "LEGO Marvel Spider-Man vs Hulk Epic Clash",
-          "brand": "Lego",
-          "price": 89.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824109",
-          "item": "LEGO Marvel Spider-Man Prison Transport Chase",
-          "brand": "LEGO®",
-          "price": 49.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824114",
-          "item": "Savage Hulk Talk'n electronic mask.",
-          "brand": null,
-          "price": 29.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825038",
-          "item": "MindWare Tacticus",
-          "brand": null,
-          "price": 49.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825045",
-          "item": "LEGO Creator 3-in-1 Space Exploration Telescope",
-          "brand": "Lego",
-          "price": 34.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825051",
-          "item": "LEGO Creator 3-in-1 Turtle with a Water Lily Flower",
-          "brand": "LEGO®",
-          "price": 9.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825247",
-          "item": "Starbucks 22-ct. single-serve K-Cup coffee pods",
-          "brand": "Starbucks",
-          "price": 15.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028823888",
-          "item": "JanSport Cool Student backpack",
-          "brand": "Jansport",
-          "price": 66.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824030",
-          "item": "Pokemon Trading Card Game Mega Evolution Elite Trainer Box",
-          "brand": "Pokémon",
-          "price": 59.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824117",
-          "item": "Savage Smash Hulk",
-          "brand": null,
-          "price": 29.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824347",
-          "item": "Select Lay's Kettle & Simply snacks",
-          "brand": "Lay's",
-          "price": 6,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825030",
-          "item": "LEGO Creator 3-in-1 Retro Gaming Console toy",
-          "brand": "Lego",
-          "price": 19.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824329",
-          "item": "Pringles 18-ct. variety pack snacks",
-          "brand": "Pringles",
-          "price": 8.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825244",
-          "item": "Peet's 22-ct. single-serve K-Cup coffee pods",
-          "brand": null,
-          "price": 15.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825241",
-          "item": "Chobani 24-oz. creamers.",
-          "brand": "Chobani",
-          "price": 10,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825962",
-          "item": "Mondo Llama 10-ct. broad tip markers or 12-ct. colored pencils",
-          "brand": "Mondo Llama",
-          "price": 0.5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825977",
-          "item": "up&up 2-pockets pronged folder",
-          "brand": "up&up",
-          "price": 0.5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825989",
-          "item": "Crayola 10-ct. broad tip markers or 12-ct. colored pencils",
-          "brand": "Crayola",
-          "price": 0.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028826010",
-          "item": "Elmer's 4-oz. school glue or 2-ct. glue sticks",
-          "brand": "Elmer's",
-          "price": 0.5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028826039",
-          "item": "Mondo Llama™ 24-ct. crayons",
-          "brand": "Mondo Llama",
-          "price": 0.25,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028826044",
-          "item": "Dealworthy™ folders",
-          "brand": "dealworthy",
-          "price": 0.25,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824049",
-          "item": "TYLA, A*POP",
-          "brand": null,
-          "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824079",
-          "item": "Ariana Grande, petal",
-          "brand": "ARIANA GRANDE",
-          "price": 32.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824045",
-          "item": "Green Day, Nimrods Original Soundtrack",
-          "brand": null,
-          "price": 39.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825035",
-          "item": "LEGO Creator 3-in-1 Wild Animals: Colorful Hummingbird",
-          "brand": "LEGO®",
-          "price": 23.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825042",
-          "item": "Barbie Science Lab play set.",
-          "brand": "Barbie",
-          "price": 53.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825054",
-          "item": "Pasta Passion & Pistols board game.",
-          "brand": null,
-          "price": 19.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824342",
-          "item": "Favorite Day™ ice cream pints",
-          "brand": "Favorite Day",
-          "price": 2.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825242",
-          "item": "Select Starbucks bagged coffee",
-          "brand": "Starbucks",
-          "price": 9.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825243",
-          "item": "Select Folgers ground coffee",
-          "brand": "Folgers",
-          "price": 13.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025526496",
-          "item": "Room Essentials™ 5-pc. 1-cup plastic food storage set",
-          "brand": "Room Essentials",
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025526638",
-          "item": "65\" | TCL • Roku TV",
-          "brand": "TCL",
-          "price": 549.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025526534",
-          "item": "Therabody Theragun Prime (6th gen).",
-          "brand": "Therabody",
-          "price": 329.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025526907",
-          "item": "Clorox 3-pk. 225-ct. disinfecting wipes.",
-          "brand": "Clorox",
-          "price": 12.79,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527008",
-          "item": "BOUNTY 6-pk. select-a-size triple-roll paper towels.",
-          "brand": null,
-          "price": 16.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528015",
-          "item": "Select Sargento sliced cheese",
-          "brand": "Sargento",
-          "price": 2.79,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528335",
-          "item": "Select Perfect Bar multipack bars",
-          "brand": "Perfect Bar",
-          "price": 7.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530070",
-          "item": "Select Dr Pepper, Canada Dry & more",
-          "brand": "Dr Pepper | Canada Dry",
-          "price": 16,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530291",
+          "id": "Target-1027362548",
           "item": "Select LaCroix 8-pk. sparkling water.",
           "brand": "LaCroix",
           "price": 11,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025516825",
-          "item": "OLIPOP 4-pk. prebiotic soda",
-          "brand": "Olipop",
-          "price": 7.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361107",
+          "item": "Good & Gather 64-oz. organic milk.",
+          "brand": "Good & Gather",
+          "price": 3.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025530185",
-          "item": "Gatorade 12-pk. sports drinks",
-          "brand": "Gatorade",
-          "price": 6.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361132",
+          "item": "Michelob Ultra 12-pk. beer.**",
+          "brand": "Michelob",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025530368",
-          "item": "Select 6-pk. craft beer.**",
-          "brand": null,
-          "price": 11.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361757",
+          "item": "Select Sargento sliced cheese",
+          "brand": "Sargento",
+          "price": 5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529805",
-          "item": "Zevo Flying Insect Trap starter kit.",
-          "brand": "Zevo",
-          "price": 17.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362431",
+          "item": "Select Cook's 750mL sparkling wine.**",
+          "brand": "Cook's",
+          "price": 7,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527582",
-          "item": "Midea 0.9-cu.-ft. 900-watt microwave oven",
-          "brand": "Midea",
-          "price": 79.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362445",
+          "item": "Select Kim Crawford 750mL wine**",
+          "brand": "Kim Crawford",
+          "price": 12,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527916",
-          "item": "BISSELL FeatherWeight corded stick & handheld vacuum",
-          "brand": "Bissell",
-          "price": 34.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362656",
+          "item": "Select Dr Pepper, A&W, Canada Dry a more 12-pk. soda",
+          "brand": "Dr Pepper | A&W | Canada Dry",
+          "price": 16,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025528033",
-          "item": "Shark Lift-Away corded vacuum",
-          "brand": "SHARK®",
-          "price": 229.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362986",
+          "item": "up&up 28-oz. fresh liquid dishwashing soap",
+          "brand": "up&up",
+          "price": 2.59,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529617",
-          "item": "Tide Evo Free & Gentle 42 CT. laundry detergent tiles",
+          "id": "Target-1027362907",
+          "item": "Select Lunchables Basics",
+          "brand": "Lunchables",
+          "price": 5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363222",
+          "item": "Glad ForceFlex 13-gal. 100-cf. tall drawstring kitchen trash bags.",
+          "brand": "Glad",
+          "price": 19.79,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363253",
+          "item": "Hefty Ultra Strong 13-gal. 50-ct. tall drawstring kitchen trash bags.",
+          "brand": "Hefty",
+          "price": 11.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363259",
+          "item": "OxiClean Max Force 3-lb. unscented stain remover powder.",
+          "brand": "OxiClean",
+          "price": 10.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363213",
+          "item": "Select Dr Pepper, A&W, Canada Dry & more 12-pk. sodas",
+          "brand": "Dr Pepper | A&W | Canada Dry",
+          "price": 16,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363246",
+          "item": "Tide Evo 42-cit. Spring Blast laundry detergent tiles.",
           "brand": "Tide",
           "price": 19.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529052",
-          "item": "Pampers Amore 108 ct. diapers.",
-          "brand": "Pampers",
-          "price": 47.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529514",
-          "item": "up&up 40-ct antibacterial hand wipes",
+          "id": "Target-1027363352",
+          "item": "up&up 92-oz. free & clear liquid laundry detergent",
           "brand": "up&up",
-          "price": 1.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "price": 8.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529535",
-          "item": "up&up 2-pk. triple-roll paper towels.",
+          "id": "Target-1027363074",
+          "item": "Sale Select Good & Gather frozen shrimp",
+          "brand": "Good & Gather",
+          "price": 16,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363139",
+          "item": "Select Hillshire Farm lunch meat",
+          "brand": "Hillshire Farm",
+          "price": 7,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363228",
+          "item": "Kleenex Ultra Soft 6-pk. 720-ct. facial tissues.",
+          "brand": "Kleenex",
+          "price": 10.29,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363240",
+          "item": "Tide Evo 40-ct. Free & Gentle unscented laundry detergent tiles.",
+          "brand": "Tide",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363327",
+          "item": "up&up 6-ct. triple-roll make-a-size paper towels.",
+          "brand": "up&up",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361889",
+          "item": "LEGO Pokémon Rayquaza 72168.",
+          "brand": "Lego",
+          "price": 129.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362153",
+          "item": "La Roche Posay 13.52-oz. Effaclar Supramolecular cleanser.",
+          "brand": "LA ROCHE POSAY",
+          "price": 25.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362170",
+          "item": "MONDAY 5.07-oz. hair & body mist.",
+          "brand": "Monday",
+          "price": 8.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363342",
+          "item": "up&up 18-cu. soft & strong mega-roll toilet paper.",
           "brand": "up & up",
-          "price": 5.39,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "price": 13.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025528741",
-          "item": "Premium collectible blind boxes.",
+          "id": "Target-1027360290",
+          "item": "STEPHEN KING Special edition Hardcover",
+          "brand": null,
+          "price": 35,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362836",
+          "item": "Kraft 4-pk. macaroni & cheese cups",
+          "brand": "Kraft",
+          "price": 8,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362477",
+          "item": "Oral-B iO Series 5 electric toothbrush",
+          "brand": "Oral-B",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027356669",
+          "item": "Select Room Essentials™ dinnerware",
+          "brand": "Room Essentials",
+          "price": 0.5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358384",
+          "item": "Kenmore 11-cu.-ft. 1000-watt microwave oven",
+          "brand": "Kenmore",
+          "price": 59.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361053",
+          "item": "Savage Hulk Talk'n electronic mask.",
+          "brand": null,
+          "price": 29.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358536",
+          "item": "Hamilton Beach 2-slice stainless steel toaster",
+          "brand": "Hamilton Beach",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358412",
+          "item": "Keurig K-Supreme single-serve coffee maker",
+          "brand": "Keurig",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358565",
+          "item": "Frigidaire 16-cu.-ft. dorm fridge",
+          "brand": "Frigidaire",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358503",
+          "item": "T-Fal Simply Cook 12-pc. nonstick ceramic cookware set",
+          "brand": "T-fal",
+          "price": 59.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358474",
+          "item": "Culligan ZeroWater Technology 32-cup water dispenser",
+          "brand": "Culligan",
+          "price": 34.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358771",
+          "item": "Ninja Crispi portable cooking system",
+          "brand": "Ninja",
+          "price": 159.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358647",
+          "item": "Frigidaire Gallery nugget ice maker",
+          "brand": "FRIGIDAIRE GALLERY",
+          "price": 199,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358798",
+          "item": "Ninja BlendBoss blender with 20-oz. travel tumbler",
+          "brand": "Ninja",
+          "price": 109.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358741",
+          "item": "Hamilton Beach 12-cup programmable coffee maker",
+          "brand": "Hamilton Beach",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360125",
+          "item": "Whitney Houston, WHITNEY",
+          "brand": "Whitney Houston",
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360320",
+          "item": "Hardcover",
+          "brand": null,
+          "price": 21,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360270",
+          "item": "Paperback",
+          "brand": null,
+          "price": 16,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360232",
+          "item": "Hardcover",
+          "brand": null,
+          "price": 24.5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360199",
+          "item": "Paperback",
+          "brand": null,
+          "price": 15.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361112",
+          "item": "Toddler boys' Marvel Spider-Man T-shirt",
+          "brand": null,
+          "price": 8,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361085",
+          "item": "LEGO Marvel Spider-Man vs Hulk Epic Clash set 76350",
+          "brand": "Lego",
+          "price": 89.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360991",
+          "item": "Boys' Marvel Spider-Man basketball jersey",
+          "brand": null,
+          "price": 15,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361354",
+          "item": "Disney Princess Style Collection DIY tote bag",
           "brand": null,
           "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529661",
-          "item": "Downy Citrea 21.1-oz. scent booster beads",
-          "brand": "Downy",
-          "price": 15.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361266",
+          "item": "Disney Frozen Elsa fashion doll with icy creations playset, dough & 9 accessories",
+          "brand": "Disney",
+          "price": 26.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529821",
-          "item": "Ziploc 48-ct. quart-size food storage bags.",
-          "brand": "Ziploc",
-          "price": 5.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361291",
+          "item": "Sesame Street Tickle Me Elmo",
+          "brand": "Sesame Street",
+          "price": 39.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025530223",
-          "item": "Select Danimals yogurt smoothies",
-          "brand": "Danimals",
-          "price": 6,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527999",
-          "item": "BLACK+DECKER cordless handheld vacuum",
-          "brand": "BLACK+DECKER",
-          "price": 34.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527285",
-          "item": "Clear Protein clear packet",
-          "brand": "Clean Simple",
-          "price": 3.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527336",
-          "item": "e.l.f Hair products",
-          "brand": "e.l.f",
-          "price": 10,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527691",
-          "item": "Philips 2300 automatic espresso maker with milk frother",
-          "brand": "Philips",
-          "price": 549.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527887",
-          "item": "BISELL ReadyClean cordless stick vacuum",
-          "brand": null,
-          "price": 124.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529087",
-          "item": "Millie Moon 120 ct. luxury diapers",
+          "id": "Target-1027361955",
+          "item": "Millie Moon 120-ct. luxury diapers.",
           "brand": "MILLIE MOON",
           "price": 39.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529641",
-          "item": "Glad ForceFlex MaxStrength 45 ct. 13-gal. tall kitchen trash bags.",
-          "brand": "Glad",
-          "price": 12.79,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361975",
+          "item": "The Honest Company Clean Conscious 576-ct. baby wipes",
+          "brand": "The Honest Company",
+          "price": 37.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529784",
-          "item": "Clorox ToiletWand 3-in-1 starter kit.",
-          "brand": "Clorox",
-          "price": 12.89,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362195",
+          "item": "Athena Club 8-oz. Glossy shave oil.",
+          "brand": "ATHENA CLUB",
+          "price": 9.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025530089",
-          "item": "Select Naked juice smoothies",
-          "brand": "Naked",
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529228",
-          "item": "Pioneer Pastures 4-pk. 11-oz. protein milkshakes",
-          "brand": "Pioneer",
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529852",
-          "item": "Select Tyson frozen chicken nuggets, tenders & more",
-          "brand": "Tyson",
+          "id": "Target-1027362236",
+          "item": "Good Molecules 15 mL firming peptide eye cream",
+          "brand": "GOOD MOLECULES",
           "price": 5.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529942",
-          "item": "Select Oscar Mayer hot dogs",
-          "brand": "Oscar Mayer",
+          "id": "Target-1027362293",
+          "item": "L'Oréal Paris 1.7-oz. Revitalift Triple Power facial moisturizer",
+          "brand": "L'oreal paris",
+          "price": 23.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362252",
+          "item": "MEDIHEAL 0.81-oz. Essential mask.",
+          "brand": "Mediheal",
+          "price": 2.19,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362273",
+          "item": "Hiya Kids' 30-ct. daily multivitamin chewable tablets.",
+          "brand": "Hiya",
+          "price": 34.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362387",
+          "item": "Colgate Total Active Prevention whitening toothpaste",
+          "brand": "Colgate",
+          "price": 7.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362443",
+          "item": "BelliWelli 16 servings daily fiber supplement + probiotics, electrolytes & collagen power",
+          "brand": "BelliWelli",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362366",
+          "item": "Zyrtec 24 Hour 30-ct. allergy relief tablets.",
+          "brand": "Zyrtec",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362346",
+          "item": "Nicorette 2-mg 160-ct. stop smoking aid nicotine gum",
+          "brand": "Nicorette",
+          "price": 66.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362408",
+          "item": "up&up™ 500-mg./1000-ct. extra strength pain relief caplets.",
+          "brand": "up&up",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362424",
+          "item": "Lumify 7.5 mL eye drops for redness relief.",
+          "brand": "lumify",
+          "price": 19.59,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362522",
+          "item": "Oral-B iO Series 3 electric toothbrush",
+          "brand": "Oral-B",
+          "price": 59.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362491",
+          "item": "Philips Sonicare 6100 electric toothbrush",
+          "brand": "Philips",
+          "price": 89.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362507",
+          "item": "Philips Sonicare 4100 electric toothbrush",
+          "brand": "Philips",
+          "price": 39.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362867",
+          "item": "Select General Mills family-size cereal",
+          "brand": "General Mills",
+          "price": 8,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362922",
+          "item": "Select Jimmy Dean sausage links, patties & crumbles",
+          "brand": "Jimmy Dean",
+          "price": 4.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362933",
+          "item": "Select Good & Gather™ single-serve coffee pods",
+          "brand": "Good & Gather™",
+          "price": 7.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363335",
+          "item": "up&up 8.5\" 55-ct. heavy-duty disposable paper plates.",
+          "brand": "up&up",
+          "price": 2.89,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363359",
+          "item": "up&up 4-pk. 110-ct. limited-edition back-to-school facial tissues",
+          "brand": "up&up",
+          "price": 5.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244776",
+          "item": "Sale Select Goldfish snacks",
+          "brand": "Goldfish",
           "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527734",
-          "item": "Nespresso Vertuo Up coffee & espresso maker",
-          "brand": "Nespresso",
-          "price": 169.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1030245643",
+          "item": "UNO Pop card game",
+          "brand": "UNO",
+          "price": 6.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028826017",
-          "item": "up&up® school glue or 2-ct. glue sticks.",
+          "id": "Target-1030246034",
+          "item": "Purina Beggin' 25-oz. bacon dog treats",
+          "brand": "Purina",
+          "price": 10.19,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652268",
+          "item": "Elmer's 4-oz. school glue or 2-ct. glue sticks",
+          "brand": "Elmer's",
+          "price": 0.5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652249",
+          "item": "Crayola 10-ct. broad tip markers or 12-ct. colored pencils.",
+          "brand": "Crayola",
+          "price": 0.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360891",
+          "item": "NFL Starter pullover jacket",
+          "brand": null,
+          "price": 149.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360857",
+          "item": "NFL Starter satin jacket",
+          "brand": "NFL",
+          "price": 129.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361153",
+          "item": "Poppi Spider-Man 4-pk. lemonade soda",
+          "brand": "Poppi",
+          "price": 6.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361859",
+          "item": "LEGO Pokémon SMART Play: Charizard vs. Jolteon Ultimate Battle",
+          "brand": "Lego",
+          "price": 119.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362071",
+          "item": "bumbum 114.ct. luxury skincare diapers.",
+          "brand": "bumbum",
+          "price": 39.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652653",
+          "item": "Pixi Perfume 0.5-oz. Eau de Parfum.",
+          "brand": "PIXI",
+          "price": 17.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652637",
+          "item": "Dove Beauty 2.6-oz. Ice Cream Parlor antiperspirant & deodorant stick",
+          "brand": "Dove",
+          "price": 7.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652668",
+          "item": "The Doux Mousse Def",
+          "brand": "THE DOUX",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652660",
+          "item": "Being Curl 12-oz. Power conditioner cream formula",
+          "brand": "Being",
+          "price": 6.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652664",
+          "item": "Dove Beauty 20-oz. body wash",
+          "brand": "Dove",
+          "price": 7.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029652640",
+          "item": "Maybelline Lash Sensational Sky Tubes Tubing 0.23-oz 24-H mascara",
+          "brand": "Maybelline",
+          "price": 10.89,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1029651623",
+          "item": "Up&up 4-oz. school glue or 2-ct. glue sticks",
           "brand": "up&up",
           "price": 0.25,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028826020",
-          "item": "Mondo Llama 10-ct. broad or fine tip colored markers",
-          "brand": "Mondo Llama",
-          "price": 0.5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825983",
+          "id": "Target-1029651563",
           "item": "up&up composition notebook",
           "brand": "up&up",
           "price": 0.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028825996",
-          "item": "Crayola 24-ct. crayons",
-          "brand": "Crayola",
+          "id": "Target-1029651496",
+          "item": "Mondo Llama 10 CT broad tip markers or 12 ct. colored pencils",
+          "brand": "Mondo Llama",
           "price": 0.5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527249",
-          "item": "Sunny day must-haves",
-          "brand": null,
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029651593",
+          "item": "Mondo Llama™ 24-ct. crayons",
+          "brand": "Mondo Llama",
+          "price": 0.25,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527614",
-          "item": "Cuisinart Classic 10-pc. stainless steel cookware set",
-          "brand": "Cuisinart",
-          "price": 127.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527642",
-          "item": "Gourmia 6-qt. digital air fryer",
-          "brand": "Gourmia",
-          "price": 49.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527759",
-          "item": "Frigidaire 1.6-cu.-ft. fridge with freezer",
-          "brand": "Frigidaire",
-          "price": 119.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527666",
-          "item": "Frigidaire 6-can mini fridge",
-          "brand": "Frigidaire",
-          "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527829",
-          "item": "DREO Macro 416 True HEPA air purifier",
-          "brand": "Dreo",
-          "price": 69.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527970",
-          "item": "Dirt Devil Vibe 3-in-1 corded stick vacuum",
-          "brand": "Dirt Devil",
-          "price": 49.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528093",
-          "item": "Shark Navigator Lift-Away Deluxe cored vacuum",
-          "brand": "SHARK®",
-          "price": 149.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528141",
-          "item": "Shark Pet cordless stick vacuum",
-          "brand": "Shark",
-          "price": 199.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528202",
-          "item": "REXING DT2 dual-channel 1080p front & rear dash cam",
-          "brand": "Rexing",
-          "price": 89.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025526850",
-          "item": "55\" | TCL • Roku TV QM5 Series Smart 4K UHD Mini-LED TV",
-          "brand": "TCL",
-          "price": 429.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530180",
-          "item": "Select Kellogg's family-size cereal",
-          "brand": "Kellogg's",
-          "price": 8,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530273",
-          "item": "Select Eggo frozen waffles",
-          "brand": "Eggo",
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530418",
-          "item": "Select Château d'Esclans 750mL wine.**",
-          "brand": "Château D'Esclans",
-          "price": 21,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530414",
-          "item": "Select Twisted Tea, Jumex & more",
-          "brand": "Twisted Tea | Jumex",
-          "price": 17.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530423",
-          "item": "BARK Ebi Eiko plush dog toy.",
-          "brand": "Bark!",
-          "price": 13.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530431",
-          "item": "PetArmor Plus 3-month flea & tick treatment for dogs.",
-          "brand": "PetArmor",
-          "price": 27.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530463",
-          "item": "Boots & Barkley 2-pc. tennis ball launcher dog toy.",
-          "brand": "Boots & Barkley",
-          "price": 4.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825245",
-          "item": "Good & Gather™ 64-oz. organic milk.",
-          "brand": "Good & Gather™",
-          "price": 3.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028834872",
-          "item": "Our Generation single horse barn with foal & accessories",
-          "brand": "Our Generation",
-          "price": 54.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028834875",
-          "item": "Gigglescape™ 5-pc. wooden fold-up dollhouse with accessories.",
-          "brand": null,
-          "price": 60,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028827662",
-          "item": "Brightroom 10-ct. flocked velvet closet hangers",
-          "brand": "Brightroom™",
-          "price": 6,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028834873",
-          "item": "PeachyBbies 12-ct. slime.",
-          "brand": null,
-          "price": 14.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028834877",
-          "item": "Young + Wild and Friedman Grab & Go slime & sand",
-          "brand": null,
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028834871",
-          "item": "Baby Alive Nighttime Snuggles doll.",
-          "brand": "Baby Alive",
-          "price": 29.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658096",
-          "item": "JLab GO Air Pop Bluetooth earbuds",
-          "brand": "JLab",
-          "price": 19.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527783",
-          "item": "Mr. Coffee Switch 12-cup coffee maker",
-          "brand": "Mr. Coffee",
-          "price": 18.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025527943",
-          "item": "Dreo Macro 417S True HEPA air purifier",
-          "brand": "Dreo",
-          "price": 84.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529144",
-          "item": "Grüns Kids Superfoods Greens 12-ct. gummies.",
-          "brand": "Grüns",
-          "price": 14.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028834870",
-          "item": "Our Generation arts & crafts activity doll.",
-          "brand": "Our Generation",
-          "price": 39.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658085",
-          "item": "JBL Flip 7 Bluetooth speaker",
-          "brand": "JBL",
-          "price": 99.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658064",
-          "item": "TI-84 Plus CE graphing calculator",
-          "brand": "Texas Instruments",
-          "price": 94.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658069",
-          "item": "Paper Mate gel pens*",
-          "brand": "Paper Mate",
-          "price": 13.29,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658076",
-          "item": "JBL Charge 6 portable Bluetooth speaker",
-          "brand": "JBL",
-          "price": 159.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658072",
-          "item": "JLab GO Air Sport true wireless earbuds",
-          "brand": "JLab",
-          "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658061",
-          "item": "Gadget grab tech accessories",
-          "brand": null,
-          "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658079",
-          "item": "JBL Boombox 4 Bluetooth speaker",
-          "brand": "JBL",
-          "price": 449.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658081",
-          "item": "JBL SenseLite wireless earbuds",
-          "brand": "JBL",
-          "price": 119.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658107",
-          "item": "Apple MacBook Neo",
-          "brand": "Apple",
-          "price": 699.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658101",
-          "item": "AirPods Max 2",
-          "brand": "Apple",
-          "price": 549.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658103",
-          "item": "Apple AirPods Pro 3",
-          "brand": "Apple",
-          "price": 249.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1029658105",
-          "item": "Apple AirTag (1 pack) 2nd generation",
-          "brand": "Apple",
-          "price": 29.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529432",
-          "item": "up&up 150-ct. snack food storage bags.",
+          "id": "Target-1029651526",
+          "item": "up&up 2-pocket pronged folder",
           "brand": "up&up",
-          "price": 3.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "price": 0.5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025526935",
-          "item": "Lysol 3-pk. 240-ct. disinfecting wipes",
-          "brand": "Lysol",
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529740",
-          "item": "Air Wick 4 CT scented oil air freshener refills.",
-          "brand": "Air Wick",
-          "price": 10.19,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529678",
-          "item": "Tide Evo Spring Blast 42-ct. laundry detergent tiles.",
-          "brand": "Tide",
-          "price": 19.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025529914",
-          "item": "Good Little Garden™ fresh Girlfriends' Day bouquet.",
-          "brand": "Good Little Garden",
-          "price": 12,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528107",
-          "item": "Select Lunchly meal kits",
-          "brand": "Lunchly",
-          "price": 8,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028824322",
-          "item": "Sale Select MadeGood granola bars & snacks",
-          "brand": "MadeGood",
-          "price": 7,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530427",
-          "item": "Boots & Barkley™ 17\" sofa cat scratcher",
-          "brand": "Boots & Barkley",
-          "price": 9.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530458",
-          "item": "Good'n'Fun 12-oz. rawhide dog treats",
-          "brand": "Good 'n' Fun",
-          "price": 11.79,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530445",
-          "item": "KONG 0.5-lb. armor bone dog toy.",
-          "brand": "KONG",
-          "price": 15.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530451",
-          "item": "Kindfull™ 5-ct. rawhide-free chicken recipe roll dog treats",
-          "brand": "Kindfull",
-          "price": 14.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825248",
-          "item": "SToK 48-oz. cold brew chilled coffee",
-          "brand": "Stok",
-          "price": 11,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028826027",
-          "item": "Dealworthy spiral notebook",
-          "brand": "dealworthy",
-          "price": 0.35,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028827507",
-          "item": "Brightroom™ 66-qt. clear latching tote",
-          "brand": "Brightroom™",
-          "price": 9,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028826030",
+          "id": "Target-1029652187",
           "item": "Dealworthy backpacks",
           "brand": null,
           "price": 5,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028827569",
-          "item": "up&up 4-pk. 60-watt LED lightbulbs",
-          "brand": "up & up",
-          "price": 5.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652260",
+          "item": "Crayola 24-ct. crayons",
+          "brand": "Crayola",
+          "price": 0.5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028827631",
-          "item": "Heyday™ 12-ft. 3-outlet indoor extension cord.",
-          "brand": "Heyday",
-          "price": 15,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652275",
+          "item": "JanSport Big Student backpack",
+          "brand": "Jansport",
+          "price": 61.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028834876",
-          "item": "FAO Schwarz 14\" Isabella newborn baby doll.",
-          "brand": "FAO Schwarz",
-          "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652634",
+          "item": "Pantene Abundant & Strong 13.5-oz. shampoo",
+          "brand": "Pantene",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028834874",
-          "item": "Our Generation 18\" doll with balloons",
-          "brand": "Our Generation",
-          "price": 29.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652647",
+          "item": "MIX:BAR 5-oz. women's hair & body mist.",
+          "brand": "MIX:BAR",
+          "price": 9.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028825246",
-          "item": "Select Peet's bagged coffee",
-          "brand": "Peet's",
-          "price": 10.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652179",
+          "item": "Dealworthy spiral notebook",
+          "brand": "dealworthy",
+          "price": 0.35,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527855",
-          "item": "WINIX T500 True HEPA carbon filter air purifier",
-          "brand": "Winix",
-          "price": 109.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652201",
+          "item": "Dealworthy™ folders",
+          "brand": "dealworthy",
+          "price": 0.25,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025528119",
-          "item": "Shark Steam & Scrub corded mop",
-          "brand": "SHARK®",
-          "price": 169.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1029652169",
+          "item": "Mondo Llama 10 CT broad or fine tip colored markers",
+          "brand": "Mondo Llama™",
+          "price": 0.5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025528013",
-          "item": "Oroweat 24-oz. protein bread",
-          "brand": "Oroweat",
-          "price": 5.39,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025530439",
-          "item": "Quirky Kitty Furst Class 3-pc. cat toy set.",
+          "id": "Target-1027360158",
+          "item": "Exclusive Chuck Timely & The Hourglass, Role Model",
           "brand": null,
-          "price": 6.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "price": 32.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025529018",
-          "item": "Huggies Little Movers 120-diapers",
-          "brand": "Huggies",
-          "price": 44.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027358709",
+          "item": "Gourmia 6-qt. digital air fryer",
+          "brand": "Gourmia",
+          "price": 49.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025530169",
-          "item": "Select Oyster Bay 750mL wine",
-          "brand": "Oyster Bay",
-          "price": 11,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362514",
+          "item": "Good Little Garden™ fresh Sunny Garden bouquet.",
+          "brand": "Good Little Garden",
+          "price": 14,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025528063",
-          "item": "Shark Navigator robotic vacuum",
-          "brand": "Shark",
-          "price": 299.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027361786",
+          "item": "LEGO Pokémon SMART Play™: Charmander and Geodude's Cavern Clash",
+          "brand": "LEGO®",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527831",
-          "item": "Select Market Pantry™ take & bake pizza",
-          "brand": "Market Pantry",
-          "price": 6,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362828",
+          "item": "Charmin Ultra Soft 12-ct. mega-XL roll toilet paper.",
+          "brand": "Charmin",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025526674",
-          "item": "40\" | TCL • Roku TV Q3 Series Smart 1080P QLED TV",
-          "brand": "TCL",
-          "price": 159.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1027362781",
+          "item": "BOUNTY 6-Ct. triple-roll select-a-size paper towels.",
+          "brand": "Bounty",
+          "price": 16.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527353",
-          "item": "Select Stouffer's frozen meals",
-          "brand": "Stouffer's",
-          "price": 9,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1030238648",
+          "item": "Select Nature Valley bars & snacks",
+          "brand": "Nature Valley",
+          "price": 5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028824069",
-          "item": "Ariana Grande, petal",
-          "brand": null,
-          "price": 12.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028825047",
-          "item": "Murder Phone party game",
-          "brand": null,
-          "price": 24.99,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1025528124",
-          "item": "Totino's 50 ct. frozen pizza rolls",
-          "brand": "Totino's",
-          "price": 4.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
-        },
-        {
-          "id": "Target-1028827600",
-          "item": "Brightroom 2.2-bushel flexible laundry hamper",
-          "brand": "Brightroom™",
+          "id": "Target-1030238532",
+          "item": "Select Chips Ahoy! Family-Size cookies",
+          "brand": "Nabisco",
           "price": 8,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1028827538",
-          "item": "Command 8-ct. X-Large damage-free hanging strips",
+          "id": "Target-1030238619",
+          "item": "Select Gushers",
+          "brand": "Gushers",
+          "price": 7.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030241917",
+          "item": "STEM Flying Insects, 1 light trap & 1 cartridge",
+          "brand": "STEM",
+          "price": 15.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358446",
+          "item": "Chefman Fast-Boil 1.8-liter infuser kettle",
+          "brand": "Chefman",
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362772",
+          "item": "Charmin Ultra Strong 12-ct. mega-XL roll toilet paper",
+          "brand": "Charmin",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362918",
+          "item": "up&up 4-pk. 300-ct. lemon & fresh disinfecting wipes",
+          "brand": "up&up",
+          "price": 11.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244833",
+          "item": "Command Decor large metal hook with 6 medium strips",
           "brand": "Command",
-          "price": 9.49,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025530261",
-          "item": "Pop-Tarts 8-ct. protein & 12-ct. frosted pastries",
-          "brand": "Pop-Tarts",
-          "price": 6,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "id": "Target-1030244852",
+          "item": "Therabody Theragun Mini (3rd generation)",
+          "brand": "Therabody",
+          "price": 219.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         },
         {
-          "id": "Target-1025527437",
-          "item": "Kraft 2-pk. & 4-pk. macaroni & cheese cups",
-          "brand": "Kraft",
+          "id": "Target-1030244956",
+          "item": "Select Mott's Fruit Roll-Ups & more fruit snacks.",
+          "brand": "Mott's",
+          "price": 7.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244625",
+          "item": "Nintendo Switch 2: Pokemon Pokopia Expansion Pass with free lenticular card",
+          "brand": null,
+          "price": 34.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244699",
+          "item": "Marvel Tokon: Fighting Souls for PS5",
+          "brand": null,
+          "price": 59.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030238590",
+          "item": "M&M's family-size chocolate candy",
+          "brand": "M&Ms",
+          "price": 8.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244649",
+          "item": "Blue Buffalo Bits 19-oz. dog treats.",
+          "brand": "Blue Buffalo",
+          "price": 15.79,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030238561",
+          "item": "Select Pirate's Booty snacks",
+          "brand": "Pirate's Booty",
+          "price": 6.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244781",
+          "item": "DualSense Edge wireless controller for PS5",
+          "brand": "Sony",
+          "price": 199.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244762",
+          "item": "AirTag (4 pack) (2nd generation)",
+          "brand": "Apple",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244780",
+          "item": "Marvel's Wolverine for PS5",
+          "brand": null,
+          "price": 69.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244860",
+          "item": "Bonkers PurrPops 18 ct, 3.6 oz. lollipop cat treats",
+          "brand": "GREENIES™",
+          "price": 10.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244921",
+          "item": "Select Oreo family-size cookies",
+          "brand": "Oreo",
           "price": 8,
-          "validFrom": "2026-07-26T00:00:00-04:00",
-          "validTo": "2026-08-01T23:59:59-04:00"
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030244932",
+          "item": "Nutter Butter family-size cookies",
+          "brand": "Nutter Butter",
+          "price": 8,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245177",
+          "item": "BISSELL PowerClean swivel head cordless vacuum",
+          "brand": "Bissell",
+          "price": 159.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245242",
+          "item": "Apple Watch® Series 11",
+          "brand": "Apple",
+          "price": 299.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245244",
+          "item": "Apple Watch® SE 3",
+          "brand": "Apple",
+          "price": 219.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245252",
+          "item": "65\" | HIRO • Roku TV",
+          "brand": "HIRO",
+          "price": 279.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245323",
+          "item": "The Last Of Us Part II Remastered for PS5",
+          "brand": null,
+          "price": 29.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245328",
+          "item": "Astro Bot for PS5",
+          "brand": "Sony",
+          "price": 39.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245343",
+          "item": "Saros for PS5",
+          "brand": null,
+          "price": 49.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245661",
+          "item": "Spin Master Games Mahjong Set Classic Game.",
+          "brand": "Spin Master Games",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245184",
+          "item": "BISSELL Little Green mini corded carpet cleaner",
+          "brand": "Bissell",
+          "price": 119.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245236",
+          "item": "AirPods 4",
+          "brand": "Apple",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245274",
+          "item": "JBL Grip portable speaker",
+          "brand": "JBL",
+          "price": 79.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246075",
+          "item": "Select Frito-Lay multipack snacks",
+          "brand": "Frito-Lay",
+          "price": 8.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246288",
+          "item": "OFF! Outdoor 10.5-oz. fly, gnat & mosquito repellent.",
+          "brand": "Off!",
+          "price": 10.19,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246052",
+          "item": "Hooray House knit dog harness.",
+          "brand": "Hooray House",
+          "price": 34.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363064",
+          "item": "Select Good & Gather™ pasta",
+          "brand": "Good & Gather",
+          "price": 6.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245281",
+          "item": "Beats Studio Pro Noise Cancelling Headphones",
+          "brand": "BEATS",
+          "price": 169.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245332",
+          "item": "TI-84 CE Plus graphing calculator",
+          "brand": null,
+          "price": 94.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245154",
+          "item": "BISSELL CleanView pet hair pick-up vacuum",
+          "brand": "Bissell",
+          "price": 59.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245162",
+          "item": "BISSELL FeatherWeight corded stick & handheld vacuum",
+          "brand": "Bissell",
+          "price": 34.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246276",
+          "item": "Raid Wasp & Hornet",
+          "brand": "Raid",
+          "price": 5.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245655",
+          "item": "USA-shaped 200-pc. puzzle.",
+          "brand": null,
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246283",
+          "item": "Swiffer Deluxe Sweep + Mop",
+          "brand": "Swiffer",
+          "price": 19.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245268",
+          "item": "Beats Solo 4 Wireless On-Ear Headphones",
+          "brand": "BEATS",
+          "price": 129.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245288",
+          "item": "50\"\" HIRO • Roku TV 4K HDR LED Smart TV",
+          "brand": "Roku",
+          "price": 179.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245649",
+          "item": "Magic Puzzle Company The Spooky Shire 1000-pc. jigsaw puzzle.",
+          "brand": "Magic Puzzle Company",
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246023",
+          "item": "Boots & Barkley™ Core Collar - S - Peony",
+          "brand": "Boots & Barkley",
+          "price": 9.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246011",
+          "item": "Boots & Barkley peony dog harness",
+          "brand": "Boots & Barkley",
+          "price": 16.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246027",
+          "item": "Milk-Bone Flavor Snacks",
+          "brand": "Milk-Bone",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245247",
+          "item": "JBL Clip 5 portable Bluetooth waterproof speaker",
+          "brand": "JBL",
+          "price": 69.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245167",
+          "item": "Dyson V8 Cyclone cordless stick vacuum",
+          "brand": "Dyson",
+          "price": 299.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245005",
+          "item": "Trending treats for the final stretch of summer",
+          "brand": null,
+          "price": 2.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245626",
+          "item": "theory11 Spider-Man jigsaw puzzle",
+          "brand": "theory11",
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245632",
+          "item": "theory11 Avengers jigsaw puzzle.",
+          "brand": "theory11",
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245638",
+          "item": "Monopoly K-Pop Demon Hunters.",
+          "brand": null,
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246004",
+          "item": "Boots & Barkley 5-ft. peony dog leash",
+          "brand": "Boots & Barkley",
+          "price": 14.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246019",
+          "item": "Boots & Barkley dog waste bag holder",
+          "brand": "Boots & Barkley",
+          "price": 4.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246038",
+          "item": "Temptations MixUps 30-oz. cat treats",
+          "brand": "Temptations",
+          "price": 15.79,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246047",
+          "item": "Hooray House 5-ft. dog leash",
+          "brand": "Hooray House",
+          "price": 27.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245148",
+          "item": "Hoover SmartWash carpet cleaner",
+          "brand": "Hoover",
+          "price": 219.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245293",
+          "item": "40\" | Roku TV Select Series 1080p Full HD Smart TV",
+          "brand": "Roku TV",
+          "price": 139.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245189",
+          "item": "Shark Pet cordless vacuum.",
+          "brand": "Shark",
+          "price": 199.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245230",
+          "item": "Apple Pencil (USB-C)",
+          "brand": "Apple",
+          "price": 69.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245356",
+          "item": "Blink battery doorbell 2K camera with Sync Module Core",
+          "brand": "Blink",
+          "price": 47.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245336",
+          "item": "Logitech wireless keyboard and mouse",
+          "brand": "Logitech",
+          "price": 17.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246099",
+          "item": "Select Frito-Lay party-size snacks & dips",
+          "brand": "Frito-Lay",
+          "price": 10,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363056",
+          "item": "Select Oscar Mayer hot dogs",
+          "brand": "Oscar Mayer",
+          "price": 5,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030246281",
+          "item": "Bona wood floor mop starter kit.",
+          "brand": "Bona",
+          "price": 33.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1030245348",
+          "item": "Marvel's Spider-Man 2 standard edition for PS5",
+          "brand": null,
+          "price": 29.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362946",
+          "item": "Select Tyson frozen chicken patties, nuggets & more",
+          "brand": "Tyson",
+          "price": 10,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027359267",
+          "item": "Roborock Blueair Blue Pure 511i Max HEPA air purifier",
+          "brand": "Roborock",
+          "price": 118.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027359236",
+          "item": "Clorox Turbo+ True HEPA personal air purifier.",
+          "brand": "Clorox",
+          "price": 94.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027359176",
+          "item": "Bionaire Sense HEPA air purifier.",
+          "brand": "Bionaire",
+          "price": 79.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027359149",
+          "item": "Roborock Q10 PF+ cordless vacuum & mop",
+          "brand": "Roborock",
+          "price": 319.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361810",
+          "item": "LEGO Pokémon SMART Play™: Trainer's Buggy Adventure with Squirtle 72156.",
+          "brand": "LEGO®",
+          "price": 29.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361760",
+          "item": "LEGO Pokémon SMART Play™: Training House with Pikachu",
+          "brand": "Lego",
+          "price": 69.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361873",
+          "item": "LEGO Pokémon Arcanine 72160.",
+          "brand": "LEGO®",
+          "price": 99.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361832",
+          "item": "LEGO Pokémon Munchlax 72150.",
+          "brand": "Lego",
+          "price": 69.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362215",
+          "item": "BYOMA 5.91-oz. Milky Moisture facial cleanser.",
+          "brand": "BYOMA",
+          "price": 12.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362330",
+          "item": "Tampax Pearl 12-ct. starter kit regular super tampons.",
+          "brand": "Tampax",
+          "price": 4.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360757",
+          "item": "Various Artists, Bleacher Bangers Setlist.",
+          "brand": null,
+          "price": 27.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360790",
+          "item": "NFL Retro All Team Football",
+          "brand": null,
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361024",
+          "item": "Hulk Gamma Blast set.",
+          "brand": null,
+          "price": 27.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360962",
+          "item": "Marvel Twin Spider-Man hooded blanket",
+          "brand": "Marvel",
+          "price": 22.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361219",
+          "item": "Marvel Spider-Man ActionVerse Stretch & Blast Buggy",
+          "brand": null,
+          "price": 24.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027358673",
+          "item": "Cuisinart Personal Brew 12-cup coffee maker",
+          "brand": "Cuisinart",
+          "price": 79.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027356871",
+          "item": "SodaStream sparkling water maker bundle",
+          "brand": "SodaStream",
+          "price": 199.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027359206",
+          "item": "Roborock Qrevo Curv 2 Flow robotic vacuum & mop",
+          "brand": "Roborock",
+          "price": 849.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360825",
+          "item": "Transformers NFL Green Bay Packers Tundra Prime action figure.",
+          "brand": "Transformers",
+          "price": 29.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027360725",
+          "item": "Transformers NFL Minnesota Vikings Skolgrin action figure",
+          "brand": "Transformers",
+          "price": 29.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361188",
+          "item": "Poppi Spider-Man 4-pk. wild berry soda",
+          "brand": "Poppi",
+          "price": 6.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361672",
+          "item": "ZURU Ballers FIFA, NBA & WWE mini figures",
+          "brand": "Zuru",
+          "price": 9.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027361718",
+          "item": "Barbie Nutcracker deluxe doll",
+          "brand": "Barbie",
+          "price": 32.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027362927",
+          "item": "Select craft 6-pk. beer.**",
+          "brand": null,
+          "price": 11.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363235",
+          "item": "BOUNTY 8 CT. MEGA-ROLL SELECT-A-SIZE PAPER TOWELS",
+          "brand": "Bounty",
+          "price": 29.49,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363274",
+          "item": "Downy Violeta Botanicals",
+          "brand": "Downy",
+          "price": 15.99,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
+        },
+        {
+          "id": "Target-1027363083",
+          "item": "Select Talenti ice cream & frozen treats",
+          "brand": "Talenti",
+          "price": 9,
+          "validFrom": "2026-08-02T00:00:00-04:00",
+          "validTo": "2026-08-08T23:59:59-04:00"
         }
       ]
     },
