@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /finances
+Disallow: /tasks
+Disallow: /weekly-reset
+
+Sitemap: https://pasionfruit.github.io/sitemap.xml

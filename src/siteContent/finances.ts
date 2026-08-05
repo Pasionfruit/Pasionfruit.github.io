@@ -28,5 +28,5 @@ export const financesSectionPage: PageContent = {
       body: 'Recent spending and categorized purchases for review.',
     },
   ],
-  callout: '',
+  callout: 'Visible only to approved accounts.',
 }

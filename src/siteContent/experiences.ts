@@ -30,7 +30,7 @@ export const experiencesSectionPage: PageContent = {
   cards: [
     {
       title: 'Education',
-      body: 'Structured list of education details and completion dates.',
+      body: 'Degree, institution, and the coursework most relevant to the analytical work I do now.',
     },
     {
       title: 'Technical Skills',
@@ -38,7 +38,7 @@ export const experiencesSectionPage: PageContent = {
     },
     {
       title: 'Professional Experience',
-      body: 'Use the toggle to view technical-only experience or all experience entries.',
+      body: 'Roles across BI development, data analysis, cybersecurity, and a few jobs before that. Use the toggle to narrow it to technical work or show everything.',
     },
   ],
   callout:
@@ -50,24 +50,27 @@ export const experiencesDetailPages: Record<string, SubpageContent> = {
     eyebrow: 'Academic path',
     title: 'Studying',
     summary:
-      'A home for the exams I am studying, the tools I use, and the habits that keep the work moving.',
+      'Studying for actuarial exams alongside a full-time job comes down to protecting a small amount of time and using it well. This page holds the exam track I am on, what I am working through now, and the materials and session structure that have held up so far.',
     accent: '#7a62ff',
     cards: [
       {
         title: 'Actuary Exams',
-        body: 'Structured list of actuarial exam milestones and timelines.',
+        body: 'The exam sequence, where I am in it, and target sitting dates.',
       },
       {
         title: 'Current Study Plan',
-        body: 'Keep track of the classes or topics that matter this term., link to study plan here',
+        body: 'The topics in front of me right now and how the weeks between here and the next sitting are allocated.',
       },
-      { title: 'Pomodoro Timer', body: "Let's study!" },
+      {
+        title: 'Pomodoro Timer',
+        body: 'A timer for focused sessions. Long blocks were never realistic on weeknights, so short and repeatable wins.',
+      },
       {
         title: 'Study Materials',
-        body: 'Google Drive links to all my notes and previous studying trackers (updated weekly/as notebook fills up)',
+        body: 'Notes and past study trackers, updated as each notebook fills up.',
       },
     ],
-    note: '',
+    note: 'Consistency beats intensity here — a handful of protected hours a week has done more than any single long weekend of cramming.',
   },
 }
 

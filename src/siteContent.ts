@@ -9,7 +9,7 @@ import {
   experiencesSectionPage,
   professionalExperienceEntries,
 } from './siteContent/experiences'
-import { homeHighlights, navSections } from './siteContent/home'
+import { homeHighlights, homeIntro, navSections } from './siteContent/home'
 import { trainingDetailPages, trainingSectionPage } from './siteContent/training'
 import type { PageContent, SectionId, SubpageContent } from './siteContent/shared'
 
@@ -28,6 +28,7 @@ export {
   actuaryExamEntries,
   educationEntries,
   homeHighlights,
+  homeIntro,
   navSections,
   professionalExperienceEntries,
 }

@@ -29,7 +29,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import { feature } from 'topojson-client'
-import { useAdSenseGate } from './useAdSenseGate'
+import { useRouteMeta } from './routeMeta'
 import type { Topology } from 'topojson-specification'
 import {
   Chart,
@@ -52,6 +52,8 @@ import {
   actuaryExamEntries,
   detailPages,
   educationEntries,
+  homeHighlights,
+  homeIntro,
   navSections,
   professionalExperienceEntries,
   sectionPages,
@@ -422,7 +424,7 @@ function SiteLayout({
     activeSectionId ? [activeSectionId] : [],
   )
 
-  useAdSenseGate(location.pathname)
+  useRouteMeta(location.pathname)
 
   useEffect(() => {
     setMenuOpen(false)
@@ -962,6 +964,13 @@ function HomePage({
         <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
         <WeatherCard />
       </div>
+      <section className="home-intro">
+        <h1>{homeIntro.title}</h1>
+        {homeIntro.paragraphs.map((paragraph) => (
+          <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+        ))}
+      </section>
+
       <section id="sections" className="section-block">
         <div className="section-grid">
           {navSections.map((section) =>
@@ -990,6 +999,18 @@ function HomePage({
               </Link>
             ),
           )}
+        </div>
+      </section>
+
+      <section className="home-highlights">
+        <h2>What you&apos;ll find here</h2>
+        <div className="home-highlight-grid">
+          {homeHighlights.map((highlight) => (
+            <article key={highlight.title} className="info-card">
+              <h3>{highlight.title}</h3>
+              <p>{highlight.body}</p>
+            </article>
+          ))}
         </div>
       </section>
 

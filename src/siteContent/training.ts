@@ -29,49 +29,78 @@ export const trainingSectionPage: PageContent = {
   eyebrow: 'Progress tracking',
   title: 'Training',
   summary:
-    'Stats of the slow times and weak lifts\n• Strava: https://www.strava.com/athletes/116157184\n• Instagram: @mrpasionfruit',
+    'Training around a full-time job means most weeks are a compromise, so I log what actually happened instead of what the plan said. These pages hold the session log, the personal bests, and the data analysis I use to tell a real trend from a bad week.\n• Strava: https://www.strava.com/athletes/116157184\n• Instagram: @mrpasionfruit',
   accent: '#14b8a6',
   cards: [
     {
       title: 'Next Event Countdown',
-      body: '',
+      body: 'Time remaining until the next race or event I am training toward.',
     },
     {
       title: 'Training Log',
-      body: 'Filterable by season and year',
+      body: 'Every logged session, filterable by season and year.',
     },
-
   ],
-  callout: '',
+  callout:
+    'Nothing here is impressive on its own — the point is consistency over a long enough window that the trend means something. Slow times and light lifts still count as data.',
 }
 
 export const trainingDetailPages: Record<string, SubpageContent> = {
   '/training/records': {
     eyebrow: 'Session log',
     title: 'Training Records',
-    summary: 'Day 1 or 1 Day',
+    summary:
+      'Personal bests and the history behind them. The individual numbers matter less than whether the work is showing up week after week, so consistency gets as much space here as the records do.',
     accent: '#14b8a6',
     cards: [
-      { title: 'Consistency', body: 'Github chart of training over time' },
-      { title: 'Milestones', body: 'Track the lifts or benchmarks that matter most over time.' },
-      { title: 'Equipment', body: 'Gear, shoes, and nutrition used in training.' },
-      { title: 'Week Plans', body: 'Chart of Mon - Sun Morning and Evening sessions, completed?' },
-      { title: 'Previous Events', body: 'Scrolling filterable list of previous Events' },
+      {
+        title: 'Consistency',
+        body: 'A contribution-style grid of training days over time. The gaps are as informative as the streaks — most of them line up with work crunches or travel.',
+      },
+      {
+        title: 'Milestones',
+        body: 'The lifts and benchmarks I actually track, with how they have moved over time.',
+      },
+      {
+        title: 'Equipment',
+        body: 'Shoes, gear, and nutrition I have settled on, including what I have replaced and why.',
+      },
+      {
+        title: 'Week Plans',
+        body: 'The Monday-through-Sunday layout of morning and evening sessions, and whether each one actually got done.',
+      },
+      {
+        title: 'Previous Events',
+        body: 'Races and events already completed, with results and what I would do differently.',
+      },
     ],
-    note: '',
+    note: 'Records update as sessions sync, so a recent PR may take a day to appear here.',
   },
   '/training/data': {
     eyebrow: 'Numbers and trends',
     title: 'Training Data Analysis',
-    summary: 'Charts and metrics that make the overall trend easy to understand at a glance.',
+    summary:
+      'Wearables produce far more data than is useful. This page is where I work out which metrics actually predict how a session goes, what the terminology means in plain language, and how to read a trend without over-fitting to a single bad night of sleep.',
     accent: '#14b8a6',
     cards: [
-      { title: 'Health Data', body: 'Ingested data from Garmin, Ringconn, and Apple Health' },
-      { title: 'Health Data Terms', body: 'Filterable list of health data terms and their definitions' },
-      { title: 'Tools', body: 'Tools on calculating and visualizing training data' },
-      { title: 'Learning', body: 'Gemini Notebook with resources and top recommended videos' },
+      {
+        title: 'Health Data',
+        body: 'Sleep, heart rate, recovery, and workload pulled from Garmin, RingConn, and Apple Health, charted over time.',
+      },
+      {
+        title: 'Health Data Terms',
+        body: 'Plain-language definitions for the metrics these devices report — HRV, training load, VO2 max estimates, and the rest — including how much to trust each one.',
+      },
+      {
+        title: 'Tools',
+        body: 'The calculators and visualizations I use to turn raw exports into something readable.',
+      },
+      {
+        title: 'Learning',
+        body: 'A Gemini notebook of the sources and videos that actually changed how I interpret this data.',
+      },
     ],
-    note: 'Keep this page readable first and analytical second.',
+    note: 'Single days are noise. Anything on this page is worth reading as a multi-week trend, not a daily score.',
   },
   //   '/training/learn': {
   //     eyebrow: 'Technique notes',

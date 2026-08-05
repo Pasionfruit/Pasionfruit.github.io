@@ -2953,6 +2953,52 @@ button svg,
   margin-bottom: 0.9rem;
 }
 
+.home-intro {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1.4rem 0 0.4rem;
+}
+
+.home-intro h1 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  line-height: 1.15;
+}
+
+.home-intro p {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.home-highlights {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.home-highlights h2 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: clamp(1.15rem, 3.6vw, 1.6rem);
+  line-height: 1.15;
+}
+
+.home-highlight-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+}
+
+@media (min-width: 760px) {
+  .home-highlight-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* Home top row: Tasks of the Day (left) + Weather (right), equal size on
    desktop; stacked with a collapsible Weather card on mobile. */
 .home-top-row {

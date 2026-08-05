@@ -18,11 +18,11 @@ export const aboutMeSectionPage: PageContent = {
   cards: [
     {
       title: 'Meet the Oreo Gang',
-      body: '',
+      body: 'The cats I live with.',
     },
     {
       title: 'Question of the Day',
-      body: "Feature currently disabled due to figuring out a good way to keep it updated and preventing a DOS",
+      body: 'Currently disabled while I work out a way to keep it updated without leaving it open to abuse.',
     },
     {
       title: 'Bucket List',
@@ -30,11 +30,11 @@ export const aboutMeSectionPage: PageContent = {
     },
     {
       title: 'Places visited',
-      body: 'Color of the world, with countries/states visited highlighted.',
+      body: 'A map of the world with the countries and states I have been to highlighted.',
     },
     {
       title: 'Backpack',
-      body: 'Traveling inventory grouped by storage and type.',
+      body: 'What I actually pack, grouped by bag and category — refined over enough trips to be worth writing down.',
     },
   ],
   callout:
@@ -43,43 +43,47 @@ export const aboutMeSectionPage: PageContent = {
 
 export const aboutMeDetailPages: Record<string, SubpageContent> = {
   '/mrpasionfruit/oreo-gang': {
-    eyebrow: 'Inside joke archive',
+    eyebrow: 'The cats',
     title: 'Oreo Gang',
     summary:
-      'A place for group memories, story snippets, and anything else that deserves its own playful corner.',
+      'The cats I live with, and the running collection of photos and small stories that come with them. This is the least serious corner of the site and intentionally so — no metrics, no tracking, no analysis.',
     accent: '#ff5c38',
     cards: [
       {
-        title: 'Community',
-        body: 'Keep the tone personal and light so the page feels like a shared memory board.',
+        title: 'The gang',
+        body: 'Who they are, how each of them ended up here, and the personality differences that became obvious within about a week.',
       },
       {
-        title: 'Posts',
-        body: 'This can later turn into a collection of short entries, photos, or running jokes.',
+        title: 'Daily life',
+        body: 'What living with them actually looks like — the routines they enforce, the furniture they have claimed, and the ongoing negotiation over desk space during work hours.',
       },
       {
-        title: 'Feel',
-        body: 'Make it easy to skim on a phone while still leaving room for longer memories.',
+        title: 'Photos and stories',
+        body: 'A growing archive of pictures and the short stories attached to them.',
       },
     ],
-    note: 'Use this as the nested personality page under the main about hub.',
+    note: 'A memory board more than a page — it grows whenever something is worth remembering.',
   },
   '/mrpasionfruit/interests': {
     eyebrow: 'What I like',
     title: 'Interests',
-    summary: 'A shortlist of the subjects, media, and ideas I keep coming back to.',
+    summary:
+      'The subjects I keep returning to, and what each one actually changed about how I work or think. Most of them overlap more than they look like they should — the same habit of taking something apart to understand it shows up in cooking, training, and code alike.',
     accent: '#ff5c38',
     cards: [
-      { title: 'Reading', body: 'Books, articles, and notes that shaped how I think this month.' },
+      {
+        title: 'Reading',
+        body: 'Books, papers, and long-form articles worth finishing, with notes on the ideas that stuck rather than a summary of each one.',
+      },
       {
         title: 'Building',
-        body: 'Tools, side projects, and experiments I want to keep iterating on.',
+        body: 'Side projects in progress — this site, a home NAS, and a turn-based multiplayer game that has been on the list for a while. Notes on what each one taught me, including the parts that did not work.',
       },
       {
         title: 'Watching',
-        body: 'Shows, videos, and creators that sparked a new idea or habit.',
+        body: 'Creators and channels that led to an actual change in how I train, cook, or build something, rather than just background viewing.',
       },
     ],
-    note: 'This page can later feed into recommendations or a content feed.',
+    note: 'Updated as things earn their place, so the list stays short rather than comprehensive.',
   },
 }
