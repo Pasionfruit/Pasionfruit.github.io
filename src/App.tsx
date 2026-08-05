@@ -5,20 +5,16 @@ import {
   Download,
   ExternalLink,
   Flame,
-  Hotel,
   LayoutGrid,
   Link2,
   List,
   Pencil,
-  Plane,
   Play,
   RotateCcw,
-  Route as RouteIcon,
   Settings,
   ShoppingCart,
   SquareCheck,
   Utensils,
-  UtensilsCrossed,
   X,
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
@@ -33,6 +29,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import { feature } from 'topojson-client'
+import { useAdSenseGate } from './useAdSenseGate'
 import type { Topology } from 'topojson-specification'
 import {
   Chart,
@@ -327,10 +324,6 @@ function App() {
             />
           )}
         />
-        <Route
-          path="finances/points"
-          element={canViewPrivateFinances ? <PointsConversionPage /> : <Navigate replace to="/finances" />}
-        />
         <Route path="mrpasionfruit/oreo-gang" element={<DetailPage path="/mrpasionfruit/oreo-gang" />} />
         <Route path="mrpasionfruit/interests" element={<DetailPage path="/mrpasionfruit/interests" />} />
         <Route
@@ -428,6 +421,8 @@ function SiteLayout({
   const [expandedSectionIds, setExpandedSectionIds] = useState<SectionId[]>(() =>
     activeSectionId ? [activeSectionId] : [],
   )
+
+  useAdSenseGate(location.pathname)
 
   useEffect(() => {
     setMenuOpen(false)
@@ -9157,36 +9152,6 @@ function HealthDataCard({ title }: { title: string }) {
         </>
       )}
     </article>
-  )
-}
-
-function PointsConversionPage() {
-  const categories = [
-    { label: 'Trips', icon: Plane, description: 'Convert points into flights, travel credits, and vacation packages.' },
-    { label: 'Miles', icon: RouteIcon, description: 'See how far your points take you in airline miles and rewards.' },
-    { label: 'Food', icon: UtensilsCrossed, description: 'Redeem points for dining credits, delivery, and restaurant rewards.' },
-    { label: 'Hotel', icon: Hotel, description: 'Turn points into hotel nights, upgrades, and loyalty rewards.' },
-  ]
-
-  return (
-    <PageFrame
-      eyebrow="Coming soon"
-      title="Points Conversion"
-      summary="Convert your credit card points into real-world value across travel, dining, and hotel rewards."
-      accent="#1f8f3a"
-      backLink="/finances"
-      backLabel="Back to Finances"
-      note="This page is a placeholder — full conversion logic coming soon."
-    >
-      {categories.map((cat) => (
-        <article key={cat.label} className="info-card section-page-card points-conversion-card">
-          <div className="points-conversion-icon"><cat.icon size={30} strokeWidth={1.6} aria-hidden="true" /></div>
-          <h3>{cat.label}</h3>
-          <p>{cat.description}</p>
-          <p className="points-conversion-badge">Coming soon</p>
-        </article>
-      ))}
-    </PageFrame>
   )
 }
 

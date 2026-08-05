@@ -1956,31 +1956,6 @@
   font-size: 1.2rem;
 }
 
-.points-conversion-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.points-conversion-icon {
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.points-conversion-badge {
-  margin: auto 0 0;
-  display: inline-block;
-  align-self: flex-start;
-  padding: 0.2rem 0.6rem;
-  border-radius: 2rem;
-  border: 1px solid var(--border);
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-}
-
 .section-page-card p {
   font-size: 0.9rem;
   line-height: 1.4;
