@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-05T09:56:59.558Z",
+  "lastUpdated": "2026-08-06T11:28:35.362Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -218,15 +218,6 @@
         "description": "Save $1.50 on any ONE (1) all® free clear Laundry Detergent Product (excludes Fabric Softener & Dryer Sheets)",
         "category": "Household",
         "validTo": "2026-08-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713282",
-        "brand": "Allegra",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any ONE (1) Children's Allegra Or Children's Xyzal Allergy product",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -536,10 +527,10 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654914",
+        "id": "flipp-4654913",
         "brand": "AVEENO®",
         "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
+        "description": "SAVE $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz, shave and scrubs)",
         "category": "Health & Beauty",
         "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
@@ -554,10 +545,10 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654913",
+        "id": "flipp-4654914",
         "brand": "AVEENO®",
         "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz, shave and scrubs)",
+        "description": "SAVE $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
@@ -878,21 +869,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4722857",
+        "brand": "Colgate",
+        "discount": "Save $4.00",
+        "description": "SAVE $4.00 on any ONE (1) Colgate Adult Battery Powered Toothbrush",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4695794",
         "brand": "Colgate",
         "discount": "SAVE $4.00",
         "description": "SAVE $4.00 On any TWO (2) Colgate Total, Max Fresh, Sensitive, Optic White Advanced, Stain Fighter, Purple or Charcoal Toothpastes (3oz or larger; excludes 3pk Toothpastes), Colgate 360°, Total, Gum Health, Expert or Optic White Toothbrushes",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4695796",
-        "brand": "Colgate",
-        "discount": "SAVE $3.00",
-        "description": "SAVE $3.00 On any ONE (1) Colgate Kids Battery Powered Toothbrush",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1014,10 +1005,10 @@
       },
       {
         "id": "flipp-4718654",
-        "brand": "Dave's Killer Bread",
+        "brand": "Dave's Killer",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) pack of Dave’s Killer Bread® Organic Bars or Bites, any variety",
-        "category": "Other",
+        "category": "Grocery",
         "validTo": "2026-09-11T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -1382,6 +1373,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4718624",
+        "brand": "Fancy Feast",
+        "discount": "Save $0.75",
+        "description": "Save $0.75 on any ONE (1) 1.06 oz - 1.96 oz package of Fancy Feast® Layered Delights™, Chef's Cuts™, or Savory Purees Cat Treats",
+        "category": "Pets",
+        "validTo": "2026-09-15T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4683789",
         "brand": "Febreze",
         "discount": "Save $3.00",
@@ -1487,6 +1487,15 @@
         "description": "Save $8.00 on any ONE (1) Florastor Product",
         "category": "Health & Beauty",
         "validTo": "2026-09-13T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4719341",
+        "brand": "Frito-Lay",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Miss Vickie's 7.5 oz",
+        "category": "Grocery",
+        "validTo": "2026-08-20T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1805,6 +1814,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4718623",
+        "brand": "Hellmann's",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) 11.5 oz. Hellmann’s® or Best Foods® Mayo product",
+        "category": "Grocery",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4702312",
         "brand": "Heluva Good",
         "discount": "Save $1.00",
@@ -2012,12 +2030,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4681173",
+        "id": "flipp-4718646",
         "brand": "Lay's",
         "discount": "Save $1.79",
-        "description": "Save $1.79 on any ONE (1) Lays XL 4.75 - 8oz or Lays Kettle Cooked 7.75-8 oz",
+        "description": "Save $1.79 on any ONE (1) Lay's XL 4.75 - 8oz",
         "category": "Grocery",
-        "validTo": "2026-08-05T19:59:59.000-04:00",
+        "validTo": "2026-08-19T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2192,6 +2210,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4654419",
+        "brand": "Muscle Milk",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) MUSCLE MILK® 11 oz 4pk",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-08T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4713280",
         "brand": "Nasacort",
         "discount": "Save $5.00",
@@ -2327,15 +2354,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4634820",
-        "brand": "Neutrogena",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Neutrogena Makeup product (excludes travel & trial sizes, Healthy Skin Liquid Makeup, and Glass Glow Balm products)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-16T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4654461",
         "brand": "Neutrogena",
         "discount": "Save $2.50",
@@ -2450,15 +2468,6 @@
         "description": "Save $2.00 on any ONE (1) NOW Supplement",
         "category": "Health & Beauty",
         "validTo": "2026-08-31T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4681185",
-        "brand": "Nutella",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Nutella Peanut 13oz",
-        "category": "Grocery",
-        "validTo": "2026-09-01T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2822,15 +2831,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4681178",
-        "brand": "Outshine",
-        "discount": "Save $1.70",
-        "description": "Save $1.70 on any ONE (1) Outshine® Fruit Bars 6-12 ct.",
-        "category": "Grocery",
-        "validTo": "2026-08-19T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4713339",
         "brand": "OxiClean",
         "discount": "Save $2.00",
@@ -2855,15 +2855,6 @@
         "description": "Save $3.00 ONE PainQuil product (excludes trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4683815",
-        "brand": "Palmolive",
-        "discount": "Save $0.75",
-        "description": "Save $0.75 on any ONE (1) Palmolive Ultra Dish Liquid (18oz or larger)",
-        "category": "Household",
-        "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2972,24 +2963,6 @@
         "description": "Save $1.00 on any ONE (1) POPPI 6-pk. Mini Cans",
         "category": "Grocery",
         "validTo": "2026-08-15T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4681183",
-        "brand": "Premier Protein",
-        "discount": "Save $2.50",
-        "description": "Save $2.50 on any ONE (1) Premier Protein 4ct shakes",
-        "category": "Grocery",
-        "validTo": "2026-09-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4711649",
-        "brand": "President",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) President® Butter product, any variety",
-        "category": "Grocery",
-        "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3272,21 +3245,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4722854",
+        "brand": "Stonyfield",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Stonyfield Organic Kids or YoBaby Multipack (any variety)",
+        "category": "Grocery",
+        "validTo": "2026-09-03T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4692874",
         "brand": "Suave",
         "discount": "Save $4.00",
         "description": "Save $4.00 off THREE (3) Evermark Products (Suave, Pond's, Caress, ChapStick, Q-Tip, St. Ives, Noxzema)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4689442",
-        "brand": "Suavitel",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Suavitel Liquid Fabric Conditioner (46oz or larger) or Suavitel Refresher Fabric Rinse (25.5oz ONLY)",
-        "category": "Household",
-        "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3485,15 +3458,6 @@
         "description": "Save $1.50 on any ONE (1) Tostitos 8-13 oz",
         "category": "Grocery",
         "validTo": "2026-08-19T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4681176",
-        "brand": "Tostitos",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Tostitos 8-13 oz",
-        "category": "Grocery",
-        "validTo": "2026-08-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3776,6 +3740,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4718660",
+        "brand": "Ziploc",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Ziploc Twist n Loc Container",
+        "category": "Other",
+        "validTo": "2026-09-19T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4702360",
         "brand": "Zyrtec",
         "discount": "Save $5.00",
@@ -3853,6 +3826,27 @@
     "source": "Slickdeals",
     "error": null,
     "coupons": [
+      {
+        "id": "sd-19847697",
+        "place": "Burger King",
+        "title": "Free Whopper from Burger King In-Restaurant Starting 8/6 When You Text SEND-THIS-TEXT-FOR-FREE-WHOPPER to 250783",
+        "url": "https://slickdeals.net/f/19847697-free-whopper-from-burger-king-in-restaurant-starting-8-6-when-you-text-send-this-text-for-free-whopper-to-250783?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-05T21:34:05.000Z"
+      },
+      {
+        "id": "sd-19846818",
+        "place": "Chipotle",
+        "title": "Spanglish Organic Chipotle Chicken 11.9 oz dry seasoning $4.97 at Costco in store only. YMMV",
+        "url": "https://slickdeals.net/f/19846818-spanglish-organic-chipotle-chicken-11-9-oz-dry-seasoning-4-97-at-costco-in-store-only-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-05T16:44:51.000Z"
+      },
+      {
+        "id": "sd-19846026",
+        "place": "KFC",
+        "title": "T-Mobile Customers * Starts 8/11/26 * T-Mobile Free Grill Tongs, KFC $3 3-pc Tenders Combo, more",
+        "url": "https://slickdeals.net/f/19846026-t-mobile-customers-starts-8-11-26-t-mobile-free-grill-tongs-kfc-3-3-pc-tenders-combo-more?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-05T12:45:15.000Z"
+      },
       {
         "id": "sd-19844364",
         "place": "Subway",
@@ -4078,13 +4072,6 @@
         "postedAt": "2026-07-09T17:41:22.000Z"
       },
       {
-        "id": "sd-19735383",
-        "place": "Chipotle",
-        "title": "Chipotle - $50 Gift Card [Digital], $45, Best Buy",
-        "url": "https://slickdeals.net/f/19735383-chipotle-50-gift-card-digital-45-best-buy?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-08T09:03:10.000Z"
-      },
-      {
         "id": "sd-19731273",
         "place": "Domino's",
         "title": "Domino's - $100 Gift Card [Digital], $85, Best Buy",
@@ -4167,13 +4154,6 @@
         "title": "Pizza Hut Rewards Members: FREE Medium 1-Topping Pizza after Completing a Purchase with Venmo",
         "url": "https://slickdeals.net/f/19658631-pizza-hut-rewards-members-free-medium-1-topping-pizza-after-completing-a-purchase-with-venmo?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-22T15:58:46.000Z"
-      },
-      {
-        "id": "sd-19653294",
-        "place": "McDonald's",
-        "title": "McDonald's free breakfast sandwich with $1+ purchase on app TODAY ONLY YMMV",
-        "url": "https://slickdeals.net/f/19653294-mcdonald-s-free-breakfast-sandwich-with-1-purchase-on-app-today-only-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-21T12:59:54.000Z"
       }
     ]
   }
