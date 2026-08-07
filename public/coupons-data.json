@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-06T11:28:35.362Z",
+  "lastUpdated": "2026-08-07T10:05:22.855Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -347,15 +347,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4695788",
-        "brand": "American Crew",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 Any ONE (1) full sized American Crew product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-31T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4674484",
         "brand": "Angel Soft",
         "discount": "SAVE $0.50",
@@ -698,15 +689,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4692873",
-        "brand": "Booster",
-        "discount": "Buy One, Get One",
-        "description": "Buy One, Get One Buy any ONE (1) Because Booster Pads or Underwear and Receive ONE (1) Because Booster Pads or Underwear Free (Max Savings Value Up to $17.49)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-31T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4674436",
         "brand": "Bounty",
         "discount": "Save $1.00",
@@ -740,6 +722,15 @@
         "description": "$2.00 OFF any ONE (1) package of Brawny® Paper Towels, 6 roll or larger",
         "category": "Household",
         "validTo": "2026-08-24T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4722855",
+        "brand": "Carando®",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any TWO (2) Carando® or Smithfield® Frozen Sausage Links or Meatballs",
+        "category": "Grocery",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -848,15 +839,6 @@
         "description": "Save $5.00 instantly when you spend $25.00 on participating General Mills and Coca-Cola® brand items. You must meet the $25.00 spend threshold once all manufacturer coupons or discounts have been applied. (See additional details)",
         "category": "Grocery",
         "validTo": "2026-09-15T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4717133",
-        "brand": "Colgate",
-        "discount": "SAVE $4.00",
-        "description": "SAVE $4.00 On any ONE (1) Colgate Adult Battery Powered Toothbrush",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -992,15 +974,6 @@
         "description": "Save $1.00 on any ONE (1) Danimals Product (12 pk., 6 pk. Or 4 pk.)",
         "category": "Grocery",
         "validTo": "2026-09-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4697913",
-        "brand": "Danone",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Silk Protein Yogurt Single Serve",
-        "category": "Grocery",
-        "validTo": "2026-08-20T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1913,15 +1886,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4694783",
-        "brand": "International Delight",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) International Delight®  Creamer",
-        "category": "Grocery",
-        "validTo": "2026-09-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4704488",
         "brand": "Irish Spring",
         "discount": "Save $3.50",
@@ -2342,24 +2306,6 @@
         "description": "SAVE $3.00 on any ONE (1) NEUTROGENA® Sun or AVEENO® Sun product (excludes travel & trial sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4634802",
-        "brand": "Neutrogena",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on any TWO (2) NEUTROGENA® Cleansing Wipes 20ct singles OR 25ct and larger",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-16T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654461",
-        "brand": "Neutrogena",
-        "discount": "Save $2.50",
-        "description": "Save $2.50 on any ONE (1) NEUTROGENA® Liquid Cleanser (excludes Acne Cleansers, Bars, Concentrate Refill Packs, Trial/Travel sizes & Wipes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-15T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2966,6 +2912,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4711649",
+        "brand": "President",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) President® Butter product, any variety",
+        "category": "Grocery",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4702285",
         "brand": "Propel",
         "discount": "Save $2.00",
@@ -3101,6 +3056,33 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4726691",
+        "brand": "Rana",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Rana Base Filled Pasta",
+        "category": "Grocery",
+        "validTo": "2026-09-07T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4726690",
+        "brand": "Rana",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Rana 12oz Meal Kit or Lasagna",
+        "category": "Grocery",
+        "validTo": "2026-09-07T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4711687",
+        "brand": "Red Star Yeast",
+        "discount": "Save $0.50",
+        "description": "Save $0.50 on any ONE (1) Red Star or Platinum Yeast Product",
+        "category": "Grocery",
+        "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4692838",
         "brand": "Refresh",
         "discount": "$8.00 OFF",
@@ -3182,15 +3164,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654457",
-        "brand": "Sensodyne",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Sensodyne or Pronamel Product (excludes .8oz)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4713357",
         "brand": "Seventh Generation",
         "discount": "Save $2.00",
@@ -3206,6 +3179,15 @@
         "description": "Save $2.00 on any ONE (1) Seventh Generation® Liquid Laundry Detergent, Packs, Laundry Detergent Sheets, or EasyDose™",
         "category": "Household",
         "validTo": "2026-08-16T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4722856",
+        "brand": "Smithfield",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Smithfield® Prime Fresh Lunchmeat Family Size",
+        "category": "Grocery",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3260,15 +3242,6 @@
         "description": "Save $4.00 off THREE (3) Evermark Products (Suave, Pond's, Caress, ChapStick, Q-Tip, St. Ives, Noxzema)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4711642",
-        "brand": "Sweet Loren's",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Sweet Loren's Breakfast Biscuits",
-        "category": "Grocery",
-        "validTo": "2026-09-02T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3829,8 +3802,8 @@
       {
         "id": "sd-19847697",
         "place": "Burger King",
-        "title": "Free Whopper from Burger King In-Restaurant Starting 8/6 When You Text SEND-THIS-TEXT-FOR-FREE-WHOPPER to 250783",
-        "url": "https://slickdeals.net/f/19847697-free-whopper-from-burger-king-in-restaurant-starting-8-6-when-you-text-send-this-text-for-free-whopper-to-250783?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Burger King Your Way Promotion: Burger King Classic Whopper (In-Restaurant Only) Free to Claim via Mobile Device (Valid thru 8/31)",
+        "url": "https://slickdeals.net/f/19847697-burger-king-your-way-promotion-burger-king-classic-whopper-in-restaurant-only-free-to-claim-via-mobile-device-valid-thru-8-31?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-05T21:34:05.000Z"
       },
       {
@@ -4140,20 +4113,6 @@
         "title": "$42.50 | $50 Subway eGift Card at Amazon",
         "url": "https://slickdeals.net/f/19676625-42-50-50-subway-egift-card-at-amazon?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-24T14:10:26.000Z"
-      },
-      {
-        "id": "sd-19663029",
-        "place": "Popeyes",
-        "title": "$50 Popeyes Physical Gift Card - $40",
-        "url": "https://slickdeals.net/f/19663029-50-popeyes-physical-gift-card-40?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-23T07:07:17.000Z"
-      },
-      {
-        "id": "sd-19658631",
-        "place": "Pizza Hut",
-        "title": "Pizza Hut Rewards Members: FREE Medium 1-Topping Pizza after Completing a Purchase with Venmo",
-        "url": "https://slickdeals.net/f/19658631-pizza-hut-rewards-members-free-medium-1-topping-pizza-after-completing-a-purchase-with-venmo?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-22T15:58:46.000Z"
       }
     ]
   }
