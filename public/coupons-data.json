@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-07T10:05:22.855Z",
+  "lastUpdated": "2026-08-08T09:44:36.136Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -263,6 +263,24 @@
         "description": "Save $4.00 on any ONE (1) Children's Allegra or Children's Xyzal Allergy product",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4713282",
+        "brand": "Allegra",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 on any ONE (1) Children's Allegra Or Children's Xyzal Allergy product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-12T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4729306",
+        "brand": "Allegra",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 on any ONE (1) Children's Allegra Or Children's Xyzal Allergy product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -842,15 +860,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4704486",
-        "brand": "Colgate",
-        "discount": "Save $4.00",
-        "description": "SAVE $4.00 on any TWO (2) Colgate Total, Max Fresh, Sensitive, Optic White Advanced, Stain Fighter, Purple or Charcoal Toothpastes (3oz or larger; excludes 3pk Toothpastes), Colgate 360°, Total, Gum Health, Expert or Optic White Toothbrushes , Mouthwashes or Mouth Rinses (16oz or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4722857",
         "brand": "Colgate",
         "discount": "Save $4.00",
@@ -1334,15 +1343,6 @@
         "description": "SAVE 50¢ on SEVEN (7) 3 oz cans of Fancy Feast® Wet Cat Food",
         "category": "Pets",
         "validTo": "2026-09-02T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4661235",
-        "brand": "Fancy Feast",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any TWO (2) 2.8 oz packages of Fancy Feast® Petites Wet Cat Food",
-        "category": "Pets",
-        "validTo": "2026-08-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2390,6 +2390,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4712057",
+        "brand": "Non-Drowsy Claritin®",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) Non-Drowsy Claritin® Allergy 20ct or larger (excludes Children's Claritin® and Claritin-D®)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-06T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4711646",
         "brand": "Noosa",
         "discount": "Save $0.50",
@@ -2423,15 +2432,6 @@
         "description": "Save $1.00 on any ONE (1) Nutella Ice Cream (14 fl oz)",
         "category": "Grocery",
         "validTo": "2026-09-15T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4654912",
-        "brand": "OGX",
-        "discount": "SAVE $4.00",
-        "description": "SAVE $4.00 on any TWO (2) OGX® Hair products (excludes trial/travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-09T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3011,6 +3011,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4726715",
+        "brand": "Quaker",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any TWO (2) Quaker Rice Snacks",
+        "category": "Grocery",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4634857",
         "brand": "Quilted Northern",
         "discount": "$1.00 OFF",
@@ -3233,15 +3242,6 @@
         "description": "Save $2.00 on any ONE (1) Stonyfield Organic Kids or YoBaby Multipack (any variety)",
         "category": "Grocery",
         "validTo": "2026-09-03T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4692874",
-        "brand": "Suave",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 off THREE (3) Evermark Products (Suave, Pond's, Caress, ChapStick, Q-Tip, St. Ives, Noxzema)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-22T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3799,6 +3799,13 @@
     "source": "Slickdeals",
     "error": null,
     "coupons": [
+      {
+        "id": "sd-19856190",
+        "place": "Burger King",
+        "title": "Burger king- Bogo impossible whopper (ymmv)",
+        "url": "https://slickdeals.net/f/19856190-burger-king-bogo-impossible-whopper-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-08T08:30:29.000Z"
+      },
       {
         "id": "sd-19847697",
         "place": "Burger King",
