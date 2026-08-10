@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-09T09:47:16.462Z",
+  "lastUpdated": "2026-08-10T10:23:18.367Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -545,15 +545,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654918",
-        "brand": "AVEENO®",
-        "discount": "SAVE $5.00",
-        "description": "SAVE $5.00 on any ONE (1) AVEENO® Facial Moisturizer, Serum or Treatment (excludes trial/travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4702319",
         "brand": "Axe",
         "discount": "Save $7.00",
@@ -923,6 +914,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4695796",
+        "brand": "Colgate",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 On any ONE (1) Colgate Kids Battery Powered Toothbrush",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4705081",
         "brand": "Colgate optic white",
         "discount": "SAVE $10.00",
@@ -1028,15 +1028,6 @@
         "description": "Save $3.00 on any ONE (1) Curly’s® Pulled Pork or Pulled Chicken",
         "category": "Grocery",
         "validTo": "2026-08-25T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713327",
-        "brand": "Danimals",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Danimals Product (12 pk., 6 pk. Or 4 pk.)",
-        "category": "Grocery",
-        "validTo": "2026-09-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1188,15 +1179,6 @@
         "brand": "Dove",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) Dove Baby Wash 13oz+ OR Dove Baby Lotion (excludes Dove Baby Wash 34oz+)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4695792",
-        "brand": "Dove",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Liquid Hand Wash Foams (10oz) or Gels (12oz)",
         "category": "Health & Beauty",
         "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
@@ -1379,15 +1361,6 @@
         "description": "SAVE $4.00 on any ONE (1) Eucerin ® Radiant Tone Product. *Excludes trial and travel sizes",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4711651",
-        "brand": "Famous Amos",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Famous Amos On-the-Go Cookies, 10pk or larger",
-        "category": "Grocery",
-        "validTo": "2026-09-15T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2054,6 +2027,15 @@
         "description": "Save $1.00 on any ONE (1) pack of Kotex® Pads or Liners or U by Kotex® Tampons (Not valid on Liv by Kotex® products, Kotex Liners 16ct or trial/travel packs.)",
         "category": "Health & Beauty",
         "validTo": "2026-08-15T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4733563",
+        "brand": "Kotex",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 on any TWO (2) Kotex Tampons 30-32-ct, Kotex Pads 28ct and 39-56ct, or Overnight Pads 36ct (excludes 28ct Teen Pad)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3155,6 +3137,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4715511",
+        "brand": "Sour Patch Kids",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 on ONE(1) Sour Punch Bites 9 Oz Bag",
+        "category": "Grocery",
+        "validTo": "2026-09-16T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4713697",
         "brand": "Stayfree",
         "discount": "SAVE $1.00",
@@ -3710,6 +3701,27 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19861674",
+        "place": "McDonald's",
+        "title": "McDonald's- Free medium fries with minimum purchase of $1 (YMMV)",
+        "url": "https://slickdeals.net/f/19861674-mcdonald-s-free-medium-fries-with-minimum-purchase-of-1-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-10T09:25:22.000Z"
+      },
+      {
+        "id": "sd-19861665",
+        "place": "McDonald's",
+        "title": "McDonald's- $2 Breakfast Sandwich (YMMV)",
+        "url": "https://slickdeals.net/f/19861665-mcdonald-s-2-breakfast-sandwich-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-10T09:23:22.000Z"
+      },
+      {
+        "id": "sd-19859553",
+        "place": "Subway",
+        "title": "(Another) Subway BOGO Footlongs 8/9 - 8/12 Sub Club Members Only",
+        "url": "https://slickdeals.net/f/19859553-another-subway-bogo-footlongs-8-9-8-12-sub-club-members-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-09T18:37:38.000Z"
+      },
+      {
         "id": "sd-19858227",
         "place": "McDonald's",
         "title": "McDonalds- $0.99 Any Size Premium Roast or Iced Coffee 1x Daily (YMMV)",
@@ -4016,13 +4028,6 @@
         "title": "12-Pc KFC Fried Chicken Bucket (Original or Extra Crispy) $15 (Order Online or via App)",
         "url": "https://slickdeals.net/f/19695330-12-pc-kfc-fried-chicken-bucket-original-or-extra-crispy-15-order-online-or-via-app?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-28T03:24:18.000Z"
-      },
-      {
-        "id": "sd-19685625",
-        "place": "Dunkin'",
-        "title": "Dunkin Rewards Summer Bonus 50 Points Per Week Summer Poll",
-        "url": "https://slickdeals.net/f/19685625-dunkin-rewards-summer-bonus-50-points-per-week-summer-poll?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-25T19:23:32.000Z"
       }
     ]
   }
