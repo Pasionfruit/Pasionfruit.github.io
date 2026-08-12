@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-11T10:04:25.588Z",
+  "lastUpdated": "2026-08-12T10:13:25.195Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -227,6 +227,15 @@
         "description": "Save $3.00 on any ONE (1) Afrin® SeaWater, 30ml, twin pack or larger",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4737423",
+        "brand": "Align",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Align Probiotic Supplement Product (excludes trial/travel size)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -602,7 +611,7 @@
         "id": "flipp-4735470",
         "brand": "Banquet",
         "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Banquet® MEGA Chicken Tenders or Fillets 22-24oz",
+        "description": "Save $2.00 on any ONE (1) Banquet® MEGA Chicken Tenders or Filets 22-24oz",
         "category": "Grocery",
         "validTo": "2026-09-09T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -660,6 +669,15 @@
         "category": "Health & Beauty",
         "validTo": "2026-08-29T23:59:59.000-04:00",
         "redemption": "print"
+      },
+      {
+        "id": "flipp-4737427",
+        "brand": "BENADRYL",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) BENADRYL® product (excludes trial/travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-18T19:59:59.000-04:00",
+        "redemption": "savetocard"
       },
       {
         "id": "flipp-4692868",
@@ -959,6 +977,42 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4737400",
+        "brand": "Colgate",
+        "discount": "Save $3.00",
+        "description": "SAVE $3.00 on any ONE (1) Colgate Kids Battery Powered Toothbrush",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4737397",
+        "brand": "Colgate",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) Optic White Pro Series Toothpaste",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4737406",
+        "brand": "Colgate",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Colgate Total (3.3oz or 5.1oz), Optic White Stain Fighter, Max Fresh or Sensitive Toothpaste (excluding 3pack Toothpastes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4737403",
+        "brand": "Colgate",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Colgate Optic White Advanced , Purple, Charcoal, Sensitivity Relief, Total Gum Protect, Plaque Cleanse, Sensitivity Mineral Shield, Tom's of Maine or hello Adult Toothpaste",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4722857",
         "brand": "Colgate",
         "discount": "Save $4.00",
@@ -992,6 +1046,15 @@
         "description": "SAVE $10.00 On any TWO (2) Colgate Optic White Pro Series Toothpastes",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4735469",
+        "brand": "CONAGRA",
+        "discount": "Save $1.25",
+        "description": "Save $1.25 on any ONE (1) Dolly Parton’s™ Frozen Single-Serve Meals 11-12.5 oz",
+        "category": "Grocery",
+        "validTo": "2026-09-09T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1091,15 +1154,6 @@
         "description": "Save $5.00 ONE Crest 3DWhitestrips (excludes Noticeably White, Classic White and any Crest 3DWhitestrips product with 5 or less treatments).",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4702315",
-        "brand": "Crush",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any TWO (2) 12pk 12oz Crush, Schweppes, Starry, Mug, and Brisk",
-        "category": "Grocery",
-        "validTo": "2026-08-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1218,15 +1272,6 @@
         "category": "Health & Beauty",
         "validTo": "2026-08-29T23:59:59.000-04:00",
         "redemption": "print"
-      },
-      {
-        "id": "flipp-4735469",
-        "brand": "Dolly Parton's",
-        "discount": "Save $1.25",
-        "description": "Save $1.25 on any ONE (1) Dolly Parton’s™ Frozen Single-Serve Meals 11-12.5 oz",
-        "category": "Grocery",
-        "validTo": "2026-09-09T19:59:59.000-04:00",
-        "redemption": "savetocard"
       },
       {
         "id": "flipp-4702317",
@@ -1352,6 +1397,15 @@
         "description": "Save $4.00 ONE Downy In-Wash Scent Boosters Boutique Botanicals 4.8 oz OR Downy In-Wash Scent Boosters Unlimited 4.8 oz (excludes travel size).",
         "category": "Household",
         "validTo": "2026-08-16T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4735471",
+        "brand": "Dr Pepper",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any TWO (2) 12pk Dr. Pepper Products",
+        "category": "Grocery",
+        "validTo": "2026-09-09T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1481,21 +1535,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4719374",
+        "brand": "Fancy Feast",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 on ONE (1) 16 ct or larger (4 oz package) of Fancy Feast® Gems® Wet Cat Food",
+        "category": "Pets",
+        "validTo": "2026-09-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4718624",
         "brand": "Fancy Feast",
         "discount": "Save $0.75",
         "description": "Save $0.75 on any ONE (1) 1.06 oz - 1.96 oz package of Fancy Feast® Layered Delights™, Chef's Cuts™, or Savory Purees Cat Treats",
         "category": "Pets",
         "validTo": "2026-09-15T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4735467",
-        "brand": "FATTY",
-        "discount": "Save $2.50",
-        "description": "Save $2.50 on any ONE (1) FATTY® Smoked Meat Sticks Minis, 5 pack",
-        "category": "Other",
-        "validTo": "2026-09-09T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2093,6 +2147,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4737416",
+        "brand": "Impossible",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 On Any TWO (2) Impossible Products",
+        "category": "Grocery",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4704488",
         "brand": "Irish Spring",
         "discount": "Save $3.50",
@@ -2144,6 +2207,15 @@
         "description": "Save $0.50 ONE Ivory Body Wash 27oz or Larger.",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4737418",
+        "brand": "Kellogg's",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any FOUR (4) Cheez-It®, Pringles®, Keebler® Sandwich Crackers, Pop-Tarts®, Rice Krispies Treats®, Nutri-Grain® Bars, Special K® Bars and/or Eggo® (5 oz. or Larger, Any Flavor, Mix or Match)",
+        "category": "Other",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2279,6 +2351,15 @@
         "description": "Save $10.00 when you spend $35.00 on Pampers or Luvs Products",
         "category": "Baby",
         "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4737395",
+        "brand": "MALK",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) MALK Organics Product",
+        "category": "Grocery",
+        "validTo": "2026-09-03T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3173,15 +3254,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654973",
-        "brand": "Raid®",
-        "discount": "Save $0.75",
-        "description": "Save $0.75 on any ONE (1) Raid® Product",
-        "category": "Household",
-        "validTo": "2026-08-12T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4726691",
         "brand": "Rana",
         "discount": "Save $1.00",
@@ -3200,21 +3272,21 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4735466",
+        "brand": "Refresh",
+        "discount": "Save $6.00",
+        "description": "Save $6.00 on any TWO (2) Refresh Eye Drops",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-23T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4692838",
         "brand": "Refresh",
         "discount": "$8.00 OFF",
         "description": "$8.00 OFF on TWO (2) packages of Refresh® Eye Drops (excludes Refresh Tears® 15mL, Refresh Plus® 30ct, and Refresh Contacts® 12mL)",
         "category": "Health & Beauty",
         "validTo": "2026-09-15T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4731590",
-        "brand": "Sally Hansen",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Sally Hansen Miracle Gel® or Perfect Press-On Nail or Perfect Brush-On nail product",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-08T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3299,6 +3371,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4735467",
+        "brand": "Smokehouse",
+        "discount": "Save $2.50",
+        "description": "Save $2.50 on any ONE (1) FATTY® Smoked Meat Sticks Minis, 5 pack",
+        "category": "Grocery",
+        "validTo": "2026-09-09T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4715511",
         "brand": "Sour Patch Kids",
         "discount": "SAVE $1.00",
@@ -3323,15 +3404,6 @@
         "description": "Save $1.00 on any ONE (1) Stayfree® Pads 28ct. or Larger",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674056",
-        "brand": "STEM",
-        "discount": "Save $2.00",
-        "description": "Save $2 on any ONE (1) STEM Products and Refills",
-        "category": "Other",
-        "validTo": "2026-08-11T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3854,6 +3926,27 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19868364",
+        "place": "Chipotle",
+        "title": "Play the Chipotle IQ trivia game for 5,000 BOGO codes per hour",
+        "url": "https://slickdeals.net/f/19868364-play-the-chipotle-iq-trivia-game-for-5-000-bogo-codes-per-hour?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-11T21:04:53.000Z"
+      },
+      {
+        "id": "sd-19867803",
+        "place": "Chipotle",
+        "title": "Verizon Shine $5 Chipotle GC Free",
+        "url": "https://slickdeals.net/f/19867803-verizon-shine-5-chipotle-gc-free?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-11T19:03:27.000Z"
+      },
+      {
+        "id": "sd-19867506",
+        "place": "KFC",
+        "title": "KFC: BOGO Popcorn Chicken Box combo meal $10.99 YMMV",
+        "url": "https://slickdeals.net/f/19867506-kfc-bogo-popcorn-chicken-box-combo-meal-10-99-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-11T17:49:07.000Z"
+      },
+      {
         "id": "sd-19862379",
         "place": "Dunkin'",
         "title": "Free Dunkin Donuts Medium Refresher for Rewards Members - August 10",
@@ -3919,8 +4012,8 @@
       {
         "id": "sd-19846026",
         "place": "KFC",
-        "title": "T-Mobile Customers * Starts 8/11/26 * T-Mobile Free Grill Tongs, KFC $3 3-pc Tenders Combo, more",
-        "url": "https://slickdeals.net/f/19846026-t-mobile-customers-starts-8-11-26-t-mobile-free-grill-tongs-kfc-3-3-pc-tenders-combo-more?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "T-Mobile Customers: 3-Pc KFC Tenders Combo $3 or T-Mobile Branded Grill Tongs Free to Claim & More via T-Mobile T-Life App",
+        "url": "https://slickdeals.net/f/19846026-t-mobile-customers-3-pc-kfc-tenders-combo-3-or-t-mobile-branded-grill-tongs-free-to-claim-more-via-t-mobile-t-life-app?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-05T12:45:15.000Z"
       },
       {
@@ -4036,13 +4129,6 @@
         "postedAt": "2026-07-26T19:14:08.000Z"
       },
       {
-        "id": "sd-19808175",
-        "place": "Chipotle",
-        "title": "Chipotle- BOGO  Rewards Members Accounts (YMMV)",
-        "url": "https://slickdeals.net/f/19808175-chipotle-bogo-rewards-members-accounts-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-25T16:06:08.000Z"
-      },
-      {
         "id": "sd-19797816",
         "place": "Subway",
         "title": "Select Subway Buy One Footlong Get One Free $10",
@@ -4097,13 +4183,6 @@
         "title": "Wendy's- $1 Small Frosty  (National Ice Cream Day)",
         "url": "https://slickdeals.net/f/19780953-wendy-s-1-small-frosty-national-ice-cream-day?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-19T12:04:45.000Z"
-      },
-      {
-        "id": "sd-19770321",
-        "place": "Chipotle",
-        "title": "Chipotle - Free 100,000 Burritos During World Cup Final Water Break #2 - Sunday, 7/19/26",
-        "url": "https://slickdeals.net/f/19770321-chipotle-free-100-000-burritos-during-world-cup-final-water-break-2-sunday-7-19-26?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-16T18:19:56.000Z"
       },
       {
         "id": "sd-19759596",
@@ -4181,13 +4260,6 @@
         "title": "BURGER KING APP: New 'TAP UP\" Soccer Game Play 4 days in a row, get 100 Bonus Crowns plus daily prize (food, crowns, etc)",
         "url": "https://slickdeals.net/f/19700610-burger-king-app-new-tap-up-soccer-game-play-4-days-in-a-row-get-100-bonus-crowns-plus-daily-prize-food-crowns-etc?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-29T15:32:12.000Z"
-      },
-      {
-        "id": "sd-19695330",
-        "place": "KFC",
-        "title": "12-Pc KFC Fried Chicken Bucket (Original or Extra Crispy) $15 (Order Online or via App)",
-        "url": "https://slickdeals.net/f/19695330-12-pc-kfc-fried-chicken-bucket-original-or-extra-crispy-15-order-online-or-via-app?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-28T03:24:18.000Z"
       }
     ]
   }
