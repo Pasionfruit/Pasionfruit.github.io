@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-12T10:13:19.104Z",
+  "lastUpdated": "2026-08-13T10:14:37.705Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-08-12T00:00:00-04:00",
@@ -3054,9 +3054,1209 @@
       ]
     },
     "Publix": {
-      "validFrom": "2026-08-06T00:00:00-04:00",
+      "validFrom": "2026-08-12T00:00:00-04:00",
       "validTo": "2026-08-25T23:59:59-04:00",
       "deals": [
+        {
+          "id": "Publix-1031870858",
+          "item": "Bob Evans Side Dishes",
+          "brand": "Bob Evans",
+          "price": 9,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870394",
+          "item": "GreenWise Lamb Round Bone",
+          "brand": "GreenWise",
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871704",
+          "item": "Cherries",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881381",
+          "item": "publix.com/save",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869971",
+          "item": "White Shrimp",
+          "brand": null,
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886073",
+          "item": "Nellie's Free Range Eggs",
+          "brand": "Nellie's Free Range",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886107",
+          "item": "Publix 73% Lean Ground Beef Roll",
+          "brand": "Publix",
+          "price": 16.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031855988",
+          "item": "12-Pack Michelob Ultra Beer",
+          "brand": "Michelob Ultra",
+          "price": 14.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031856038",
+          "item": "Grape Tomatoes",
+          "brand": null,
+          "price": 4,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031856187",
+          "item": "Chateau Ste Michelle Cabernet Sauvignon or Merlot Wine",
+          "brand": "Chateau Ste Michelle | Merlot",
+          "price": 12.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866596",
+          "item": "Lean Ground Beef Burgers",
+          "brand": null,
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866407",
+          "item": "Sourdough Round Bread",
+          "brand": null,
+          "price": 4.19,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866656",
+          "item": "Lean Ground Beef",
+          "brand": null,
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867188",
+          "item": "GreenWise Angus Eye Round Roast",
+          "brand": "GreenWise",
+          "price": 10.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866919",
+          "item": "GreenWise Pork Loin Back Ribs",
+          "brand": "GreenWise",
+          "price": 7.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867206",
+          "item": "GreenWise Organic Pitted Kalamata Olives",
+          "brand": "GreenWise",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867513",
+          "item": "Publix Pistachio Pudding",
+          "brand": "Publix",
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867491",
+          "item": "Pistachio Shortbread Cookies",
+          "brand": null,
+          "price": 4.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867044",
+          "item": "GreenWise Organic Old Fashioned Oats",
+          "brand": "GreenWise",
+          "price": 3.29,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867266",
+          "item": "GreenWise Organic Red or White Seedless Grapes",
+          "brand": "GreenWise",
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868274",
+          "item": "12-Pack High Noon Vodka Seltzer",
+          "brand": "High Noon",
+          "price": 27.89,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868276",
+          "item": "6-Pack Victory Brewing Co. Beer",
+          "brand": "Victory Brewing Company",
+          "price": 11.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868268",
+          "item": "Bonanza California Cabernet Sauvignon Wine",
+          "brand": "Bonanza",
+          "price": 17.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868508",
+          "item": "GreenWise Sparkling Water",
+          "brand": "GreenWise",
+          "price": 5.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868725",
+          "item": "12-Pack Pacifico Clara Beer",
+          "brand": "Pacifico",
+          "price": 16.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868726",
+          "item": "12-Pack Peroni Nastro Azzurro Beer",
+          "brand": "Peroni Nastro",
+          "price": 17.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868727",
+          "item": "8-Pack Guinness Draught Stout",
+          "brand": "GUINNESS DRAUGHT",
+          "price": 17.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031882390",
+          "item": "Nestlé Toll House Morsels",
+          "brand": "Nestle",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869803",
+          "item": "Tilapia Fillets",
+          "brand": null,
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869967",
+          "item": "GreenWise Ground Chuck Burgers",
+          "brand": "GreenWise",
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870078",
+          "item": "Top Sirloin Fillet",
+          "brand": null,
+          "price": 11.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869931",
+          "item": "Salmon Select Cuts, Brown",
+          "brand": null,
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869724",
+          "item": "GreenWise Keta Salmon Fillets",
+          "brand": "GreenWise",
+          "price": 10.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869681",
+          "item": "Publix Savory Umami Seasoned Broccoli and Zucchini†",
+          "brand": "Publix",
+          "price": 5.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869953",
+          "item": "Publix Meal for One",
+          "brand": "Publix",
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869909",
+          "item": "Publix Chicken Pot Pie",
+          "brand": "Publix",
+          "price": 7.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869838",
+          "item": "Demakes Bros. Chicken Breast Skewers",
+          "brand": "Demakes Bros",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870390",
+          "item": "Hormel Marinated Pork Loin Tenderloin",
+          "brand": "Hormel",
+          "price": 12,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870391",
+          "item": "Publix Chicken Drumsticks",
+          "brand": "Publix",
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821343",
+          "item": "Bottom Round Roast",
+          "brand": null,
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870516",
+          "item": "Publix Assorted Pork Loin Chops†",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870960",
+          "item": "Publix Pork Boston Butt Roast†",
+          "brand": "Publix",
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870967",
+          "item": "Publix Pork Picnic, Boneless",
+          "brand": "Publix",
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881615",
+          "item": "Mini Assorted Pastries",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871131",
+          "item": "Outside Skirt Steak",
+          "brand": null,
+          "price": 21.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871683",
+          "item": "Publix Cantaloupe Chunks",
+          "brand": "Publix",
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871779",
+          "item": "Strawberries",
+          "brand": null,
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871667",
+          "item": "Watermelon Feta Salad",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871739",
+          "item": "Publix Fruit Salad",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871784",
+          "item": "Plumcots",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871940",
+          "item": "Bartlett Pears or Navel Oranges",
+          "brand": null,
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872031",
+          "item": "Honeydew or Orangedew Melons",
+          "brand": null,
+          "price": 4.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881240",
+          "item": "Publix Southern Cobb Salad",
+          "brand": "Publix",
+          "price": 7.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881225",
+          "item": "Coca-Cola Fountain Drink",
+          "brand": "Coca-Cola",
+          "price": 1,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881426",
+          "item": "Boar's Head® American Cheese, Yellow or White",
+          "brand": "Boar's Head®",
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881581",
+          "item": "GreenWise Dessert Cakes",
+          "brand": "GreenWise",
+          "price": 6.29,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881658",
+          "item": "Cannoli",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881843",
+          "item": "Brioche Donuts, 4-Count",
+          "brand": "Publix",
+          "price": 5.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881811",
+          "item": "Soft Sweet Hoagie Rolls†",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872369",
+          "item": "Jumbo Red Onions",
+          "brand": null,
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872248",
+          "item": "Florida's Natural Peach Mango Flavored Juice Drink",
+          "brand": "Florida's Natural",
+          "price": 4,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872401",
+          "item": "Brussels Sprouts",
+          "brand": null,
+          "price": 5,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872463",
+          "item": "Publix Yellow Onions",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872412",
+          "item": "Organic Cauliflower or Broccoli",
+          "brand": null,
+          "price": 7,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872738",
+          "item": "Russet Potatoes",
+          "brand": null,
+          "price": 1.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885016",
+          "item": "Crest 3D White Mouthwash",
+          "brand": "Crest",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885115",
+          "item": "L. Organic Pads or Tampons",
+          "brand": null,
+          "price": 10.69,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885448",
+          "item": "Publix Deli Muenster Cheese",
+          "brand": "Publix",
+          "price": 4.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031883640",
+          "item": "Dole Fruit Cups Or Wiggles",
+          "brand": "Dole",
+          "price": 6,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031883840",
+          "item": "Nabisco Oreo Cookies or Ritz Crackers or Bits",
+          "brand": "Nabisco",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031884024",
+          "item": "Philadelphia Cream Cheese Spread",
+          "brand": "PHILADELPHIA",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031884153",
+          "item": "Checkers Rally's Fries",
+          "brand": "Checkers | Arby's | Nathan's",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867028",
+          "item": "GreenWise Organic Gala Apples",
+          "brand": "GreenWise",
+          "price": 4.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885421",
+          "item": "La Bonne Vie Brie Mini Cheese",
+          "brand": "La Bonne Vie",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031822362",
+          "item": "GreenWise Angus Eye Round Steak",
+          "brand": "GreenWise",
+          "price": 11.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886089",
+          "item": "Bimbo White Bread",
+          "brand": "Bimbo",
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886031",
+          "item": "Pediasure Grow & Gain Shake",
+          "brand": "PediaSure",
+          "price": 21,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886084",
+          "item": "Publix Classic Salad Blend",
+          "brand": "Publix",
+          "price": 1.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886103",
+          "item": "Nissin Top Ramen Bowl",
+          "brand": "Nissin",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886636",
+          "item": "P. F. Chang's Home Menu Egg Rolls, Rice, or Dumplings",
+          "brand": "P.F. Chang's",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886634",
+          "item": "P. F. Chang's Home Menu Entrées",
+          "brand": "P. F. Chang's | Bertolli",
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888590",
+          "item": "Solo Bold Hold Plates",
+          "brand": "Solo",
+          "price": 12,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888768",
+          "item": "Purex Crystals In-Wash Fragrance Booster",
+          "brand": "Purex",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888585",
+          "item": "Kleenex Facial Tissues",
+          "brand": "Kleenex",
+          "price": 12,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888752",
+          "item": "Angel Soft Bathroom Tissue",
+          "brand": "Angel Soft",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872724",
+          "item": "Publix Baby Cut Carrots",
+          "brand": "Publix",
+          "price": 3,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888696",
+          "item": "Tide or Gain Laundry Detergent",
+          "brand": "Tide | Gain | Downy",
+          "price": 15.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888772",
+          "item": "Sparkle Paper Towels",
+          "brand": "Sparkle",
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885348",
+          "item": "Publix Buffalo Chicken Tender Sub",
+          "brand": "Publix",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031855993",
+          "item": "Robert Mondavi Woodbridge Chardonnay Wine",
+          "brand": "Robert Mondavi",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866989",
+          "item": "GreenWise Ground Turkey Breast",
+          "brand": "GreenWise",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031855998",
+          "item": "Chateau Ste Michelle Chardonnay Wine",
+          "brand": "Chateau Ste. Michelle",
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872854",
+          "item": "Mango",
+          "brand": null,
+          "price": 4,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886120",
+          "item": "Chock Full O'Nuts Ground Coffee",
+          "brand": "Chock Full o' Nuts",
+          "price": 12.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885754",
+          "item": "Lemon Sliced Loaf Cake",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866873",
+          "item": "GreenWise Organic Beans",
+          "brand": "GreenWise",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886124",
+          "item": "Coca-Cola Products",
+          "brand": "Coca-Cola",
+          "price": 2,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031866889",
+          "item": "GreenWise Organic Baby Bella Mushrooms",
+          "brand": "GreenWise",
+          "price": 5,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869736",
+          "item": "White Shrimp",
+          "brand": null,
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031888735",
+          "item": "Publix Aluminum Foil",
+          "brand": "Publix",
+          "price": 9,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881270",
+          "item": "Publix Cuban Sandwich",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031824949",
+          "item": "Boar's Head® Everroast Chicken Breast",
+          "brand": "Boar's Head",
+          "price": 11.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031881313",
+          "item": "Publix Banana Pudding",
+          "brand": "Publix",
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868296",
+          "item": "15-Pack Miller Lite or Coors Light Beer",
+          "brand": "Miller | Coors",
+          "price": 18.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867176",
+          "item": "GreenWise Organic Protein Powder",
+          "brand": "GreenWise",
+          "price": 15.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031871760",
+          "item": "Tree-Ripened Peaches or Nectarines",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870447",
+          "item": "Nathan's Famous Beef Franks",
+          "brand": "Nathan's",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870393",
+          "item": "Publix Chicken Thighs",
+          "brand": "Publix",
+          "price": 2.39,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867458",
+          "item": "12-Pack Bitburger Premium Pilsner",
+          "brand": "BITBURGER",
+          "price": 16.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869874",
+          "item": "GreenWise Ground Chuck",
+          "brand": "GreenWise",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870623",
+          "item": "GreenWise Angus Strip Steak",
+          "brand": "GreenWise",
+          "price": 21.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031872345",
+          "item": "Florida's Natural 100% Premium Orange Juice",
+          "brand": "Florida's Natural",
+          "price": 7,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870442",
+          "item": "GreenWise Angus New York Strip Steak",
+          "brand": "GreenWise",
+          "price": 20.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031868301",
+          "item": "Woodbridge Wine",
+          "brand": "Woodbridge",
+          "price": 16.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031826119",
+          "item": "Clio Greek Yogurt Bar",
+          "brand": "Clio",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821308",
+          "item": "Publix Spinach & Feta Cheese-Stuffed Chicken Breast",
+          "brand": "Publix",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821090",
+          "item": "Publix Frozen Yogurt",
+          "brand": "Publix",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821050",
+          "item": "Publix Pistachio-Crusted Cod Meal for One",
+          "brand": "Publix",
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821136",
+          "item": "Boneless Chuck Roast",
+          "brand": null,
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821167",
+          "item": "Publix Chicken Cordon",
+          "brand": "Publix",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821231",
+          "item": "Publix Shredded Cheese",
+          "brand": "Publix",
+          "price": 11,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821452",
+          "item": "Red or White Seedless Grapes",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821623",
+          "item": "Tampax Pearl or Radiant Tampons",
+          "brand": "Tampax | Always",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031822110",
+          "item": "Head & Shoulders Bare Shampoo or Conditioner",
+          "brand": "Head & Shoulders | Herbal Essences | Pantene",
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821679",
+          "item": "Bulk Sweet Corn",
+          "brand": null,
+          "price": 3,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821716",
+          "item": "Beefsteak Tomatoes†",
+          "brand": null,
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821751",
+          "item": "Broccoli or Cauliflower",
+          "brand": null,
+          "price": 6,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031821844",
+          "item": "Publix Pistachio Flavored Yogurt Parfait",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031822167",
+          "item": "Red or Black Plums",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031822331",
+          "item": "Cantaloupe or Sugar Kiss Melon",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031824821",
+          "item": "Publix Boneless Skinless Chicken Breast Cutlets",
+          "brand": "Publix",
+          "price": 8.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031824910",
+          "item": "Boneless Top Sirloin Steak",
+          "brand": null,
+          "price": 10.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031824944",
+          "item": "Publix Boneless Skinless Chicken Breast",
+          "brand": "Publix",
+          "price": 8.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031824981",
+          "item": "Publix Smoked Tavern Ham",
+          "brand": "Publix",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031831216",
+          "item": "Iceburg Lettuce",
+          "brand": null,
+          "price": 4,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031831249",
+          "item": "Minute Maid Drink",
+          "brand": "Minute Maid",
+          "price": 5,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031832292",
+          "item": "Belgioioso Fresh Mozzarella Cheese",
+          "brand": "Belgioioso",
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031832324",
+          "item": "Publix Sweet Chili Boneless Wings",
+          "brand": "Publix",
+          "price": 8.79,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031854254",
+          "item": "Strawberry Dulce de Leche Cake",
+          "brand": "Publix Bakery",
+          "price": 21.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886609",
+          "item": "Lactaid Lactose Free Milk",
+          "brand": "LACTAID",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031870392",
+          "item": "GreenWise Lamb Shoulder Blade Chops",
+          "brand": "GreenWise",
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031885909",
+          "item": "Milk-Bone Dog Biscuits, Snacks, or Treats",
+          "brand": "Milk-Bone",
+          "price": 7,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031867268",
+          "item": "GreenWise Popcorn",
+          "brand": "GreenWise",
+          "price": 2.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031832349",
+          "item": "Try in a Meal Roll",
+          "brand": null,
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031831208",
+          "item": "Sweet Heat Summer Fruit Salad†",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886126",
+          "item": "Bush's Best Beans",
+          "brand": "Bush's",
+          "price": 5,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031886106",
+          "item": "Ocean Spray Juice Cocktail",
+          "brand": "Ocean Spray",
+          "price": 4.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869696",
+          "item": "Salmon Select Cuts",
+          "brand": null,
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031869941",
+          "item": "Publix Salmon Meal for One",
+          "brand": "Publix",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031884359",
+          "item": "Maple Hill Plain Greek Yogurt or Whole Milk Plain Organic Kefir",
+          "brand": "Maple Hill",
+          "price": 5.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
         {
           "id": "Publix-1032589621",
           "item": "Softsoap Velvet Silk Foaming Hand Soap 9-oz or Liquid Hand Soap 11.25-oz or Irish Spring Bar Soap 3-ct.",
@@ -3362,2196 +4562,948 @@
           "validTo": "2026-08-25T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352993",
-          "item": "Pan Francés",
-          "brand": null,
-          "price": 2.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353472",
-          "item": "Pastel de Canela en Espiral con Glaseado",
-          "brand": null,
-          "price": 5.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030349134",
-          "item": "Pasta Dental Crest 3D White",
-          "brand": "Crest",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347082",
-          "item": "Caldo Swanson",
-          "brand": "Swanson",
-          "price": 4,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347077",
-          "item": "Leche de Coco Coco López",
-          "brand": "COCO LOPEZ",
-          "price": 1.89,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347092",
-          "item": "Atún Claro en Trozos Bumble Bee",
-          "brand": "Bumble Bee",
-          "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346858",
-          "item": "Aguacates Tropicales de la Florida o Pitaya",
-          "brand": null,
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346891",
-          "item": "Brussels Sprouts",
-          "brand": null,
-          "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346915",
-          "item": "Publix Stuffed Crust Pizza",
-          "brand": "Publix",
-          "price": 6.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346901",
-          "item": "White Shrimp, Peeled & Deveined,",
-          "brand": null,
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346862",
-          "item": "Papas Russet de Idaho Publix",
-          "brand": "Publix",
-          "price": 3.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346877",
-          "item": "Carambola",
-          "brand": null,
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346881",
-          "item": "Publix Yellow Onions",
-          "brand": "Publix",
-          "price": 3.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347139",
-          "item": "Pechuga de Pavo Asada al Horno Publix",
-          "brand": "Publix",
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347856",
-          "item": "Mezcla de Ensalada Clásica Publix",
-          "brand": "Publix",
-          "price": 4,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030348902",
-          "item": "Boliche para Asar",
-          "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030348906",
-          "item": "Top Blade Roast",
-          "brand": null,
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030348910",
-          "item": "Hormel Side Dishes",
-          "brand": "Hormel",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030349114",
-          "item": "Barra de Proteína Pure",
-          "brand": "Pure Protein",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030349419",
-          "item": "Panes de Masa Agria GreenWise",
+          "id": "Publix-1031393583",
+          "item": "Pasteles de Postre GreenWise",
           "brand": "GreenWise",
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030349642",
-          "item": "Comida Tamaño Familiar Stouffer's",
-          "brand": "Stouffer's",
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030349639",
-          "item": "Potatoes Ore-Ida",
-          "brand": "Ore-Ida",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030350011",
-          "item": "Cerezas",
-          "brand": null,
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030350026",
-          "item": "Uvas Rojas o Blancas sin Semillas",
-          "brand": null,
-          "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030350244",
-          "item": "Té Publix",
-          "brand": "Publix",
-          "price": 1,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030351259",
-          "item": "18-Pack Bud Light Beer",
-          "brand": "Bud Light",
-          "price": 17.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030351256",
-          "item": "Cerveza Bitburger Premium Pilsner Paquete de 12",
-          "brand": "BITBURGER",
-          "price": 16.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358364",
-          "item": "Bolsas Altas para la Cocina Glad",
-          "brand": "Glad",
-          "price": 9.29,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358361",
-          "item": "Detergente para la Ropa Tide",
-          "brand": "Tide",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030351386",
-          "item": "Croissants en Miniatura",
-          "brand": null,
           "price": 6.29,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030358513",
-          "item": "Sándwich de Pavo Fryer en Croissant Boar's Head®",
-          "brand": "Boar's Head",
-          "price": 6.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031386457",
+          "item": "Batido Pediasure Grow & Gain",
+          "brand": "PediaSure",
+          "price": 21,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030358380",
-          "item": "Bolsas para Congelar o Almacenar Ziploc BOGO*",
-          "brand": "Ziploc",
-          "price": 11,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358382",
-          "item": "Clorox Cleaner or Foamer",
-          "brand": "Clorox",
-          "price": 9,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358396",
-          "item": "Quilted Northern Bathroom Tissue",
-          "brand": "Quilted Northern",
-          "price": 11.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030351581",
-          "item": "Mezcla para Sofrito El Sembrador",
-          "brand": "EL SEMBRADOR",
-          "price": 3.29,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030351790",
-          "item": "Filete de Lomo de Cerdo Prairie Fresh",
-          "brand": "PRAIRIE FRESH",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030351818",
-          "item": "Brócoli o Coliflor",
-          "brand": null,
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352002",
-          "item": "Cerveza Modelo Oro Paquete de 12",
-          "brand": "Modelo",
-          "price": 14.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352009",
-          "item": "Cerveza Michelob Ultra Paquete de 12",
-          "brand": "Michelob Ultra",
-          "price": 14.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352029",
-          "item": "12-Pack Samuel Adams Beer",
-          "brand": "Samuel Adams | Angry Orchard",
-          "price": 17.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352047",
-          "item": "Garbanzos Publix",
+          "id": "Publix-1031393261",
+          "item": "Paleta de Cerdo Estilo Boston para Asar Publix",
           "brand": "Publix",
-          "price": 0.89,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352010",
-          "item": "Bebida Alcohólica Twisted Tea Hard Iced Tea Paquete de 12",
-          "brand": "Twisted Tea",
-          "price": 18.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393857",
+          "item": "Fruta en Tazas Dole",
+          "brand": "Dole",
+          "price": 6,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352273",
-          "item": "Carne Molida de Pecho de Res",
+          "id": "Publix-1031393821",
+          "item": "Bebida con Electrólitos Electrolit",
+          "brand": "Electrolit",
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388600",
+          "item": "Salmon Select Cuts",
           "brand": null,
           "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352286",
-          "item": "Ground Chuck Burgers or Slider",
+          "id": "Publix-1031394376",
+          "item": "Cóctel de Jugo Ocean Spray",
+          "brand": "Ocean Spray",
+          "price": 4.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388758",
+          "item": "Bebida de Jugo con Sabor a Melocotón y Mango Florida's Natural",
+          "brand": "Florida's Natural",
+          "price": 4,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388538",
+          "item": "Camarones Blancos",
           "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352299",
-          "item": "Caja de Merienda del Publix Produce",
-          "brand": "Publix",
-          "price": 9,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352113",
-          "item": "Brócoli y Calabacín Sazonados Sabrosos Umami Publix",
-          "brand": "Publix",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352098",
+          "id": "Publix-1031388539",
           "item": "Filetes de Salmón Keta GreenWise",
           "brand": "GreenWise",
           "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352146",
-          "item": "Filetes de Siluro",
-          "brand": null,
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393995",
+          "item": "Barra de Yogur Griego Clio",
+          "brand": "Clio",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352119",
-          "item": "Filetes de Salmón del Atlántico Bluehouse",
-          "brand": "Bluehouse",
-          "price": 14.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394002",
+          "item": "Papas Fritas Checkers Rally's",
+          "brand": "Checkers Rally's",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352136",
-          "item": "Camarones Blancos",
-          "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394152",
+          "item": "Platos Solo Bold Hold",
+          "brand": "Solo",
+          "price": 12,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352166",
-          "item": "Bistec de Lomo de Res Angus GreenWise",
-          "brand": "GreenWise",
-          "price": 18.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352128",
-          "item": "Carne Molida de Res Orgánica Dakota",
-          "brand": "Dakota",
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352174",
-          "item": "Chuletas de Lomo de Cerdo Deshuesadas Magras Publix",
+          "id": "Publix-1031394172",
+          "item": "Papel Aluminio Publix",
           "brand": "Publix",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352182",
-          "item": "Thinly-Sliced Boneless Chops",
-          "brand": null,
-          "price": 6.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352191",
-          "item": "Bistec de Lomo de Res Angus GreenWise",
-          "brand": null,
-          "price": 21.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352197",
-          "item": "Cerveza Yuengling Traditional Lager Paquete de 12",
-          "brand": "Yuengling",
-          "price": 13.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352200",
-          "item": "Black Box Wine",
-          "brand": "Black Box",
           "price": 9,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352202",
-          "item": "Almejas Rellenas",
-          "brand": null,
-          "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352735",
-          "item": "Publix Swiss Cheese",
-          "brand": "Publix",
+          "id": "Publix-1031393669",
+          "item": "Atún de Aleta Amarilla Genova",
+          "brand": "Genova",
           "price": 6.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352717",
-          "item": "Papitas Fritas Dirty o Zapp's",
-          "brand": "Dirty | Zapp's",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388540",
+          "item": "Cortes Selectos de Salmón",
+          "brand": null,
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352196",
-          "item": "Vino Cabernet Sauvignon Black Box",
-          "brand": "Black Box",
-          "price": 18.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394006",
+          "item": "Yuca Publix",
+          "brand": "Publix",
+          "price": 5.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352198",
-          "item": "Vino Claret Francis Coppola Diamond Collection",
-          "brand": "Francis Coppola",
-          "price": 12.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388565",
+          "item": "White Shrimp, Peeled and Deveined",
+          "brand": null,
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352199",
-          "item": "Francis Coppola Diamond Collection Chardonnay Wine",
-          "brand": "Francis Coppola",
-          "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388479",
+          "item": "Pudín de Pistacho Publix",
+          "brand": "Publix",
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352229",
-          "item": "Carne Molida de Pavo Butterball",
-          "brand": "Butterball",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352218",
-          "item": "Rebanadas de Queso Sargento",
-          "brand": "Sargento",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352227",
-          "item": "Tocino Oscar Mayer",
-          "brand": "Oscar Mayer",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030348892",
-          "item": "Albóndigas de Res Sazonadas Publix",
+          "id": "Publix-1031388589",
+          "item": "Comida de Salmón para Uno Publix",
           "brand": "Publix",
           "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352208",
-          "item": "Queso en Rebanadas Kraft American Singles",
-          "brand": "Kraft",
-          "price": 4.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352280",
-          "item": "Bistec de Vacío de Palomilla",
-          "brand": "Publix",
-          "price": 16.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352312",
-          "item": "Melocotones o Nectarinas Madurados en Árbol",
+          "id": "Publix-1031369857",
+          "item": "Uvas Rojas o Blancas sin Semillas",
           "brand": null,
           "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352352",
-          "item": "GreenWise Organic Red or White Seedless Grapes",
-          "brand": "GreenWise",
-          "price": 3.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358676",
-          "item": "Dixie Plates, 100 or 150-ct. or To Go Cups, 66-ct. pkg",
-          "brand": "Dixie",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358675",
-          "item": "Refrescante Ambiental Febreze Air",
-          "brand": "Febreze",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352463",
-          "item": "Limonada Simply",
-          "brand": "Simply Beverages",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030346867",
-          "item": "Calabacín o Calabaza Amarilla",
+          "id": "Publix-1031388429",
+          "item": "Lean Ground Beef Burgers or Sliders",
           "brand": null,
-          "price": 3.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352568",
-          "item": "Detergente para el Lavaplatos Cascade",
-          "brand": "Cascade",
-          "price": 19.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352588",
-          "item": "Papel Toalla Bounty",
-          "brand": "Bounty",
-          "price": 22.19,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352594",
-          "item": "Limpiador para Platos con Atomizador Dawn Powerwash",
-          "brand": "Dawn",
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352634",
-          "item": "Salsa Casera Rao's",
-          "brand": "Rao's",
-          "price": 6.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352599",
-          "item": "Bistecs Porterhouse o T-Bone",
-          "brand": null,
-          "price": 13.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352480",
-          "item": "Vine-Ripe Tomatoes",
-          "brand": null,
-          "price": 2.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352475",
-          "item": "Simply 100% Juice",
-          "brand": "Simply Beverages",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352525",
-          "item": "Cheese Combo Combo de Pavo con Miel de Arce y Queso Muenster Boar's Head®",
-          "brand": "Boar's Head",
-          "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352536",
-          "item": "Sub de Pavo Boar's Head®",
-          "brand": "Boar's Head",
-          "price": 9.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352519",
-          "item": "Ensalada Chef Publix",
-          "brand": "Publix",
-          "price": 6.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352598",
-          "item": "Servilletas Acolchadas Bounty",
-          "brand": "Bounty",
-          "price": 5.79,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352584",
-          "item": "Kit Inicial para Combatir Olores de Basura Febreze Trash",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352945",
-          "item": "GreenWise Organic Frozen Riced Cauliflower",
-          "brand": "GreenWise",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352814",
-          "item": "Nabisco Snak-Saks or Minis Cookies,",
-          "brand": "Nabisco",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352947",
-          "item": "Stok Cold Brew Coffee",
-          "brand": "Stok",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352926",
-          "item": "Yogur La Yogurt",
-          "brand": "LA YOGURT",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352970",
-          "item": "Pastel Tres Leches Grande",
-          "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353089",
-          "item": "Carne Molida de Res 100% Alimentada con Hierba Force of Nature",
-          "brand": "Force of Nature",
-          "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353109",
-          "item": "Zanahorias Cortadas en Miniatura Tamaño Merienda Publix",
-          "brand": "Publix",
-          "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353103",
-          "item": "Ciruelas Rojas o Negras",
-          "brand": null,
-          "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353111",
-          "item": "Bartlett or Bosc Pears",
-          "brand": null,
-          "price": 1.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353142",
-          "item": "Repuestos de Paños Secos para Barrer Swiffer Sweep",
-          "brand": "Swiffer",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353415",
-          "item": "Pañales Pampers Swaddlers",
-          "brand": "Pampers",
           "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030353448",
-          "item": "Sándwich Estilo Italiano Clásico Boar's Head®",
-          "brand": "Boar's Head",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352969",
-          "item": "Caderas de Pollo Deshuesadas y sin Piel Publix",
-          "brand": "Publix",
+          "id": "Publix-1031388314",
+          "item": "Refrescos Especiales Coca-Cola Paquete de 4",
+          "brand": "Coca-Cola",
           "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030353321",
-          "item": "Plátanos Maduros Publix",
-          "brand": "Publix",
-          "price": 7.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353275",
-          "item": "Crest Pro-Health or Gum Care Mouthwash or Rinse",
-          "brand": "Crest",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353279",
-          "item": "Clif Builders Protein Bar",
-          "brand": "Clif",
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353283",
-          "item": "Rxbar Protein Bar",
+          "id": "Publix-1031388295",
+          "item": "Pan Redondo de Masa Agria",
           "brand": null,
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 4.19,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030353471",
-          "item": "Caja de Merienda Publix",
+          "id": "Publix-1031388446",
+          "item": "Cerveza Modelo Oro Paquete de 12",
+          "brand": "Modelo",
+          "price": 14.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388454",
+          "item": "Cerveza Michelob Ultra Paquete de 12",
+          "brand": "Michelob Ultra",
+          "price": 14.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388455",
+          "item": "Vino California Cabernet Sauvignon Bonanza",
+          "brand": null,
+          "price": 17.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388497",
+          "item": "Vino Chardonnay Chateau Ste Michelle",
+          "brand": "Chateau Ste. Michelle",
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388487",
+          "item": "Comida para Uno de Bacalao con Cobertura de Pistacho Publix",
           "brand": "Publix",
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388492",
+          "item": "Parfait de Yogur con Sabor a Pistacho Publix",
+          "brand": "Publix",
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388504",
+          "item": "Galletas Shortbread con Pistacho",
+          "brand": null,
           "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030353424",
-          "item": "Ensalada de Pavo Fryer Boar's Head®",
-          "brand": "Boar's Head",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353444",
-          "item": "Ensalada de Pollo Boar's Head® Everroast Cransational",
-          "brand": "Boar's Head",
-          "price": 8.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353518",
-          "item": "Salchicha de Cerdo Estilo Campestre Publix",
+          "id": "Publix-1031393300",
+          "item": "Publix Pork Picnic",
           "brand": "Publix",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030353491",
-          "item": "Bistecs Porterhouse o T-Bone",
-          "brand": "Publix",
-          "price": 14.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353495",
+          "id": "Publix-1031393287",
           "item": "Queso Rallado Publix",
           "brand": "Publix",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 11,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030353470",
-          "item": "Dip de Crema Agria con Cebolla Francesa Publix",
+          "id": "Publix-1031393081",
+          "item": "Sándwich Cubano Publix",
           "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352944",
-          "item": "Breakstone's Cottage Doubles",
-          "brand": "Breakstones's",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352150",
-          "item": "Salmón Marinado con Borbón The Original",
-          "brand": null,
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347811",
-          "item": "Platos o Tazones Dixie",
-          "brand": "Dixie",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030347097",
-          "item": "Salchicha de Vienna Armour",
-          "brand": "Armour | Libby's",
-          "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353544",
-          "item": "Blanqueador Publix",
-          "brand": "Publix",
-          "price": 6.69,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352165",
-          "item": "Acompañante de Espárragos Sazonados Publix",
-          "brand": "Publix",
-          "price": 6.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353465",
-          "item": "Waffles Publix",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353477",
-          "item": "Champiñones Blancos Publix",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353501",
-          "item": "Filetes de Pargo Publix",
-          "brand": "Publix",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353505",
-          "item": "Comida para Gatos Publix",
-          "brand": "Publix",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352175",
-          "item": "Carne Molida de Pollo Perdue",
-          "brand": "Perdue",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353020",
-          "item": "Panquecitos de Chantillí con Bayas y Vainilla",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352344",
-          "item": "Blackberries",
-          "brand": null,
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352158",
-          "item": "Patas de Cangrejo Tanner",
-          "brand": null,
-          "price": 22.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030358672",
-          "item": "Papel Toalla Bounty",
-          "brand": "Bounty",
-          "price": 11.79,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353066",
-          "item": "Bocaditos de Galleta",
-          "brand": null,
           "price": 3.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352236",
-          "item": "Publix Boneless Pork Loin Florentine",
+          "id": "Publix-1031393106",
+          "item": "Ensalada Cobb Sureña Publix",
           "brand": "Publix",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 7.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030346872",
+          "id": "Publix-1031393131",
+          "item": "Pudín de Banana Publix",
+          "brand": "Publix",
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393111",
+          "item": "Refresco de Máquina Coca-Cola",
+          "brand": "Coca-Cola",
+          "price": 1,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393145",
+          "item": "Alitas de Pollo Deshuesadas con Chile Dulce Publix",
+          "brand": "Publix",
+          "price": 8.79,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393138",
+          "item": "Try in a Meal With Choice of Two Sides, and a Roll",
+          "brand": null,
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031369825",
+          "item": "Bistec de Palomilla Deshuesado",
+          "brand": null,
+          "price": 10.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031369821",
+          "item": "Filetes de Pechuga de Pollo Deshuesados y sin Piel Publix",
+          "brand": "Publix",
+          "price": 8.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031370308",
+          "item": "Sub de Tiras de Pollo Crujiente Estilo Búfalo Publix",
+          "brand": "Publix",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031370300",
+          "item": "Pechuga de Pollo Boar's Head® Everroast",
+          "brand": "Boar's Head",
+          "price": 11.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031372645",
+          "item": "Tampax Pearl or Radiant Tampons Tampones Tampax Pearl o Radiant",
+          "brand": "Tampax",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031372640",
+          "item": "Champú o Acondicionador Head & Shoulders Bare",
+          "brand": "Head & Shoulders | Herbal Essences | Pantene",
+          "price": 9.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031373619",
+          "item": "Bistec New York Strip de Carne de Res Angus GreenWise",
+          "brand": "GreenWise",
+          "price": 20.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031381258",
           "item": "Maíz Dulce a Granel",
           "brand": null,
           "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030352323",
-          "item": "Arándanos Azules Orgánicos",
-          "brand": null,
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353015",
-          "item": "Panquecitos Sundae con Chocolate y Vainilla",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353108",
-          "item": "Honeydew or Orangedew Melons",
-          "brand": null,
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353065",
-          "item": "Ensalada de Col Dulce Publix",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352656",
-          "item": "Café Soluble Nescafé",
-          "brand": "Nescafe",
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353497",
-          "item": "Palomitas de Maíz para el Microondas Publix",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353504",
-          "item": "Leche Evaporada Publix",
-          "brand": "Publix",
-          "price": 1.19,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352753",
-          "item": "Meriendas Little Debbie",
-          "brand": "Little Debbie",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352953",
-          "item": "Healthy Choice Bowls or Simply Steamers or Marie Callender's Entrées, 9 to 14 - oz box",
-          "brand": "Healthy Choice | Simply Steamers | Marie Callender's",
-          "price": 7,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353316",
-          "item": "Yogur Yogurico",
-          "brand": "Yogurico",
-          "price": 4.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352773",
-          "item": "Agua de Manantial Publix",
-          "brand": "Publix",
-          "price": 11,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352712",
-          "item": "Pollo Asado al Horno Original Publix",
-          "brand": "Publix",
-          "price": 7.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352103",
-          "item": "Camarones Cocidos",
-          "brand": null,
-          "price": 11.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353503",
-          "item": "Jabón Líquido para el Cuerpo Publix",
-          "brand": "Publix",
-          "price": 5.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030350321",
-          "item": "18-Pack Corona Extra, Light, or Premier; or Modelo Especial, 12-oz can or bot.; or 24-Pack Corona Light Beer, 12-oz can",
-          "brand": "Corona | Modelo",
-          "price": 26.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352978",
-          "item": "Donas Rellenas en Miniatura Paquete de 6",
-          "brand": null,
-          "price": 3.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352311",
-          "item": "Bolsitas de Puré de Frutas Gutzy",
-          "brand": "Gutzy Organic",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352982",
-          "item": "Salteado de Caderas de Pollo Marinadas Publix",
-          "brand": "Publix",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353328",
-          "item": "Stouffer's French Bread Pizza",
-          "brand": "Stouffer's",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030352910",
-          "item": "Queso Crema para Untar Tillamook",
-          "brand": "Tillamook",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030353507",
-          "item": "Tocino Publix",
-          "brand": "Publix",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030105690",
-          "item": "White Shrimp",
-          "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030105593",
-          "item": "Publix Classic Salad Blend",
-          "brand": "Publix",
-          "price": 4,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030110526",
-          "item": "Dixie Plates or Bowls",
-          "brand": "Dixie",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030105767",
-          "item": "White Shrimp, Peeled & Deveined",
-          "brand": null,
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215573",
-          "item": "Zucchini or Yellow Squash†",
-          "brand": null,
-          "price": 3.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213291",
-          "item": "12-Pack Samuel Adams Beer 12 - oz can or bot. or Angry Orchard Crisp Apple Hard Cider, 12 - oz can",
-          "brand": "Samuel Adams | Angry Orchard",
-          "price": 17.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030110987",
-          "item": "Publix Oven-Roasted Turkey Breast",
-          "brand": "Publix",
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215963",
-          "item": "Simply 100% Juice, Juice, or Cocktail, 46 or 52-oz cont",
-          "brand": "Simply Beverages",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215462",
-          "item": "Tree-Ripened Peaches or Nectarines",
+          "id": "Publix-1031382853",
+          "item": "Ciruelas Rojas o Negras",
           "brand": null,
           "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030215449",
-          "item": "Organic Blueberries",
-          "brand": null,
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031383301",
+          "item": "Vino Chardonnay Robert Mondavi Woodbridge",
+          "brand": "Woodbridge",
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030217052",
-          "item": "Publix Boneless Skinless Chicken Thighs†",
-          "brand": "Publix",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217150",
-          "item": "Mini Filled Donuts, 6-Count",
+          "id": "Publix-1031388335",
+          "item": "Uvas Rojas o Blancas sin Semillas Orgánicas GreenWise",
           "brand": null,
           "price": 3.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030227287",
-          "item": "Publix Cat Food",
-          "brand": "Publix",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388329",
+          "item": "Champiñones Orgánicos Baby Bella GreenWise",
+          "brand": "GreenWise",
+          "price": 5,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030227267",
-          "item": "Publix Body Wash",
-          "brand": "Publix",
-          "price": 5.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030119247",
-          "item": "Crest 3D White Toothpaste",
-          "brand": "Crest",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030225162",
-          "item": "Boar's Head® Classic Italian-Style Sandwich",
-          "brand": "Boar's Head",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213961",
-          "item": "Bluehouse Atlantic Salmon Fillets",
-          "brand": null,
-          "price": 14.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215052",
-          "item": "Gutzy Fruitpods",
-          "brand": "Gutzy Organic",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030216262",
-          "item": "Boar's Head® Maple Turkey and Muenster Cheese Combo",
-          "brand": "Boar's Head",
+          "id": "Publix-1031388356",
+          "item": "Boliche para Asar de Carne de Res Angus GreenWise",
+          "brand": "GreenWise",
           "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030209535",
-          "item": "GreenWise Angus Ribeye Steak",
+          "id": "Publix-1031388341",
+          "item": "Manzanas Orgánicas Gala GreenWise",
           "brand": "GreenWise",
-          "price": 21.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030209522",
-          "item": "GreenWise Angus Ribeye Steak",
-          "brand": "GreenWise",
-          "price": 18.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030110665",
-          "item": "Cherries",
-          "brand": null,
           "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030209862",
-          "item": "12-Pack Bitburger Premium Pilsner",
+          "id": "Publix-1031388364",
+          "item": "Aceitunas Kalamata Orgánicas sin Semillas GreenWise",
+          "brand": "GreenWise",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388349",
+          "item": "Costillas de Lomo de Cerdo GreenWise",
+          "brand": "GreenWise",
+          "price": 7.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388392",
+          "item": "Proteína Orgánica en Polvo GreenWise",
+          "brand": "GreenWise",
+          "price": 15.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388383",
+          "item": "Frijoles Orgánicos GreenWise",
+          "brand": "GreenWise",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388358",
+          "item": "Palomitas de Maíz GreenWise",
+          "brand": "GreenWise",
+          "price": 2.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388393",
+          "item": "Pechuga de Pavo Molida GreenWise",
+          "brand": "GreenWise",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388374",
+          "item": "Avena Tradicional Orgánica GreenWise",
+          "brand": "GreenWise",
+          "price": 3.29,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388399",
+          "item": "Agua Efervescente GreenWise",
+          "brand": "GreenWise",
+          "price": 5.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031390739",
+          "item": "Papas Russet",
+          "brand": null,
+          "price": 1.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388432",
+          "item": "Carne Molida de Res Magra",
+          "brand": null,
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388460",
+          "item": "Cerveza Bitburger Premium Pilsner Paquete de 12",
           "brand": "BITBURGER",
           "price": 16.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030211368",
-          "item": "Prairie Fresh Pork Tenderloin",
-          "brand": "PRAIRIE FRESH",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030211384",
-          "item": "Noosa Finest Yoghurt",
-          "brand": "Noosa",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030211396",
-          "item": "Broccoli or Cauliflower",
-          "brand": null,
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030212696",
-          "item": "Publix Chickpeas†",
+          "id": "Publix-1031388502",
+          "item": "Yogur Congelado Publix",
           "brand": "Publix",
-          "price": 0.89,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030212887",
-          "item": "12-Pack Twisted Tea Hard Iced Tea",
-          "brand": "Twisted Tea",
-          "price": 18.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030212934",
-          "item": "12-Pack Michelob Ultra Beer",
-          "brand": "Michelob Ultra®",
-          "price": 14.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213933",
-          "item": "GreenWise Keta Salmon Fillets†",
-          "brand": "GreenWise",
-          "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214003",
-          "item": "Kraft American Singles",
-          "brand": "Kraft",
-          "price": 4.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213667",
-          "item": "Cooked Shrimp",
-          "brand": null,
-          "price": 11.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213850",
-          "item": "Tanner Crab Clusters",
-          "brand": null,
-          "price": 22.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213712",
-          "item": "The Original Bourbon Marinated Salmon",
+          "id": "Publix-1031388530",
+          "item": "Filetes de Tilapia",
           "brand": null,
           "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030213869",
-          "item": "Catfish Fillets",
-          "brand": null,
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213773",
-          "item": "Perdue Ground Chicken",
-          "brand": "Perdue",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214133",
-          "item": "Butterball Ground Turkey†",
-          "brand": "Butterball",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214059",
-          "item": "Stuffed Clams†",
-          "brand": null,
-          "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214225",
-          "item": "Oscar Mayer Bacon",
-          "brand": "Oscar Mayer",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214302",
-          "item": "Eye Round Roast",
-          "brand": null,
+          "id": "Publix-1031388550",
+          "item": "Carne Molida de Pecho de Res GreenWise",
+          "brand": "GreenWise",
           "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030214301",
-          "item": "Sargento Cheese Slices",
-          "brand": "Sargento",
-          "price": 8,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388593",
+          "item": "Lomo de Cerdo Marinado Hormel",
+          "brand": "Hormel",
+          "price": 12,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030214276",
-          "item": "Bottom Sirloin Flap Steak",
-          "brand": null,
-          "price": 16.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214240",
-          "item": "Ground Chuck†",
-          "brand": null,
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214255",
-          "item": "Publix Seasoned Beef Meatballs",
+          "id": "Publix-1031388551",
+          "item": "Brócoli y Calabacín Sazonado Sabroso Umami Publix",
           "brand": "Publix",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215605",
-          "item": "Vine- Ripe Tomatoes",
-          "brand": null,
-          "price": 2.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030214960",
-          "item": "Publix Produce Snack Box",
-          "brand": "Publix",
-          "price": 9,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215338",
-          "item": "Red or Black Plums",
-          "brand": null,
-          "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215657",
-          "item": "Bulk Sweet Corn†",
-          "brand": null,
-          "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215918",
-          "item": "Simply Lemonade",
-          "brand": "Simply Beverages",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030215529",
-          "item": "Florida Tropical Avocados or Dragonfruit",
-          "brand": null,
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217126",
-          "item": "Publix Boneless Skinless Chicken Thighs",
-          "brand": "Publix",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217724",
-          "item": "Cascade Dishwasher Detergent",
-          "brand": "Cascade",
-          "price": 19.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217770",
-          "item": "Febreze Trash Odor Fighter Starter Kit",
-          "brand": "Febreze",
           "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030216460",
-          "item": "Dirty or Zapp's Potato Chips††",
-          "brand": "Dirty Words",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217198",
-          "item": "GreenWise Sourdough Breads",
+          "id": "Publix-1031388608",
+          "item": "Chuletas de Paleta de Cordero GreenWise",
           "brand": "GreenWise",
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 9.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030217049",
-          "item": "Publix Marinated Chicken Thigh Stir-Fry",
-          "brand": "Publix",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217653",
-          "item": "Publix Sweet Coleslaw†",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217277",
-          "item": "Cookie Bites",
-          "brand": null,
-          "price": 3.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217862",
-          "item": "Bounty Quilted Napkins",
-          "brand": "Bounty",
-          "price": 5.79,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030217774",
-          "item": "Dawn Powerwash Dish Spray",
-          "brand": "Dawn",
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030219152",
-          "item": "Publix Original Oven-Roasted Chicken",
+          "id": "Publix-1031388569",
+          "item": "Pastel Relleno de Pollo Publix",
           "brand": "Publix",
           "price": 7.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030219322",
-          "item": "French Bread",
-          "brand": "Publix Bakery",
-          "price": 2.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030219318",
-          "item": "Mini Croissants",
-          "brand": null,
-          "price": 6.29,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030219332",
-          "item": "Chantilly Berry Vanilla Cupcakes",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030224393",
-          "item": "Ziploc Freezer or Storage Bags",
-          "brand": "Ziploc",
-          "price": 11,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030224176",
-          "item": "Tide Laundry Detergent",
-          "brand": "Tide | Downy | Gain",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030224470",
-          "item": "Clorox Cleaner",
-          "brand": "Clorox",
-          "price": 9,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227173",
-          "item": "Publix Snack Box",
+          "id": "Publix-1031388587",
+          "item": "Comida para Uno Publix",
           "brand": "Publix",
-          "price": 4.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227150",
-          "item": "Publix Waffles",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227451",
-          "item": "Publix Bacon†",
-          "brand": "Publix",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227219",
-          "item": "Publix Grated Cheese",
-          "brand": "Publix",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227185",
-          "item": "Publix French Onion Sour Cream Dip",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030223909",
-          "item": "Crest Pro-Health or Gum Care",
-          "brand": "Crest",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030224041",
-          "item": "Glad Tall Kitchen Bags",
-          "brand": "Glad",
-          "price": 9.29,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030224241",
-          "item": "Febreze Air Air Refresher",
-          "brand": "Febreze",
-          "price": 12,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030225053",
-          "item": "Boar's Head® Fryer Turkey Croissant Sandwich",
-          "brand": "Boar's Head",
           "price": 6.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030225041",
-          "item": "Pampers Swaddlers Diapers",
-          "brand": "Pampers Cruisers",
-          "price": 9.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030225114",
-          "item": "Boar's Head® Fryer Turkey Salad",
-          "brand": "Boar's Head",
-          "price": 7.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030225271",
-          "item": "Boar's Head® Everroast Cransational Chicken Salad",
-          "brand": "Boar's Head",
-          "price": 8.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227422",
-          "item": "Publix Bleach",
-          "brand": "Publix",
-          "price": 6.69,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227449",
-          "item": "Publix Evaporated Milk",
-          "brand": "Publix",
-          "price": 1.19,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227282",
-          "item": "Publix White Mushrooms",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227158",
-          "item": "Publix Snapper Fillets",
-          "brand": "Publix",
-          "price": 12.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030216404",
-          "item": "Publix Tea",
-          "brand": "Publix",
-          "price": 1,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030234554",
-          "item": "Ore-Ida Potatoes",
-          "brand": "Ore-Ida",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030234568",
-          "item": "Tillamook Cream Cheese Spread",
-          "brand": "Tillamook",
-          "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030234598",
-          "item": "Healthy Choice Bowls or Simply Steamers",
-          "brand": "Healthy Choice | Marie Callender's",
-          "price": 7,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030233397",
-          "item": "12-Pack Yuengling Traditional Lager",
-          "brand": "Yuengling",
-          "price": 13.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030233398",
-          "item": "Black Box Cabernet Sauvignon Wine",
-          "brand": "Black Box",
-          "price": 18.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030233399",
-          "item": "Francis Coppola Diamond Collection Claret Wine",
-          "brand": "Francis Coppola",
-          "price": 12.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030233402",
-          "item": "Large Tres Leches Cake",
+          "id": "Publix-1031388563",
+          "item": "Brochetas de Pechuga de Pollo Demakes Bros.",
           "brand": null,
           "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030234050",
-          "item": "Arizona Tea Or Fruit Juice Cocktail",
-          "brand": null,
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030234580",
-          "item": "Stouffer's Family Size Entrée",
-          "brand": "Stouffer's",
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030235458",
-          "item": "Publix Snack Size Baby Cut Carrots",
-          "brand": "Publix",
-          "price": 3,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030235456",
-          "item": "Red or White Seedless Grapes",
+          "id": "Publix-1031388697",
+          "item": "Melocotones o Nectarinas Madurados en Árbol",
           "brand": null,
           "price": 2.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030238060",
-          "item": "Swiffer Sweep Dry Sweeping Cloths Refills",
-          "brand": "Swiffer",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388743",
+          "item": "Cerveza Peroni Nastro Azzurro Paquete de 12",
+          "brand": "Peroni",
+          "price": 17.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030213697",
-          "item": "Publix Savory Umami Seasoned Broccoli and Zucchini",
-          "brand": "Publix",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031388744",
+          "item": "Cerveza Pacifico Clara Paquete de 12",
+          "brand": "Pacifico",
+          "price": 16.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030105616",
-          "item": "Publix Idaho Russet Potatoes",
-          "brand": "Publix",
+          "id": "Publix-1031388706",
+          "item": "Ensalada de Sandía y Queso Feta",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388684",
+          "item": "Ensalada de Frutas Publix",
+          "brand": null,
           "price": 3.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030227324",
-          "item": "Publix Country-Style Pork Sausage",
+          "id": "Publix-1031388703",
+          "item": "Ensalada de Frutas de Verano Dulce y Picante",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388711",
+          "item": "Trozos de Melón Cantalupo Publix",
           "brand": "Publix",
-          "price": 10,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 3.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030110305",
-          "item": "Ground Chuck Burgers or Slider Burgers",
+          "id": "Publix-1031388727",
+          "item": "Fresas",
+          "brand": null,
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388790",
+          "item": "Tomates Beefsteak",
+          "brand": null,
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388780",
+          "item": "Brócoli o Coliflor",
+          "brand": null,
+          "price": 6,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031390686",
+          "item": "Zanahorias Tiernas Cortadas Publix",
+          "brand": "Publix",
+          "price": 3,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031370304",
+          "item": "Jamón Tavern Ahumado Publix",
+          "brand": "Publix",
+          "price": 7.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031370312",
+          "item": "Queso Mozzarella Fresco Belgioioso",
+          "brand": "Belgioioso",
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393274",
+          "item": "Churrasco",
+          "brand": null,
+          "price": 21.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393179",
+          "item": "All Other Tender Subs",
+          "brand": null,
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393183",
+          "item": "Try With Boar's Head® American Cheese, Yellow or White",
+          "brand": null,
+          "price": 6.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393260",
+          "item": "Pollo Cordon Bleu Publix",
           "brand": "Publix",
           "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030219276",
-          "item": "Sundae Chocolate & Vanilla Cupcakes",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030234042",
-          "item": "Publix Spring Water",
+          "id": "Publix-1031393275",
+          "item": "Chuletas de Lomo de Cerdo Surtidas Publix",
           "brand": "Publix",
-          "price": 11,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030233268",
-          "item": "Publix Lean Pork Loin Boneless Chops",
-          "brand": "Publix",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030203478",
-          "item": "Pure Protein Bar",
-          "brand": "Pure Protein",
-          "price": 5.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030247016",
-          "item": "Bounty Paper Towels",
-          "brand": "Bounty",
-          "price": 11.79,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227610",
-          "item": "Porterhouse or T-Bone Steaks†",
+          "id": "Publix-1031393281",
+          "item": "Pecho de Res Deshuesado para Asar",
           "brand": null,
-          "price": 14.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 8.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030212923",
-          "item": "Modelo Especial, 12-oz can or bot.; or 24-Pack Corona Light Beer",
-          "brand": "Modelo Especial | Corona",
-          "price": 26.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393258",
+          "item": "Perros Calientes de Carne de Res Nathan's Famous",
+          "brand": "Nathan's",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030217747",
-          "item": "Bounty Paper Towels",
-          "brand": "Bounty",
-          "price": 22.19,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393607",
+          "item": "Panecillos Hoagie Dulces y Suaves",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030227157",
-          "item": "Iced Cinnamon Swirl Cake",
+          "id": "Publix-1031393626",
+          "item": "Donas de Brioche Paquete de 4",
           "brand": null,
           "price": 5.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030212939",
-          "item": "8-Pack Sun Cruiser Vodka Iced Tea",
-          "brand": "Sun Cruiser",
-          "price": 18.89,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030213817",
-          "item": "Publix Seasoned Asparagus Side†",
-          "brand": "Publix",
-          "price": 6.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030227222",
-          "item": "Publix Microwave Popcorn",
-          "brand": "Publix",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030216319",
-          "item": "Publix Chef Salad",
-          "brand": "Publix",
-          "price": 6.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1030233400",
-          "item": "Francis Coppola Diamond Collection",
+          "id": "Publix-1031393620",
+          "item": "Pastel de Dulce de Leche con Fresas",
           "brand": null,
-          "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "price": 21.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030234061",
-          "item": "Nabisco Snak-Saks",
-          "brand": "Nabisco",
-          "price": 6,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393602",
+          "item": "Pastelitos Surtidos en Miniatura",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030216336",
-          "item": "Boar's Head® Turkey Sub",
-          "brand": "Boar's Head",
-          "price": 9.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393703",
+          "item": "Mama Francesca Grated Cheese",
+          "brand": "Mama Francesca",
+          "price": 2.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030213755",
-          "item": "Dakota Organic Ground Beef",
-          "brand": "Dakota",
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393793",
+          "item": "Arroz Jazmín Goya",
+          "brand": "Goya",
+          "price": 11.09,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030217642",
-          "item": "Force of Nature 100% Grass Fed Ground Beef†",
-          "brand": "Force of Nature",
-          "price": 10.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393794",
+          "item": "Atún Claro Iberia",
+          "brand": "IBERIA",
+          "price": 2.19,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030233299",
-          "item": "Porterhouse or T-Bone Steaks",
-          "brand": "Porterhouse Steak",
-          "price": 13.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031393991",
+          "item": "Queso Crema para Untar Philadelphia",
+          "brand": "PHILADELPHIA",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1030234592",
-          "item": "Publix Frozen Garlic Bread Texas Toast, Breadsticks, or Knots",
-          "brand": "Publix",
+          "id": "Publix-1031394217",
+          "item": "Bebida Minute Maid",
+          "brand": "Minute Maid",
           "price": 5,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032241484",
-          "item": "Rao's Homemade Sauce",
-          "brand": "Rao's",
-          "price": 6.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394009",
+          "item": "Leche sin Lactosa Lactaid",
+          "brand": "LACTAID®",
+          "price": 8,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032241486",
-          "item": "Swanson Broth",
-          "brand": "Swanson",
-          "price": 4,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394168",
+          "item": "Detergente para la Ropa Tide o Gain",
+          "brand": "Tide | Gain",
+          "price": 15.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032241506",
-          "item": "Sugar In The Raw Turbinado Cane Sugar",
-          "brand": "Sugar In The Raw®",
-          "price": 7.49,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394136",
+          "item": "Pañuelos Faciales Kleenex",
+          "brand": "Kleenex",
+          "price": 12,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032241500",
-          "item": "Starbucks K-Cup Coffee",
-          "brand": "Starbucks",
-          "price": 8.99,
-          "validFrom": "2026-08-06T00:00:00-04:00",
-          "validTo": "2026-08-12T23:59:59-04:00"
+          "id": "Publix-1031394286",
+          "item": "Milk-Bone Dog Biscuits",
+          "brand": "Milk-Bone",
+          "price": 7,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394229",
+          "item": "Rebanadas de Pastel de Limón en Barra",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394328",
+          "item": "Refrescos Coca-Cola",
+          "brand": "Coca-Cola",
+          "price": 2,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394357",
+          "item": "Café Molido Chock Full O'Nuts",
+          "brand": "Chock Full o' Nuts",
+          "price": 12.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394374",
+          "item": "Tazón de Fideos Top Ramen Nissin",
+          "brand": "Nissin",
+          "price": 10,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394307",
+          "item": "Pediasure Grow & Gain Shake With Fiber",
+          "brand": "PediaSure",
+          "price": 21,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394315",
+          "item": "Pan Blanco Bimbo",
+          "brand": null,
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394371",
+          "item": "Frijoles Bush's Best",
+          "brand": "Bush's",
+          "price": 5,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394355",
+          "item": "Rollo de Carne Molida de Res",
+          "brand": null,
+          "price": 16.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031393653",
+          "item": "Frijoles Negros Goya",
+          "brand": "Goya",
+          "price": 1.79,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031388603",
+          "item": "Muslos de Pollo Publix",
+          "brand": "Publix",
+          "price": 1.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031394372",
+          "item": "Mezcla de Ensalada Clásica Publix",
+          "brand": "Publix",
+          "price": 1.49,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1031382867",
+          "item": "Melón de Castilla o Sugar Kiss",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-13T00:00:00-04:00",
+          "validTo": "2026-08-19T23:59:59-04:00"
         }
       ]
     },
@@ -5560,26 +5512,34 @@
       "validTo": "2026-08-18T23:59:59-04:00",
       "deals": [
         {
-          "id": "Aldi-1031811652",
-          "item": "Savoritz Mini Sandwich Crackers",
-          "brand": "Savoritz",
-          "price": 2.89,
+          "id": "Aldi-1031818099",
+          "item": "Dentiguard Rechargeable Water Flosser",
+          "brand": "Dentiguard",
+          "price": 24.99,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031812341",
-          "item": "Fresh Asian Cedar Plank Salmon",
-          "brand": null,
-          "price": 10.99,
+          "id": "Aldi-1031808817",
+          "item": "Park Street Deli Hummus Mini Cups",
+          "brand": "Park Street Deli",
+          "price": 3.45,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031812280",
-          "item": "Farmer Focus Fresh Antibiotic Free Family Pack Whole Chicken Wings",
-          "brand": "Farmer Focus",
-          "price": 1.69,
+          "id": "Aldi-1032869335",
+          "item": "Friendly Farms Nonfat Greek Yogurt",
+          "brand": "Friendly Farms",
+          "price": 2.79,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869249",
+          "item": "Friendly Farms Unsweetened Vanilla or Sweetened Almondmilk",
+          "brand": "Friendly Farms",
+          "price": 2.29,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -5600,274 +5560,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031812030",
-          "item": "Berryhill Grape Jelly",
-          "brand": "Berryhill",
-          "price": 2.59,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811968",
-          "item": "Seasoned Chicken Skewers",
-          "brand": null,
-          "price": 7.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031810890",
-          "item": "Savoritz Family Size Cheese Crackers",
-          "brand": "Savoritz",
-          "price": 3.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811522",
-          "item": "Southern Grove On-the-Go Sweet or Savory Variety Pack",
-          "brand": "Southern Grove",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811207",
-          "item": "Millville Kids Fruit & Grain Mini Bars",
-          "brand": "Millville",
-          "price": 3.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807427",
-          "item": "Simms Multipack Meat Snack Sticks",
-          "brand": "Simms",
-          "price": 3.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807562",
-          "item": "Friendly Farms Unsweetened Vanilla or Sweetened Almondmilk",
-          "brand": "Friendly Farms",
-          "price": 2.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807652",
-          "item": "Simply Nature Organic Fruit Snacks",
-          "brand": "Simply Nature",
-          "price": 4.95,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031805499",
-          "item": "PurAqua Italian Mineral Water",
-          "brand": "PurAqua",
-          "price": 4.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807697",
-          "item": "Clancy's Kettle Chips",
-          "brand": "Clancy's",
-          "price": 1.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807922",
-          "item": "Friendly Farms Nonfat Greek Yogurt",
-          "brand": "Friendly Farms",
-          "price": 2.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031808012",
-          "item": "L'oven Fresh Keto Friendly Bread",
-          "brand": "L'oven",
-          "price": 4.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807049",
-          "item": "Breakfast Best Breakfast Bowl",
-          "brand": "Breakfast Best",
-          "price": 1.85,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031809394",
           "item": "ALDI Fruit Strips",
           "brand": "ALDI",
           "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811395",
-          "item": "Baker's Treat Mini Muffins",
-          "brand": "Baker's Treat",
-          "price": 2.75,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811082",
-          "item": "L'oven Fresh Protein Bread",
-          "brand": "L'oven Fresh",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811842",
-          "item": "Simply Nature Organic Juice Boxes",
-          "brand": "Simply Nature",
-          "price": 3.45,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812464",
-          "item": "Baby Bella Mushrooms",
-          "brand": null,
-          "price": 1.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811716",
-          "item": "Nature's Nectar Single Serve Apple Juice 6-Pack",
-          "brand": "Nature's Nectar",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812155",
-          "item": "Fresh Lamb Shoulder Chops",
-          "brand": null,
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811331",
-          "item": "Blueberries",
-          "brand": null,
-          "price": 1.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811904",
-          "item": "Simply Nature Granola Bites",
-          "brand": "Simply Nature",
-          "price": 3.09,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811779",
-          "item": "Boulder Reclosable Sandwich Bags",
-          "brand": "Boulder",
-          "price": 2.25,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812588",
-          "item": "Fresh Seasoned Beef Skewers",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812092",
-          "item": "Fresh Seasoned Chicken",
-          "brand": null,
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811457",
-          "item": "Avocados",
-          "brand": null,
-          "price": 0.59,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812713",
-          "item": "Simply Nature Organic Turkey",
-          "brand": "Simply Nature",
-          "price": 4.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812650",
-          "item": "John Soules Foods \"67\" Chicken Nuggets",
-          "brand": "John Soules Foods",
-          "price": 6.7,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812220",
-          "item": "Benton's Mini Crunchy or Chewy Cookies",
-          "brand": "Benton's",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812403",
-          "item": "Boulder Snack Bags",
-          "brand": "Boulder",
-          "price": 1.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812527",
-          "item": "Happy Farms Deli-Sliced Medium or Mild Cheddar",
-          "brand": "Happy Farms",
-          "price": 1.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031804970",
-          "item": "Fresh Organic 85/15 Grass-Fed Ground Beef",
-          "brand": "Simply Nature",
-          "price": 5.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031805247",
-          "item": "Boulder Heavy Duty Coated Paper Plates",
-          "brand": "Boulder",
-          "price": 3.39,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031806847",
-          "item": "Barissimo Caramel Macchiato Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -5884,14 +5580,6 @@
           "item": "ALDI Fruit Cups",
           "brand": "ALDI",
           "price": 2.19,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031808817",
-          "item": "Park Street Deli Hummus Mini Cups",
-          "brand": "Park Street Deli",
-          "price": 3.45,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -5936,34 +5624,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031817451",
-          "item": "KIRKTON HOUSE Cookbook Stand",
-          "brand": "KIRKTON HOUSE",
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031817163",
-          "item": "Serra Ladies' Scuba Top",
-          "brand": "Serra",
-          "price": 12.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031817487",
           "item": "THE HALLOWEEN COLLECTION Pastel Ceramic Ghost",
           "brand": null,
           "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031817919",
-          "item": "THE HALLOWEEN COLLECTION Pastel Halloween Mug",
-          "brand": null,
-          "price": 3.99,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -5984,22 +5648,6 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031817739",
-          "item": "Crofton Grater Assortment",
-          "brand": "Crofton",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031817811",
-          "item": "KIRKTON HOUSE Kitchen Pantry Storage Solution",
-          "brand": "KIRKTON HOUSE",
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031817235",
           "item": "Serra Ladies' 3-Piece Pajama Set",
           "brand": "Serra",
@@ -6008,42 +5656,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031818063",
-          "item": "Welby Hot/Cold Gel Wrap",
-          "brand": "Welby",
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031817307",
           "item": "Easy Home Divided Laundry Basket",
           "brand": "Easy Home",
           "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031817199",
-          "item": "KIRKTON HOUSE 20\" x 34\" Crystal Accent Rug",
-          "brand": "KIRKTON HOUSE",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031817379",
-          "item": "KIRKTON HOUSE Bamboo Dish or Lid Organizer",
-          "brand": "KIRKTON HOUSE",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031818207",
-          "item": "THE HALLOWEEN COLLECTION Pastel Halloween Garland",
-          "brand": null,
-          "price": 5.99,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6068,14 +5684,6 @@
           "item": "KIRKTON HOUSE Premium Pantry Basket",
           "brand": "KIRKTON HOUSE",
           "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031818099",
-          "item": "Dentiguard Rechargeable Water Flosser",
-          "brand": "Dentiguard",
-          "price": 24.99,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6112,14 +5720,6 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031818135",
-          "item": "Visage Manicure or Pedicure Assortment",
-          "brand": null,
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031817703",
           "item": "Easy Home Lumbar or Ring Cushion",
           "brand": "Easy Home",
@@ -6136,74 +5736,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031804674",
-          "item": "PurAqua Belle Vie 12-Pack",
-          "brand": "PurAqua",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031805740",
-          "item": "Barissimo Zero Sugar Coffee Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031806205",
-          "item": "Choeur Chocolate Assortment",
-          "brand": "Choeur",
-          "price": 1.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031806436",
-          "item": "Specially Selected Brioche Burger Buns",
-          "brand": "Specially Selected",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031806651",
-          "item": "Park Street Deli Cranberry Almond Chicken Salad",
-          "brand": "Park Street Deli",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031808191",
           "item": "Fresh Beef for Shawarma",
           "brand": null,
           "price": 7.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807312",
-          "item": "PurAqua Sparkling Frost Water",
-          "brand": "PurAqua",
-          "price": 0.59,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031805970",
-          "item": "Elevation Functional Protein Bars",
-          "brand": "Elevation",
-          "price": 3.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807967",
-          "item": "Choeur Dark Chocolate Assortment",
-          "brand": "Choeur",
-          "price": 1.99,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6244,22 +5780,6 @@
           "item": "Whole Seedless Watermelon",
           "brand": null,
           "price": 4.65,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031809109",
-          "item": "Fresh Pork Belly Slab",
-          "brand": null,
-          "price": 2.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031808369",
-          "item": "Park Street Deli Hummus or Tzatziki Snackers",
-          "brand": "Park Street Deli",
-          "price": 1.39,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6336,10 +5856,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031808874",
-          "item": "Friendly Farms Drinkable Yogurt",
-          "brand": "Friendly Farms",
-          "price": 1.69,
+          "id": "Aldi-1031809289",
+          "item": "Simms Multipack Meat Snack Sticks",
+          "brand": "Simms",
+          "price": 3.89,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6360,66 +5880,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031807742",
-          "item": "Barissimo Italian Sweet Cream Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807832",
-          "item": "Friendly Farms Lactose Free Whole or 2% Milk",
-          "brand": "Friendly Farms",
-          "price": 2.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031804265",
-          "item": "VitaLife Organic Kombucha",
-          "brand": "VitaLife",
-          "price": 1.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807472",
-          "item": "Specially Selected Seeded Brioche Burger Buns",
-          "brand": null,
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031809442",
           "item": "PurAqua Purified Water 24-Pack",
           "brand": "PurAqua",
           "price": 3.75,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807607",
-          "item": "Specially Selected Sliced Sourdough Round",
-          "brand": null,
-          "price": 3.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807787",
-          "item": "Barissimo Flavored Iced Coffee",
-          "brand": "Barissimo",
-          "price": 3.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807877",
-          "item": "Specially Selected Everything Sourdough",
-          "brand": null,
-          "price": 3.49,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6448,82 +5912,10 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031807198",
-          "item": "Simply Nature Fair Trade Organic Whole Bean Coffee",
-          "brand": "Simply Nature",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1031808985",
           "item": "Organic Blueberries",
           "brand": null,
           "price": 3.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031807517",
-          "item": "Barissimo Coconut Crème or Cinnamon Roll Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031810954",
-          "item": "California Red Grapes",
-          "brand": null,
-          "price": 1.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811588",
-          "item": "Simply Nature Organic Creamy Peanut Butter",
-          "brand": "Simply Nature",
-          "price": 4.39,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031812774",
-          "item": "Mini Cucumbers",
-          "brand": null,
-          "price": 1.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031810771",
-          "item": "Clancy's Snack Combo",
-          "brand": "Clancy's",
-          "price": 6.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811019",
-          "item": "Elevation Kids Baked Oat Bars",
-          "brand": "Elevation",
-          "price": 3.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811143",
-          "item": "Lunch Buddies Apple Squeezies Variety 12-Pack",
-          "brand": "Lunch Buddies",
-          "price": 6.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1031811269",
-          "item": "Cantaloupe",
-          "brand": null,
-          "price": 2.39,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6556,6 +5948,566 @@
           "item": "KIRKTON HOUSE Pastel Halloween Throw",
           "brand": "KIRKTON HOUSE",
           "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817199",
+          "item": "KIRKTON HOUSE 20\" x 34\" Crystal Accent Rug",
+          "brand": "KIRKTON HOUSE",
+          "price": 7.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817379",
+          "item": "KIRKTON HOUSE Bamboo Dish or Lid Organizer",
+          "brand": "KIRKTON HOUSE",
+          "price": 7.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817919",
+          "item": "THE HALLOWEEN COLLECTION Pastel Halloween Mug",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031818063",
+          "item": "Welby Hot/Cold Gel Wrap",
+          "brand": "Welby",
+          "price": 9.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817163",
+          "item": "Serra Ladies' Scuba Top",
+          "brand": "Serra",
+          "price": 12.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031808369",
+          "item": "Park Street Deli Hummus or Tzatziki Snackers",
+          "brand": "Park Street Deli",
+          "price": 1.39,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031809109",
+          "item": "Fresh Pork Belly Slab",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817811",
+          "item": "KIRKTON HOUSE Kitchen Pantry Storage Solution",
+          "brand": "KIRKTON HOUSE",
+          "price": 6.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031818207",
+          "item": "THE HALLOWEEN COLLECTION Pastel Halloween Garland",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817451",
+          "item": "KIRKTON HOUSE Cookbook Stand",
+          "brand": "KIRKTON HOUSE",
+          "price": 9.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031817739",
+          "item": "Crofton Grater Assortment",
+          "brand": "Crofton",
+          "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031818135",
+          "item": "Visage Manicure or Pedicure Assortment",
+          "brand": null,
+          "price": 9.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031808874",
+          "item": "Friendly Farms Drinkable Yogurt",
+          "brand": "Friendly Farms",
+          "price": 1.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869138",
+          "item": "Barissimo Zero Sugar Coffee Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869156",
+          "item": "Choeur Chocolate Assortment",
+          "brand": "Choeur",
+          "price": 1.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869311",
+          "item": "Friendly Farms Lactose Free Whole or 2% Milk",
+          "brand": "Friendly Farms",
+          "price": 2.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869324",
+          "item": "Specially Selected Everything Sourdough",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869182",
+          "item": "Barissimo Caramel Macchiato Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869207",
+          "item": "PurAqua Sparkling Frost Water",
+          "brand": "PurAqua",
+          "price": 0.59,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869200",
+          "item": "Simply Nature Fair Trade Organic Whole Bean Coffee",
+          "brand": "Simply Nature",
+          "price": 7.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869237",
+          "item": "Barissimo Coconut Crème or Cinnamon Roll Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869087",
+          "item": "VitaLife Organic Kombucha",
+          "brand": "VitaLife",
+          "price": 1.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869271",
+          "item": "Simply Nature Organic Fruit Snacks",
+          "brand": "Simply Nature",
+          "price": 4.95,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869290",
+          "item": "Barissimo Italian Sweet Cream Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869121",
+          "item": "Boulder Heavy Duty Coated Paper Plates",
+          "brand": "Boulder",
+          "price": 3.39,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869300",
+          "item": "Barissimo Flavored Iced Coffee",
+          "brand": "Barissimo",
+          "price": 3.89,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869112",
+          "item": "Fresh Organic 85/15 Grass-Fed Ground Beef",
+          "brand": "Simply Nature",
+          "price": 5.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869146",
+          "item": "Elevation Functional Protein Bars",
+          "brand": "Elevation",
+          "price": 3.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869166",
+          "item": "Specially Selected Brioche Burger Buns",
+          "brand": "Specially Selected",
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869190",
+          "item": "Breakfast Best Breakfast Bowl",
+          "brand": "Breakfast Best",
+          "price": 1.85,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869261",
+          "item": "Specially Selected Sliced Sourdough Round",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869101",
+          "item": "PurAqua Belle Vie 12-Pack",
+          "brand": "PurAqua",
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869129",
+          "item": "PurAqua Italian Mineral Water",
+          "brand": "PurAqua",
+          "price": 4.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869174",
+          "item": "Park Street Deli Cranberry Almond Chicken Salad",
+          "brand": "Park Street Deli",
+          "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869227",
+          "item": "Specially Selected Seeded Brioche Burger Buns",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869358",
+          "item": "L'oven Fresh Keto Friendly Bread",
+          "brand": "L'oven",
+          "price": 4.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869346",
+          "item": "Choeur Dark Chocolate Assortment",
+          "brand": "Choeur",
+          "price": 1.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032869281",
+          "item": "Clancy's Kettle Chips",
+          "brand": "Clancy's",
+          "price": 1.89,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897072",
+          "item": "Clancy's Snack Combo",
+          "brand": "Clancy's",
+          "price": 6.29,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897273",
+          "item": "California Red Grapes",
+          "brand": null,
+          "price": 1.29,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897153",
+          "item": "Savoritz Family Size Cheese Crackers",
+          "brand": "Savoritz",
+          "price": 3.79,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897933",
+          "item": "Simply Nature Granola Bites",
+          "brand": "Simply Nature",
+          "price": 3.09,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898120",
+          "item": "Berryhill Grape Jelly",
+          "brand": "Berryhill",
+          "price": 2.59,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898496",
+          "item": "Happy Farms Deli-Sliced Medium or Mild Cheddar",
+          "brand": "Happy Farms",
+          "price": 1.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898616",
+          "item": "Mini Cucumbers",
+          "brand": null,
+          "price": 1.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897476",
+          "item": "Baker's Treat Mini Muffins",
+          "brand": "Baker's Treat",
+          "price": 2.75,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897704",
+          "item": "Savoritz Mini Sandwich Crackers",
+          "brand": "Savoritz",
+          "price": 2.89,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897360",
+          "item": "Lunch Buddies Apple Squeezies Variety 12-Pack",
+          "brand": "Lunch Buddies",
+          "price": 6.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897331",
+          "item": "L'oven Fresh Protein Bread",
+          "brand": "L'oven Fresh",
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897418",
+          "item": "Cantaloupe",
+          "brand": null,
+          "price": 2.39,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898409",
+          "item": "Fresh Asian Cedar Plank Salmon",
+          "brand": null,
+          "price": 10.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897389",
+          "item": "Millville Kids Fruit & Grain Mini Bars",
+          "brand": "Millville",
+          "price": 3.89,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897894",
+          "item": "Simply Nature Organic Juice Boxes",
+          "brand": "Simply Nature",
+          "price": 3.45,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898467",
+          "item": "Baby Bella Mushrooms",
+          "brand": null,
+          "price": 1.29,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898380",
+          "item": "Farmer Focus Fresh Antibiotic Free Family Pack Whole Chicken Wings",
+          "brand": "Farmer Focus",
+          "price": 1.69,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897302",
+          "item": "Elevation Kids Baked Oat Bars",
+          "brand": "Elevation",
+          "price": 3.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897836",
+          "item": "Nature's Nectar Single Serve Apple Juice 6-Pack",
+          "brand": "Nature's Nectar",
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898322",
+          "item": "Fresh Lamb Shoulder Chops",
+          "brand": null,
+          "price": 6.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897447",
+          "item": "Blueberries",
+          "brand": null,
+          "price": 1.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898063",
+          "item": "Seasoned Chicken Skewers",
+          "brand": null,
+          "price": 7.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897638",
+          "item": "Simply Nature Organic Creamy Peanut Butter",
+          "brand": "Simply Nature",
+          "price": 4.39,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897534",
+          "item": "Southern Grove On-the-Go Sweet or Savory Variety Pack",
+          "brand": "Southern Grove",
+          "price": 7.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897865",
+          "item": "Boulder Reclosable Sandwich Bags",
+          "brand": "Boulder",
+          "price": 2.25,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898525",
+          "item": "Fresh Seasoned Beef Skewers",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898149",
+          "item": "Fresh Seasoned Chicken",
+          "brand": null,
+          "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032897505",
+          "item": "Avocados",
+          "brand": null,
+          "price": 0.59,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898587",
+          "item": "Simply Nature Organic Turkey",
+          "brand": "Simply Nature",
+          "price": 4.79,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898558",
+          "item": "John Soules Foods \"67\" Chicken Nuggets",
+          "brand": "John Soules Foods",
+          "price": 6.7,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898351",
+          "item": "Benton's Mini Crunchy or Chewy Cookies",
+          "brand": "Benton's",
+          "price": 3.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1032898438",
+          "item": "Boulder Snack Bags",
+          "brand": "Boulder",
+          "price": 1.89,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         }
