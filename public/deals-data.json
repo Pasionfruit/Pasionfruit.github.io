@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-13T10:14:37.705Z",
+  "lastUpdated": "2026-08-14T10:10:39.090Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-08-12T00:00:00-04:00",
@@ -5520,14 +5520,6 @@
           "validTo": "2026-08-18T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1031808817",
-          "item": "Park Street Deli Hummus Mini Cups",
-          "brand": "Park Street Deli",
-          "price": 3.45,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
           "id": "Aldi-1032869335",
           "item": "Friendly Farms Nonfat Greek Yogurt",
           "brand": "Friendly Farms",
@@ -5540,6 +5532,14 @@
           "item": "Friendly Farms Unsweetened Vanilla or Sweetened Almondmilk",
           "brand": "Friendly Farms",
           "price": 2.29,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-18T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1031808817",
+          "item": "Park Street Deli Hummus Mini Cups",
+          "brand": "Park Street Deli",
+          "price": 3.45,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"
         },
@@ -6251,262 +6251,6 @@
           "id": "Aldi-1032869281",
           "item": "Clancy's Kettle Chips",
           "brand": "Clancy's",
-          "price": 1.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897072",
-          "item": "Clancy's Snack Combo",
-          "brand": "Clancy's",
-          "price": 6.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897273",
-          "item": "California Red Grapes",
-          "brand": null,
-          "price": 1.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897153",
-          "item": "Savoritz Family Size Cheese Crackers",
-          "brand": "Savoritz",
-          "price": 3.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897933",
-          "item": "Simply Nature Granola Bites",
-          "brand": "Simply Nature",
-          "price": 3.09,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898120",
-          "item": "Berryhill Grape Jelly",
-          "brand": "Berryhill",
-          "price": 2.59,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898496",
-          "item": "Happy Farms Deli-Sliced Medium or Mild Cheddar",
-          "brand": "Happy Farms",
-          "price": 1.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898616",
-          "item": "Mini Cucumbers",
-          "brand": null,
-          "price": 1.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897476",
-          "item": "Baker's Treat Mini Muffins",
-          "brand": "Baker's Treat",
-          "price": 2.75,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897704",
-          "item": "Savoritz Mini Sandwich Crackers",
-          "brand": "Savoritz",
-          "price": 2.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897360",
-          "item": "Lunch Buddies Apple Squeezies Variety 12-Pack",
-          "brand": "Lunch Buddies",
-          "price": 6.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897331",
-          "item": "L'oven Fresh Protein Bread",
-          "brand": "L'oven Fresh",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897418",
-          "item": "Cantaloupe",
-          "brand": null,
-          "price": 2.39,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898409",
-          "item": "Fresh Asian Cedar Plank Salmon",
-          "brand": null,
-          "price": 10.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897389",
-          "item": "Millville Kids Fruit & Grain Mini Bars",
-          "brand": "Millville",
-          "price": 3.89,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897894",
-          "item": "Simply Nature Organic Juice Boxes",
-          "brand": "Simply Nature",
-          "price": 3.45,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898467",
-          "item": "Baby Bella Mushrooms",
-          "brand": null,
-          "price": 1.29,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898380",
-          "item": "Farmer Focus Fresh Antibiotic Free Family Pack Whole Chicken Wings",
-          "brand": "Farmer Focus",
-          "price": 1.69,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897302",
-          "item": "Elevation Kids Baked Oat Bars",
-          "brand": "Elevation",
-          "price": 3.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897836",
-          "item": "Nature's Nectar Single Serve Apple Juice 6-Pack",
-          "brand": "Nature's Nectar",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898322",
-          "item": "Fresh Lamb Shoulder Chops",
-          "brand": null,
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897447",
-          "item": "Blueberries",
-          "brand": null,
-          "price": 1.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898063",
-          "item": "Seasoned Chicken Skewers",
-          "brand": null,
-          "price": 7.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897638",
-          "item": "Simply Nature Organic Creamy Peanut Butter",
-          "brand": "Simply Nature",
-          "price": 4.39,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897534",
-          "item": "Southern Grove On-the-Go Sweet or Savory Variety Pack",
-          "brand": "Southern Grove",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897865",
-          "item": "Boulder Reclosable Sandwich Bags",
-          "brand": "Boulder",
-          "price": 2.25,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898525",
-          "item": "Fresh Seasoned Beef Skewers",
-          "brand": null,
-          "price": 5.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898149",
-          "item": "Fresh Seasoned Chicken",
-          "brand": null,
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032897505",
-          "item": "Avocados",
-          "brand": null,
-          "price": 0.59,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898587",
-          "item": "Simply Nature Organic Turkey",
-          "brand": "Simply Nature",
-          "price": 4.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898558",
-          "item": "John Soules Foods \"67\" Chicken Nuggets",
-          "brand": "John Soules Foods",
-          "price": 6.7,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898351",
-          "item": "Benton's Mini Crunchy or Chewy Cookies",
-          "brand": "Benton's",
-          "price": 3.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-18T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032898438",
-          "item": "Boulder Snack Bags",
-          "brand": "Boulder",
           "price": 1.89,
           "validFrom": "2026-08-12T00:00:00-04:00",
           "validTo": "2026-08-18T23:59:59-04:00"

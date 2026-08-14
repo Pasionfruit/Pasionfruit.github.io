@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-13T10:14:42.338Z",
+  "lastUpdated": "2026-08-14T10:10:44.752Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -545,6 +545,69 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4674055",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Body Wash or Bath product (excludes sizes smaller than 2.5oz and shave)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674061",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674028",
+        "brand": "AVEENO",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) AVEENO® Baby or AVEENO® Kids Product (excludes gift sets, trial/travel sizes, & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674057",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Body Moisturizer (excludes Anti-Itch, travel & trial sizes except 2oz ointment, single-use masks and gift sets)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674127",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4674059",
+        "brand": "AVEENO",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) AVEENO® Facial Moisturizer, Serum or Treatment (excludes trial/travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4742417",
+        "brand": "AVEENO",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) AVEENO® Facial Cleansing product (excludes travel/trial sizes, refills, multipacks & wipes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4654921",
         "brand": "AVEENO®",
         "discount": "SAVE $3.00",
@@ -743,6 +806,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4722855",
+        "brand": "Carando®",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any TWO (2) Carando® or Smithfield® Frozen Sausage Links or Meatballs",
+        "category": "Grocery",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4731559",
         "brand": "Carefree",
         "discount": "Save $1.00",
@@ -923,15 +995,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4713315",
-        "brand": "Clorox",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any TWO (2) Clorox® Home Cleaning, Laundry or Pine-Sol Products (Excludes Clorox® Mist, $1.25, trial size and travel size, tools, & textiles)",
-        "category": "Household",
-        "validTo": "2026-08-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695766",
         "brand": "Clorox®",
         "discount": "Save $2.00",
@@ -986,19 +1049,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4739939",
+        "id": "flipp-4739937",
         "brand": "Colgate",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Colgate 360° Advanced, Gum Health or Optic White Manual Toothbrush",
         "category": "Health & Beauty",
         "validTo": "2026-08-26T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4739937",
+        "id": "flipp-4739939",
         "brand": "Colgate",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Colgate 360° Advanced, Gum Health or Optic White Manual Toothbrush",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
         "category": "Health & Beauty",
         "validTo": "2026-08-26T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -1145,6 +1208,15 @@
         "description": "Save $5.00 ONE Crest 3DWhitestrips (excludes Noticeably White, Classic White and any Crest 3DWhitestrips product with 5 or less treatments).",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4697915",
+        "brand": "Curly's",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Curly’s® Pulled Pork or Pulled Chicken",
+        "category": "Grocery",
+        "validTo": "2026-08-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1409,21 +1481,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4713341",
-        "brand": "Emergen-C",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Emergen-C 18ct or larger",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-09T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695754",
         "brand": "Emergen-C",
         "discount": "Save $2.00",
         "description": "Save $2.00 on Any One (1) Emergen-C product 18ct or Larger",
         "category": "Health & Beauty",
         "validTo": "2026-09-10T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4739943",
+        "brand": "Energizer",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) pack of Energizer® Batteries",
+        "category": "Other",
+        "validTo": "2026-09-13T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1559,15 +1631,6 @@
         "description": "Save $3.00 ONE Febreze Car 2-CT/3-CT (excludes trial/travel size).",
         "category": "Household",
         "validTo": "2026-08-30T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4656965",
-        "brand": "Feel Good Foods",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Feel Good Foods Mozzarella Sticks, Crispy Jalapeño Bites or Crispy Chicken Bites",
-        "category": "Grocery",
-        "validTo": "2026-09-14T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2003,6 +2066,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4739935",
+        "brand": "Irish Spring",
+        "discount": "Save $4.00",
+        "description": "SAVE $4.00 on any TWO (2) Irish Spring or Softsoap Body Washes (20oz or larger), Irish Spring Bar Soap Multipacks (6ct or larger) or Softsoap Liquid Hand Soap Refills (50oz ONLY)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4695797",
         "brand": "Irish Spring",
         "discount": "SAVE $3.50",
@@ -2414,15 +2486,6 @@
         "description": "SAVE $4.00 on any TWO (2) NEUTROGENA® Wipes (excludes trial & travel sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-16T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4695716",
-        "brand": "Neutrogena",
-        "discount": "Save $6.00",
-        "description": "Save $6.00 on any ONE (1) NEUTROGENA® Hair Restore Supplement Powder or Growth Scalp Serum",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3074,6 +3137,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4722856",
+        "brand": "Smithfield",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Smithfield® Prime Fresh Lunchmeat Family Size",
+        "category": "Grocery",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4735467",
         "brand": "Smokehouse",
         "discount": "Save $2.50",
@@ -3278,15 +3350,6 @@
         "description": "Save $1.50 when you purchase any ONE(1) Children's/Infants' TYLENOL® or Children's/Infants' MOTRIN® product (excluding Children's TYLENOL® Cold & Flu, TYLENOL® Family)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713275",
-        "brand": "Unisom",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Unisom product, excluding travel/trial",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3521,6 +3584,27 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19877757",
+        "place": "Chipotle",
+        "title": "[AC / Max SS] Best Foods Chipotle Mayonnaise Dressing Jug, 1 Gallon (128 Fl Oz) YMMV on coupon $10.96",
+        "url": "https://slickdeals.net/f/19877757-ac-max-ss-best-foods-chipotle-mayonnaise-dressing-jug-1-gallon-128-fl-oz-ymmv-on-coupon-10-96?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-14T06:34:07.000Z"
+      },
+      {
+        "id": "sd-19875507",
+        "place": "Subway",
+        "title": "Subway Restaurants: 40% Off Footlong",
+        "url": "https://slickdeals.net/f/19875507-subway-restaurants-40-off-footlong?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-13T16:47:13.000Z"
+      },
+      {
+        "id": "sd-19875438",
+        "place": "Chipotle",
+        "title": "Chipotle- BOGO Free Entree (YMMV)",
+        "url": "https://slickdeals.net/f/19875438-chipotle-bogo-free-entree-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-13T16:30:08.000Z"
+      },
+      {
         "id": "sd-19874190",
         "place": "Subway",
         "title": "$7.50 bonus on select $50 One4All Gift Card, redeem for Lowe's, Subway, Kroger Gift Card Portal",
@@ -3530,8 +3614,8 @@
       {
         "id": "sd-19868364",
         "place": "Chipotle",
-        "title": "Play the Chipotle IQ trivia game for 5,000 BOGO codes per hour",
-        "url": "https://slickdeals.net/f/19868364-play-the-chipotle-iq-trivia-game-for-5-000-bogo-codes-per-hour?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Chipotle IQ trivia game 5,000 BOGO entrée offers each hour",
+        "url": "https://slickdeals.net/f/19868364-chipotle-iq-trivia-game-5-000-bogo-entr-e-offers-each-hour?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-11T21:04:53.000Z"
       },
       {
@@ -3675,20 +3759,6 @@
         "postedAt": "2026-08-01T18:56:20.000Z"
       },
       {
-        "id": "sd-19830705",
-        "place": "Subway",
-        "title": "Subway Bogo Footlong Deal  $5",
-        "url": "https://slickdeals.net/f/19830705-subway-bogo-footlong-deal-5?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-01T03:09:19.000Z"
-      },
-      {
-        "id": "sd-19829337",
-        "place": "Chipotle",
-        "title": "Chipotle $25 Gift card (Email Delivery) $20 eGifter",
-        "url": "https://slickdeals.net/f/19829337-chipotle-25-gift-card-email-delivery-20-egifter?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-31T16:47:37.000Z"
-      },
-      {
         "id": "sd-19829205",
         "place": "Domino's",
         "title": "CVS B&M 8/2-8/8: Buy $50 Door Dash, Dominos, Fandango and other participating GC's get $10 Extra Bucks limit 1 per card",
@@ -3701,13 +3771,6 @@
         "title": "Taco Bell: Meximelt or Nacho Fries $1 each + Free Pickup (August 4 only)",
         "url": "https://slickdeals.net/f/19823922-taco-bell-meximelt-or-nacho-fries-1-each-free-pickup-august-4-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-30T03:09:06.000Z"
-      },
-      {
-        "id": "sd-19816233",
-        "place": "Chipotle",
-        "title": "CHIPOTLE FREE CHIPS AND GUAC WITH ENTREE PURCHASE - Valid 7/31-8/1 for App and Online Orders ONLY",
-        "url": "https://slickdeals.net/f/19816233-chipotle-free-chips-and-guac-with-entree-purchase-valid-7-31-8-1-for-app-and-online-orders-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-28T04:58:20.000Z"
       },
       {
         "id": "sd-19815012",
@@ -3855,13 +3918,6 @@
         "title": "Wendy's- $0.99 any size soft drink with any purchase (ymmv)",
         "url": "https://slickdeals.net/f/19706625-wendy-s-0-99-any-size-soft-drink-with-any-purchase-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-06-30T23:27:11.000Z"
-      },
-      {
-        "id": "sd-19700610",
-        "place": "Burger King",
-        "title": "BURGER KING APP: New 'TAP UP\" Soccer Game Play 4 days in a row, get 100 Bonus Crowns plus daily prize (food, crowns, etc)",
-        "url": "https://slickdeals.net/f/19700610-burger-king-app-new-tap-up-soccer-game-play-4-days-in-a-row-get-100-bonus-crowns-plus-daily-prize-food-crowns-etc?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-29T15:32:12.000Z"
       }
     ]
   }
