@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-14T10:10:44.752Z",
+  "lastUpdated": "2026-08-15T09:31:43.823Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -401,6 +401,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4713337",
+        "brand": "Arm & Hammer",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Arm & Hammer™ Laundry Rinse",
+        "category": "Other",
+        "validTo": "2026-08-28T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4713297",
         "brand": "Arm & Hammer",
         "discount": "Save $2.00",
@@ -432,15 +441,6 @@
         "brand": "Arm & Hammer",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) ARM & HAMMER™ Liquid Detergent",
-        "category": "Other",
-        "validTo": "2026-08-28T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713337",
-        "brand": "Arm & Hammer",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Arm & Hammer™ Laundry Rinse",
         "category": "Other",
         "validTo": "2026-08-28T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -585,15 +585,6 @@
         "brand": "AVEENO",
         "discount": "Save $3.00",
         "description": "Save $3.00 on any ONE (1) AVEENO® Sun adult, kids or baby product (excludes travel/trial sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-22T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674059",
-        "brand": "AVEENO",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) AVEENO® Facial Moisturizer, Serum or Treatment (excludes trial/travel sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -995,6 +986,24 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4713315",
+        "brand": "Clorox",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any TWO (2) Clorox® Home Cleaning, Laundry or Pine-Sol Products (Excludes Clorox® Mist, $1.25, trial size and travel size, tools, & textiles)",
+        "category": "Household",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4745247",
+        "brand": "Clorox",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any TWO (2) Clorox® Home Cleaning, Laundry or Pine-Sol Products (Excludes Clorox® Mist, $1.25, trial size and travel size, tools, & textiles)",
+        "category": "Other",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4695766",
         "brand": "Clorox®",
         "discount": "Save $2.00",
@@ -1364,15 +1373,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4695791",
-        "brand": "Dove",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Baby Wash 13oz+ OR Dove Baby Lotion (excludes Dove Baby Wash 34oz+)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695712",
         "brand": "Dove",
         "discount": "Save $4.00",
@@ -1397,6 +1397,15 @@
         "description": "Save $3.00 on any ONE (1) Dove Men+Care Body Wash 18oz, Plant Powered Body Wash 18oz+ or Bar 4-6ct (excludes items and sizes not listed)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4732044",
+        "brand": "Dove Men+Care",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-30T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1478,6 +1487,15 @@
         "description": "Save $3.00 on any ONE (1) DUREX® Product, 10ct or larger",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4746237",
+        "brand": "El Monterey",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) El Monterey Mas Bold Taquitos",
+        "category": "Grocery",
+        "validTo": "2026-09-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2237,15 +2255,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4654911",
-        "brand": "LUBRIDERM®",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 ON any ONE (1) LUBRIDERM® Product (16 fl. oz. or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4737395",
         "brand": "MALK",
         "discount": "Save $1.00",
@@ -2363,6 +2372,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4740310",
+        "brand": "MUSCLE MILK®",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) MUSCLE MILK 11oz 4pk",
+        "category": "Grocery",
+        "validTo": "2026-09-10T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4713280",
         "brand": "Nasacort",
         "discount": "Save $5.00",
@@ -2432,15 +2450,6 @@
         "description": "Save $1.50 on any ONE (1) Nature's Truth Vitamin or Supplement Product",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713343",
-        "brand": "Neuriva",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) Neuriva® Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2678,15 +2687,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4695779",
-        "brand": "One A Day®",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) One A Day® 65ct - 100ct",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4705381",
         "brand": "Opti-Free",
         "discount": "$3 off",
@@ -2921,6 +2921,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4746236",
+        "brand": "Portland Pet Food Company",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Portland Pet Food product",
+        "category": "Pets",
+        "validTo": "2026-09-30T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4679249",
         "brand": "Publix",
         "discount": "Save $1.50",
@@ -3054,6 +3063,15 @@
         "category": "Health & Beauty",
         "validTo": "2026-09-15T02:59:59.000-04:00",
         "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4745469",
+        "brand": "Rubbermaid",
+        "discount": "0.5% off",
+        "description": "Rubbermaid Take Alongs Food Storage Containers",
+        "category": "Household",
+        "validTo": "2026-08-22T23:59:59.000-04:00",
+        "redemption": "print"
       },
       {
         "id": "flipp-4739931",
@@ -3584,6 +3602,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19881783",
+        "place": "Dunkin'",
+        "title": "88-Count or 96-Count Keurig Coffee K-Cup Pods (Various: Dunkin', Folgers, Green Mountain, McCafe, Newman's Own, More) from $38.99 + Free Shipping",
+        "url": "https://slickdeals.net/f/19881783-88-count-or-96-count-keurig-coffee-k-cup-pods-various-dunkin-folgers-green-mountain-mccafe-newman-s-own-more-from-38-99-free-shipping?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-15T07:55:37.000Z"
+      },
+      {
         "id": "sd-19877757",
         "place": "Chipotle",
         "title": "[AC / Max SS] Best Foods Chipotle Mayonnaise Dressing Jug, 1 Gallon (128 Fl Oz) YMMV on coupon $10.96",
@@ -3628,8 +3653,8 @@
       {
         "id": "sd-19867506",
         "place": "KFC",
-        "title": "KFC: BOGO Popcorn Chicken Box combo meal $10.99 YMMV",
-        "url": "https://slickdeals.net/f/19867506-kfc-bogo-popcorn-chicken-box-combo-meal-10-99-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "KFC Restaurant Offer: Any KFC Big Box Combo: Popcorn Chicken/Tenders Big Box B1G1 Free (Valid thru 8/28)",
+        "url": "https://slickdeals.net/f/19867506-kfc-restaurant-offer-any-kfc-big-box-combo-popcorn-chicken-tenders-big-box-b1g1-free-valid-thru-8-28?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-11T17:49:07.000Z"
       },
       {
@@ -3899,25 +3924,11 @@
         "postedAt": "2026-07-07T01:54:14.000Z"
       },
       {
-        "id": "sd-19711134",
-        "place": "Dunkin'",
-        "title": "Dunkin' Original Blend Medium Roast Whole Bean Coffee, 12 Ounces (Pack of 6) $39.92",
-        "url": "https://slickdeals.net/f/19711134-dunkin-original-blend-medium-roast-whole-bean-coffee-12-ounces-pack-of-6-39-92?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-02T02:28:49.000Z"
-      },
-      {
         "id": "sd-19709400",
         "place": "Burger King",
         "title": "Texas Double Whopper Meal - $0.00-$2.50. - Burger Kings + free pickup $0.6",
         "url": "https://slickdeals.net/f/19709400-texas-double-whopper-meal-0-00-2-50-burger-kings-free-pickup-0-6?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-01T16:13:01.000Z"
-      },
-      {
-        "id": "sd-19706625",
-        "place": "Wendy's",
-        "title": "Wendy's- $0.99 any size soft drink with any purchase (ymmv)",
-        "url": "https://slickdeals.net/f/19706625-wendy-s-0-99-any-size-soft-drink-with-any-purchase-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-06-30T23:27:11.000Z"
       }
     ]
   }
