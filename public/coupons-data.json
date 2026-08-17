@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-16T09:32:48.058Z",
+  "lastUpdated": "2026-08-17T09:49:46.611Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -356,15 +356,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4695788",
-        "brand": "American Crew",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 Any ONE (1) full sized American Crew product",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-31T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4732051",
         "brand": "AMLACTIN",
         "discount": "$3.00 OFF",
@@ -380,15 +371,6 @@
         "description": "when you buy ONE BOX any flavor/size Annie’s™ Nature Pals™ Fruit Snacks OR any flavor/variety Annie's™ Fruit Snack Variety or Value Packs",
         "category": "Grocery",
         "validTo": "2026-09-14T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4739933",
-        "brand": "Armour",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Armour® Family Size Frozen Meatballs",
-        "category": "Grocery",
-        "validTo": "2026-08-25T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -713,15 +695,6 @@
         "description": "Save $1.50 off any ONE (1) Burt's Bees product (excluding Lip Balms)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713682",
-        "brand": "Caltrate®",
-        "discount": "SAVE $2.00",
-        "description": "SAVE $2.00 on any ONE (1) Caltrate® product (50ct or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-24T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1184,6 +1157,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4747707",
+        "brand": "Dove Men+Care",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4732044",
         "brand": "Dove Men+Care",
         "discount": "Save $2.00",
@@ -1217,15 +1199,6 @@
         "description": "Save $4.00 on Any TWO (2) Dove Deodorant Product (excludes Trial & Trial, Twin Packs, Invisible Solids and Dove Men+Care)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4747707",
-        "brand": "Dove Men+Care",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1334,15 +1307,6 @@
         "description": "Save $2.00 on any ONE (1) El Monterey Mas Bold Taquitos",
         "category": "Grocery",
         "validTo": "2026-09-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4695754",
-        "brand": "Emergen-C",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on Any One (1) Emergen-C product 18ct or Larger",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-10T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1760,15 +1724,6 @@
         "redemption": "print"
       },
       {
-        "id": "flipp-4679250",
-        "brand": "GreenWise",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 Off The Purchase of Four (4)  GreenWise Organic Baby Food Banana, Apple & Butternut Squash, 4-oz pouch",
-        "category": "Baby",
-        "validTo": "2026-08-23T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4732093",
         "brand": "Harry’s",
         "discount": "SAVE $1.00",
@@ -1820,15 +1775,6 @@
         "description": "$3.00 OFF any ONE (1) Icy Hot® Product (Excluding 1ct Patch, 1.5oz Original no-mess, 1.5oz Lidocaine no-mess, 1.25oz. Original Cream).",
         "category": "Health & Beauty",
         "validTo": "2026-08-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4737416",
-        "brand": "Impossible",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 On Any TWO (2) Impossible Products",
-        "category": "Grocery",
-        "validTo": "2026-08-26T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1940,15 +1886,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4732106",
-        "brand": "Kristin Ess",
-        "discount": "SAVE $2.00",
-        "description": "SAVE $2.00 when you buy ONE (1) Kristin Ess Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-06T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4705380",
         "brand": "L'oreal paris",
         "discount": "$2 off",
@@ -1981,7 +1918,7 @@
         "discount": "save $1.00",
         "description": "ANY L’Oréal® Paris Lip product",
         "category": "Other",
-        "validTo": "2026-08-22T20:00:00.000-04:00",
+        "validTo": "2026-08-17T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2588,29 +2525,20 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4746236",
-        "brand": "Portland Pet Food Company",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Portland Pet Food product",
-        "category": "Pets",
-        "validTo": "2026-09-30T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4679249",
-        "brand": "Publix",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 Off The Purchase of One (1)   Publix Original Charcoal Briquets  16-lb bag or Instant Light, 12-lb bag",
-        "category": "Other",
-        "validTo": "2026-08-23T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4747731",
         "brand": "Publix",
         "discount": "Save $2.00",
         "description": "Save $2.00 Off The Purchase of One (1) Publix Tall Kitchen Bags With Drawstring, Unscented, 13-gal, 80-ct. box",
         "category": "Other",
+        "validTo": "2026-09-20T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747732",
+        "brand": "Publix",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 Off The Purchase of Two (2)  Publix Unscented Baby Wipes  With Aloe & Vitamin E, Travel Pack, 72-ct. pouch",
+        "category": "Baby",
         "validTo": "2026-09-20T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -2621,15 +2549,6 @@
         "description": "Save $.50 Off The Purchase of One (1) Publix Mini Crab Cakes With Sweet Heat Dipping Sauce, Perfect for the Air Fryer, each tray",
         "category": "Grocery",
         "validTo": "2026-09-07T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4747732",
-        "brand": "Publix",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 Off The Purchase of Two (2)  Publix Unscented Baby Wipes  With Aloe & Vitamin E, Travel Pack, 72-ct. pouch",
-        "category": "Baby",
-        "validTo": "2026-09-20T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2858,19 +2777,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4747775",
+        "id": "flipp-4747767",
         "brand": "Secret",
-        "discount": "Save $5.00",
-        "description": "THREE Secret Fresh, Outlast, Aluminum Free, or Dry Spray Antiperspirants/Deodorants (excludes trial/travel size).",
+        "discount": "Save $6.00",
+        "description": "TWO Secret Clinical Antiperspirant/Deodorants (excludes trial/travel sizes).",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4747767",
+        "id": "flipp-4747775",
         "brand": "Secret",
-        "discount": "Save $6.00",
-        "description": "TWO Secret Clinical Antiperspirant/Deodorants (excludes trial/travel sizes).",
+        "discount": "Save $5.00",
+        "description": "THREE Secret Fresh, Outlast, Aluminum Free, or Dry Spray Antiperspirants/Deodorants (excludes trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -3214,7 +3133,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on any ONE (1) World’s Best Cat Litter product",
         "category": "Other",
-        "validTo": "2026-08-22T20:00:00.000-04:00",
+        "validTo": "2026-08-17T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3386,11 +3305,11 @@
     "error": null,
     "coupons": [
       {
-        "id": "sd-19884114",
+        "id": "sd-19885281",
         "place": "Subway",
-        "title": "Select Subway Sub Club Members: Any Qualifying Subway Footlong $6.99",
-        "url": "https://slickdeals.net/f/19884114-select-subway-sub-club-members-any-qualifying-subway-footlong-6-99?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-16T06:48:40.000Z"
+        "title": "Select Subway Sub Club Members: Any Qualifying Footlong Sub $7 (App & Online Orders Only)",
+        "url": "https://slickdeals.net/f/19885281-select-subway-sub-club-members-any-qualifying-footlong-sub-7-app-online-orders-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-16T17:48:00.000Z"
       },
       {
         "id": "sd-19883826",
@@ -3437,8 +3356,8 @@
       {
         "id": "sd-19868364",
         "place": "Chipotle",
-        "title": "Chipotle IQ trivia game 5,000 BOGO entrée offers each hour",
-        "url": "https://slickdeals.net/f/19868364-chipotle-iq-trivia-game-5-000-bogo-entr-e-offers-each-hour?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Chipotle IQ trivia game 5,000 BOGO entree codes each hour (Aug 18-Aug 20)",
+        "url": "https://slickdeals.net/f/19868364-chipotle-iq-trivia-game-5-000-bogo-entree-codes-each-hour-aug-18-aug-20?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-11T21:04:53.000Z"
       },
       {
