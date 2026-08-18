@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-17T09:49:46.611Z",
+  "lastUpdated": "2026-08-18T09:39:05.867Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -374,6 +374,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4739933",
+        "brand": "Armour",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Armour® Family Size Frozen Meatballs",
+        "category": "Grocery",
+        "validTo": "2026-08-25T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4731533",
         "brand": "Aspercreme",
         "discount": "Save $3.00",
@@ -633,6 +642,15 @@
         "category": "Health & Beauty",
         "validTo": "2026-08-29T23:59:59.000-04:00",
         "redemption": "print"
+      },
+      {
+        "id": "flipp-4692873",
+        "brand": "Booster",
+        "discount": "Buy One, Get One",
+        "description": "Buy One, Get One Buy any ONE (1) Because Booster Pads or Underwear and Receive ONE (1) Because Booster Pads or Underwear Free (Max Savings Value Up to $17.49)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-31T02:59:59.000-04:00",
+        "redemption": "savetocard"
       },
       {
         "id": "flipp-4732063",
@@ -1049,6 +1067,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4697913",
+        "brand": "Danone",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Silk Protein Yogurt Single Serve",
+        "category": "Grocery",
+        "validTo": "2026-08-20T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4718654",
         "brand": "Dave's Killer",
         "discount": "Save $2.00",
@@ -1157,10 +1184,10 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4747707",
-        "brand": "Dove Men+Care",
+        "id": "flipp-4747709",
+        "brand": "Dove",
         "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
+        "description": "Save $2.00 on any ONE (1) Dove Deodorant Product (excludes Trial & Travel, Twin Packs, Invisible Solids and Dove Men+Care)",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -1190,6 +1217,15 @@
         "description": "SAVE $8.00 on TWO (2) Dove Men+Care Deodorant Products.",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747707",
+        "brand": "Dove Men+Care",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1616,15 +1652,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4713665",
-        "brand": "GATORADE FIT",
-        "discount": "$1.00 OFF",
-        "description": "$1.00 OFF WHEN YOU BUY ONE (1) GATORADE®, PROPEL®, or GATORADE WATER MULTIPACK",
-        "category": "Grocery",
-        "validTo": "2026-09-06T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4692867",
         "brand": "General Mills",
         "discount": "$1.00 OFF",
@@ -1685,6 +1712,24 @@
         "description": "Save $1.00 on any TWO (2) Gerber® 2nd Foods 4 oz Tubs (2-pk. 4-oz)",
         "category": "Baby",
         "validTo": "2026-09-02T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747791",
+        "brand": "Gillete",
+        "discount": "Save $3.00",
+        "description": "ONE Gillette Clinical Antiperspirant or Deodorant (excludes trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747771",
+        "brand": "Gillette",
+        "discount": "Save $5.00",
+        "description": "THREE Gillette Clear Gel Antiperspirant/Deodorant (excludes Gillette SkinShield Clear Gel 3.8oz and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1886,6 +1931,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4732106",
+        "brand": "Kristin Ess",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 when you buy ONE (1) Kristin Ess Product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-06T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4705380",
         "brand": "L'oreal paris",
         "discount": "$2 off",
@@ -1918,7 +1972,7 @@
         "discount": "save $1.00",
         "description": "ANY L’Oréal® Paris Lip product",
         "category": "Other",
-        "validTo": "2026-08-17T20:00:00.000-04:00",
+        "validTo": "2026-08-18T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1955,6 +2009,15 @@
         "description": "Save $1.00 on any ONE (1) LISTERINE® Mouthwash product (500 mL or larger), POCKETMIST® product (2ct. or larger), or single use liquid packs (15 ct or larger)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747691",
+        "brand": "Lysol",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Lysol® Disinfecting Wipes (30 ct. or Higher)",
+        "category": "Other",
+        "validTo": "2026-09-26T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2246,6 +2309,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4747705",
+        "brand": "OGX",
+        "discount": "Save $4.00",
+        "description": "Save $4.00 on any TWO (2) OGX® Hair or Body products (excludes trial & travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4732049",
         "brand": "Olay",
         "discount": "Save $10.00",
@@ -2261,6 +2333,15 @@
         "description": "when you buy TWO Old El Paso™ products listed: Hard Shells • Kits • Sauce • Tortillas • Pockets • Bowls • Beans • Rice • Chiles • Soup • Broth",
         "category": "Grocery",
         "validTo": "2026-09-14T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747762",
+        "brand": "Old Spice",
+        "discount": "Save $7.00",
+        "description": "TWO Old Spice Whole Body Deodorant Sprays, Sticks, or Creams (excludes trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2282,12 +2363,48 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4747789",
+        "brand": "Old Spice",
+        "discount": "Save $7.00",
+        "description": "TWO Old Spice Alchemist Deodorant, Alchemist Body Wash, OR Alchemist Cologne Mist (excludes travel/trial size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4732064",
         "brand": "Old Spice",
         "discount": "Save $7.00",
         "description": "Save $7.00 TWO Old Spice Gentleman's Super Hydration Body Wash (excludes trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747783",
+        "brand": "Old Spice",
+        "discount": "Save $5.00",
+        "description": "THREE Old Spice Antiperspirant/Deodorant or Body Wash (excludes Items under 2oz, Gift-packs, High Endurance or Base Antiperspirant/Deodorant, Whole Body Deodorant, Sprays, Super Hydration, Alchemist, Bar Soap, Pump Body Wash 25oz or larger and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747785",
+        "brand": "Old Spice",
+        "discount": "Save $4.00",
+        "description": "TWO Old Spice Body Wash Pump 25oz or Larger (excludes Super Hydration and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747787",
+        "brand": "Old Spice",
+        "discount": "Save $5.00",
+        "description": "TWO Old Spice Dry Spray or Body Spray (excludes Whole Body and trial/travel size).",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2633,15 +2750,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4711687",
-        "brand": "Red Star Yeast",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any ONE (1) Red Star or Platinum Yeast Product",
-        "category": "Grocery",
-        "validTo": "2026-09-14T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4735466",
         "brand": "Refresh",
         "discount": "Save $6.00",
@@ -2685,15 +2793,6 @@
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
         "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4745469",
-        "brand": "Rubbermaid",
-        "discount": "0.5% off",
-        "description": "Rubbermaid Take Alongs Food Storage Containers",
-        "category": "Household",
-        "validTo": "2026-08-22T23:59:59.000-04:00",
-        "redemption": "print"
       },
       {
         "id": "flipp-4739931",
@@ -2882,6 +2981,15 @@
         "description": "SAVE $1.00 on ONE(1) Sour Punch Bites 9 Oz Bag",
         "category": "Grocery",
         "validTo": "2026-09-16T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4747695",
+        "brand": "St. Joseph",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) St. Joseph product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3133,7 +3241,7 @@
         "discount": "save $2.00",
         "description": "Save $2.00 on any ONE (1) World’s Best Cat Litter product",
         "category": "Other",
-        "validTo": "2026-08-17T20:00:00.000-04:00",
+        "validTo": "2026-08-18T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3305,6 +3413,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19889874",
+        "place": "Chipotle",
+        "title": "Chipotle: BOGO for wearing student gear 8/20 in-store only, Then 3 Sundays of BTGO 8/23, 8/30, 9/6 w/code SUNDAYS (online/app only). All after 3pm",
+        "url": "https://slickdeals.net/f/19889874-chipotle-bogo-for-wearing-student-gear-8-20-in-store-only-then-3-sundays-of-btgo-8-23-8-30-9-6-w-code-sundays-online-app-only-all-after-3pm?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-17T18:31:16.000Z"
+      },
+      {
         "id": "sd-19885281",
         "place": "Subway",
         "title": "Select Subway Sub Club Members: Any Qualifying Footlong Sub $7 (App & Online Orders Only)",
@@ -3471,13 +3586,6 @@
         "title": "16.5-Ounce Native x Dunkin' Strawberry Frosted Shampoo (Limited Edition) $6.65 w/ S&S + Free Shipping w/ Prime or on $35+",
         "url": "https://slickdeals.net/f/19835772-16-5-ounce-native-x-dunkin-strawberry-frosted-shampoo-limited-edition-6-65-w-s-s-free-shipping-w-prime-or-on-35?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-02T22:10:35.000Z"
-      },
-      {
-        "id": "sd-19832928",
-        "place": "Chipotle",
-        "title": "$50 Chipotle eGift Card (Email Delivery) $42.50",
-        "url": "https://slickdeals.net/f/19832928-50-chipotle-egift-card-email-delivery-42-50?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-01T21:03:24.000Z"
       },
       {
         "id": "sd-19832682",
