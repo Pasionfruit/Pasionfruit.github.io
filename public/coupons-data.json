@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-18T09:39:05.867Z",
+  "lastUpdated": "2026-08-19T09:39:40.591Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -1148,6 +1148,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4752373",
+        "brand": "Dental Fresh",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Dental Fresh Advanced Plaque & Tartar Water Additive for Dogs and Cats",
+        "category": "Pets",
+        "validTo": "2026-09-26T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4713352",
         "brand": "Depend",
         "discount": "Save $2.50",
@@ -1355,21 +1364,12 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4681170",
+        "id": "flipp-4738643",
         "brand": "Fancy Feast",
-        "discount": "Save $0.50",
-        "description": "Save $0.50 on any SEVEN (7) 3 oz cans of Fancy Feast® Wet Cat Food",
+        "discount": "SAVE $1.50",
+        "description": "SAVE $1.50 on ONE (1) 12 ct box (3 oz cans) of Fancy Feast® Wet Cat Food",
         "category": "Pets",
-        "validTo": "2026-09-01T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4663146",
-        "brand": "Fancy Feast",
-        "discount": "SAVE 50¢",
-        "description": "SAVE 50¢ on SEVEN (7) 3 oz cans of Fancy Feast® Wet Cat Food",
-        "category": "Pets",
-        "validTo": "2026-09-02T02:59:59.000-04:00",
+        "validTo": "2026-09-30T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1796,6 +1796,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4751198",
+        "brand": "Hello",
+        "discount": "SAVE $4.00",
+        "description": "SAVE $4.00 On any TWO (2) hello Deodorants (2.6oz ONLY)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-30T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4732075",
         "brand": "Herbal Essences",
         "discount": "Save $6.00",
@@ -1967,15 +1976,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-81434",
-        "brand": "L'Oréal Paris",
-        "discount": "save $1.00",
-        "description": "ANY L’Oréal® Paris Lip product",
-        "category": "Other",
-        "validTo": "2026-08-18T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4740088",
         "brand": "L'oreal Paris Elvive",
         "discount": "$8.00 OFF",
@@ -2063,6 +2063,24 @@
         "description": "$3.00 OFF ANY ONE (1) Maybelline® New York Product (Excludes Expert Wear® Eye Shadow Monos & Baby Lips® Moisturizing Lip Balms)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4752371",
+        "brand": "Minute",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Minute Ready-to-Serve Sticky Rice Cups",
+        "category": "Other",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4752367",
+        "brand": "Minute",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Minute Ready-to-Serve Veggie Stir Fry Cups",
+        "category": "Other",
+        "validTo": "2026-09-18T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2642,6 +2660,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4752359",
+        "brand": "PopCorners",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) PopCorners 7 oz (Excludes Protein and Party Size)",
+        "category": "Grocery",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4747731",
         "brand": "Publix",
         "discount": "Save $2.00",
@@ -2750,6 +2777,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4752362",
+        "brand": "Red Bull",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Red Bull Energy Drink, Red Bull Sugarfree, or Red Bull Zero 12 oz. 4-Pack.",
+        "category": "Grocery",
+        "validTo": "2026-09-29T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4735466",
         "brand": "Refresh",
         "discount": "Save $6.00",
@@ -2792,6 +2828,15 @@
         "description": "$3.00 off ANY TWO (2) REVLON COLORSILK BOND REPAIR OR REVLON AFTER COLOR ITEMS",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4752354",
+        "brand": "Ruffles",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Ruffles 5.5-8.5 oz (Excludes Baked, Simply and Party Size)",
+        "category": "Grocery",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3236,15 +3281,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-100920",
-        "brand": "World's Best Cat Litter",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on any ONE (1) World’s Best Cat Litter product",
-        "category": "Other",
-        "validTo": "2026-08-18T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695770",
         "brand": "Xyzal",
         "discount": "Save $5.00",
@@ -3413,10 +3449,24 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19894767",
+        "place": "Chipotle",
+        "title": "9-Ounce Hampton Distribution Ground Chipotle Powder $2.69 w/ S&S + Free Shipping w/ Prime or on $35+",
+        "url": "https://slickdeals.net/f/19894767-9-ounce-hampton-distribution-ground-chipotle-powder-2-69-w-s-s-free-shipping-w-prime-or-on-35?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-18T21:56:27.000Z"
+      },
+      {
+        "id": "sd-19893639",
+        "place": "McDonald's",
+        "title": "MyMcDonald's Rewards: Redeem 1500 pts for $0.50/gal Shell Fuel Rewards code",
+        "url": "https://slickdeals.net/f/19893639-mymcdonald-s-rewards-redeem-1500-pts-for-0-50-gal-shell-fuel-rewards-code?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-18T16:40:09.000Z"
+      },
+      {
         "id": "sd-19889874",
         "place": "Chipotle",
-        "title": "Chipotle: BOGO for wearing student gear 8/20 in-store only, Then 3 Sundays of BTGO 8/23, 8/30, 9/6 w/code SUNDAYS (online/app only). All after 3pm",
-        "url": "https://slickdeals.net/f/19889874-chipotle-bogo-for-wearing-student-gear-8-20-in-store-only-then-3-sundays-of-btgo-8-23-8-30-9-6-w-code-sundays-online-app-only-all-after-3pm?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Chipotle: BOGO for wearing student gear 8/20 in-store only, Then 3 Sundays of B2G1 8/23, 8/30, 9/6 w/code SUNDAYS (online/app only). All after 3pm",
+        "url": "https://slickdeals.net/f/19889874-chipotle-bogo-for-wearing-student-gear-8-20-in-store-only-then-3-sundays-of-b2g1-8-23-8-30-9-6-w-code-sundays-online-app-only-all-after-3pm?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-17T18:31:16.000Z"
       },
       {
@@ -3490,13 +3540,6 @@
         "postedAt": "2026-08-11T17:49:07.000Z"
       },
       {
-        "id": "sd-19866876",
-        "place": "Popeyes",
-        "title": "T-Mobile Customers * Starts Aug 18,  2026 * $5 Atom Movie Ticket to Mutiny, Popeyes Free Chicken Wrap, more",
-        "url": "https://slickdeals.net/f/19866876-t-mobile-customers-starts-aug-18-2026-5-atom-movie-ticket-to-mutiny-popeyes-free-chicken-wrap-more?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-11T14:59:16.000Z"
-      },
-      {
         "id": "sd-19862379",
         "place": "Dunkin'",
         "title": "Free Dunkin Donuts Medium Refresher for Rewards Members - August 10",
@@ -3551,13 +3594,6 @@
         "title": "Burger King Your Way Promotion: Burger King Classic Whopper (In-Restaurant Only) Free to Claim via Mobile Device (Valid thru 8/31)",
         "url": "https://slickdeals.net/f/19847697-burger-king-your-way-promotion-burger-king-classic-whopper-in-restaurant-only-free-to-claim-via-mobile-device-valid-thru-8-31?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-05T21:34:05.000Z"
-      },
-      {
-        "id": "sd-19846818",
-        "place": "Chipotle",
-        "title": "Spanglish Organic Chipotle Chicken 11.9 oz dry seasoning $4.97 at Costco in store only. YMMV",
-        "url": "https://slickdeals.net/f/19846818-spanglish-organic-chipotle-chicken-11-9-oz-dry-seasoning-4-97-at-costco-in-store-only-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-05T16:44:51.000Z"
       },
       {
         "id": "sd-19846026",
