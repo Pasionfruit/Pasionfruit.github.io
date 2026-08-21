@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-20T09:40:49.360Z",
+  "lastUpdated": "2026-08-21T09:42:56.776Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -374,15 +374,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4731533",
-        "brand": "Aspercreme",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Icy Hot Lidocaine, Aspercreme lidocaine or Aspercreme Arthritis Pain Reliever Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-05T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4713701",
         "brand": "Aspercreme®",
         "discount": "Save $3.00",
@@ -425,15 +416,6 @@
         "description": "Save $5.00 on any ONE (1) Astepro® Allergy Product 60 sprays or larger",
         "category": "Health & Beauty",
         "validTo": "2026-09-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4674028",
-        "brand": "AVEENO",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) AVEENO® Baby or AVEENO® Kids Product (excludes gift sets, trial/travel sizes, & wipes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-22T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -698,15 +680,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4732101",
-        "brand": "Burt's Bees",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 off any ONE (1) Burt's Bees product (excluding Lip Balms)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4674438",
         "brand": "Cascade",
         "discount": "Save $4.00",
@@ -923,15 +896,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4732104",
-        "brand": "Colgate",
-        "discount": "SAVE $2.00",
-        "description": "SAVE $2.00 On any ONE (1) Colgate 360° (excluding 360° Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4732103",
         "brand": "Colgate",
         "discount": "SAVE $2.00",
@@ -1031,21 +995,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4697913",
-        "brand": "Danone",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Silk Protein Yogurt Single Serve",
-        "category": "Grocery",
-        "validTo": "2026-08-20T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4718654",
         "brand": "Dave's Killer",
         "discount": "Save $2.00",
         "description": "Save $2.00 on any ONE (1) pack of Dave’s Killer Bread® Organic Bars or Bites, any variety",
         "category": "Grocery",
         "validTo": "2026-09-11T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4758627",
+        "brand": "Dave's Killer Bread",
+        "discount": "Save $0.35",
+        "description": "Save $0.35 on any ONE (1) pack of Dave's Killer Bread® Loaf Bread, Breakfast, Buns or Sandwich Rolls",
+        "category": "Other",
+        "validTo": "2026-09-30T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1319,21 +1283,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4752857",
-        "brand": "Energizer",
-        "discount": "SAVE $1.00",
-        "description": "SAVE $1.00 on any ONE (1) pack of Energizer® Batteries.",
-        "category": "Household",
-        "validTo": "2026-10-01T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4739943",
         "brand": "Energizer",
         "discount": "Save $1.00",
         "description": "Save $1.00 on any ONE (1) pack of Energizer® Batteries",
         "category": "Other",
         "validTo": "2026-09-13T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4752857",
+        "brand": "Energizer",
+        "discount": "SAVE $1.00",
+        "description": "SAVE $1.00 on any ONE (1) pack of Energizer® Batteries.",
+        "category": "Household",
+        "validTo": "2026-10-01T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1415,6 +1379,15 @@
         "description": "Save $0.75 on any ONE (1) 1.06 oz - 1.96 oz package of Fancy Feast® Layered Delights™, Chef's Cuts™, or Savory Purees Cat Treats",
         "category": "Pets",
         "validTo": "2026-09-15T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4755670",
+        "brand": "Febreze",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 ONE Febreze Trash product (excludes trial/travel size).",
+        "category": "Household",
+        "validTo": "2026-08-30T02:59:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1541,15 +1514,6 @@
         "description": "Save $8.00 on any ONE (1) Florastor Product",
         "category": "Health & Beauty",
         "validTo": "2026-09-13T02:59:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4719341",
-        "brand": "Frito-Lay",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Miss Vickie's 7.5 oz",
-        "category": "Grocery",
-        "validTo": "2026-08-20T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1922,6 +1886,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4732106",
+        "brand": "Kristin Ess",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 when you buy ONE (1) Kristin Ess Product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-06T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4705380",
         "brand": "L'oreal paris",
         "discount": "$2 off",
@@ -1954,7 +1927,7 @@
         "discount": "save $1.00",
         "description": "ANY L’Oréal® Paris Lip product",
         "category": "Other",
-        "validTo": "2026-08-20T20:00:00.000-04:00",
+        "validTo": "2026-08-21T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2282,15 +2255,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4718662",
-        "brand": "Nutella",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Nutella Ice Cream (14 fl oz)",
-        "category": "Grocery",
-        "validTo": "2026-09-15T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4732033",
         "brand": "OGX",
         "discount": "SAVE $4.00",
@@ -2345,19 +2309,19 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4747762",
+        "id": "flipp-4747789",
         "brand": "Old Spice",
         "discount": "Save $7.00",
-        "description": "TWO Old Spice Whole Body Deodorant Sprays, Sticks, or Creams (excludes trial/travel size).",
+        "description": "TWO Old Spice Alchemist Deodorant, Alchemist Body Wash, OR Alchemist Cologne Mist (excludes travel/trial size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4747789",
+        "id": "flipp-4747762",
         "brand": "Old Spice",
         "discount": "Save $7.00",
-        "description": "TWO Old Spice Alchemist Deodorant, Alchemist Body Wash, OR Alchemist Cologne Mist (excludes travel/trial size).",
+        "description": "TWO Old Spice Whole Body Deodorant Sprays, Sticks, or Creams (excludes trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
@@ -2543,6 +2507,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4755411",
+        "brand": "Palmolive",
+        "discount": "Save $1.50",
+        "description": "Save $1.50 on any ONE (1) Palmolive Ultra Dish Liquid (32.5oz ONLY) or Palmolive Ultra Strength EZ-Pump Dish Soap (28oz ONLY)",
+        "category": "Household",
+        "validTo": "2026-09-02T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4705400",
         "brand": "Pampers",
         "discount": "$2 off",
@@ -2603,6 +2576,15 @@
         "description": "Save $3.00 on any FOUR (4) Pepsi® Products",
         "category": "Grocery",
         "validTo": "2026-09-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-103019",
+        "brand": "Pepto Bismol",
+        "discount": "save $0.50",
+        "description": "Save $0.50 on ONE Pepto Product.",
+        "category": "Other",
+        "validTo": "2026-08-21T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2975,15 +2957,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4722856",
-        "brand": "Smithfield",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Smithfield® Prime Fresh Lunchmeat Family Size",
-        "category": "Grocery",
-        "validTo": "2026-09-16T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4735467",
         "brand": "Smokehouse",
         "discount": "Save $2.50",
@@ -3026,15 +2999,6 @@
         "description": "Save $5.00 on any ONE (1) STEM™ Devices",
         "category": "Household",
         "validTo": "2026-09-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4722854",
-        "brand": "Stonyfield",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Stonyfield Organic Kids or YoBaby Multipack (any variety)",
-        "category": "Grocery",
-        "validTo": "2026-09-03T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3245,24 +3209,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4718656",
-        "brand": "Wonder",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Wonder® Cake Multi-Pack product, any variety",
-        "category": "Grocery",
-        "validTo": "2026-08-26T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-100920",
-        "brand": "World's Best Cat Litter",
-        "discount": "save $2.00",
-        "description": "Save $2.00 on any ONE (1) World’s Best Cat Litter product",
-        "category": "Other",
-        "validTo": "2026-08-20T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695770",
         "brand": "Xyzal",
         "discount": "Save $5.00",
@@ -3314,15 +3260,6 @@
         "description": "ONE Zevo Flying Insect Trap Full Size Starter Kit.",
         "category": "Other",
         "validTo": "2026-09-05T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4718660",
-        "brand": "Ziploc",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Ziploc Twist n Loc Container",
-        "category": "Other",
-        "validTo": "2026-09-19T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3431,6 +3368,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19902219",
+        "place": "Chipotle",
+        "title": "The “Chipotle Salish Meal” Contest (IG) ~ 9/4/2026",
+        "url": "https://slickdeals.net/f/19902219-the-chipotle-salish-meal-contest-ig-9-4-2026?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-20T15:39:59.000Z"
+      },
+      {
         "id": "sd-19898025",
         "place": "Pizza Hut",
         "title": "T-Mobile Customers * Starts Aug 25,  2026 * 7-Eleven/Speedway Free Select BODYARMOR, Pizza Hut Free order Melts, more",
@@ -3454,8 +3398,8 @@
       {
         "id": "sd-19889874",
         "place": "Chipotle",
-        "title": "Chipotle: BOGO for wearing student gear 8/20 in-store only, Then 3 Sundays of B2G1 8/23, 8/30, 9/6 w/code SUNDAYS (online/app only). All after 3pm",
-        "url": "https://slickdeals.net/f/19889874-chipotle-bogo-for-wearing-student-gear-8-20-in-store-only-then-3-sundays-of-b2g1-8-23-8-30-9-6-w-code-sundays-online-app-only-all-after-3pm?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Chipotle Back To School Offers: 8/20 Only: Wear Any School Apparel/Accessories B1G1 Free Entrée & More (In-Restaurant Only After 3PM)",
+        "url": "https://slickdeals.net/f/19889874-chipotle-back-to-school-offers-8-20-only-wear-any-school-apparel-accessories-b1g1-free-entr-e-more-in-restaurant-only-after-3pm?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-17T18:31:16.000Z"
       },
       {
@@ -3510,16 +3454,9 @@
       {
         "id": "sd-19868364",
         "place": "Chipotle",
-        "title": "Chipotle IQ trivia game 5,000 BOGO entree codes each hour (Aug 18-Aug 20)",
-        "url": "https://slickdeals.net/f/19868364-chipotle-iq-trivia-game-5-000-bogo-entree-codes-each-hour-aug-18-aug-20?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "title": "Chipotle: BOGO Entrée Offer, Cilantro Lime Sauce or Queso Blanco Topping/Side Free w/ Quiz (Online/Mobile Orders Only)",
+        "url": "https://slickdeals.net/f/19868364-chipotle-bogo-entr-e-offer-cilantro-lime-sauce-or-queso-blanco-topping-side-free-w-quiz-online-mobile-orders-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-11T21:04:53.000Z"
-      },
-      {
-        "id": "sd-19867803",
-        "place": "Chipotle",
-        "title": "Verizon Shine $5 Chipotle GC Free",
-        "url": "https://slickdeals.net/f/19867803-verizon-shine-5-chipotle-gc-free?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-11T19:03:27.000Z"
       },
       {
         "id": "sd-19867506",
@@ -3744,13 +3681,6 @@
         "title": "DUNKIN REWARDS: Order an Espresso Drink through the app, earn 200 Rewards Points (stacked offers, activation needed) ends 7/10",
         "url": "https://slickdeals.net/f/19741536-dunkin-rewards-order-an-espresso-drink-through-the-app-earn-200-rewards-points-stacked-offers-activation-needed-ends-7-10?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-09T17:41:22.000Z"
-      },
-      {
-        "id": "sd-19730103",
-        "place": "Chick-fil-A",
-        "title": "Chick-fil-A July 7th play for  a treat",
-        "url": "https://slickdeals.net/f/19730103-chick-fil-a-july-7th-play-for-a-treat?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-07T01:54:14.000Z"
       }
     ]
   }
