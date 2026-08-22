@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-21T09:42:56.776Z",
+  "lastUpdated": "2026-08-22T09:32:48.150Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -266,15 +266,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4713284",
-        "brand": "Allegra",
-        "discount": "Save $5.00",
-        "description": "Save $5.00 on any ONE (1) Allegra Adult Allergy product (excluding 5ct & 12ct)",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-12T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695776",
         "brand": "Allegra",
         "discount": "$5.00 OFF",
@@ -488,15 +479,6 @@
         "description": "SAVE $5.00 on any TWO (2) AXE Body Wash 16oz+ (excludes trial and travel sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4732091",
-        "brand": "Axe",
-        "discount": "SAVE $8.00",
-        "description": "SAVE $8.00 on TWO (2) Axe Deodorant Products.",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -887,12 +869,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4739939",
+        "id": "flipp-4732105",
         "brand": "Colgate",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 on any ONE (1) Colgate 360° (excluding 360°Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
+        "discount": "SAVE $3.00",
+        "description": "SAVE $3.00 On any ONE (1) Colgate 360° Advanced, Gum Health or Optic White Manual Toothbrush",
         "category": "Health & Beauty",
-        "validTo": "2026-08-26T19:59:59.000-04:00",
+        "validTo": "2026-08-23T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4732104",
+        "brand": "Colgate",
+        "discount": "SAVE $2.00",
+        "description": "SAVE $2.00 On any ONE (1) Colgate 360° (excluding 360° Advanced), Total or Expert Manual Toothbrush, Mouthwash or Mouth Rinse (16oz or larger)",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-30T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1005,10 +996,10 @@
       },
       {
         "id": "flipp-4758627",
-        "brand": "Dave's Killer Bread",
+        "brand": "Dave's Killer",
         "discount": "Save $0.35",
         "description": "Save $0.35 on any ONE (1) pack of Dave's Killer Bread® Loaf Bread, Breakfast, Buns or Sandwich Rolls",
-        "category": "Other",
+        "category": "Grocery",
         "validTo": "2026-09-30T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
@@ -1580,15 +1571,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4732094",
-        "brand": "Garnier",
-        "discount": "$5.00 OFF",
-        "description": "$5.00 OFF ANY TWO (2) Garnier® Nutrisse®, or Olia® Hair Color Products",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4705382",
         "brand": "Garnier | Whole Blends",
         "discount": "$3 off",
@@ -1751,21 +1733,21 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4751198",
-        "brand": "Hello",
-        "discount": "SAVE $4.00",
-        "description": "SAVE $4.00 On any TWO (2) hello Deodorants (2.6oz ONLY)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4732075",
         "brand": "Herbal Essences",
         "discount": "Save $6.00",
         "description": "Save $6.00 TWO Herbal Essences Pure Plant Essences Shampoo, Conditioner OR Treatment (excludes Dual Packs, 100 mL Shampoo and Conditioners, and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4761235",
+        "brand": "Holland House",
+        "discount": "Save $0.75",
+        "description": "Save $0.75 on any ONE (1) Holland House Cooking Wine",
+        "category": "Other",
+        "validTo": "2026-10-12T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1919,24 +1901,6 @@
         "description": "$2.00 OFF ANY ONE (1) L’Oréal Paris® Cosmetics (excludes Colour Riche/Colour Riche Monos eyeshadow, makeup remover, accessories, trial & travel sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-81434",
-        "brand": "L'Oréal Paris",
-        "discount": "save $1.00",
-        "description": "ANY L’Oréal® Paris Lip product",
-        "category": "Other",
-        "validTo": "2026-08-21T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4740088",
-        "brand": "L'oreal Paris Elvive",
-        "discount": "$8.00 OFF",
-        "description": "$8.00 OFF ANY TWO (2) L’Oréal Paris® Hair Color Products",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-23T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2153,6 +2117,15 @@
         "description": "ONE Native Deodorant Spray Product (excludes trial/travel size)",
         "category": "Health & Beauty",
         "validTo": "2026-08-22T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4713350",
+        "brand": "Nature's Bounty",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Nature's Bounty Vitamin or Supplement",
+        "category": "Health & Beauty",
+        "validTo": "2026-08-29T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2576,15 +2549,6 @@
         "description": "Save $3.00 on any FOUR (4) Pepsi® Products",
         "category": "Grocery",
         "validTo": "2026-09-05T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-103019",
-        "brand": "Pepto Bismol",
-        "discount": "save $0.50",
-        "description": "Save $0.50 on ONE Pepto Product.",
-        "category": "Other",
-        "validTo": "2026-08-21T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3155,15 +3119,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4732084",
-        "brand": "Vaseline®",
-        "discount": "Save $2.00",
-        "description": "Save $2.00 off any ONE (1) Vaseline® Products (excludes Trial & Travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4695069",
         "brand": "Vick's",
         "discount": "Save $3.00",
@@ -3182,15 +3137,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-4747703",
-        "brand": "Vitafusion",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Vitafusion Supplement",
-        "category": "Health & Beauty",
-        "validTo": "2026-10-05T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4705407",
         "brand": "Walgreens",
         "discount": "$5 off",
@@ -3206,6 +3152,15 @@
         "description": "Save $1.00 on any ONE (1) Windex® Foam Product",
         "category": "Household",
         "validTo": "2026-08-26T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-100920",
+        "brand": "World's Best Cat Litter",
+        "discount": "save $2.00",
+        "description": "Save $2.00 on any ONE (1) World’s Best Cat Litter product",
+        "category": "Other",
+        "validTo": "2026-08-22T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3368,6 +3323,27 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19909719",
+        "place": "Dunkin'",
+        "title": "Dunkin August 25 Code Drop for free Specialty Coffee",
+        "url": "https://slickdeals.net/f/19909719-dunkin-august-25-code-drop-for-free-specialty-coffee?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-22T07:19:08.000Z"
+      },
+      {
+        "id": "sd-19907595",
+        "place": "Chipotle",
+        "title": "Chipotle- Free queso (or any other reward) with $5 minimum purchase",
+        "url": "https://slickdeals.net/f/19907595-chipotle-free-queso-or-any-other-reward-with-5-minimum-purchase?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-21T18:31:28.000Z"
+      },
+      {
+        "id": "sd-19906767",
+        "place": "Chipotle",
+        "title": "Chipotle Sunday Resets: Order 2 entrees on Sundays to get one free entree",
+        "url": "https://slickdeals.net/f/19906767-chipotle-sunday-resets-order-2-entrees-on-sundays-to-get-one-free-entree?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-21T15:03:04.000Z"
+      },
+      {
         "id": "sd-19902219",
         "place": "Chipotle",
         "title": "The “Chipotle Salish Meal” Contest (IG) ~ 9/4/2026",
@@ -3438,25 +3414,11 @@
         "postedAt": "2026-08-13T16:47:13.000Z"
       },
       {
-        "id": "sd-19875438",
-        "place": "Chipotle",
-        "title": "Chipotle- BOGO Free Entree (YMMV)",
-        "url": "https://slickdeals.net/f/19875438-chipotle-bogo-free-entree-ymmv?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-13T16:30:08.000Z"
-      },
-      {
         "id": "sd-19874190",
         "place": "Subway",
         "title": "$7.50 bonus on select $50 One4All Gift Card, redeem for Lowe's, Subway, Kroger Gift Card Portal",
         "url": "https://slickdeals.net/f/19874190-7-50-bonus-on-select-50-one4all-gift-card-redeem-for-lowe-s-subway-kroger-gift-card-portal?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-13T09:23:51.000Z"
-      },
-      {
-        "id": "sd-19868364",
-        "place": "Chipotle",
-        "title": "Chipotle: BOGO Entrée Offer, Cilantro Lime Sauce or Queso Blanco Topping/Side Free w/ Quiz (Online/Mobile Orders Only)",
-        "url": "https://slickdeals.net/f/19868364-chipotle-bogo-entr-e-offer-cilantro-lime-sauce-or-queso-blanco-topping-side-free-w-quiz-online-mobile-orders-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-11T21:04:53.000Z"
       },
       {
         "id": "sd-19867506",
@@ -3674,13 +3636,6 @@
         "title": "Tmobile Tue 7/14: Free Summer Tumbler, Free 6-Piece Wings W/$5 At Popeyes, Free Jumbo Jack W/$1 At Jack In The Box ...",
         "url": "https://slickdeals.net/f/19745289-tmobile-tue-7-14-free-summer-tumbler-free-6-piece-wings-w-5-at-popeyes-free-jumbo-jack-w-1-at-jack-in-the-box?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-10T15:42:24.000Z"
-      },
-      {
-        "id": "sd-19741536",
-        "place": "Dunkin'",
-        "title": "DUNKIN REWARDS: Order an Espresso Drink through the app, earn 200 Rewards Points (stacked offers, activation needed) ends 7/10",
-        "url": "https://slickdeals.net/f/19741536-dunkin-rewards-order-an-espresso-drink-through-the-app-earn-200-rewards-points-stacked-offers-activation-needed-ends-7-10?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-09T17:41:22.000Z"
       }
     ]
   }
