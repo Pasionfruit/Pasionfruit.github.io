@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-23T09:33:36.887Z",
+  "lastUpdated": "2026-08-24T09:54:43.438Z",
   "grocery": {
     "source": "Flipp",
     "error": null,
@@ -968,15 +968,6 @@
         "redemption": "print"
       },
       {
-        "id": "flipp-4732088",
-        "brand": "Degree",
-        "discount": "SAVE $5.00",
-        "description": "SAVE $5.00 on TWO (2) Degree Deodorant Products.",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4732087",
         "brand": "Degree",
         "discount": "SAVE $5.00",
@@ -1073,15 +1064,6 @@
         "description": "Save $2.00 on any ONE (1) Dove Men+Care Antiperspirant or Deodorant Stick, Dry Spray, or Whole Body (excludes Twin Packs and Trial and Travel Sizes)",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4732015",
-        "brand": "Dove Men+Care",
-        "discount": "Save $4.00",
-        "description": "Save $4.00 on Any TWO (2) Dove Deodorant Product (excludes Trial & Trial, Twin Packs, Invisible Solids and Dove Men+Care)",
-        "category": "Health & Beauty",
-        "validTo": "2026-08-30T02:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1463,6 +1445,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4762336",
+        "brand": "Garnier",
+        "discount": "Save $3.00",
+        "description": "Save $3.00 on any ONE (1) Garnier® Skincare product (excludes 100mL Micellar Water, Kits, and trial & travel sizes)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-05T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4747983",
         "brand": "Garnier",
         "discount": "$5.00 OFF",
@@ -1487,15 +1478,6 @@
         "description": "SAVE $6.00 off ANY TWO (2) Garnier® Olia® haircolor products",
         "category": "Health & Beauty",
         "validTo": "2026-09-06T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4762336",
-        "brand": "Garnier",
-        "discount": "Save $3.00",
-        "description": "Save $3.00 on any ONE (1) Garnier® Skincare product (excludes 100mL Micellar Water, Kits, and trial & travel sizes)",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1778,6 +1760,24 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-4763450",
+        "brand": "Kleenex",
+        "discount": "Save $1.00",
+        "description": "Save $1.00 on any ONE (1) Kleenex Hand Towels",
+        "category": "Other",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4763451",
+        "brand": "Kotex",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Kotex Pads 24-36ct and Kotex Liners 68-120ct (excludes 28ct pad & 36ct overnight pad)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4747708",
         "brand": "Kotex",
         "discount": "Save $1.00",
@@ -1828,7 +1828,7 @@
         "discount": "save $1.00",
         "description": "ANY L’Oréal® Paris Lip product",
         "category": "Other",
-        "validTo": "2026-08-23T20:00:00.000-04:00",
+        "validTo": "2026-08-24T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -1892,15 +1892,6 @@
         "description": "$3.00 OFF ANY ONE (1) Maybelline® New York Product (Excludes Expert Wear® Eye Shadow Monos & Baby Lips® Moisturizing Lip Balms)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4752371",
-        "brand": "Minute",
-        "discount": "Save $1.00",
-        "description": "Save $1.00 on any ONE (1) Minute Ready-to-Serve Sticky Rice Cups",
-        "category": "Other",
-        "validTo": "2026-09-16T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2009,15 +2000,6 @@
         "description": "Save $1.00 on any ONE (1) Nature's Bounty Vitamin or Supplement",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-4713328",
-        "brand": "Nature's Truth",
-        "discount": "Save $1.50",
-        "description": "Save $1.50 on any ONE (1) Nature's Truth Vitamin or Supplement Product",
-        "category": "Health & Beauty",
-        "validTo": "2026-09-06T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2327,6 +2309,15 @@
         "redemption": "savetocard"
       },
       {
+        "id": "flipp-100916",
+        "brand": "Oral-B",
+        "discount": "save $1.00",
+        "description": "Save $1.00 on ONE Oral-B Kids Battery Toothbrush (excludes trial/travel size).",
+        "category": "Other",
+        "validTo": "2026-08-24T20:00:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4732039",
         "brand": "Oral-B",
         "discount": "Save $10.00",
@@ -2351,15 +2342,6 @@
         "description": "ONE Oral-B Glide Manual Floss OR Oral-B Expanding Floss OR Oral-B Glide Floss Picks OR Satin Floss (Excludes Essential Floss, Oral-B Fresh Mint Picks and trial/travel size).",
         "category": "Health & Beauty",
         "validTo": "2026-08-29T19:59:59.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
-        "id": "flipp-100916",
-        "brand": "Oral-B",
-        "discount": "save $1.00",
-        "description": "Save $1.00 on ONE Oral-B Kids Battery Toothbrush (excludes trial/travel size).",
-        "category": "Other",
-        "validTo": "2026-08-23T20:00:00.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -2480,15 +2462,6 @@
         "redemption": "savetocard"
       },
       {
-        "id": "flipp-103019",
-        "brand": "Pepto Bismol",
-        "discount": "save $0.50",
-        "description": "Save $0.50 on ONE Pepto Product.",
-        "category": "Other",
-        "validTo": "2026-08-23T20:00:00.000-04:00",
-        "redemption": "savetocard"
-      },
-      {
         "id": "flipp-4711652",
         "brand": "Pillsbury",
         "discount": "Save $1.00",
@@ -2504,6 +2477,15 @@
         "description": "Save $2.50 on any ONE (1) pack of Poise® Pads (12 Ct+) or Liners (44 Ct+) OR any Depend® Product (8 Ct or larger). (Not valid on One™ by Poise®, Poise® Liners 8-30 Ct, or Depend® Postpartum)",
         "category": "Health & Beauty",
         "validTo": "2026-08-30T02:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4763452",
+        "brand": "Poise",
+        "discount": "Save $2.00",
+        "description": "Save $2.00 on any ONE (1) Poise Pads 14-20ct, 28ct or 30ct, or Poise Liners 44-48ct  (excluding Overnight pads, 20-22ct)",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-16T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3020,6 +3002,15 @@
         "redemption": "print"
       },
       {
+        "id": "flipp-100920",
+        "brand": "World's Best Cat Litter",
+        "discount": "save $2.00",
+        "description": "Save $2.00 on any ONE (1) World’s Best Cat Litter product",
+        "category": "Other",
+        "validTo": "2026-08-24T20:00:00.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
         "id": "flipp-4695770",
         "brand": "Xyzal",
         "discount": "Save $5.00",
@@ -3089,6 +3080,15 @@
         "description": "Save $5.00 on any ONE (1) Adult ZYRTEC® 24-60ct. product (Excludes trial & travel)",
         "category": "Health & Beauty",
         "validTo": "2026-09-01T19:59:59.000-04:00",
+        "redemption": "savetocard"
+      },
+      {
+        "id": "flipp-4763670",
+        "brand": "Zyrtec",
+        "discount": "Save $5.00",
+        "description": "Save $5.00 on any ONE (1) Adult ZYRTEC® Allergen Shield Spray product",
+        "category": "Health & Beauty",
+        "validTo": "2026-09-05T19:59:59.000-04:00",
         "redemption": "savetocard"
       },
       {
@@ -3179,6 +3179,13 @@
     "error": null,
     "coupons": [
       {
+        "id": "sd-19916046",
+        "place": "Taco Bell",
+        "title": "[SnS, AC] $1.39* | 12-Oz Taco Bell Creamy Sauce (Chipotle) at Amazon",
+        "url": "https://slickdeals.net/f/19916046-sns-ac-1-39-12-oz-taco-bell-creamy-sauce-chipotle-at-amazon?utm_source=rss&utm_content=def&utm_medium=RSS2",
+        "postedAt": "2026-08-24T06:56:43.000Z"
+      },
+      {
         "id": "sd-19911738",
         "place": "Subway",
         "title": "Subway® × arc raiders",
@@ -3261,13 +3268,6 @@
         "title": "88-Count or 96-Count Keurig Coffee K-Cup Pods (Various: Dunkin', Folgers, Green Mountain, McCafe, Newman's Own, More) from $38.99 + Free Shipping",
         "url": "https://slickdeals.net/f/19881783-88-count-or-96-count-keurig-coffee-k-cup-pods-various-dunkin-folgers-green-mountain-mccafe-newman-s-own-more-from-38-99-free-shipping?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-08-15T07:55:37.000Z"
-      },
-      {
-        "id": "sd-19877757",
-        "place": "Chipotle",
-        "title": "[AC / Max SS] Best Foods Chipotle Mayonnaise Dressing Jug, 1 Gallon (128 Fl Oz) YMMV on coupon $10.96",
-        "url": "https://slickdeals.net/f/19877757-ac-max-ss-best-foods-chipotle-mayonnaise-dressing-jug-1-gallon-128-fl-oz-ymmv-on-coupon-10-96?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-08-14T06:34:07.000Z"
       },
       {
         "id": "sd-19875507",
@@ -3429,13 +3429,6 @@
         "title": "T-Mobile Customers T Life App * Starts 7/28/26 * KFC Free Snacker, more",
         "url": "https://slickdeals.net/f/19795053-t-mobile-customers-t-life-app-starts-7-28-26-kfc-free-snacker-more?utm_source=rss&utm_content=def&utm_medium=RSS2",
         "postedAt": "2026-07-22T12:06:37.000Z"
-      },
-      {
-        "id": "sd-19793817",
-        "place": "Taco Bell",
-        "title": "Taco Bell Enchiritos $1 (get up to five), Add Nacho Fries for $1 for Rewards Members In-App 7/22/26 Only",
-        "url": "https://slickdeals.net/f/19793817-taco-bell-enchiritos-1-get-up-to-five-add-nacho-fries-for-1-for-rewards-members-in-app-7-22-26-only?utm_source=rss&utm_content=def&utm_medium=RSS2",
-        "postedAt": "2026-07-22T03:43:08.000Z"
       },
       {
         "id": "sd-19792185",
