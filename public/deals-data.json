@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-24T09:54:38.282Z",
+  "lastUpdated": "2026-08-25T09:41:34.326Z",
   "stores": {
     "Walmart": {
       "validFrom": "2026-08-19T00:00:00-04:00",
@@ -2682,310 +2682,6 @@
       "validTo": "2026-08-26T23:59:59-04:00",
       "deals": [
         {
-          "id": "Publix-1032589621",
-          "item": "Softsoap Velvet Silk Foaming Hand Soap 9-oz or Liquid Hand Soap 11.25-oz or Irish Spring Bar Soap 3-ct.",
-          "brand": "Softsoap | Irish Spring",
-          "price": 4,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032561967",
-          "item": "SCAN TO CLIP Colgate Kids Battery",
-          "brand": "Colgate",
-          "price": 2.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562166",
-          "item": "Lactaid Creamer",
-          "brand": "LACTAID®",
-          "price": 8,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562197",
-          "item": "Colgate Optic White Pro Series",
-          "brand": "Colgate",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562230",
-          "item": "Land O' Frost Premium Lunch Meat",
-          "brand": "Land O Frost",
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562240",
-          "item": "Tena Moderate 20-ct., UltraThin 30-ct. or Heavy Absorbency 14-ct. Pads",
-          "brand": "Tena",
-          "price": 10,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562304",
-          "item": "Dole Whip",
-          "brand": "Dole",
-          "price": 4.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562297",
-          "item": "Softsoap Liquid Hand Soap Refills 50-oz or Irish Spring Bar Soap 8-ct.",
-          "brand": "Softsoap | Irish",
-          "price": 5.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562348",
-          "item": "Goodles Mac & Cheese",
-          "brand": "Goodles",
-          "price": 6,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562361",
-          "item": "Carapelli Olive Oil",
-          "brand": "Carapelli",
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562533",
-          "item": "illy Coffee",
-          "brand": "illy",
-          "price": 11.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586018",
-          "item": "Utz Variety Snack Pack",
-          "brand": "UTZ",
-          "price": 8.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586065",
-          "item": "Colgate Total 5.1-oz, Sensitive 6-oz or MaxFresh 4.5-oz Toothpaste",
-          "brand": "Colgate",
-          "price": 3,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586723",
-          "item": "King's Hawaiian Rolls",
-          "brand": "King's Hawaiian",
-          "price": 8.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586806",
-          "item": "Rice Krispies Treats",
-          "brand": "Kellogg's",
-          "price": 10.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586981",
-          "item": "Mateo's Salsa or Queso",
-          "brand": "Mateo's",
-          "price": 7.98,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032587293",
-          "item": "Allegra 24–30-ct., Allegra Kids 8-oz, Xyzal 35-ct. or Nasacort .57-oz",
-          "brand": "Allegra | Xyzal | Nasacort",
-          "price": 19.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562537",
-          "item": "Tampax Pearl Tampons 45–50-ct. or Always Ultra or Maxi Pads 36–50-ct.",
-          "brand": "Tampax | Always",
-          "price": 11.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586980",
-          "item": "Stauffer's Simply Animals Crackers, Ginger Snaps or Lemon Snaps",
-          "brand": "Stauffer's",
-          "price": 6,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589631",
-          "item": "Hello Deodorant",
-          "brand": "Hello",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589633",
-          "item": "Pop-Tarts",
-          "brand": "Pop-Tarts",
-          "price": 7,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032563552",
-          "item": "Pringles Snack Cups",
-          "brand": "Pringles",
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586974",
-          "item": "Eggo Protein or Zero",
-          "brand": "Eggo",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589608",
-          "item": "Colgate Optic White Advanced 3.2-oz OR Optic White Charcoal or Sensitivity Relief 3.8-oz Toothpaste",
-          "brand": "Colgate",
-          "price": 3,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589629",
-          "item": "McCormick Grill Mates 30 Minute Montreal Steak Marinade",
-          "brand": "McCormick",
-          "price": 1.95,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589625",
-          "item": "L'oreal Paris EverPure Shampoo or Conditioner",
-          "brand": "L'oreal paris",
-          "price": 18,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586066",
-          "item": "Cheez-It Variety Pack",
-          "brand": "Cheez-It",
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589630",
-          "item": "Q-tips",
-          "brand": "Q-tips",
-          "price": 3.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562352",
-          "item": "Icy Hot Original",
-          "brand": "Icy Hot",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562306",
-          "item": "Act Mouthwash",
-          "brand": "ACT",
-          "price": 8,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562359",
-          "item": "Jovial Organic Tomatoes",
-          "brand": "Jovial",
-          "price": 10,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562368",
-          "item": "Dial Liquid Hand Soap",
-          "brand": "Dial",
-          "price": 5,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589632",
-          "item": "Cottonelle Ultra Clean or Ultra Comfort Bath Tissue",
-          "brand": "Cottonelle",
-          "price": 17.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586069",
-          "item": "Archer Sticks",
-          "brand": "Archer",
-          "price": 13.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589614",
-          "item": "Colgate Optic White Advanced Toothpaste",
-          "brand": "Colgate",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562289",
-          "item": "Lärabar Real Fruit & Nut Bar",
-          "brand": "Lärabar",
-          "price": 10,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562343",
-          "item": "Frank's RedHot Sauce",
-          "brand": "Frank's",
-          "price": 7.5,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562298",
-          "item": "Dial Bar Soap",
-          "brand": "Dial",
-          "price": 7,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
           "id": "Publix-1032771604",
           "item": "Platanitos Fritos El Tostón",
           "brand": "El Tostón",
@@ -5312,6 +5008,310 @@
           "price": 5,
           "validFrom": "2026-08-20T00:00:00-04:00",
           "validTo": "2026-08-26T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589621",
+          "item": "Softsoap Velvet Silk Foaming Hand Soap 9-oz or Liquid Hand Soap 11.25-oz or Irish Spring Bar Soap 3-ct.",
+          "brand": "Softsoap | Irish Spring",
+          "price": 4,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032561967",
+          "item": "SCAN TO CLIP Colgate Kids Battery",
+          "brand": "Colgate",
+          "price": 2.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562166",
+          "item": "Lactaid Creamer",
+          "brand": "LACTAID®",
+          "price": 8,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562197",
+          "item": "Colgate Optic White Pro Series",
+          "brand": "Colgate",
+          "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562230",
+          "item": "Land O' Frost Premium Lunch Meat",
+          "brand": "Land O Frost",
+          "price": 6.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562240",
+          "item": "Tena Moderate 20-ct., UltraThin 30-ct. or Heavy Absorbency 14-ct. Pads",
+          "brand": "Tena",
+          "price": 10,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562304",
+          "item": "Dole Whip",
+          "brand": "Dole",
+          "price": 4.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562297",
+          "item": "Softsoap Liquid Hand Soap Refills 50-oz or Irish Spring Bar Soap 8-ct.",
+          "brand": "Softsoap | Irish",
+          "price": 5.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562348",
+          "item": "Goodles Mac & Cheese",
+          "brand": "Goodles",
+          "price": 6,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562361",
+          "item": "Carapelli Olive Oil",
+          "brand": "Carapelli",
+          "price": 9.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562533",
+          "item": "illy Coffee",
+          "brand": "illy",
+          "price": 11.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586018",
+          "item": "Utz Variety Snack Pack",
+          "brand": "UTZ",
+          "price": 8.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586065",
+          "item": "Colgate Total 5.1-oz, Sensitive 6-oz or MaxFresh 4.5-oz Toothpaste",
+          "brand": "Colgate",
+          "price": 3,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586723",
+          "item": "King's Hawaiian Rolls",
+          "brand": "King's Hawaiian",
+          "price": 8.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586806",
+          "item": "Rice Krispies Treats",
+          "brand": "Kellogg's",
+          "price": 10.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586981",
+          "item": "Mateo's Salsa or Queso",
+          "brand": "Mateo's",
+          "price": 7.98,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032587293",
+          "item": "Allegra 24–30-ct., Allegra Kids 8-oz, Xyzal 35-ct. or Nasacort .57-oz",
+          "brand": "Allegra | Xyzal | Nasacort",
+          "price": 19.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562537",
+          "item": "Tampax Pearl Tampons 45–50-ct. or Always Ultra or Maxi Pads 36–50-ct.",
+          "brand": "Tampax | Always",
+          "price": 11.49,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586980",
+          "item": "Stauffer's Simply Animals Crackers, Ginger Snaps or Lemon Snaps",
+          "brand": "Stauffer's",
+          "price": 6,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589631",
+          "item": "Hello Deodorant",
+          "brand": "Hello",
+          "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589633",
+          "item": "Pop-Tarts",
+          "brand": "Pop-Tarts",
+          "price": 7,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032563552",
+          "item": "Pringles Snack Cups",
+          "brand": "Pringles",
+          "price": 6.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586974",
+          "item": "Eggo Protein or Zero",
+          "brand": "Eggo",
+          "price": 4.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589608",
+          "item": "Colgate Optic White Advanced 3.2-oz OR Optic White Charcoal or Sensitivity Relief 3.8-oz Toothpaste",
+          "brand": "Colgate",
+          "price": 3,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589629",
+          "item": "McCormick Grill Mates 30 Minute Montreal Steak Marinade",
+          "brand": "McCormick",
+          "price": 1.95,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589625",
+          "item": "L'oreal Paris EverPure Shampoo or Conditioner",
+          "brand": "L'oreal paris",
+          "price": 18,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586066",
+          "item": "Cheez-It Variety Pack",
+          "brand": "Cheez-It",
+          "price": 9.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589630",
+          "item": "Q-tips",
+          "brand": "Q-tips",
+          "price": 3.79,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562352",
+          "item": "Icy Hot Original",
+          "brand": "Icy Hot",
+          "price": 7.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562306",
+          "item": "Act Mouthwash",
+          "brand": "ACT",
+          "price": 8,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562359",
+          "item": "Jovial Organic Tomatoes",
+          "brand": "Jovial",
+          "price": 10,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562368",
+          "item": "Dial Liquid Hand Soap",
+          "brand": "Dial",
+          "price": 5,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589632",
+          "item": "Cottonelle Ultra Clean or Ultra Comfort Bath Tissue",
+          "brand": "Cottonelle",
+          "price": 17.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032586069",
+          "item": "Archer Sticks",
+          "brand": "Archer",
+          "price": 13.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032589614",
+          "item": "Colgate Optic White Advanced Toothpaste",
+          "brand": "Colgate",
+          "price": 7.99,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562289",
+          "item": "Lärabar Real Fruit & Nut Bar",
+          "brand": "Lärabar",
+          "price": 10,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562343",
+          "item": "Frank's RedHot Sauce",
+          "brand": "Frank's",
+          "price": 7.5,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1032562298",
+          "item": "Dial Bar Soap",
+          "brand": "Dial",
+          "price": 7,
+          "validFrom": "2026-08-12T00:00:00-04:00",
+          "validTo": "2026-08-25T23:59:59-04:00"
         }
       ]
     },
