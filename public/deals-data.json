@@ -1,1161 +1,1169 @@
 {
-  "lastUpdated": "2026-08-25T09:41:34.326Z",
+  "lastUpdated": "2026-08-26T09:49:35.262Z",
   "stores": {
     "Walmart": {
-      "validFrom": "2026-08-19T00:00:00-04:00",
-      "validTo": "2026-08-25T23:59:59-04:00",
+      "validFrom": "2026-08-26T00:00:00-04:00",
+      "validTo": "2026-09-01T23:59:59-04:00",
       "deals": [
         {
-          "id": "Walmart-1034271937",
-          "item": "Coppertone Sport Sunscreen Spray, Ilona Maher Limited Edition Design, SPF 50 Sunscreen",
-          "brand": "Coppertone",
-          "price": 9.34,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271948",
-          "item": "Huffy 20\" Rock It Kids' Bike, Fits Riders 44\"-56\", Blue, Youth, Boys",
-          "brand": "Huffy",
-          "price": 88,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271973",
+          "id": "Walmart-1036384182",
           "item": "Casper Sleep Essential Cooling Pillow, Standard",
           "brand": "Casper",
           "price": 39.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034271984",
-          "item": "Free Assembly Women's and Women's Plus Square Neck Cotton Sweater with Flutter Sleeves",
-          "brand": "Free Assembly",
-          "price": 10.8,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271927",
-          "item": "Great Value Wet & Dry Mop Sweeper Kit",
-          "brand": "Great Value",
-          "price": 9.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271921",
-          "item": "Lysol Disinfectant Spray, Sanitizing and Antibacterial Spray, Deodorizer, Early Morning Breeze",
-          "brand": "Lysol",
-          "price": 6.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271962",
-          "item": "Bloom Nutrition Greens & Superfoods Powder, Strawberry Kiwi, 25 Servings",
-          "brand": "Bloom Nutrition",
-          "price": 21.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271960",
-          "item": "Smartfood Variety Pack Flavored Popcorn 3 Flavors",
-          "brand": "Smartfood",
-          "price": 8.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271995",
-          "item": "Free Assembly Women's and Women's Plus Smocked Cotton Drop Waist Mini Dress",
-          "brand": "Free Assembly",
-          "price": 15.75,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271932",
-          "item": "O-Cedar EasyWring™ Spin Mop & Bucket System",
-          "brand": "O-Cedar",
-          "price": 34.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272168",
-          "item": "Clorox Scentiva Disinfecting Multi-Surface Cleaner Spray, Coconut & Waterlily",
-          "brand": "Clorox",
-          "price": 4.28,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271968",
-          "item": "Better Homes & Gardens River Oaks Outdoor Sofa & 2 Nesting Tables with Patio Cover, Dark Brown",
-          "brand": "Better Homes & Gardens",
-          "price": 598,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271980",
-          "item": "Reebok Women's Evolution Active Dress with Removable Cups",
-          "brand": "Reebok",
-          "price": 20.4,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271924",
-          "item": "Galanz 3.1 Cu Ft Two Door Mini Fridge With Freezer Stainless Steel - Energy star certified, compact and efficient for dorms, offices, and small spaces",
-          "brand": "Galanz",
-          "price": 128,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271923",
-          "item": "Black Rifle Coffee Company Just Black, Medium Roast, Ground Coffee,12 oz",
-          "brand": "Black Rifle Coffee Company",
-          "price": 11.66,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271928",
-          "item": "Avia Women's Bubble Bottom Sneakers",
-          "brand": "Avia",
-          "price": 26,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271935",
-          "item": "CleverMade 62L Collapsible Rolling Tote Cart, Black",
-          "brand": "CleverMade",
-          "price": 24.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272224",
-          "item": "Great Value Disposable Paper Plates",
-          "brand": "Great Value",
-          "price": 8.37,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272161",
-          "item": "Justice Girls Colorblock Jersey Tee",
-          "brand": "Justice",
-          "price": 16,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272162",
-          "item": "Just Cook Ceramic Glass 7-Cup Round Food Storage Container for Meal Prep and Lunches, Large",
-          "brand": "Just Cook",
-          "price": 9.93,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272233",
-          "item": "Eastsport Unisex 16\" Success Mesh Backpack, Black",
-          "brand": "Eastsport",
-          "price": 9.58,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272238",
-          "item": "Wonder Nation Kids' 17\" Optic Checks Backpack, Black and White",
-          "brand": "Wonder Nation",
-          "price": 4.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272209",
-          "item": "Wonder Nation Boys Henley Shirt with Long Sleeves",
-          "brand": "Wonder Nation",
-          "price": 7.48,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272216",
-          "item": "Weekend Academy Girls Layered Tee with Short Sleeves",
-          "brand": "Weekend Academy",
-          "price": 8.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272222",
-          "item": "MGA Entertainment Rainbow High Girl's Mini Backpack-Blue",
-          "brand": "MGA Entertainment",
-          "price": 9.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272231",
-          "item": "Wonder Nation Boys's Spider-Man Graphic Hoodie with Long Sleeves",
-          "brand": "Wonder Nation",
-          "price": 11.19,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272050",
-          "item": "Beautiful 2 Slice Toaster with Touch-Activated Display, White Icing by Drew Barrymore",
-          "brand": "Beautiful",
-          "price": 39.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272132",
-          "item": "Lysol Disinfectant Spray, Sanitizing and Antibacterial Spray, Lavender & Cotton Blossom",
-          "brand": "Lysol",
-          "price": 6.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272029",
-          "item": "Razer Basilisk V3 Ergonomic Wired Gaming Mouse with 26K DPI Optical Sensor, 11 Programmable Buttons, Chroma RGB and HyperScroll Tilt Wheel - Black",
-          "brand": "Razer",
-          "price": 34.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272062",
-          "item": "GIGABYTE Gaming A16 16\" Laptop, Intel Core i7-13620H, 16GB RAM, 1TB SSD, GeForce RTX 5060, 165Hz IPS, Black Steel, CVHI3US894SH",
-          "brand": "GIGABYTE",
-          "price": 1049,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272100",
-          "item": "Beats Studio Pro Wireless Headphones - Matte White",
-          "brand": "BEATS",
-          "price": 149,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272018",
-          "item": "Aula F75 Pro 75% Tri-Mode Wireless Mechanical Gaming Keyboard, Hot Swappable Reaper Switches, RGB Backlit, Bluetooth/2.4GHz/USB-C, Media Knob Control, 4000 mAh Battery, Black Gradient",
-          "brand": "AULA",
-          "price": 64.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272065",
-          "item": "Chefman Anti-Overflow Belgian Waffle Maker with Shade Selector and Non-Stick Plates, Black",
-          "brand": "Chefman",
-          "price": 26.92,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271940",
-          "item": "Great Value Disinfecting Wipes, Lemon and Fresh Scent",
-          "brand": "Great Value",
-          "price": 8.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271956",
-          "item": "Mainstays Extra Soft Jersey Bed Sheet Set",
-          "brand": "Mainstays",
-          "price": 19.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271969",
-          "item": "Terra & Sky Women's Plus Sleeveless Smocked Midi Dress",
+          "id": "Walmart-1036384321",
+          "item": "Terra & Sky Women's Plus Size Straight High Rise Jeans",
           "brand": "Terra & Sky",
-          "price": 21,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 16.79,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034271933",
-          "item": "Apple EarPods 3.5 mm Headphone Plug",
-          "brand": "Apple",
-          "price": 14.88,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384274",
+          "item": "Great Value Disinfecting Wipes",
+          "brand": "300 Count, 4 Pack",
+          "price": 10.78,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034271944",
-          "item": "Avia Women's 5000 Performance Sneakers, Wide Width Available",
-          "brand": "Avia",
-          "price": 24,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384352",
+          "item": "Great Value Low Streaking Wet Mopping Cloths, Lavender",
+          "brand": "Great Value",
+          "price": 7.67,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034271945",
-          "item": "Lasko 20\" 3-Speed Weather-Resistant Motor Box Fan B20200",
-          "brand": "Lasko",
-          "price": 19.87,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384180",
+          "item": "Shark VACMOP Cordless Hard Floor Vacuum Mop, for Tile, Vinyl, Laminate, Wood, with (4) Disposable VACMOP Pads, 12-oz Shark Multi-Surface Cleaner, VM200",
+          "brand": "Shark",
+          "price": 59.68,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034271977",
-          "item": "Scoop Women's Smocked Eyelet Tank Top",
-          "brand": "Scoop",
-          "price": 8.25,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271983",
-          "item": "Joyspun Women's French Terry Lounge Sleep Short Sleeve Top and Shorts Set",
-          "brand": "Joyspun",
-          "price": 12,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271986",
-          "item": "Athletic Works Women's and Women's Plus ButterCore Soft Performance Gym Shorts",
-          "brand": "Athletic Works",
-          "price": 10,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272038",
-          "item": "JLab JBuddies Pop Wireless Kids Headphones, 2 in 1 Wireless + Wired, Volume Safe, Pink",
-          "brand": "JLab",
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272047",
-          "item": "Canon MegaTank PIXMA G3272 All-In-One, Wireless Color Inkjet Printer for Home Office Use",
-          "brand": "Canon",
-          "price": 159,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272052",
-          "item": "George Foreman 4‑Serving Electric Grill & Panini Press, Easy‑Clean Removable Dishwasher‑Safe Nonstick Plates",
-          "brand": "George Foreman",
-          "price": 39.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272023",
-          "item": "Purex Crystals In-Wash Fragrance and Scent Booster, Fresh Spring Waters",
-          "brand": "Purex",
-          "price": 6.27,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271989",
-          "item": "Reebok Women's and Women's Plus Staple 5\" Running Short",
-          "brand": "Reebok",
-          "price": 9,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271994",
-          "item": "Free Assembly Women's Patch Pocket Denim Shorts, 3\" Inseam",
-          "brand": "Free Assembly",
-          "price": 18,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272006",
-          "item": "ARM & HAMMER Plus OxiClean Max Force Deep Clean Stain Detergent, Sparkling Clean",
-          "brand": "ARM & HAMMER",
-          "price": 14.37,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271999",
-          "item": "Free Assembly Women's Twist Front Sleeveless Maxi Dress with Drop Waist",
-          "brand": "Free Assembly",
-          "price": 12.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271952",
-          "item": "Mainstays Saucer Chair for Kids and Teens, Pink",
+          "id": "Walmart-1036384435",
+          "item": "Mainstays Dashwood 4-Piece Outdoor Patio Conversation Set, Seats 4, Red",
           "brand": "Mainstays",
-          "price": 29.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 197,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034271964",
-          "item": "Magic Bullet 4 Piece Personal Blender MBR-0401WM, Black",
-          "brand": "Magic Bullet",
-          "price": 19.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271941",
-          "item": "Frito Lay Doritos & Cheetos Snack Chips Mix Variety Pack",
-          "brand": "Frito Lay",
-          "price": 8.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271949",
-          "item": "BISSELL PowerForce Helix, Bagless, Upright Vacuum, Pet Friendly, Scatter-Free Technology, Helix Dirt Separation System, Lightweight, 3313, Blue & Black",
-          "brand": "BISSELL",
-          "price": 59.76,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271975",
-          "item": "Scoop Women's Square Neck Crochet Cotton Tank Top",
-          "brand": "Scoop",
-          "price": 9.9,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271981",
-          "item": "Free Assembly Women's and Women's Plus Beaded Cardigan Sweater with Short Puff Sleeves, Lightweight",
-          "brand": "Free Assembly",
-          "price": 11.25,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271958",
-          "item": "Zinus Spa Sensations Serenity 8\" Memory Foam Mattress",
-          "brand": "Spa Sensations",
-          "price": 120,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271990",
-          "item": "Free Assembly Women's and Women's Plus Graphic Sweater Shell",
-          "brand": "Free Assembly",
-          "price": 7.5,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272030",
-          "item": "Suavitel Refresher Fabric Rinse, 4X Odor Action, Ocean Fresh Scent",
-          "brand": "Suavitel",
-          "price": 3.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034271997",
-          "item": "Reebok Women's Everyday High Rise Bike Short, 5\" Inseam",
-          "brand": "Reebok",
-          "price": 10.8,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272004",
-          "item": "Libman 24-Inch Cotton Dust Mop with Red Steel Handle for Commercial Use",
-          "brand": "Libman",
-          "price": 33.9,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272005",
-          "item": "Crocs Women's Kadee Flip Flop Wedge Sandal",
-          "brand": "Crocs",
-          "price": 29.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272007",
-          "item": "Free Assembly Women's and Women's Plus Embroidered Cotton Midi Dress",
-          "brand": "Free Assembly",
-          "price": 21,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272033",
-          "item": "Swiffer Power Mop, Floor Cleaner, Tile, Vinyl, Laminate, Wood, Floor Cleaner, Cleaning Set",
-          "brand": "Swiffer",
-          "price": 26.94,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272021",
-          "item": "Purex Crystals Scent Booster, Fresh Lavender Fields",
-          "brand": "Purex",
-          "price": 3.57,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272040",
-          "item": "Charmin Essentials Soft Toilet Paper 12 Mega Rolls",
-          "brand": "Charmin",
-          "price": 9.87,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272075",
-          "item": "Great Value Natural No Stir Creamy Peanut Butter",
-          "brand": "Great Value",
-          "price": 1.92,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272009",
-          "item": "Avia Women's Bubble Bottom Sneakers",
-          "brand": "Avia",
-          "price": 18.2,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272016",
-          "item": "Persil Deep Clean Liquid Laundry Detergent, Original",
-          "brand": "Persil",
-          "price": 4.88,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272028",
-          "item": "Beautiful XL Electric Griddle 12\" x 22,\" Non-stick, White Icing by Drew Barrymore",
-          "brand": "Beautiful",
-          "price": 49.47,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272034",
-          "item": "Magic Bullet Mini Juicer, 400-Watt, Silver, MBJ10100WM",
-          "brand": "Magic Bullet",
-          "price": 39.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272035",
-          "item": "HP OmniStudio 23.8 Inch All-in-One Desktop PC, Full HD Display, Windows 11 Home, Cashmere White",
-          "brand": "HP",
-          "price": 599,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272042",
-          "item": "Beautiful 3 Qt Air Fryer with TurboCrisp Technology, EverGood Ceramic Nonstick Coating, White Icing by Drew Barrymore",
-          "brand": "Beautiful",
-          "price": 49.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272048",
-          "item": "JBL Vibe Flex 2 - True Wireless Earbuds - Black",
-          "brand": "JBL",
-          "price": 39.88,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272053",
-          "item": "Yellowstone Kayce Ceramic Dinner Plate",
-          "brand": "Yellowstone",
-          "price": 6.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272104",
-          "item": "Better Homes & Gardens 4-Piece Tomato Beige Reusable Bamboo Melamine Plastic Salad Serving Set with Acacia Wood Lid and Utensils",
-          "brand": "Better Homes & Gardens",
-          "price": 16.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272051",
-          "item": "SAMSUNG 27\" Odyssey G55C QHD 165Hz 1ms(MPRT) Curved Gaming Monitor - LS27CG556ENXZA",
-          "brand": "SAMSUNG",
-          "price": 179,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272067",
-          "item": "CyberPowerPC Gamer Supreme Gaming Desktop, Intel Core Ultra 7 270K Plus, NVIDIA GeForce RTX 5060 Ti 8GB, 16GB DDR5, 1TB SSD, Black, SLC8200WST (Software Offer with Purchase)",
-          "brand": "CyberPowerPC",
-          "price": 1399,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272073",
-          "item": "HP OmniBook 5 16 inch Laptop Next Gen AI PC 2K IPS Touchscreen Windows AMD Ryzen AI 7 445 16GB 1TB SSD Meteor Silver",
-          "brand": "HP",
-          "price": 749,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272078",
-          "item": "Cirkul 40oz. All-Day StrawSip™ Tumbler, Double-Wall Insulated Stainless Steel Tumbler with Handle, Pearl",
-          "brand": "Cirkul",
-          "price": 16.57,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272090",
-          "item": "Better Homes & Gardens Floral Green Reusable Dishwasher-Safe Bamboo Melamine Plastic 15.6\" x 10.1\" Serving Tray",
-          "brand": "Better Homes & Gardens",
-          "price": 6.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272092",
-          "item": "Unbranded Fresh Banana",
-          "brand": "Unbranded",
-          "price": 0.2,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272118",
-          "item": "Mainstays Chelsea Outdoor Patio 4-Piece Sectional Dining Set, Blue",
-          "brand": "Mainstays",
-          "price": 297,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272119",
-          "item": "Better Homes & Gardens Marlow 10' x 10' Steel Frame Gazebo with Canopy and Mosquito Netting",
-          "brand": "Better Homes & Gardens",
-          "price": 298,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272066",
-          "item": "Great Value 100% Whole Wheat Round Top Bread",
-          "brand": "Great Value",
-          "price": 1.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272080",
-          "item": "Great Value Concord Grape Jelly",
-          "brand": "Great Value",
-          "price": 1.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272088",
-          "item": "onn 20 Inch Bluetooth 2.1 Channel Soundbar with Multi-Color LED Lighting, Black",
-          "brand": "onn",
-          "price": 29.88,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272101",
+          "id": "Walmart-1036384167",
           "item": "Better Homes & Gardens Tomato Beige Reusable Dishwasher-Safe Bamboo Melamine Plastic 13.35\" x 10\" Divided Serving Tray",
           "brand": "Better Homes & Gardens",
           "price": 6.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272108",
-          "item": "Crunch Pak Snack Featuring Bluey with Fresh Sliced Peeled Apples, Pretzels, and Cheese",
-          "brand": "Crunch Pak",
-          "price": 1.47,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384154",
+          "item": "Martha Stewart Everyday Elverton 32-Piece Non-Stick Aluminum Cookware Set, Pots and Pans with Utensils, White",
+          "brand": "Martha Stewart",
+          "price": 179,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272133",
-          "item": "Better Homes & Gardens Marlow Outdoor Patio Rocking Chairs, 2-Pack, White Frame with Cream Cushions",
+          "id": "Walmart-1036384263",
+          "item": "Easy Spirit Women's Alison Slide Sandal",
+          "brand": "Easy Spirit",
+          "price": 34.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384123",
+          "item": "Better Homes & Gardens Floral Green Reusable Dishwasher-Safe Bamboo Melamine Plastic 15.6\" x 10.1\" Serving Tray",
           "brand": "Better Homes & Gardens",
-          "price": 197,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 6.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272139",
-          "item": "Sanrio Hello Kitty Girls Raglan Graphic Tee with Short Sleeves",
-          "brand": "Sanrio",
-          "price": 7.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384185",
+          "item": "Frigidaire 6.5 Cu. ft. Garage Ready Upright Freezer, Compact Vertical Freezer for Apartments, Garage, Basement, Office, Bulk Storage, Platinum Silver",
+          "brand": "Frigidaire",
+          "price": 218,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272146",
-          "item": "Safavieh Courtyard Amber Geometric Indoor/Outdoor Area Rug, Beige/Terracotta, 5'3\" x 7'7\"",
-          "brand": "Safavieh",
-          "price": 49.34,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384159",
+          "item": "Keurig K-Express Essentials Black Single-Serve K-Cup Pod Coffee Maker",
+          "brand": "Keurig",
+          "price": 49.47,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272076",
-          "item": "Acer Predator Orion 6000 Gaming Desktop, Intel Core Ultra 7 265KF, NVIDIA GeForce RTX 5070 Ti, 32GB DDR5, 1TB PCIe 4.0 SSD, PO6-605-UR15W, White (Software Offer with Purchase)",
-          "brand": "Acer",
-          "price": 2099,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384138",
+          "item": "Dearfoams Cozy Comfort Men's Notch Clog Slippers",
+          "brand": null,
+          "price": 6,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272081",
-          "item": "AULA S99-Key Tri-Mode Gaming Keyboard, Bluetooth/2.4GHz/USB-C, RGB Backlit, Numpad, Media Knob, Mechanical Feel, Green",
-          "brand": "AULA",
-          "price": 35.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384229",
+          "item": "weariQ Bluetooth Smart Glasses – Shiny Black Audio Sunglasses – Black Polarized Lenses, Open-Ear Speaker, Voice Assistant, Hands-Free Calls & Music",
+          "brand": null,
+          "price": 17.88,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272089",
-          "item": "Great Value Colby & Monterey Jack Cheese Snack, 9 oz Bag, 12 Cheese Sticks",
+          "id": "Walmart-1036384148",
+          "item": "Better Homes & Gardens Cool & Crisp 4-Piece 300 Thread Count Cotton Percale Sheet Set, Green River, Queen",
+          "brand": "Better Homes & Gardens",
+          "price": 35.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384296",
+          "item": "Crocs Unisex Offroad Sport Clogs",
+          "brand": "Crocs",
+          "price": 34.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384390",
+          "item": "nutribullet Juicer 700 Watt with 27 oz Juice Pitcher",
+          "brand": "Nutribullet",
+          "price": 89.74,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384418",
+          "item": "Barbie + Float Life by Funboy Splash Pad, 64\" Diameter, Children Ages 6+",
+          "brand": "Barbie",
+          "price": 18.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384420",
+          "item": "Battat Rainbow Ridge Balance Beams Active Playset with 10 Plastic Pcs, Toddler and Preschool Toys",
+          "brand": "Battat",
+          "price": 19.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384165",
+          "item": "BISSELL PowerForce Helix, Bagless, Upright Vacuum, Pet Friendly, Scatter-Free Technology, Helix Dirt Separation System, Lightweight, 3313, Blue & Black",
+          "brand": "BISSELL",
+          "price": 59.76,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384314",
+          "item": "Aerosoles Women's Lucca Footbed Buckle Clog",
+          "brand": "Aerosoles",
+          "price": 24.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384327",
+          "item": "Avia Women's 5000 Performance Sneakers, Wide Width Available",
+          "brand": "Avia",
+          "price": 14,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384350",
+          "item": "Great Value Dry Sweeping Cloth Refills",
           "brand": "Great Value",
-          "price": 2.56,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 7.76,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272105",
-          "item": "Frito Lay Simply NKD No Dyes No Artificial Flavors Variety pack Snack Mix",
-          "brand": "Frito Lay",
-          "price": 5.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272112",
-          "item": "Cottonelle Ultra Soft Toilet Paper, Strong Toilet Tissue",
-          "brand": "Cottonelle",
-          "price": 11.67,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272124",
-          "item": "Quilted Northern Ultra Plush 3-Ply Toilet Paper",
-          "brand": "Quilted Northern",
-          "price": 11.67,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272115",
-          "item": "Mainstays Dashwood Steel 3-Piece Rocker Outdoor Chat Set, Black",
+          "id": "Walmart-1036384380",
+          "item": "Mainstays Can Opener and Knife Sharpener, Bottle Opener with Removable Cutting Lever Black",
           "brand": "Mainstays",
-          "price": 147,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 14.96,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272123",
-          "item": "Mainstays Wood Outdoor Modern Adirondack Chair, Grey Color",
-          "brand": "Mainstays",
-          "price": 66,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272136",
-          "item": "Better Homes & Gardens Bellamy Outdoor 1-Piece Patio Coffee Table, Wicker",
-          "brand": "Better Homes & Gardens",
-          "price": 148,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272143",
-          "item": "TERRO Fruit Fly Trap",
-          "brand": "TERRO",
-          "price": 5.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272093",
-          "item": "Better Homes & Gardens- Acacia Wood Large Angled Serving Bowl, Natural Finish",
-          "brand": "Better Homes & Gardens",
-          "price": 19.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272102",
-          "item": "Capri Sun Flavored with Other Natural Flavor Juice Drink Blend, 10 Pouches, for School Lunches and On-the-Go Hydration, Fruit Punch, All Natural Ingredients",
-          "brand": "Capri Sun",
-          "price": 3.12,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272116",
-          "item": "Better Homes & Gardens Lilah Outdoor Metal Bistro Table",
-          "brand": "Better Homes & Gardens",
-          "price": 67,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272140",
-          "item": "Wonder Nation Boys Straight Fit Denim Jeans",
-          "brand": "Wonder Nation",
-          "price": 6.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272127",
-          "item": "Better Homes & Gardens Electric Outdoor Patio Heater",
-          "brand": "Better Homes & Gardens",
-          "price": 197,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272138",
-          "item": "Mainstays Albany Lane 6-Piece Steel Outdoor Patio Dining Set with Umbrella, Gray",
-          "brand": "Mainstays",
-          "price": 97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272151",
-          "item": "Arctic Zone Lunch Box Combo with Thermal Insulation, Watercolor Butterflies",
-          "brand": "Arctic Zone",
-          "price": 9.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272153",
-          "item": "Wonder Nation Boys Relaxed Straight Leg Denim Jeans",
-          "brand": "Wonder Nation",
-          "price": 11.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272158",
-          "item": "My Texas House Isla Outdoor Area Rug",
-          "brand": "My Texas House",
-          "price": 49.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272159",
-          "item": "Athletic Works Boys Core Performance Shorts, 2-Pack",
-          "brand": "Athletic Works",
-          "price": 7.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272167",
-          "item": "Arctic Zone Lunch Box Combo, Tesseract Red and Black",
-          "brand": "Arctic Zone",
-          "price": 9.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272130",
-          "item": "Weekend Academy Girls Belted Skirtall",
-          "brand": "Weekend Academy",
-          "price": 19.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272173",
-          "item": "Athletic Works Girls Active Tee with Short Sleeves",
-          "brand": "Athletic Works",
-          "price": 6.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272154",
-          "item": "Mainstays Chelsea 4-Piece Outdoor Patio Deep Seating Set with Terracotta Cushions",
-          "brand": "Mainstays",
-          "price": 447,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272155",
-          "item": "Wonder Nation Girls Kid Tough Short Sleeve Tee",
-          "brand": "Wonder Nation",
-          "price": 3.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272184",
-          "item": "My Texas House Nora Outdoor Area Rug",
-          "brand": "My Texas House",
-          "price": 97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272208",
-          "item": "Eastsport Unisex City Mesh 16\" Backpack, Black",
-          "brand": "Eastsport",
-          "price": 9.58,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272221",
-          "item": "Cook with Color 4-Compartment Portable Snack Box Food Storage Container with Removable Ice Pack, Sage",
-          "brand": "Cook with Color",
-          "price": 8.11,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272229",
-          "item": "Wonder Nation Boys 17\" Pop Art Dinosaur Backpack & Lunch Set, Navy",
-          "brand": "Wonder Nation",
-          "price": 9.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272157",
-          "item": "Better Homes & Gardens River Oaks Outdoor Swivel Gliders with Patio Covers",
-          "brand": "Better Homes & Gardens",
-          "price": 598,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272213",
-          "item": "Athletic Works Girls Active Graphic Tee with Short Sleeves",
-          "brand": "Athletic Works",
-          "price": 7.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272187",
-          "item": "Ozark Trail 10L Adult/Teen Polyester Daypack Backpack, Navy",
-          "brand": "Ozark Trail",
-          "price": 4.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272192",
-          "item": "Cook with Color 4-Compartment Mini Snack Box Food Storage Carrier, Charcuterie Container with Ice Pack, Portable and Dishwasher Safe, Taupe",
-          "brand": "Cook with Color",
-          "price": 7.94,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Walmart-1034272198",
+          "id": "Walmart-1036384262",
           "item": "Zevo Compact Flying Insect Trap - 1 Plug In Device & 1 Cartridge",
           "brand": "Zevo",
           "price": 15.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272177",
-          "item": "SAFAVIEH Courtyard Amanda Geometric Indoor/Outdoor Area Rug, Black/Beige",
-          "brand": "Safavieh",
-          "price": 16.93,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384294",
+          "item": "Skechers Work Women's Nampa Bungee Slip Resistant Athletic Shoe",
+          "brand": "Skechers",
+          "price": 49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272174",
-          "item": "Wonder Nation Boys Sweater Polo",
-          "brand": "Wonder Nation",
-          "price": 9.11,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384308",
+          "item": "Easy Spirit Women's Cecee Heeled Sandal, Wide Width Available",
+          "brand": "Easy Spirit",
+          "price": 32,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272176",
-          "item": "Tide evo Laundry Detergent Tiles, 100% Concentrated, Original Tide Scent",
-          "brand": "Tide",
-          "price": 8.94,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384330",
+          "item": "Reebok Women's and Women's Plus Everyday High Rise Leggings, 25\" Inseam",
+          "brand": "Reebok",
+          "price": 12,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272183",
-          "item": "Mainstays Albany Lane 3-Piece Outdoor Bistro Set, Folding Chairs & Glass Table, Black",
+          "id": "Walmart-1036384272",
+          "item": "Fitflop Women's Rally e01 Multi-Knit Trainers",
+          "brand": "FitFlop",
+          "price": 65,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384290",
+          "item": "Crocs Women's Getaway Platform H-Strap Sandal",
+          "brand": "Crocs",
+          "price": 34.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384168",
+          "item": "Lasko 20\" 3-Speed Weather-Resistant Motor Box Fan B20200",
+          "brand": "Lasko",
+          "price": 19.87,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384176",
+          "item": "Altec Lansing Hydra Jolt 2.0 Everything Proof Wireless Magnetic Portable Bluetooth Speaker, Periwinkle Blue White, IMW1202-PERIWT",
+          "brand": "Altec Lansing",
+          "price": 29.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384207",
+          "item": "Fruit of the Loom All Day Comfort Women's Socks, Sizes 4-12, 6-Pack",
+          "brand": "Fruit of the Loom",
+          "price": 6.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384212",
+          "item": "VIZIO 55 in Mini LED Quantum 4K QLED HDR Smart TV, 2026 Model, VQM55C-10",
+          "brand": "VIZIO",
+          "price": 248,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384251",
+          "item": "O-Cedar EasyWring™ Spin Mop & Bucket System",
+          "brand": "O-Cedar",
+          "price": 34.96,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384184",
+          "item": "JBL Tune 520BT - Wireless on-ear headphones - Purple",
+          "brand": "JBL",
+          "price": 39.88,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384235",
+          "item": "FitFlop Women's Super-Q Knit Slip On Sneaker",
+          "brand": "FitFlop",
+          "price": 39.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384315",
+          "item": "Terra & Sky Women's Plus Sleeveless Smocked Midi Dress",
+          "brand": "Terra & Sky",
+          "price": 21,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384191",
+          "item": "Mainstays Extra Soft Jersey Bed Sheet Set, Full, Purple Crackle",
           "brand": "Mainstays",
-          "price": 48,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 19.96,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272189",
-          "item": "Athletic Works Boys ButterCore Knit Shorts",
-          "brand": "Athletic Works",
+          "id": "Walmart-1036384200",
+          "item": "Cirkul 40oz. All-Day StrawSip™ Tumbler, Double-Wall Insulated Stainless Steel Tumbler with Handle, Pearl",
+          "brand": "Cirkul",
+          "price": 16.57,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384453",
+          "item": "H2OGO! Patriotic Kickin Kids Inflatable Soccer Game",
+          "brand": "H2OGO!",
           "price": 9.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272194",
-          "item": "Wonder Nation Little Girls Scooter Skirt with Paperbag Waist",
-          "brand": "Wonder Nation",
-          "price": 6.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384458",
+          "item": "Intex Pink Transparent Lounge Float",
+          "brand": "Intex",
+          "price": 10.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272024",
-          "item": "Hamilton Beach 6 Qt Slow Cooker, Stoneware Crock with Removable Pot, Red",
-          "brand": "Hamilton Beach",
-          "price": 38.07,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384498",
+          "item": "Great Value Concord Grape Jelly",
+          "brand": "Great Value",
+          "price": 1.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272058",
+          "id": "Walmart-1036384514",
+          "item": "My Texas House Cambria Outdoor Dining Table, 67 in, Steel, Black",
+          "brand": "My Texas House",
+          "price": 147,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384569",
+          "item": "ONSON Smoothie Blender, 1400W High-Speed Countertop Blender, 60 Oz BPA-Free Jar for Shakes, Smoothies, Frozen Drinks & Ice Crushing",
+          "brand": "ONSON",
+          "price": 66.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384525",
+          "item": "Crunch Pak Snack Featuring Bluey with Fresh Sliced Peeled Apples, Pretzels, and Cheese",
+          "brand": "Crunch Pak",
+          "price": 1.47,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384532",
+          "item": "Mainstays Albany Lane 6-Piece Steel Outdoor Patio Dining Set with Umbrella, Gray",
+          "brand": "Mainstays",
+          "price": 97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384471",
+          "item": "Coleman Steel Pro Max 14' x 33\" Round Metal Frame Above Ground Pool Set",
+          "brand": "Coleman",
+          "price": 228,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384502",
+          "item": "Great Value Colby & Monterey Jack Cheese Snack",
+          "brand": "Great Value",
+          "price": 2.56,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384564",
           "item": "Hamilton Beach Smoothie Blender, 48 oz BPA-Free Jar 650 W 12-Function Countertop Blender for Kitchen, Black",
           "brand": "Hamilton Beach",
           "price": 22.88,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272064",
-          "item": "Thyme & Table Dot Ceramic Dinner Plate Black and White",
-          "brand": "Thyme & Table",
-          "price": 6.27,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384566",
+          "item": "George Foreman 2‑Serving Electric Indoor Grill, Non‑Stick Panini Press, Compact Slim Design, Easy‑Clean Drip Tray, Black",
+          "brand": "George Foreman",
+          "price": 20.28,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272085",
-          "item": "Better Homes & Gardens 36 oz Round Tomato Beige Reusable Dishwasher-Safe Bamboo Melamine Plastic Dinner Bowl",
+          "id": "Walmart-1036384570",
+          "item": "George Foreman 4‑Serving Electric Grill & Panini Press, Easy‑Clean Removable Dishwasher‑Safe Nonstick Plates",
+          "brand": "George Foreman",
+          "price": 39.96,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385051",
+          "item": "SAMSUNG 27\" Odyssey G55C QHD 165Hz 1ms(MPRT) Curved Gaming Monitor - LS27CG556ENXZA",
+          "brand": "Samsung",
+          "price": 179,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384302",
+          "item": "LifeStride Women's Sanya Dress Pumps, Wide Width Available",
+          "brand": "LifeStride",
+          "price": 40,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384213",
+          "item": "Huffy 20\" Rock It Kids' Bike, Fits Riders 44\"-56\", Blue, Youth, Boys",
+          "brand": "Huffy",
+          "price": 88,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384284",
+          "item": "LifeStride Womens I-Loyal Ballet Flats - Various Widths Available",
+          "brand": "LifeStride",
+          "price": 42.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384307",
+          "item": "Fitflop Women's Surfa Stripe-Webbing Toe-Post Sandals",
+          "brand": "Fitflop",
+          "price": 45,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384313",
+          "item": "Reebok Women's Evolution Active Dress with Removable Cups",
+          "brand": "Reebok",
+          "price": 20.4,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384193",
+          "item": "Mainstays Saucer Chair for Kids and Teens, Pink",
+          "brand": "Mainstays",
+          "price": 29.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384258",
+          "item": "Great Value Double Zipper Sandwich Bags",
+          "brand": "Great Value",
+          "price": 1.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384271",
+          "item": "Tide Laundry Detergent Liquid with 6X Boosted Cleaning Power, Original Scent",
+          "brand": "Tide",
+          "price": 17.94,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384204",
+          "item": "EGOHOME StarryRest 14 inch King Mattress, Medium, Euro Top, Hybrid Mattress in a Box",
+          "brand": "EGOHOME",
+          "price": 242,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384392",
+          "item": "Terra & Sky Women's Plus Printed Swing Mini Swing Dress with Tie Back",
+          "brand": "Terra & Sky",
+          "price": 21,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384562",
+          "item": "PowerXL 6.3 Quart AirMax Air Fryer Oven with Four Presets and Compact Two-Tier Design, 450F Maximum Temperature, No Preheat Needed",
+          "brand": "PowerXL",
+          "price": 52,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384517",
+          "item": "Capri Sun Flavored with Other Natural Flavor Juice Drink Blend, 10 Pouches, for School Lunches and On-the-Go Hydration, Fruit Punch, All Natural Ingredients",
+          "brand": "Capri Sun",
+          "price": 3.12,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384561",
+          "item": "Beautiful XL Electric Griddle 12\" x 22,\" Non-stick, White Icing by Drew Barrymore",
+          "brand": "Beautiful",
+          "price": 49.47,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384493",
+          "item": "Great Value Natural No Stir Creamy Peanut Butter",
+          "brand": "Great Value",
+          "price": 1.92,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384469",
+          "item": "Funsicle 15ft Oasis Above Ground Metal Frame Swimming Pool, Includes FiltraBoost™ 1200S Pump with AutoSkimmer, Round, Age 6 & up",
+          "brand": "Funsicle",
+          "price": 198,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384546",
+          "item": "Better Homes & Gardens Juliet Beige Outdoor Loveseat Set with 2 Patio Covers",
           "brand": "Better Homes & Gardens",
-          "price": 10.76,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 598,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272061",
-          "item": "Fujifilm instax Mini SE Instant Camera with Bonus 10 pack Mini Film, Light Blue (Exclusive Value Pack)",
+          "id": "Walmart-1036384526",
+          "item": "Better Homes & Gardens Juliet Outdoor Coffee Table with 2 Ottomans and Patio Cover, Beige",
+          "brand": "Better Homes & Gardens",
+          "price": 279,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384399",
+          "item": "Chefman Anti-Overflow Belgian Waffle Maker with Shade Selector and Non-Stick Plates, Black",
+          "brand": "Chefman",
+          "price": 26.92,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384322",
+          "item": "Avia Women's 5000 Performance Sneakers, Wide Width Available",
+          "brand": "Avia",
+          "price": 24,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384220",
+          "item": "Hamilton Beach 0.9 Cu ft Countertop Microwave Oven, 900 Watts, Stainless Steel, New",
+          "brand": "Hamilton Beach",
+          "price": 59,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384223",
+          "item": "Avia Women's Bubble Bottom Sneakers",
+          "brand": "Avia",
+          "price": 26,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384337",
+          "item": "Lysol Disinfectant Spray, Sanitizing and Antibacterial Spray, Deodorizer, Early Morning Breeze",
+          "brand": "Lysol",
+          "price": 6.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384342",
+          "item": "ARM & HAMMER Plus OxiClean Ultra Stain Fighters Liquid Laundry Detergent, Fresh Scent",
+          "brand": "ARM & HAMMER",
+          "price": 12.48,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384518",
+          "item": "Better Homes & Gardens by POLYWOOD Southlake Outdoor Modern Adirondack Chair, All-Weather HDPE, Patio Seat, Slate Grey",
+          "brand": "Better Homes & Gardens by POLYWOOD",
+          "price": 138,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384503",
+          "item": "Better Homes & Gardens Brookbury 4-Piece Outdoor Wicker Patio Sectional Dining Set, Terracotta Cushions",
+          "brand": "Better Homes & Gardens",
+          "price": 697,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384538",
+          "item": "Mainstays Dashwood 4-Piece Outdoor Conversation Set, Cream",
+          "brand": "Mainstays",
+          "price": 197,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384449",
+          "item": "Better Homes & Gardens Willow Sage All-Weather Wicker Outdoor Loveseat and Ottoman Set, Beige",
+          "brand": "Better Homes & Gardens",
+          "price": 197,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384408",
+          "item": "My Texas House Cambria Swivel Outdoor Dining Chair, Set of 2, Black",
+          "brand": "My Texas House",
+          "price": 197,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384428",
+          "item": "Play Day Dancing Chick Bubble Blower with 4 fl oz Bubble Solution, Ages 3+",
+          "brand": "Play Day",
+          "price": 6.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384485",
+          "item": "Great Value 100% Whole Wheat Round Top Bread",
+          "brand": "Great Value",
+          "price": 1.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384320",
+          "item": "Terra & Sky Women's Plus Tiered Mini Dress with Elbow Length Sleeves",
+          "brand": "Terra & Sky",
+          "price": 14.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384332",
+          "item": "Reebok Women's and Women's Plus Game Day Straight Leg Pant",
+          "brand": "Reebok",
+          "price": 18,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384328",
+          "item": "Celebrity Pink Women's and Women's Plus Slouchy Wide Leg Jean",
+          "brand": "Celebrity Pink",
+          "price": 18.38,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384406",
+          "item": "Beautiful 5 in 1 Electric Skillet - Expandable up to 7 Qt with Glass Lid, White Icing by Drew Barrymore",
+          "brand": "Beautiful",
+          "price": 54.56,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384398",
+          "item": "Nespresso Vertuo Pop Coffee and Espresso Maker by De'Longhi, Liquorice Black",
+          "brand": "Nespresso",
+          "price": 94.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384385",
+          "item": "BLACK+DECKER 2‑Slice Toaster with Rapid Toast Technology, Black Stainless Steel, Extra‑Wide Self‑Centering Slots, 7 Settings, Pull‑Out Crumb Tray",
+          "brand": "BLACK+DECKER",
+          "price": 36.16,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384249",
+          "item": "Scrub Daddy Scrub Mommy Non-Scratch Cleaning Sponges",
+          "brand": "Scrub Daddy",
+          "price": 10.48,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385072",
+          "item": "HP OmniBook 5 16 inch Laptop Next Gen AI PC 2K IPS Touchscreen Windows AMD Ryzen AI 7 445 16GB 1TB SSD Meteor Silver",
+          "brand": "HP",
+          "price": 869.9,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384267",
+          "item": "Cottonelle Ultra Soft Toilet Paper, Strong Toilet Tissue",
+          "brand": "Cottonelle",
+          "price": 11.67,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385056",
+          "item": "Fujifilm Instax Mini SE Instant Camera with Bonus 10 pack Mini Film, Seafoam Green (Value Pack)",
           "brand": "Fujifilm",
           "price": 64,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272094",
-          "item": "Alienware 15.3\" WUXGA 165Hz Gaming Laptop, AMD Ryzen 5 220, NVIDIA GeForce RTX 4050 GDDR6, 16GB DDR5, 512GB SSD, Black, DA15265",
-          "brand": "Alienware",
-          "price": 899,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036385062",
+          "item": "Apple EarPods 3.5 mm Headphone Plug",
+          "brand": "Apple",
+          "price": 14.88,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272197",
-          "item": "Eastsport Spark Mesh Backpack, Black",
-          "brand": "Eastsport",
-          "price": 9.58,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036385074",
+          "item": "Razer Basilisk V3 Ergonomic Wired Gaming Mouse with 26K DPI Optical Sensor, 11 Programmable Buttons, Chroma RGB and HyperScroll Tilt Wheel - Black",
+          "brand": "Razer",
+          "price": 34.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272205",
-          "item": "ProKeeper+ Borosilicate Glass Lunch and Salad Storage Container with Silicone Base and Snap-Lock Lid",
-          "brand": "ProKeeper+",
-          "price": 7.92,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384373",
+          "item": "Jessica Simpson Women's and Women's Plus Saoirse Crochet Tank",
+          "brand": "Jessica Simpson",
+          "price": 17,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272230",
-          "item": "Mainstays Black Reusable Polyester Lunch Bag, Rounded Top, Zippered Main Compartment and Front Pocket",
-          "brand": "Mainstays",
-          "price": 8.87,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384282",
+          "item": "Fitflop Women's F-Luma Loafers",
+          "brand": "FitFlop",
+          "price": 95,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272178",
-          "item": "Mainstays Kids 4-Compartment Plastic Bento Box with Removable Tray, Fork, Spoon, and Dressing Container, Blue Splash and Gray",
-          "brand": "Mainstays",
-          "price": 7.82,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384215",
+          "item": "Dell DC15250 15.6\" FHD 120Hz Laptop, Intel Core 3 100U, 8GB DDR5 RAM, 512GB SSD, Carbon Black",
+          "brand": "Dell",
+          "price": 379,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272175",
-          "item": "Hello Hobby Nylon Backpack, Customizable Travel Book Bag for Crafts, School, and Everyday Teen Use, Purple",
-          "brand": "Hello Hobby",
+          "id": "Walmart-1036384245",
+          "item": "Great Value Wet & Dry Mop Sweeper Kit",
+          "brand": "Great Value",
           "price": 9.97,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Walmart-1034272201",
-          "item": "Wonder Nation Girls Fashion Wide Leg Jegging",
-          "brand": "Wonder Nation",
-          "price": 14.98,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Walmart-1036384326",
+          "item": "Time and Tru Women's Mini Sarong Coverup with Ring Buckle",
+          "brand": "Time and Tru",
+          "price": 11.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384310",
+          "item": "Dr. Scholl's Women's Walk Mode Lace-Up Sneaker",
+          "brand": "Dr. Scholl's",
+          "price": 44.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384340",
+          "item": "Bounty Paper Towels Select-A-Size White",
+          "brand": "Bounty",
+          "price": 19.96,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384376",
+          "item": "Hamilton Beach Contemporary 2 Slice Toaster with Wide Slots, Bagel Function, Toast Boost, Auto Shutoff, Stainless Steel",
+          "brand": "Hamilton Beach",
+          "price": 15.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384396",
+          "item": "Reebok Women's Small Logo Rise Tank Top",
+          "brand": "Reebok",
+          "price": 7.2,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384404",
+          "item": "Time and Tru Women's Plus Size Smocked Sleeveless Mini Dress",
+          "brand": "Time and Tru",
+          "price": 12.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384452",
+          "item": "Superman 40\" Inflatable Pool Ring Float for Pool, Beach, Lake Water Play, Ages 8+",
+          "brand": "Superman",
+          "price": 9.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384401",
+          "item": "My Texas House Cambria Steel Outdoor Chaise Lounge, Black",
+          "brand": "My Texas House",
+          "price": 147,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384305",
+          "item": "Dr. Scholl's Women's Originalist Sandal",
+          "brand": "Dr. Scholl's",
+          "price": 34.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384356",
+          "item": "Zep Home Pro Miracle Foaming Grout Cleaner and Protectant, Morning Dew Scent",
+          "brand": "Zep",
+          "price": 4.92,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384361",
+          "item": "Charmin Essentials Strong Toilet Paper",
+          "brand": "Charmin",
+          "price": 9.87,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384368",
+          "item": "Reebok Women's and Women's Plus Staple 5\" Running Short",
+          "brand": "Reebok",
+          "price": 9,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384374",
+          "item": "Beautiful 12-Piece Cookware Set, Pots and Pans with Strainer Lids and EverGood Ceramic Nonstick Coating, White Icing by Drew Barrymore",
+          "brand": "Beautiful",
+          "price": 119,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384345",
+          "item": "Suavitel Refresher Fabric Rinse and Odor Eliminator, 4X Odor Action, Floral Fresh Scent",
+          "brand": "Suavitel",
+          "price": 3.98,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384379",
+          "item": "Scoop Women's Day Lace Trim Top",
+          "brand": "Scoop",
+          "price": 18,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384391",
+          "item": "Better Homes & Gardens Vista Outdoor Dining Table, Cream Stone-Finish Metal Top with Teak Hand-Painted Legs",
+          "brand": "Better Homes & Gardens",
+          "price": 197,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384381",
+          "item": "Reebok Women's Everyday High Rise Bike Short, 5\" Inseam",
+          "brand": "Reebok",
+          "price": 10.8,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384394",
+          "item": "Mainstays Chelsea Outdoor Patio 4-Piece Sectional Dining Set, Blue",
+          "brand": "Mainstays",
+          "price": 297,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384427",
+          "item": "Intex 17' x 48\" Clearview Prism Frame Above Ground Swimming Pool Set with Pump",
+          "brand": "Intex",
+          "price": 448,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384430",
+          "item": "Little Tikes Hoop it up! Play Center, 3-in-1 Sports 25 Ball Value Pack, Indoor and Outdoor Play for Children 3 to 6 Years Old",
+          "brand": "Little Tikes",
+          "price": 39.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384439",
+          "item": "MD Sports Foldable Ladder Toss Game, Red, Green and Black",
+          "brand": "MD Sports",
+          "price": 24.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384444",
+          "item": "Little Tikes Football Pass Battle, Outdoor Sports, Boys, Girls Ages 3+",
+          "brand": "Little Tikes",
+          "price": 38.44,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384446",
+          "item": "Play Day Hopscotch Rings, 20 Pieces",
+          "brand": "Play Day",
+          "price": 5.94,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384415",
+          "item": "Reebok Women's Large Logo Rise Tank Top",
+          "brand": "Reebok",
+          "price": 7.2,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384558",
+          "item": "Beautiful 4-Slice Toaster with Touch-Activated Display, White Icing by Drew Barrymore",
+          "brand": "Beautiful",
+          "price": 59,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384523",
+          "item": "Frito Lay Simply NKD No Dyes No Artificial Flavors Variety pack Snack Mix",
+          "brand": "Frito Lay",
+          "price": 5.97,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384556",
+          "item": "Savour Dual Coffee Maker, Programmable 12-Cup Coffee Pot & Single Serve Coffee Machine",
+          "brand": "Savour",
+          "price": 69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385075",
+          "item": "GIGABYTE AERO X16 16\" Laptop, AMD Ryzen AI 7 350, 16GB RAM, 1TB SSD, GeForce RTX 5060, 165Hz IPS, Space Gray, 1VH93USC94AH",
+          "brand": "GIGABYTE",
+          "price": 1099,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385081",
+          "item": "Alienware 16\" WQXGA OLED 240Hz Gaming Laptop, Intel Core Ultra 9 290HX Plus, NVIDIA GeForce RTX 5060, 16GB DDR5, 1TB SSD, Blue, AC16251 (Software Offer with Purchase)",
+          "brand": "Alienware",
+          "price": 1899,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384441",
+          "item": "Little Tikes Adjust 'n Jam Pro Basketball Set",
+          "brand": "Little Tikes",
+          "price": 44,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384466",
+          "item": "Sportspower Arcadia Metal Swing Set with Trapeze, 2 Person Glider Swing, 5' Double Wall Slide with Lifetime Warranty, and Bonus Anchor Kit, Great for Kids 3-8",
+          "brand": "Sportspower",
+          "price": 199,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384457",
+          "item": "Spalding 54-Inch Portable Basketball Hoop with Shatter-Proof Polycarbonate Backboard, Adjustable ExactaHeight System & Pro Slam Rim-Outdoor Play",
+          "brand": "Spalding",
+          "price": 298,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384505",
+          "item": "Fresh Banana",
+          "brand": null,
+          "price": 0.2,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384419",
+          "item": "Better Homes & Gardens Lilah 2-Pack Outdoor Wicker Lounge Chairs, White",
+          "brand": "Better Homes & Gardens",
+          "price": 197,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384445",
+          "item": "Better Homes & Gardens by POLYWOOD Southlake Outdoor Flowerback Adirondack Chair, All-Weather HDPE, Patio Seat, Slate Grey",
+          "brand": "Better Homes & Gardens",
+          "price": 138,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385059",
+          "item": "Sony MDR-ZX110 Wired On-Ear Headphones, Black",
+          "brand": "Sony",
+          "price": 11.88,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385065",
+          "item": "HP OmniStudio 23.8 Inch All-in-One Desktop PC, Full HD Display, Windows 11 Home, Cashmere White",
+          "brand": "hp",
+          "price": 699,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385066",
+          "item": "HP OmniStudio 23.8 Inch All-in-One Desktop PC, Full HD Display, Windows 11 Home, Cashmere White",
+          "brand": "HP",
+          "price": 585,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385078",
+          "item": "onn 20 Inch Bluetooth 2.1 Channel Soundbar with Multi-Color LED Lighting, Black",
+          "brand": "onn",
+          "price": 29.88,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036384551",
+          "item": "Better Homes & Gardens Bellamy Outdoor 1-Piece Patio Coffee Table, Wicker",
+          "brand": "Better Homes & Gardens",
+          "price": 148,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385064",
+          "item": "Apple AirPods 4",
+          "brand": "Apple",
+          "price": 99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385067",
+          "item": "Brother Wireless HL-L2465DW Compact Monochrome Multi-Function Laser Printer with Print, Copy and Scan, Duplex and Mobile Printing",
+          "brand": "Brother",
+          "price": 149,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385079",
+          "item": "CyberPowerPC Gamer Supreme Gaming Desktop, Intel Core Ultra 7 270K Plus, NVIDIA GeForce RTX 5060 Ti 8GB, 16GB DDR5, 1TB SSD, Black, SLC8200WST (Software Offer with Purchase)",
+          "brand": "CyberPowerPC",
+          "price": 1399,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385057",
+          "item": "Beats Solo 4 Wireless Headphones - On-Ear Wireless Headphones - Drenched Gray",
+          "brand": "Beats by Dr. Dre",
+          "price": 129,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385053",
+          "item": "Samsung 34\" Odyssey G55T WQHD 165Hz 1ms(MPRT) AMD FreeSync HDR Curved Gaming Monitor - LC34G55TWDNXZA",
+          "brand": "Samsung",
+          "price": 279,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Walmart-1036385069",
+          "item": "Canon MegaTank PIXMA G3272 All-In-One, Wireless Color Inkjet Printer for Home Office Use",
+          "brand": "Canon",
+          "price": 159,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         }
       ]
     },
@@ -2678,8 +2686,8 @@
       ]
     },
     "Publix": {
-      "validFrom": "2026-08-12T00:00:00-04:00",
-      "validTo": "2026-08-26T23:59:59-04:00",
+      "validFrom": "2026-08-20T00:00:00-04:00",
+      "validTo": "2026-09-08T23:59:59-04:00",
       "deals": [
         {
           "id": "Publix-1032771604",
@@ -5010,1114 +5018,898 @@
           "validTo": "2026-08-26T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032589621",
-          "item": "Softsoap Velvet Silk Foaming Hand Soap 9-oz or Liquid Hand Soap 11.25-oz or Irish Spring Bar Soap 3-ct.",
-          "brand": "Softsoap | Irish Spring",
-          "price": 4,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186774",
+          "item": "Cortizone-10",
+          "brand": "Cortizone-10",
+          "price": 5.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032561967",
-          "item": "SCAN TO CLIP Colgate Kids Battery",
-          "brand": "Colgate",
-          "price": 2.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186781",
+          "item": "Vigo Artichokes",
+          "brand": "Vigo",
+          "price": 5,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562166",
-          "item": "Lactaid Creamer",
-          "brand": "LACTAID®",
-          "price": 8,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186788",
+          "item": "Bertolli Olive Oil",
+          "brand": "Bertolli",
+          "price": 20.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562197",
-          "item": "Colgate Optic White Pro Series",
-          "brand": "Colgate",
+          "id": "Publix-1035186825",
+          "item": "Excedrin",
+          "brand": "Excedrin",
+          "price": 12.29,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186822",
+          "item": "St. Joseph Low Dose Aspirin",
+          "brand": "St. Joseph",
           "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562230",
-          "item": "Land O' Frost Premium Lunch Meat",
-          "brand": "Land O Frost",
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186770",
+          "item": "Lipton Iced Tea Family Size",
+          "brand": "Lipton",
+          "price": 6,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562240",
-          "item": "Tena Moderate 20-ct., UltraThin 30-ct. or Heavy Absorbency 14-ct. Pads",
-          "brand": "Tena",
-          "price": 10,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186776",
+          "item": "Better Butter",
+          "brand": "Better Butter",
+          "price": 6,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562304",
+          "id": "Publix-1035186833",
+          "item": "Colgate Optic White Advanced 3.2-oz, Charcoal or Sensitivity 3.8-oz Toothpaste",
+          "brand": "Colgate",
+          "price": 8,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186773",
+          "item": "Minute Rice",
+          "brand": "Minute",
+          "price": 4,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186771",
+          "item": "Filippo Berio Pesto",
+          "brand": "Filippo Berio",
+          "price": 6,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186775",
+          "item": "Chick-fil-A Sauce",
+          "brand": "Chick-fil-A",
+          "price": 8,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186787",
+          "item": "Smithfield Smokehouse Reserve Smokin' Campfire Hickory or Smokin' Sweet Apple Orchard Bacon",
+          "brand": "Smithfield",
+          "price": 12,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186783",
+          "item": "Libby's Pumpkin",
+          "brand": "Libby's",
+          "price": 4,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186780",
+          "item": "Dole Açaí Bowl",
+          "brand": "Dole",
+          "price": 7,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186784",
+          "item": "Dole Smoothie Kit",
+          "brand": "Dole",
+          "price": 8.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186779",
+          "item": "Lipton Cold Brew Tea Family Size",
+          "brand": "Lipton",
+          "price": 8,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186782",
+          "item": "Armour Original Meatballs",
+          "brand": "Armour",
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186778",
+          "item": "Louisiana Hot Sauce",
+          "brand": "Louisiana Hot Sauce",
+          "price": 5,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186803",
+          "item": "Ghirardelli Sauce",
+          "brand": "Ghirardelli",
+          "price": 5.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186802",
           "item": "Dole Whip",
           "brand": "Dole",
-          "price": 4.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562297",
-          "item": "Softsoap Liquid Hand Soap Refills 50-oz or Irish Spring Bar Soap 8-ct.",
-          "brand": "Softsoap | Irish",
           "price": 5.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562348",
-          "item": "Goodles Mac & Cheese",
-          "brand": "Goodles",
-          "price": 6,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562361",
-          "item": "Carapelli Olive Oil",
-          "brand": "Carapelli",
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562533",
-          "item": "illy Coffee",
-          "brand": "illy",
-          "price": 11.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586018",
-          "item": "Utz Variety Snack Pack",
-          "brand": "UTZ",
-          "price": 8.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586065",
-          "item": "Colgate Total 5.1-oz, Sensitive 6-oz or MaxFresh 4.5-oz Toothpaste",
-          "brand": "Colgate",
-          "price": 3,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586723",
-          "item": "King's Hawaiian Rolls",
-          "brand": "King's Hawaiian",
-          "price": 8.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586806",
-          "item": "Rice Krispies Treats",
-          "brand": "Kellogg's",
+          "id": "Publix-1035186815",
+          "item": "Centrum",
+          "brand": "Centrum",
           "price": 10.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032586981",
-          "item": "Mateo's Salsa or Queso",
-          "brand": "Mateo's",
-          "price": 7.98,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186817",
+          "item": "Always Radiant or Infinity Flexfoam Pads",
+          "brand": "Always",
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032587293",
+          "id": "Publix-1035186816",
+          "item": "Breathe Right",
+          "brand": "Breathe Right",
+          "price": 11.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186821",
+          "item": "Scott Comfort Plus Bath Tissue",
+          "brand": "Scott",
+          "price": 10.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
+        },
+        {
+          "id": "Publix-1035186814",
           "item": "Allegra 24–30-ct., Allegra Kids 8-oz, Xyzal 35-ct. or Nasacort .57-oz",
           "brand": "Allegra | Xyzal | Nasacort",
           "price": 19.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562537",
-          "item": "Tampax Pearl Tampons 45–50-ct. or Always Ultra or Maxi Pads 36–50-ct.",
-          "brand": "Tampax | Always",
-          "price": 11.49,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586980",
-          "item": "Stauffer's Simply Animals Crackers, Ginger Snaps or Lemon Snaps",
-          "brand": "Stauffer's",
-          "price": 6,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589631",
-          "item": "Hello Deodorant",
-          "brand": "Hello",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589633",
-          "item": "Pop-Tarts",
-          "brand": "Pop-Tarts",
-          "price": 7,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032563552",
-          "item": "Pringles Snack Cups",
-          "brand": "Pringles",
-          "price": 6.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586974",
-          "item": "Eggo Protein or Zero",
-          "brand": "Eggo",
-          "price": 4.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589608",
-          "item": "Colgate Optic White Advanced 3.2-oz OR Optic White Charcoal or Sensitivity Relief 3.8-oz Toothpaste",
-          "brand": "Colgate",
-          "price": 3,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589629",
-          "item": "McCormick Grill Mates 30 Minute Montreal Steak Marinade",
-          "brand": "McCormick",
-          "price": 1.95,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589625",
-          "item": "L'oreal Paris EverPure Shampoo or Conditioner",
-          "brand": "L'oreal paris",
-          "price": 18,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586066",
-          "item": "Cheez-It Variety Pack",
-          "brand": "Cheez-It",
-          "price": 9.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589630",
-          "item": "Q-tips",
-          "brand": "Q-tips",
-          "price": 3.79,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562352",
-          "item": "Icy Hot Original",
+          "id": "Publix-1035186812",
+          "item": "Icy Hot No-Mess Roll On with Lidocaine 2.5-oz or Patch with Lidocaine 5-ct.",
           "brand": "Icy Hot",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562306",
-          "item": "Act Mouthwash",
-          "brand": "ACT",
-          "price": 8,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186834",
+          "item": "Crest Gum Detoxify Toothpaste",
+          "brand": "Crest",
+          "price": 4.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562359",
-          "item": "Jovial Organic Tomatoes",
-          "brand": "Jovial",
-          "price": 10,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186830",
+          "item": "Olay Body Wash 35-oz or Old Spice Body Wash 30–33.4-oz",
+          "brand": "Olay | Old Spice",
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         },
         {
-          "id": "Publix-1032562368",
-          "item": "Dial Liquid Hand Soap",
-          "brand": "Dial",
-          "price": 5,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589632",
-          "item": "Cottonelle Ultra Clean or Ultra Comfort Bath Tissue",
-          "brand": "Cottonelle",
-          "price": 17.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032586069",
-          "item": "Archer Sticks",
-          "brand": "Archer",
-          "price": 13.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032589614",
-          "item": "Colgate Optic White Advanced Toothpaste",
-          "brand": "Colgate",
-          "price": 7.99,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562289",
-          "item": "Lärabar Real Fruit & Nut Bar",
-          "brand": "Lärabar",
-          "price": 10,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562343",
-          "item": "Frank's RedHot Sauce",
-          "brand": "Frank's",
-          "price": 7.5,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Publix-1032562298",
-          "item": "Dial Bar Soap",
-          "brand": "Dial",
-          "price": 7,
-          "validFrom": "2026-08-12T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Publix-1035186831",
+          "item": "L. Pads 36 or 42-ct., Liners 100-ct. or Tampons 25–30-ct.",
+          "brand": null,
+          "price": 10.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-08T23:59:59-04:00"
         }
       ]
     },
     "Aldi": {
-      "validFrom": "2026-08-19T00:00:00-04:00",
-      "validTo": "2026-08-25T23:59:59-04:00",
+      "validFrom": "2026-08-26T00:00:00-04:00",
+      "validTo": "2026-09-01T23:59:59-04:00",
       "deals": [
         {
-          "id": "Aldi-1032918698",
-          "item": "Crofton Titanium Board",
-          "brand": "Crofton",
-          "price": 16.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920079",
-          "item": "KIRKTON HOUSE Harvest Wreath",
-          "brand": "KIRKTON HOUSE",
-          "price": 19.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920257",
-          "item": "Heart to Tail Plush Knotted Rope Toy Assortment",
-          "brand": "Heart to Tail",
-          "price": 6.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920667",
-          "item": "Boulder Heavy Duty Coated Paper Plates",
-          "brand": "Boulder",
-          "price": 3.39,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920211",
-          "item": "Licensed Ladies' Disney Oversized Pullover",
-          "brand": "Disney",
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919956",
-          "item": "KIRKTON HOUSE 18\" x 30\" Reversible Fall Comfort Mat",
-          "brand": "KIRKTON HOUSE",
-          "price": 8.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919905",
-          "item": "KIRKTON HOUSE 20\" x 30\" Hand-Hooked Accent Rug",
-          "brand": "KIRKTON HOUSE",
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920179",
-          "item": "KIRKTON HOUSE Fall Mini Gnome & Friends",
-          "brand": "KIRKTON HOUSE",
-          "price": 4.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920140",
-          "item": "Crofton Acacia Lazy Susan",
-          "brand": "Crofton",
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920391",
-          "item": "KIRKTON HOUSE Autumn Glass Pumpkin",
-          "brand": "KIRKTON HOUSE",
-          "price": 7.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919815",
-          "item": "Dakota's Pride Black Beans",
-          "brand": "Dakota's Pride",
-          "price": 0.85,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919825",
-          "item": "Fresh Lamb Steaks",
-          "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919583",
-          "item": "Avocados",
-          "brand": null,
-          "price": 0.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919850",
-          "item": "Mini Cucumbers",
-          "brand": null,
-          "price": 1.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920347",
-          "item": "KIRKTON HOUSE 4' x 6' High-Low Faux Fur Rug",
-          "brand": "KIRKTON HOUSE",
-          "price": 29.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919874",
-          "item": "Kiwi",
-          "brand": null,
-          "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920153",
-          "item": "Licensed 8\" K-Pop Core Plush",
-          "brand": null,
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920731",
-          "item": "Friendly Farms Nonfat Greek Yogurt",
-          "brand": "Friendly Farms",
-          "price": 2.79,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919917",
-          "item": "KIRKTON HOUSE Fall Framed Wall Art",
-          "brand": "KIRKTON HOUSE",
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920194",
-          "item": "Disney 40-oz. Character Tumbler",
-          "brand": "Disney",
-          "price": 19.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920239",
-          "item": "KIRKTON HOUSE Harvest Garland",
-          "brand": "KIRKTON HOUSE",
-          "price": 19.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920698",
-          "item": "Specially Selected Seeded Brioche Burger Buns",
-          "brand": null,
-          "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920278",
-          "item": "Licensed Disney Crossbody",
-          "brand": null,
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920363",
-          "item": "Heart to Tail Snack Pet Toy Set",
-          "brand": "Heart to Tail",
-          "price": 9.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917736",
-          "item": "Reggano Regular or Spicy Pizza Sauce",
-          "brand": "Reggano",
-          "price": 1.09,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918193",
-          "item": "Breakfast Best Breakfast Bowl",
+          "id": "Aldi-1035388289",
+          "item": "Breakfast Best Buttermilk Protein Waffles",
           "brand": "Breakfast Best",
-          "price": 1.85,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 3.59,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032901731",
-          "item": "Heart to Tail Novelty Pet Bed",
-          "brand": "Heart to Tail",
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Aldi-1035392341",
+          "item": "Brekki Overnight Oats",
+          "brand": "Brekki",
+          "price": 1.95,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032901754",
-          "item": "Crofton 3-Piece Ribbed Storage Bowls",
+          "id": "Aldi-1035395619",
+          "item": "Crofton 14-oz. Stainless Steel Insulated Mug with Lid",
           "brand": "Crofton",
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032901820",
-          "item": "Fresh Seasoned Chicken",
-          "brand": null,
           "price": 4.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032918339",
-          "item": "Barissimo Italian Sweet Cream Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918567",
-          "item": "Simms Multipack Meat Snack Sticks",
-          "brand": "Simms",
-          "price": 3.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918517",
-          "item": "Friendly Farms Unsweetened Vanilla or Sweetened Almondmilk",
-          "brand": "Friendly Farms",
-          "price": 2.29,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918769",
-          "item": "Barissimo Caramel Macchiato Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919371",
-          "item": "Parkview Polska Kielbasa",
-          "brand": "Parkview",
-          "price": 2.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919362",
-          "item": "Clancy's Restaurant Style Tortilla Chips",
-          "brand": "Clancy's",
-          "price": 2.15,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918271",
-          "item": "Fresh Organic 85/15 Grass-Fed Ground Beef",
-          "brand": "Simply Nature",
-          "price": 5.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032906325",
-          "item": "Priano Tortellini",
-          "brand": "Priano",
-          "price": 5.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032910409",
-          "item": "Boulder Heavy Duty or Regular Aluminum Foil",
-          "brand": "Boulder",
-          "price": 4.39,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032910412",
-          "item": "Boulder Parchment Paper",
-          "brand": "Boulder",
-          "price": 2.79,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032910508",
-          "item": "Reggano Meat or Tomato, Basil & Garlic",
-          "brand": "Reggano",
-          "price": 1.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032916840",
-          "item": "Priano Gnocchi",
-          "brand": "Priano",
-          "price": 1.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032916948",
-          "item": "Earthly Grains Ready-to-Eat Rice Cups",
-          "brand": "Earthly Grains",
-          "price": 1.65,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917104",
-          "item": "Boulder Utility Foil Pan with Lid",
-          "brand": "Boulder",
-          "price": 3.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917301",
-          "item": "Happy Farms Shredded Mozzarella",
-          "brand": "Happy Farms",
-          "price": 3.29,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917331",
-          "item": "Reggano Cheesy Skillet Dinner",
-          "brand": "Reggano",
-          "price": 2.79,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917148",
-          "item": "Simply Nature Fresh Organic 85/15 Grass-Fed Ground Beef",
-          "brand": "Simply Nature",
-          "price": 5.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919517",
-          "item": "Happy Farms 2% Milk Mexican or Sharp Cheddar",
-          "brand": "Happy Farms",
-          "price": 2.79,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918268",
-          "item": "Park Street Deli Cranberry Almond Chicken Salad",
-          "brand": "Park Street Deli",
-          "price": 4.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919397",
-          "item": "Appleton Farms Uncured Quarter-Sliced Ham",
-          "brand": "Appleton Farms",
-          "price": 4.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919499",
-          "item": "Park Street Deli Cantina Salsa",
-          "brand": "Park Street Deli",
-          "price": 2.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917661",
-          "item": "ALDI Deli Style Guacamole",
-          "brand": "ALDI",
-          "price": 4.29,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919472",
-          "item": "Fresh Family Pack Chicken Tenderloins",
-          "brand": null,
-          "price": 2.29,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919803",
-          "item": "Fresh Family Pack Organic Grass-Fed 93% Ground Beef",
-          "brand": "Simply Nature",
-          "price": 23.96,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920068",
-          "item": "Each",
-          "brand": "Bendon",
-          "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920404",
-          "item": "KIRKTON HOUSE LED Pierced Ceramic Pumpkin",
-          "brand": "KIRKTON HOUSE",
+          "id": "Aldi-1035393793",
+          "item": "Disney Crystal Print Mat",
+          "brand": "Disney",
           "price": 9.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032920376",
-          "item": "Heart to Tail Cat Cordion",
-          "brand": "Heart to Tail",
-          "price": 4.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920420",
-          "item": "KIRKTON HOUSE 2' x 8' Oversized Runner",
+          "id": "Aldi-1035394221",
+          "item": "KIRKTON HOUSE Vinyl Tablecloth",
           "brand": "KIRKTON HOUSE",
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "price": 3.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032920331",
-          "item": "Licensed Ladies' Disney Hat",
-          "brand": null,
-          "price": 8.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920296",
-          "item": "Heart to Tail Pet Sweater",
-          "brand": "Heart to Tail",
-          "price": 4.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920711",
-          "item": "Simply Nature Organic Fruit Snacks",
-          "brand": "Simply Nature",
-          "price": 4.95,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920663",
+          "id": "Aldi-1035395727",
           "item": "PurAqua Belle Vie 12-Pack",
           "brand": "PurAqua",
           "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032920693",
-          "item": "PurAqua Sparkling Frost Water",
-          "brand": "PurAqua",
-          "price": 0.59,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920657",
+          "id": "Aldi-1035395724",
           "item": "VitaLife Organic Kombucha",
           "brand": "VitaLife",
           "price": 1.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032920688",
+          "id": "Aldi-1035395758",
           "item": "Simply Nature Fair Trade Organic Whole Bean Coffee",
           "brand": "Simply Nature",
           "price": 7.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032920677",
-          "item": "Barissimo Zero Sugar Coffee Creamer",
+          "id": "Aldi-1035394879",
+          "item": "SOHL 4-Drawer Storage Tower",
+          "brand": "SOHL",
+          "price": 29.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394841",
+          "item": "Barissimo Italian Sweet Cream Creamer",
           "brand": "Barissimo",
           "price": 2.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032918299",
-          "item": "Elevation Functional Protein Bars",
-          "brand": "Elevation",
-          "price": 3.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920671",
-          "item": "PurAqua Italian Mineral Water",
-          "brand": "PurAqua",
-          "price": 4.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920110",
-          "item": "Licensed Children's Disney Sweatshirt & Joggers",
-          "brand": "Disney",
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919938",
-          "item": "Licensed Toddlers' Retro Sneakers",
-          "brand": null,
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918238",
-          "item": "Crofton Fruit Basket",
-          "brand": "Crofton",
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032901776",
-          "item": "Strawberries",
-          "brand": null,
-          "price": 1.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917438",
-          "item": "Priano Stuffed Shells or Manicotti",
-          "brand": "Priano",
-          "price": 4.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917577",
-          "item": "Mama Cozzi's Pizza Kitchen Pizza Dough",
-          "brand": "Mama Cozzi's",
-          "price": 1.19,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032916671",
-          "item": "Reggano Parmesan or Parmesan & Romano Cheese",
-          "brand": "Reggano",
-          "price": 2.79,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032903044",
-          "item": "Boulder Press & Seal Gallon Bags",
-          "brand": "Boulder",
+          "id": "Aldi-1035394960",
+          "item": "Breakfast Best Breakfast Bowl",
+          "brand": "Breakfast Best",
           "price": 1.85,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032909442",
-          "item": "ALDI Rotisserie Ready Meal",
-          "brand": "ALDI",
-          "price": 5.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920704",
-          "item": "Specially Selected Sliced Sourdough Round",
-          "brand": null,
-          "price": 3.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920724",
-          "item": "Specially Selected Everything Sourdough",
-          "brand": null,
-          "price": 3.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918424",
-          "item": "Crofton Wood Bowl",
-          "brand": "Crofton",
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919896",
-          "item": "LICENSED LADIES' RETRO SNEAKERS",
-          "brand": null,
-          "price": 14.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917472",
-          "item": "California Red Grapes",
-          "brand": null,
-          "price": 1.29,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919927",
-          "item": "KIRKTON HOUSE Fall Icon Candle",
-          "brand": "KIRKTON HOUSE",
-          "price": 6.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920001",
-          "item": "KIRKTON HOUSE Premium Sink Dispenser",
-          "brand": "KIRKTON HOUSE",
-          "price": 4.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920014",
-          "item": "Crofton Acacia Utensil",
-          "brand": "Crofton",
-          "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032917429",
-          "item": "Fresh Marinated Pork Loin Filet",
-          "brand": null,
-          "price": 2.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920051",
-          "item": "Crofton Baking Gadget",
-          "brand": "Crofton",
-          "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920091",
-          "item": "Belavi Resin Planter",
-          "brand": "Belavi",
-          "price": 9.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920684",
-          "item": "Specially Selected Brioche Burger Buns",
-          "brand": "Specially Selected",
-          "price": 3.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918460",
-          "item": "Barissimo Coconut Crème or Cinnamon Roll Creamer",
-          "brand": "Barissimo",
-          "price": 2.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918697",
-          "item": "KIRKTON HOUSE Harvest Swag",
-          "brand": "KIRKTON HOUSE",
-          "price": 16.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918732",
-          "item": "Clancy's Kettle Chips",
-          "brand": "Clancy's",
-          "price": 1.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920225",
-          "item": "KIRKTON HOUSE Faux Floral Drop-In Mum",
-          "brand": "KIRKTON HOUSE",
-          "price": 12.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920718",
-          "item": "Barissimo Flavored Iced Coffee",
-          "brand": "Barissimo",
-          "price": 3.89,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032919836",
-          "item": "Peaches",
-          "brand": null,
-          "price": 2.69,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032920681",
-          "item": "Choeur Chocolate Assortment",
-          "brand": "Choeur",
-          "price": 1.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918563",
-          "item": "Choeur Dark Chocolate Assortment",
-          "brand": "Choeur",
-          "price": 1.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
-        },
-        {
-          "id": "Aldi-1032918796",
+          "id": "Aldi-1035394944",
           "item": "Friendly Farms Lactose Free Whole or 2% Milk",
           "brand": "Friendly Farms",
           "price": 2.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032919614",
-          "item": "Baby Bella Mushrooms",
-          "brand": null,
-          "price": 1.29,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Aldi-1035394749",
+          "item": "Friendly Farms Unsweetened Vanilla or Sweetened Almondmilk",
+          "brand": "Friendly Farms",
+          "price": 2.29,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032917948",
-          "item": "Fresh Honey Maple Salmon",
-          "brand": null,
-          "price": 10.99,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "id": "Aldi-1035394839",
+          "item": "KIRKTON HOUSE Tinted Jar Candle",
+          "brand": "KIRKTON HOUSE",
+          "price": 3.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         },
         {
-          "id": "Aldi-1032918900",
+          "id": "Aldi-1035394662",
+          "item": "KIRKTON HOUSE 18\" x 30\" Comfort Mat",
+          "brand": "KIRKTON HOUSE",
+          "price": 6.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395091",
           "item": "L'oven Fresh Keto Friendly Bread",
           "brand": "L'oven Fresh",
           "price": 4.49,
-          "validFrom": "2026-08-19T00:00:00-04:00",
-          "validTo": "2026-08-25T23:59:59-04:00"
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392199",
+          "item": "Breakfast Best Croissant Sandwiches",
+          "brand": "Breakfast Best",
+          "price": 5.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392229",
+          "item": "Park Street Deli Sous-Vide Egg Bites",
+          "brand": "Park Street Deli",
+          "price": 5.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394106",
+          "item": "Crofton Football Gadgets",
+          "brand": "Crofton",
+          "price": 2.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395653",
+          "item": "Melii Harvest Meal Prep or Snackle",
+          "brand": "Melii",
+          "price": 3.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395748",
+          "item": "Choeur Chocolate Assortment",
+          "brand": "Choeur",
+          "price": 1.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392178",
+          "item": "Savoritz Pita Crackers",
+          "brand": "Savoritz",
+          "price": 2.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392408",
+          "item": "Park Street Deli Hummus Mini Cups",
+          "brand": "Park Street Deli",
+          "price": 3.45,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392445",
+          "item": "Cara Cara Oranges",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393973",
+          "item": "SOHL Blanket Ladder",
+          "brand": "SOHL",
+          "price": 24.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392039",
+          "item": "Breakfast Best Pre-Cooked Sausage Patties",
+          "brand": "Breakfast Best",
+          "price": 8.29,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392271",
+          "item": "L'oven Fresh 12 Grain Wide Pan Bread",
+          "brand": "L'oven Fresh",
+          "price": 2.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392853",
+          "item": "Specially Selected Pure Maple Syrup",
+          "brand": "Specially Selected",
+          "price": 5.29,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392346",
+          "item": "Lunch Buddies Crustless PB&J Sandwiches",
+          "brand": "Lunch Buddies",
+          "price": 2.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393006",
+          "item": "Fresh Antibiotic Free Family Pack Chicken Drumsticks",
+          "brand": null,
+          "price": 0.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394744",
+          "item": "Licensed Toddlers' Character Halloween Slippers",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395763",
+          "item": "PurAqua Sparkling Frost Water",
+          "brand": "PurAqua",
+          "price": 0.59,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392279",
+          "item": "Simply Nature Organic Instant Oatmeal",
+          "brand": "Simply Nature",
+          "price": 2.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035391966",
+          "item": "Park Street Deli Cranberry Almond Chicken Salad",
+          "brand": "Park Street Deli",
+          "price": 4.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392074",
+          "item": "Friendly Farms Original Coconutmilk",
+          "brand": "Friendly Farms",
+          "price": 3.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392203",
+          "item": "Millville Chewy Dipped Granola Bars",
+          "brand": "Millville",
+          "price": 1.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392301",
+          "item": "Bake Shop Mini or Large Croissants",
+          "brand": "Bake Shop",
+          "price": 2.79,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392429",
+          "item": "Millville Protein Crunchy Granola",
+          "brand": "Millville",
+          "price": 2.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392367",
+          "item": "Friendly Farms Kefir",
+          "brand": "Friendly Farms",
+          "price": 3.09,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392466",
+          "item": "Millville Protein Pancake Mix",
+          "brand": "Millville",
+          "price": 3.59,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392481",
+          "item": "California Green Grapes",
+          "brand": null,
+          "price": 1.29,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392686",
+          "item": "Fresh Family Pack",
+          "brand": null,
+          "price": 2.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392885",
+          "item": "Breakfast Best Protein French Toast Sticks",
+          "brand": "Breakfast Best",
+          "price": 4.79,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392999",
+          "item": "Zucchini",
+          "brand": null,
+          "price": 1.19,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394275",
+          "item": "Fresh Organic 85/15 Grass-Fed Ground Beef",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393529",
+          "item": "KIRKTON HOUSE Fall Circle Sign",
+          "brand": "KIRKTON HOUSE",
+          "price": 8.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394389",
+          "item": "Elevation Functional Protein Bars",
+          "brand": "Elevation",
+          "price": 3.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393982",
+          "item": "Crofton Swedish Dishcloths",
+          "brand": "Crofton",
+          "price": 4.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394821",
+          "item": "Clancy's Kettle Chips",
+          "brand": "Clancy's",
+          "price": 1.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394715",
+          "item": "Barissimo Coconut Crème or Cinnamon Roll Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394621",
+          "item": "Multicolored Peppers",
+          "brand": null,
+          "price": 2.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394898",
+          "item": "Choeur Dark Chocolate Assortment",
+          "brand": "Choeur",
+          "price": 1.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394955",
+          "item": "Simms Multipack Meat Snack Sticks",
+          "brand": "Simms",
+          "price": 3.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394624",
+          "item": "Gourmet Medley Tomatoes",
+          "brand": null,
+          "price": 2.59,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395574",
+          "item": "Plums or Nectarines",
+          "brand": null,
+          "price": 2.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393912",
+          "item": "Crofton Acacia Tray",
+          "brand": null,
+          "price": 12.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394069",
+          "item": "Licensed Halloween Character Accessories",
+          "brand": null,
+          "price": 5.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394576",
+          "item": "KIRKTON HOUSE Plush Throw",
+          "brand": "KIRKTON HOUSE",
+          "price": 4.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394748",
+          "item": "ZAK! Character Stainless Steel Water Bottle",
+          "brand": "ZAK",
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394412",
+          "item": "Disney Halloween Plush",
+          "brand": "Disney",
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393813",
+          "item": "KIRKTON HOUSE Decorative Pumpkin Candle",
+          "brand": "KIRKTON HOUSE",
+          "price": 8.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395769",
+          "item": "Specially Selected Seeded Brioche Burger Buns",
+          "brand": null,
+          "price": 3.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393695",
+          "item": "Serra Ladies' Game Day Top",
+          "brand": "Serra",
+          "price": 12.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395755",
+          "item": "Specially Selected Brioche Burger Buns",
+          "brand": "Specially Selected",
+          "price": 3.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395792",
+          "item": "Friendly Farms Nonfat Greek Yogurt",
+          "brand": "Friendly Farms",
+          "price": 2.79,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395771",
+          "item": "Specially Selected Sliced Sourdough Round",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395035",
+          "item": "Barissimo Caramel Macchiato Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395739",
+          "item": "Barissimo Zero Sugar Coffee Creamer",
+          "brand": "Barissimo",
+          "price": 2.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395783",
+          "item": "Barissimo Flavored Iced Coffee",
+          "brand": "Barissimo",
+          "price": 3.89,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394033",
+          "item": "KIRKTON HOUSE Go Sports Pillow or Throw",
+          "brand": "KIRKTON HOUSE",
+          "price": 7.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035392509",
+          "item": "Park Street Deli Protein Pudding",
+          "brand": "Park Street Deli",
+          "price": 1.39,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395731",
+          "item": "Boulder Heavy Duty Coated Paper Plates",
+          "brand": "Boulder",
+          "price": 3.39,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394603",
+          "item": "Morton's of Omaha Fresh Rosemary or Steakhouse Petite Beef Tender",
+          "brand": "Morton's of Omaha",
+          "price": 6.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395786",
+          "item": "Specially Selected Everything Sourdough",
+          "brand": null,
+          "price": 3.49,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395655",
+          "item": "Crofton Harvest Baking or Chopping Tools",
+          "brand": "Crofton",
+          "price": 3.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395778",
+          "item": "Simply Nature Organic Fruit Snacks",
+          "brand": "Simply Nature",
+          "price": 4.95,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035395734",
+          "item": "PurAqua Italian Mineral Water",
+          "brand": "PurAqua",
+          "price": 4.69,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393983",
+          "item": "Licensed Toddlers' or Children's Character Halloween Pajamas",
+          "brand": null,
+          "price": 9.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393603",
+          "item": "Serra Ladies' Game Day Pajamas",
+          "brand": "Serra",
+          "price": 12.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393968",
+          "item": "Serra Game Day Accessories",
+          "brand": "Serra",
+          "price": 4.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035394437",
+          "item": "Licensed Disney Halloween Pillow",
+          "brand": null,
+          "price": 16.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
+        },
+        {
+          "id": "Aldi-1035393878",
+          "item": "Lily & Dan Children's Super Fan Pullover",
+          "brand": "Lily & Dan",
+          "price": 5.99,
+          "validFrom": "2026-08-26T00:00:00-04:00",
+          "validTo": "2026-09-01T23:59:59-04:00"
         }
       ]
     }
