@@ -5773,10 +5773,10 @@ button svg,
   .mc-doc-footer {
     justify-content: stretch;
   }
-  .mc-doc-link {
+  .mc-doc-link,
+  .home-page .mc-doc-link {
     width: 100%;
     text-align: center;
-    display: block;
   }
 
   /* Server address: stack address and checked-time */
@@ -5798,6 +5798,7 @@ button svg,
     flex: 0 0 155px;
   }
 }
+
 
 /* ── Home page sections ───────────────────────────────────────────────────
    The three public sections live on the home page as collapsible blocks
@@ -5921,8 +5922,9 @@ button svg,
    land here and never see whose site it is. */
 .home-hero {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
+  /* The portrait column takes the right quarter of the card. */
+  grid-template-columns: 3fr 1fr;
+  align-items: stretch;
   gap: 1.15rem;
   margin-top: 1rem;
   padding: 1.35rem 1.25rem 1.4rem;
@@ -5951,15 +5953,31 @@ button svg,
   min-width: 0;
 }
 
-.home-hero-aside {
+.home-hero-identity,
+.home-hero-detail {
   display: grid;
-  justify-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+/* Portrait pinned top, links pinned bottom, so the icon row lands level with
+   the résumé buttons at the foot of the copy column. */
+.home-hero-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
 }
 
 .home-hero-portrait {
-  width: 8.25rem;
-  height: 8.25rem;
+  /* Sized so the circle runs from the top of the card down to the bottom of the
+     "Currently" line beside it. `min()` keeps it from overflowing the narrower
+     aside column on a small laptop, and the aspect ratio keeps it circular when
+     that cap kicks in. */
+  width: min(15rem, 100%);
+  aspect-ratio: 1;
+  height: auto;
   border-radius: 50%;
   object-fit: cover;
   /* The source is a 2:3 portrait with the face in the upper third, so a
@@ -5972,33 +5990,6 @@ button svg,
 }
 
 /* Portrait moves above the copy once the two no longer fit side by side. */
-@media (max-width: 34rem) {
-  .home-hero {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    gap: 0.9rem;
-  }
-
-  /* Stacked, the photo and its links belong above the name. */
-  .home-hero-aside {
-    order: -1;
-    justify-items: start;
-  }
-
-  .home-hero-portrait {
-    width: 6.5rem;
-    height: 6.5rem;
-  }
-}
-
-.home-hero-eyebrow {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
 
 .home-hero-name {
   margin: 0;
@@ -6057,53 +6048,252 @@ button svg,
   margin-top: 0.95rem;
 }
 
-/* Keeps the résumé buttons aligned with the bottom of the portrait column
-   rather than floating mid-card on a tall viewport. */
+/* Content runs top-to-bottom so the actions row lands at the foot of the
+   column, level with the icon links opposite it. */
 .home-hero-copy {
-  align-content: center;
+  align-content: space-between;
 }
 
-.home-hero-resume {
+/*
+ * One call-to-action style for the whole guest page: résumé, connection guide,
+ * start server, and project links. Scoped to .home-page so the admin
+ * dashboards and the standalone Minecraft page keep their own buttons.
+ */
+.home-page .home-hero-resume,
+.home-page .mc-doc-link,
+.home-page .project-visit {
+  --cta-accent: var(--robin-egg);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   min-height: 2.5rem;
   padding: 0.45rem 0.95rem;
-  border: 1px solid color-mix(in srgb, var(--robin-egg) 55%, var(--border-strong));
+  border: 1px solid color-mix(in srgb, var(--cta-accent) 55%, var(--border-strong));
   border-radius: 0.55rem;
-  background: color-mix(in srgb, var(--robin-egg) 22%, var(--surface));
+  background: color-mix(in srgb, var(--cta-accent) 22%, var(--surface));
   color: var(--text-strong);
+  font: inherit;
   font-size: 0.88rem;
   font-weight: 550;
+  line-height: 1.2;
+  text-align: center;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.home-hero-resume.secondary {
+/*
+ * The Gaming buttons take that section's coral accent instead of the site blue.
+ * Same specificity as the rule above, so this has to stay after it. The tint —
+ * rather than a solid coral fill — is what keeps the label readable in both
+ * themes; coral is too light to carry white text.
+ */
+.home-page .mc-doc-link {
+  --cta-accent: var(--coral);
+}
+
+/* Quieter partner for the secondary choice in a pair. */
+.home-page .home-hero-resume.secondary,
+.home-page .mc-doc-link--quiet {
+  border-color: var(--border-strong);
   background: var(--surface);
   font-weight: 500;
+}
+
+@media (hover: hover) {
+  .home-page .home-hero-resume:hover,
+  .home-page .mc-doc-link:hover,
+  .home-page .project-visit:hover {
+    border-color: var(--cta-accent);
+    background: color-mix(in srgb, var(--cta-accent) 32%, var(--surface));
+  }
+}
+
+.home-page .mc-doc-link:disabled,
+.home-page .project-visit:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .home-hero-links {
   display: inline-flex;
   align-items: center;
-  gap: 0.15rem;
+  gap: 0.4rem;
 }
 
+/* Same 2.5rem box and border treatment as the résumé buttons, so the row of
+   icons reads as the same class of control rather than bare glyphs. */
 .home-hero-links a {
   display: inline-grid;
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 0.5rem;
-  color: var(--text-muted);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.55rem;
+  background: var(--surface);
+  color: var(--text-strong);
+}
+
+.home-hero-links svg {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 @media (hover: hover) {
   .home-hero-links a:hover {
-    background: color-mix(in srgb, var(--robin-egg) 18%, var(--surface));
+    border-color: var(--robin-egg);
+    background: color-mix(in srgb, var(--robin-egg) 32%, var(--surface));
     color: var(--beach-ink);
   }
 }
 
-/* On a phone the icon row wraps under the buttons rather than being pushed
-   to a far edge that no longer exists. */
+/*
+ * On a phone the portrait sits beside the name, and the social links share the
+ * bottom row with the résumé buttons. `display: contents` flattens the three
+ * wrapper divs so every piece becomes a direct grid child and can be placed
+ * independently — the desktop DOM nesting is left alone.
+ *
+ * Column one is pinned to the portrait's width rather than left `auto`, so the
+ * wide actions row spanning it cannot stretch the column and shove the name
+ * off to the right.
+ */
+@media (max-width: 34rem) {
+  .home-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "identity  portrait"
+      "tagline   tagline"
+      "currently currently"
+      "actions   links";
+    align-items: center;
+    gap: 0.35rem 0.9rem;
+  }
 
+  .home-hero-copy,
+  .home-hero-detail,
+  .home-hero-aside {
+    display: contents;
+  }
+
+  .home-hero-identity {
+    grid-area: identity;
+  }
+
+  .home-hero-tagline {
+    grid-area: tagline;
+  }
+
+  .home-hero-currently {
+    grid-area: currently;
+  }
+
+  .home-hero-actions {
+    grid-area: actions;
+  }
+
+  .home-hero-portrait {
+    grid-area: portrait;
+    width: 5.5rem;
+    height: 5.5rem;
+    align-self: start;
+    justify-self: end;
+  }
+
+  /* Stretching both the row and the flex line makes each icon box exactly as
+     tall as the résumé buttons opposite it, so the row reads as one control
+     strip. The boxes stay narrower than they are tall — matching height is what
+     was asked for, and square boxes would not fit a 320px row. */
+  .home-hero-links {
+    grid-area: links;
+    justify-self: end;
+    align-self: stretch;
+    align-items: stretch;
+    /* Matches the actions row's own top margin. Without it the icons stretch
+       over that gap too and end up taller than the buttons they sit beside. */
+    margin-top: 0.8rem;
+  }
+
+  /*
+   * Buttons and icons have to share one ~300px row, so both get tighter here.
+   * Without this the two buttons wrap onto separate lines and the row stops
+   * reading as a single level.
+   */
+  .home-hero-actions {
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+    margin-top: 0.8rem;
+    min-width: 0;
+  }
+
+  /* Everything on this row has to fit ~250px at 320px wide, so the buttons and
+     icon boxes both tighten. Without this the buttons overflow their grid area
+     and the icons overlap them. */
+  .home-hero-resume {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .home-hero-links {
+    gap: 0.3rem;
+  }
+
+  .home-hero-links a {
+    width: 2rem;
+    height: auto;
+  }
+
+  .home-hero-links svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .home-hero-resume-ext {
+    display: none;
+  }
+
+  /* The name has to shrink to share the row with the portrait. */
+  .home-hero-name {
+    font-size: clamp(1.6rem, 8vw, 2.1rem);
+  }
+
+  .home-hero-eyebrow {
+    font-size: 0.72rem;
+  }
+}
+
+/*
+ * Very small phones (iPhone SE and narrower). Even without the "(PDF)" suffix
+ * the buttons and the three icons need ~20px more than a 320px viewport gives,
+ * so this tier shaves it off the padding, type size, and icon boxes rather than
+ * letting the row wrap or the icons overlap the buttons.
+ */
+@media (max-width: 22rem) {
+  .home-hero {
+    gap: 0.5rem 0.6rem;
+    /* Narrower side padding buys back the last few pixels the row needs. */
+    padding: 1.1rem 0.85rem 1.15rem;
+  }
+
+  .home-hero-actions {
+    gap: 0.3rem;
+  }
+
+  .home-hero-resume {
+    padding: 0.35rem 0.4rem;
+    font-size: 0.72rem;
+  }
+
+  .home-hero-links {
+    gap: 0.2rem;
+  }
+
+  .home-hero-links a {
+    width: 1.85rem;
+  }
+
+  .home-hero-links svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}

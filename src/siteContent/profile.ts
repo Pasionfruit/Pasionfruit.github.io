@@ -10,8 +10,8 @@ export const profile = {
   role: 'BI Developer & Data Analyst',
   location: 'Florida',
   tagline:
-    'Statewide transportation data by day, actuarial exams on the side, and a handful of deployed projects in between.',
-  currently: 'BI Developer / Data Analyst II at HNTB / FDOT · studying for Exam P',
+    'Working with data by day, building projects on the side, and figuring out what to make next.',
+  currently: 'BI Developer / Data Analyst II at HNTB / FDOT',
   email: 'pasionabe@gmail.com',
   linkedin: 'abe-pasion',
   github: 'Pasionfruit',

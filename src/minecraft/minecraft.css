@@ -131,6 +131,21 @@ strong {
   color: #1a1a1a;
 }
 
+/*
+ * Start Server carries the Gaming section's coral rather than the page accent,
+ * so it matches the "Start Server" button on the guest site. Coral is too light
+ * to sit under white text, so this is a tint over the surface with the normal
+ * text colour — which is also why it needs no dark-mode override the way the
+ * solid `.primary-action` fill above does. Placed after that override so it
+ * wins on source order.
+ */
+#btn-start.primary-action {
+  --gaming-accent: #e76f51;
+  border-color: color-mix(in srgb, var(--gaming-accent) 55%, var(--border-strong));
+  background: color-mix(in srgb, var(--gaming-accent) 22%, var(--surface));
+  color: var(--text-strong);
+}
+
 .secondary-action.danger {
   color: #b4443c;
   border-color: color-mix(in srgb, #b4443c 45%, var(--border));

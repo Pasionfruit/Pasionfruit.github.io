@@ -2320,13 +2320,15 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
 function CollapsibleSectionCard({
   title,
   className = '',
+  defaultCollapsed = false,
   children,
 }: {
   title: string
   className?: string
+  defaultCollapsed?: boolean
   children: ReactNode
 }) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
 
   return (
     <article className={`info-card section-page-card ${className}`.trim()}>
@@ -2354,7 +2356,7 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
     .filter((line) => line.length > 0)
 
   return (
-    <CollapsibleSectionCard title={title} className="technical-skills-card">
+    <CollapsibleSectionCard title={title} className="technical-skills-card" defaultCollapsed>
       <ul className="technical-skills-list">
         {lines.map((line) => {
           const cleanedLine = line.replace(/^•\s*/, '')
@@ -3379,7 +3381,7 @@ function NextEventCountdownCard({
 
 function EducationCard({ title }: { title: string }) {
   return (
-    <CollapsibleSectionCard title={title} className="experience-card">
+    <CollapsibleSectionCard title={title} className="experience-card" defaultCollapsed>
       <ul className="experience-list">
         {educationEntries.map((entry) => (
           <EducationRow
@@ -3504,7 +3506,7 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
       : professionalExperienceEntries.filter((entry) => entry.category === 'technical')
 
   return (
-    <CollapsibleSectionCard title={title} className="experience-card">
+    <CollapsibleSectionCard title={title} className="experience-card" defaultCollapsed>
       <div className="experience-toggle" role="tablist" aria-label="Professional experience filter">
         <button
           type="button"
@@ -4924,7 +4926,6 @@ function MinecraftServerCards() {
 
   async function handleStart() {
     /*
-     * Starting an Aternos server is slow and queued, so repeat presses do
      * nothing useful and can get the account throttled. The cooldown blocks
      * them, and pressing during it explains why rather than failing silently.
      */
@@ -4941,7 +4942,7 @@ function MinecraftServerCards() {
     try {
       await startServer()
       setCooldown(START_COOLDOWN_SECONDS)
-      setToast('Start requested. Aternos queues this — it usually takes a minute or two.')
+      setToast('Start requested! — it usually takes a minute or two.')
       await checkServerStatus()
     } catch (error) {
       setToast(error instanceof Error ? error.message : 'Could not reach the server manager.')
@@ -4961,7 +4962,7 @@ function MinecraftServerCards() {
             href={MC_DOC_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="primary-action mc-doc-link"
+            className="mc-doc-link"
           >
             Open Connection Guide
           </a>
@@ -5017,7 +5018,7 @@ function MinecraftServerCards() {
           {srvStatus && !srvStatus.online ? (
             <button
               type="button"
-              className="primary-action mc-doc-link"
+              className="mc-doc-link"
               onClick={handleStart}
               disabled={isStarting}
               aria-describedby={toast ? 'mc-start-toast' : undefined}
@@ -5030,7 +5031,7 @@ function MinecraftServerCards() {
             </button>
           ) : null}
 
-          <a href="/minecraft.html" className="secondary-action mc-doc-link">
+          <a href="/minecraft.html" className="mc-doc-link mc-doc-link--quiet">
             Open Control Dashboard
           </a>
         </div>

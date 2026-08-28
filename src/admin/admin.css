@@ -760,20 +760,10 @@
 }
 
 /* Pinned to the bottom-right corner of the card. */
+/* Position only — appearance comes from the shared guest call-to-action rule. */
 .project-visit {
   align-self: flex-end;
   margin-top: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.8rem;
-  border: 1px solid var(--border-strong);
-  border-radius: 0.45rem;
-  background: var(--surface-muted);
-  color: var(--text-strong);
-  font-size: 0.83rem;
-  font-weight: 500;
-  text-decoration: none;
 }
 
 /* ── Journal: verse, breathing, mood ──────────────────────────────────────── */
