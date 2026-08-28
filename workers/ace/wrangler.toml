@@ -1,0 +1,16 @@
+name = "ace"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+# Origins allowed to call the worker, comma separated.
+# Vite's dev server defaults to 5173 and increments when that port is taken,
+# so the first few are listed rather than just the default.
+ALLOWED_ORIGINS = "https://abepasion.com,https://www.abepasion.com,http://localhost:5173,http://localhost:5174,http://localhost:5175"
+
+# Everything else is a secret — set with `npx wrangler secret put NAME`:
+#   OLLAMA_URL            https://ace-tunnel.abepasion.com   (the tunnel hostname)
+#   ADMIN_EMAIL           pasionabe@gmail.com
+#   GOOGLE_CLIENT_ID      the same web client id the site signs in with
+#   TUNNEL_CLIENT_ID      optional, only if the tunnel is behind CF Access
+#   TUNNEL_CLIENT_SECRET  optional, pairs with TUNNEL_CLIENT_ID

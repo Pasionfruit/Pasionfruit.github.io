@@ -53,7 +53,7 @@ import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
-import { YesterdayRecapCard } from './admin/YesterdayRecapCard'
+import { AssistantAceCard } from './admin/AssistantAceCard'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   adminDashboards,
@@ -359,12 +359,20 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/` instead of the public sections: today's tasks, a
- * recap of yesterday, the inbox, and the week's calendar.
+ * What the admin sees at `/` instead of the public sections: the month's
+ * calendar, today's tasks and weather, Assistant Ace, and the inbox.
  */
 function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   return (
-    <div className="admin-page admin-home">
+    /*
+     * The admin home renders its own shell rather than going through AdminPage,
+     * so it has to set --page-accent itself — without it, accented controls
+     * fall back to the global purple instead of the Home dashboard's blue.
+     */
+    <div
+      className="admin-page admin-home"
+      style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
+    >
       <CalendarWeekCard title="Month View" idToken={googleIdToken} />
 
       {/* Reuses the public home-top-row layout: equal columns and a fixed height
@@ -374,10 +382,13 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
         <WeatherCard />
       </div>
 
-      <div className="admin-home-split">
-        <YesterdayRecapCard title="Yesterday" configured={isTodoistConfigured()} />
-        <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
-      </div>
+      <AssistantAceCard
+        title="Assistant Ace"
+        idToken={googleIdToken}
+        todoistConfigured={isTodoistConfigured()}
+      />
+
+      <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
       <div className="admin-home-links">
         <Link to="/tasks" className="admin-quick-link">

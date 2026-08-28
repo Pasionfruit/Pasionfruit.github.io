@@ -317,7 +317,10 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Yesterday' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Assistant Ace' })).toBeTruthy()
+    // Both panes are present whether or not the local model is reachable.
+    expect(screen.getByRole('heading', { name: 'Briefing' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Ask Ace' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Inbox' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Month View' })).toBeTruthy()
   })
