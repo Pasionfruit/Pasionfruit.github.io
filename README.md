@@ -228,6 +228,48 @@ Then set repository variable:
 - Name: `VITE_SHEETS_API_BASE_URL`
 - Value: your Apps Script Web App URL
 
+## Viewing the admin dashboards locally
+
+### Without any setup
+
+`npm run dev`, then open `/login`. In development the login page shows a **Local
+dev sign-in** block with a button per account — click "Abe (full admin)" and you
+land on `/admin` with all six dashboards reachable.
+
+This mints an unsigned token in your browser and nothing more. The app decides
+who is admin by reading the `email` claim out of a Google ID token client-side;
+the real check is server-side, where Apps Script re-verifies the token against
+Google's `tokeninfo` endpoint before touching a sheet. So the shortcut unlocks
+the *UI* only — saves still fail with "Invalid token" until you sign in for real.
+
+The block is wrapped in `import.meta.env.DEV`, which Vite replaces with `false`
+when building, so none of it reaches production.
+
+With no `.env`, the dashboards render their own empty and error states: Sheets
+reads fail (Journal, Work, Finance, Training), Todoist shows its missing-token
+message, and Gmail and Calendar show connect panels. That is enough to work on
+layout and navigation. Fill in `.env` when you need live data.
+
+### With a real `.env`
+
+Copy `.env.example` to `.env` and fill in the values. Every one already exists —
+the deploy workflow reads them from repository settings:
+
+| Variable | Where to find it |
+| --- | --- |
+| `VITE_GOOGLE_CLIENT_ID` | Settings → Secrets and variables → Actions → Variables, or Google Cloud Console → Credentials |
+| `VITE_SHEETS_SPREADSHEET_ID` | The `/d/<id>/` segment of the spreadsheet URL |
+| `VITE_SHEETS_API_KEY` | Google Cloud Console → Credentials → API keys |
+| `VITE_SHEETS_API_BASE_URL` | Apps Script → Deploy → Manage deployments → the `/exec` URL |
+| `VITE_TODOIST_API_TOKEN` | Todoist → Settings → Integrations → Developer |
+
+Values stored as Actions **variables** are readable in the repo settings UI;
+anything stored as a **secret** cannot be read back and has to be regenerated at
+the source. `.env` is gitignored.
+
+Only `VITE_TODOIST_API_TOKEN` needs a dev-server restart to take effect — it
+configures a proxy in `vite.config.ts` rather than being read in the browser.
+
 ## Gmail and calendar integrations
 
 Both are built but not connected. The dashboards render a panel naming exactly

@@ -36,6 +36,7 @@ import 'chartjs-adapter-date-fns'
 import './App.css'
 import './admin/admin.css'
 import { sounds } from './sounds'
+import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { PageFrame } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
@@ -5335,6 +5336,48 @@ function LoginPage({
               </button>
             ) : null}
           </div>
+
+          {/*
+            Dev-only shortcut so the private dashboards can be opened without
+            configuring OAuth. `import.meta.env.DEV` is replaced with `false`
+            at build time, so none of this reaches production. The token is
+            unsigned and unlocks the UI only — Apps Script still rejects writes.
+          */}
+          {import.meta.env.DEV ? (
+            <div
+              style={{
+                display: 'grid',
+                gap: '0.5rem',
+                marginTop: '0.9rem',
+                padding: '0.8rem',
+                border: '1px dashed var(--border-strong)',
+                borderRadius: '0.6rem',
+                background: 'var(--surface-muted)',
+              }}
+            >
+              <p className="summary-line">Local dev sign-in</p>
+              <p className="sheets-meta">
+                Skips Google OAuth. Grants dashboard access in this browser only —
+                saves are still rejected by the backend.
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+                {DEV_SIGN_IN_ACCOUNTS.map((account) => (
+                  <button
+                    key={account.email}
+                    type="button"
+                    className="secondary-action"
+                    onClick={() => {
+                      const token = makeDevIdToken(account.email)
+                      onGoogleTokenChange(token)
+                      navigate(shouldUseAdminProfile(account.email) ? '/admin' : '/')
+                    }}
+                  >
+                    {account.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </PageFrame>
     </section>
