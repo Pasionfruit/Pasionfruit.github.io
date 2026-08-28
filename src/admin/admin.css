@@ -1257,3 +1257,69 @@
   margin: 0;
   white-space: nowrap;
 }
+
+/* Sleep & recovery: day / week-average toggle and date picker. */
+.garmin-mode-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.garmin-mode-toggle button {
+  min-height: 2rem;
+  padding: 0.3rem 0.65rem;
+  border: 0;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.garmin-mode-toggle button.active {
+  background: color-mix(in srgb, #00cccc 20%, var(--surface));
+  color: #007f7f;
+  font-weight: 600;
+}
+
+:root[data-theme='dark'] .garmin-mode-toggle button.active {
+  background: color-mix(in srgb, #00cccc 26%, var(--surface));
+  color: #6ee7e7;
+}
+
+.garmin-date-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
+}
+
+.garmin-date-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.garmin-date-row input {
+  min-height: 2rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.garmin-date-row .sheets-meta {
+  margin: 0;
+}

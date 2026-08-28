@@ -504,6 +504,13 @@
   max-width: 56ch;
 }
 
+/* Inside a home section the summary is the section's own intro, so it should
+   run the full width of the card rather than being held to a reading column. */
+.home-section-panel .page-summary,
+.home-section-panel .page-note {
+  max-width: none;
+}
+
 .page-note-row {
   margin-top: 0.7rem;
   display: flex;
@@ -5866,4 +5873,23 @@ button svg,
 
 .home-section-panel .page-note {
   margin-top: 0.85rem;
+}
+
+/* Minecraft start control: sits beside the dashboard link when the server is
+   offline, with a cooldown so repeat presses cannot queue Aternos repeatedly. */
+.mc-start-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mc-toast {
+  margin: 0.6rem 0 0;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.5rem;
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  font-size: 0.82rem;
+  line-height: 1.45;
 }

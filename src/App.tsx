@@ -48,7 +48,7 @@ import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
-import { GarminPerformanceCard, GarminWellnessCard } from './admin/GarminCards'
+import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
@@ -108,7 +108,7 @@ import type {
 import { warmupAppsScript } from './data/sheets/client'
 import { closeTask, getTasksOfTheDay } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
-import { getServerStatus } from './minecraft/api'
+import { getServerStatus, startServer } from './minecraft/api'
 
 type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
@@ -411,11 +411,10 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
   return (
     <AdminPage meta={adminDashboardsById.health}>
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
+      <GarminWellnessCard title="Daily wellness" />
       <HealthDataCard title="Health Data" />
       <TrainingLogCard title="Training Log" canWrite={false} idToken={googleIdToken} />
       <MilestonesCard title="Milestones" />
-      <GarminWellnessCard title="Daily wellness" />
-      <GarminPerformanceCard title="Training & performance" />
     </AdminPage>
   )
 }
@@ -2415,6 +2414,17 @@ function parseTrainingDate(value?: string) {
     return null
   }
 
+  /*
+   * A bare 'YYYY-MM-DD' is parsed by `new Date()` as UTC midnight, which in any
+   * negative-offset zone lands on the previous day locally — putting every
+   * contribution tile one day early, in the wrong weekday column. Date-only
+   * strings are calendar dates, so build them in local time.
+   */
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim())
+  if (dateOnly) {
+    return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+  }
+
   const parsed = new Date(value)
   if (Number.isNaN(parsed.getTime())) {
     return null
@@ -4026,25 +4036,15 @@ function HealthDataCard({ title }: { title: string }) {
     const workouts   = g30.length
     const avgDist    = hMean(g30.map(r => parseFloat(r.distance_mi)))
     const sleepScore = hMean(r30.map(r => parseFloat(r.sleep_score)))
-    const sleepHours = hMean(r30.map(r => parseFloat(r.sleep_duration_h)))
-    const restHR     = r30.length > 0
-      ? hMean(r30.map(r => parseFloat(r.resting_hr)))
-      : hMean(a30.map(r => parseFloat(r.resting_hr)))
     const hrv        = r30.length > 0
       ? hMean(r30.map(r => parseFloat(r.hrv)))
       : hMean(a30.map(r => parseFloat(r.hrv_sdnn)))
 
-    const sleepTrend = trendDir(hMean(r7.map(r => parseFloat(r.sleep_score))), hMean(rP7.map(r => parseFloat(r.sleep_score))))
-    const hrvTrend   = trendDir(hMean(r7.map(r => parseFloat(r.hrv))),         hMean(rP7.map(r => parseFloat(r.hrv))))
-    const hrTrend    = trendDir(hMean(r7.map(r => parseFloat(r.resting_hr))),  hMean(rP7.map(r => parseFloat(r.resting_hr))), false)
+    const hrvTrend = trendDir(hMean(r7.map(r => parseFloat(r.hrv))), hMean(rP7.map(r => parseFloat(r.hrv))))
 
     const tiles: { label: string; value: string; trend: TrendDir }[] = [
-      { label: 'Workouts / 30d', value: workouts   > 0 ? String(workouts)                  : '—', trend: 'flat' },
-      { label: 'Avg Distance',   value: avgDist    > 0 ? `${avgDist.toFixed(1)} mi`        : '—', trend: 'flat' },
-      { label: 'Sleep Score',    value: sleepScore > 0 ? `${Math.round(sleepScore)} / 100` : '—', trend: sleepTrend },
-      { label: 'Avg Sleep',      value: sleepHours > 0 ? `${sleepHours.toFixed(1)} h`      : '—', trend: 'flat' },
-      { label: 'Resting HR',     value: restHR     > 0 ? `${Math.round(restHR)} bpm`       : '—', trend: hrTrend },
-      { label: 'Avg HRV',        value: hrv        > 0 ? `${Math.round(hrv)} ms`           : '—', trend: hrvTrend },
+      { label: 'Workouts / 30d', value: workouts > 0 ? String(workouts)           : '—', trend: 'flat' },
+      { label: 'Avg Distance',   value: avgDist  > 0 ? `${avgDist.toFixed(1)} mi` : '—', trend: 'flat' },
     ]
 
     const parts: string[] = []
@@ -4872,10 +4872,16 @@ type McServerStatus = { online: boolean; players?: { online: number; max: number
  * The Gaming section of the home page: how to connect, plus live server status
  * with a link into the control dashboard.
  */
+/** Seconds the Start button stays locked after a press. */
+const START_COOLDOWN_SECONDS = 60
+
 function MinecraftServerCards() {
   const [srvStatus,      setSrvStatus]      = useState<McServerStatus | null>(null)
   const [srvChecking,    setSrvChecking]    = useState(true)
   const [srvLastChecked, setSrvLastChecked] = useState<Date | null>(null)
+  const [isStarting,     setIsStarting]     = useState(false)
+  const [cooldown,       setCooldown]       = useState(0)
+  const [toast,          setToast]          = useState('')
 
   async function checkServerStatus() {
     setSrvChecking(true)
@@ -4900,6 +4906,47 @@ function MinecraftServerCards() {
   useEffect(() => {
     void checkServerStatus()
   }, [])
+
+  // Tick the cooldown down once a second while it is running.
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = window.setTimeout(() => setCooldown((value) => value - 1), 1000)
+    return () => window.clearTimeout(id)
+  }, [cooldown])
+
+  useEffect(() => {
+    if (!toast) return
+    const id = window.setTimeout(() => setToast(''), 4000)
+    return () => window.clearTimeout(id)
+  }, [toast])
+
+  async function handleStart() {
+    /*
+     * Starting an Aternos server is slow and queued, so repeat presses do
+     * nothing useful and can get the account throttled. The cooldown blocks
+     * them, and pressing during it explains why rather than failing silently.
+     */
+    if (cooldown > 0) {
+      setToast(`Already starting — give it ${cooldown}s before trying again.`)
+      return
+    }
+
+    if (isStarting) return
+
+    setIsStarting(true)
+    setToast('')
+
+    try {
+      await startServer()
+      setCooldown(START_COOLDOWN_SECONDS)
+      setToast('Start requested. Aternos queues this — it usually takes a minute or two.')
+      await checkServerStatus()
+    } catch (error) {
+      setToast(error instanceof Error ? error.message : 'Could not reach the server manager.')
+    } finally {
+      setIsStarting(false)
+    }
+  }
 
   return (
     <>
@@ -4964,11 +5011,33 @@ function MinecraftServerCards() {
             : 'Start, stop, and monitor the server from the control dashboard.'}
         </p>
 
-        <div className="mc-doc-footer">
+        <div className="mc-doc-footer mc-start-row">
+          {srvStatus && !srvStatus.online ? (
+            <button
+              type="button"
+              className="primary-action mc-doc-link"
+              onClick={handleStart}
+              disabled={isStarting}
+              aria-describedby={toast ? 'mc-start-toast' : undefined}
+            >
+              {isStarting
+                ? 'Starting…'
+                : cooldown > 0
+                  ? `Start Server (${cooldown}s)`
+                  : 'Start Server'}
+            </button>
+          ) : null}
+
           <a href="/minecraft.html" className="secondary-action mc-doc-link">
             Open Control Dashboard
           </a>
         </div>
+
+        {toast ? (
+          <p id="mc-start-toast" className="mc-toast" role="status" aria-live="polite">
+            {toast}
+          </p>
+        ) : null}
       </div>
     </>
   )
