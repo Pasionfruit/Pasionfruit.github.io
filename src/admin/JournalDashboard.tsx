@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PageFrame } from '../components/PageFrame'
+import { AdminPage } from './AdminPage'
 import { adminDashboardsById } from '../siteContent'
 import {
   createJournalEntry,
@@ -201,15 +201,7 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
   const isEditorOpen = isComposing || editingId !== null
 
   return (
-    <PageFrame
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      summary={meta.intro}
-      accent={meta.accent}
-      backLink="/admin"
-      backLabel="Back to dashboards"
-      note={meta.note}
-    >
+    <AdminPage meta={meta}>
       <article className="info-card admin-card admin-card-wide">
         <div className="admin-card-head">
           <h3>Entries</h3>
@@ -389,6 +381,6 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
           </ul>
         )}
       </article>
-    </PageFrame>
+    </AdminPage>
   )
 }

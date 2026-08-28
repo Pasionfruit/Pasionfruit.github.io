@@ -1,14 +1,14 @@
 /** Sections a signed-out visitor can reach. Everything else lives behind /admin. */
 export type SectionId = 'experiences' | 'personal-sites' | 'gaming'
 
-/** The private dashboards, available only to the admin Google account. */
-export type AdminDashboardId =
-  | 'tasks'
-  | 'calendar'
-  | 'journal'
-  | 'finance'
-  | 'training'
-  | 'work'
+/**
+ * The private dashboards, available only to the admin Google account.
+ * 'home' is the signed-in landing page — tasks, yesterday, inbox, and the week.
+ */
+export type AdminDashboardId = 'home' | 'journal' | 'finance' | 'training' | 'work'
+
+/** Icon key for the admin top-bar nav, mapped to a component in App.tsx. */
+export type AdminIconId = 'home' | 'journal' | 'finance' | 'training' | 'work'
 
 export type PageCard = {
   title: string
@@ -39,6 +39,7 @@ export type AdminDashboardMeta = {
   id: AdminDashboardId
   title: string
   path: string
+  icon: AdminIconId
   /** One-line label used on the /admin tile grid and in the side menu. */
   summary: string
   accent: string

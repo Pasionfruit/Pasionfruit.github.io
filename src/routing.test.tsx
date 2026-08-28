@@ -297,10 +297,49 @@ describe('guest routing', () => {
 })
 
 describe('admin routing', () => {
+  it('lands the admin on the daily dashboard at /', async () => {
+    renderAt('/', ADMIN_EMAIL)
+
+    expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Yesterday' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Inbox' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'This week' })).toBeTruthy()
+  })
+
+  it('hides the public sections from the admin home page', () => {
+    renderAt('/', ADMIN_EMAIL)
+
+    for (const id of ['experiences', 'personal-sites', 'gaming']) {
+      expect(document.getElementById(id)).toBeNull()
+    }
+
+    expect(screen.queryByRole('heading', { name: 'Professional Experience', hidden: true })).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Try it', hidden: true })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Server Status', hidden: true })).toBeNull()
+  })
+
+  it('replaces the hamburger menu with the icon nav', () => {
+    renderAt('/', ADMIN_EMAIL)
+
+    expect(document.querySelector('.menu-toggle')).toBeNull()
+    expect(document.getElementById('site-menu')).toBeNull()
+
+    const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
+      link.textContent?.trim(),
+    )
+    expect(labels).toEqual(['Home', 'Journal', 'Finance', 'Training', 'Work'])
+  })
+
+  it('points each nav item at its dashboard', () => {
+    renderAt('/', ADMIN_EMAIL)
+
+    const hrefs = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
+      link.getAttribute('href'),
+    )
+    expect(hrefs).toEqual(['/', '/admin/journal', '/admin/finance', '/admin/training', '/admin/work'])
+  })
+
   it.each([
-    ['/admin', 'Dashboards'],
-    ['/admin/tasks', 'Tasks'],
-    ['/admin/calendar', 'Calendar'],
     ['/admin/journal', 'Journal'],
     ['/admin/finance', 'Finance'],
     ['/admin/training', 'Training'],
@@ -310,22 +349,13 @@ describe('admin routing', () => {
     expect(pageTitle()).toBe(title)
   })
 
-  it('links every dashboard from the /admin hub', () => {
-    renderAt('/admin', ADMIN_EMAIL)
-
-    const hrefs = [...document.querySelectorAll('a.admin-tile')].map((link) =>
-      link.getAttribute('href'),
-    )
-
-    expect(hrefs).toEqual([
-      '/admin/tasks',
-      '/admin/calendar',
-      '/admin/journal',
-      '/admin/finance',
-      '/admin/training',
-      '/admin/work',
-    ])
-  })
+  it.each(['/admin', '/admin/tasks', '/admin/calendar'])(
+    'folds %s back into the home dashboard',
+    async (path) => {
+      renderAt(path, ADMIN_EMAIL)
+      expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
+    },
+  )
 
   it('sends the retired /training and /finances routes to their dashboards', () => {
     renderAt('/training', ADMIN_EMAIL)
@@ -337,8 +367,12 @@ describe('admin routing', () => {
     expect(pageTitle()).toBe('Finance')
   })
 
-  it('exposes the dashboards in the menu once signed in as admin', () => {
+  it('links the full task manager and weekly reset from home', () => {
     renderAt('/', ADMIN_EMAIL)
-    expect(screen.getAllByRole('link', { name: 'Dashboards' }).length).toBeGreaterThan(0)
+
+    const hrefs = [...document.querySelectorAll('.admin-quick-link')].map((link) =>
+      link.getAttribute('href'),
+    )
+    expect(hrefs).toEqual(['/tasks', '/weekly-reset'])
   })
 })

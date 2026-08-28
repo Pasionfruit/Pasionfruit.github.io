@@ -41,18 +41,6 @@ const ROUTE_META: Record<string, RouteMeta> = {
     ads: false,
     index: false,
   },
-  '/admin/tasks': {
-    title: `Tasks — ${SITE_NAME}`,
-    description: 'Private daily task dashboard.',
-    ads: false,
-    index: false,
-  },
-  '/admin/calendar': {
-    title: `Calendar — ${SITE_NAME}`,
-    description: 'Private merged calendar view.',
-    ads: false,
-    index: false,
-  },
   '/admin/journal': {
     title: `Journal — ${SITE_NAME}`,
     description: 'Private journal.',

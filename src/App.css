@@ -52,6 +52,17 @@
   line-height: 1.05;
 }
 
+@media (max-width: 48rem) {
+  .topbar-admin .brand-copy {
+    display: none;
+  }
+
+  .topbar-admin {
+    gap: 0.4rem;
+    padding: 0.7rem 0.6rem;
+  }
+}
+
 .brand-copy strong {
   font-size: 0.95rem;
 }
@@ -329,6 +340,9 @@
 }
 
 .menu-main-link {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
   color: var(--text-strong);
   text-decoration: none;
   font-size: 0.98rem;
@@ -443,7 +457,7 @@
 }
 
 .page-shell {
-  width: min(72rem, calc(100% - 1rem));
+  width: min(72rem, calc(100% - 1.5rem));
   margin: 0 auto;
   padding: 1rem 0 3rem;
 }
@@ -3004,6 +3018,14 @@ button svg,
   padding: 0.42rem 0.55rem;
   font: inherit;
   min-width: 220px;
+  max-width: 100%;
+}
+
+@media (max-width: 40rem) {
+  .sheets-input {
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 .sheets-table-shell {
@@ -4048,9 +4070,13 @@ button svg,
 
 .training-log-desktop-page-nav .secondary-action,
 .training-log-page-nav .secondary-action {
-  font-size: 0.7rem;
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0.1rem 0.3rem;
-  min-width: unset;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .training-log-page-nav {

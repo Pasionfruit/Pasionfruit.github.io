@@ -1,36 +1,29 @@
 import type { AdminDashboardId, AdminDashboardMeta } from './shared'
 
 /**
- * The private dashboards. Order here drives both the /admin tile grid and the
- * admin block in the side menu.
+ * The admin nav. Order here drives the icon bar in the top bar — there is no
+ * hamburger menu and no section list once you are signed in as admin.
+ *
+ * Home is the daily driver: tasks, yesterday's recap, inbox, and the week's
+ * calendar all on one screen, so it replaces the old /admin tile hub.
  */
 export const adminDashboards: AdminDashboardMeta[] = [
   {
-    id: 'tasks',
-    title: 'Tasks',
-    path: '/admin/tasks',
-    summary: "Today's tasks, what yesterday actually looked like, and inbox triage",
+    id: 'home',
+    title: 'Home',
+    path: '/',
+    icon: 'home',
+    summary: "Today's tasks, yesterday's recap, inbox, and the week ahead",
     accent: '#ef4444',
     eyebrow: 'Daily driver',
-    intro:
-      "Everything due today in one place, a recap of what closed yesterday so nothing quietly slips, and a summary of the mail worth answering.",
-    note: 'Task data comes from Todoist. Mail is read-only — nothing here sends or archives on your behalf.',
-  },
-  {
-    id: 'calendar',
-    title: 'Calendar',
-    path: '/admin/calendar',
-    summary: 'Google and Apple calendars merged into one week',
-    accent: '#6366f1',
-    eyebrow: 'Schedule',
-    intro:
-      'Work and personal calendars overlaid on the same week, so a training block and a meeting cannot quietly land on top of each other.',
-    note: 'Read-only. Events are pulled from the connected calendars; edits still happen in the source app.',
+    intro: '',
+    note: '',
   },
   {
     id: 'journal',
     title: 'Journal',
     path: '/admin/journal',
+    icon: 'journal',
     summary: 'Daily entries, mood, and what the day was actually about',
     accent: '#a855f7',
     eyebrow: 'Writing',
@@ -42,6 +35,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     id: 'finance',
     title: 'Finance',
     path: '/admin/finance',
+    icon: 'finance',
     summary: 'Budget targets, spending by category, and the money calendar',
     accent: '#16a34a',
     eyebrow: 'Money',
@@ -53,6 +47,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     id: 'training',
     title: 'Training',
     path: '/admin/training',
+    icon: 'training',
     summary: 'Garmin, Apple Health, and RingConn data plus the session log',
     accent: '#14b8a6',
     eyebrow: 'Body',
@@ -64,6 +59,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     id: 'work',
     title: 'Work',
     path: '/admin/work',
+    icon: 'work',
     summary: 'Active projects, deadlines, and the links I open every morning',
     accent: '#f97316',
     eyebrow: 'Day job',
@@ -78,12 +74,3 @@ export const adminDashboardsById: Record<AdminDashboardId, AdminDashboardMeta> =
     AdminDashboardId,
     AdminDashboardMeta
   >
-
-export const adminHomeContent = {
-  eyebrow: 'Private',
-  title: 'Dashboards',
-  summary:
-    'The private side of the site. Six dashboards, each one pulling from whatever system already holds that data rather than asking me to re-enter it.',
-  accent: '#7a62ff',
-  note: 'Signed in as the admin account. Signing out returns the site to its public three sections.',
-}

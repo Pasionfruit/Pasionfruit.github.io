@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PageFrame } from '../components/PageFrame'
 import { ConnectPanel } from './ConnectPanel'
-import { adminDashboardsById } from '../siteContent'
 import {
   getAppleCalendarStatus,
   getAppleCalendarUrl,
@@ -52,15 +50,18 @@ function eventTimeLabel(event: CalendarEvent) {
   return parsed.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
 }
 
-export function CalendarDashboard() {
-  const meta = adminDashboardsById.calendar
+/**
+ * The week ahead, Google and Apple overlaid. Lives on the admin home page
+ * rather than a route of its own.
+ */
+export function CalendarWeekCard({ title }: { title: string }) {
   const googleStatus = getGoogleCalendarStatus()
   const appleStatus = getAppleCalendarStatus()
+  const anyConnected = googleStatus.state === 'connected' || appleStatus.state === 'connected'
 
   const [weekOffset, setWeekOffset] = useState(0)
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [errors, setErrors] = useState<string[]>([])
-  const anyConnected = googleStatus.state === 'connected' || appleStatus.state === 'connected'
   const [isLoading, setIsLoading] = useState(anyConnected)
 
   const weekStart = useMemo(() => {
@@ -149,87 +150,69 @@ export function CalendarDashboard() {
   const rangeLabel = `${weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} – ${days[6].toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
 
   return (
-    <PageFrame
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      summary={meta.intro}
-      accent={meta.accent}
-      backLink="/admin"
-      backLabel="Back to dashboards"
-      note={meta.note}
-    >
-      <article className="info-card admin-card admin-card-wide">
-        <div className="admin-card-head">
-          <h3>Week of {rangeLabel}</h3>
-          <div className="week-nav">
-            <button type="button" onClick={() => setWeekOffset((value) => value - 1)}>
-              ‹ Prev
-            </button>
-            <button type="button" onClick={() => setWeekOffset(0)} disabled={weekOffset === 0}>
-              Today
-            </button>
-            <button type="button" onClick={() => setWeekOffset((value) => value + 1)}>
-              Next ›
-            </button>
-          </div>
+    <article className="info-card admin-card admin-card-wide">
+      <div className="admin-card-head">
+        <h3>{title}</h3>
+        <div className="week-nav">
+          <span className="admin-pill">{rangeLabel}</span>
+          <button type="button" onClick={() => setWeekOffset((value) => value - 1)}>
+            ‹
+          </button>
+          <button type="button" onClick={() => setWeekOffset(0)} disabled={weekOffset === 0}>
+            Today
+          </button>
+          <button type="button" onClick={() => setWeekOffset((value) => value + 1)}>
+            ›
+          </button>
         </div>
+      </div>
 
-        {errors.map((message) => (
-          <p key={message} className="sheets-meta">
-            {message}
-          </p>
-        ))}
+      {errors.map((message) => (
+        <p key={message} className="sheets-meta">
+          {message}
+        </p>
+      ))}
 
-        {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
+      {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
 
-        <div className="calendar-week">
-          {days.map((day) => {
-            const key = dayKey(day)
-            const dayEvents = eventsByDay[key] ?? []
+      <div className="calendar-week">
+        {days.map((day) => {
+          const key = dayKey(day)
+          const dayEvents = eventsByDay[key] ?? []
 
-            return (
-              <div key={key} className={`calendar-day ${key === todayKeyValue ? 'today' : ''}`}>
-                <div className="calendar-day-head">
-                  <span className="calendar-weekday">
-                    {day.toLocaleDateString(undefined, { weekday: 'short' })}
-                  </span>
-                  <span className="calendar-date">{day.getDate()}</span>
-                </div>
-
-                {dayEvents.length === 0 ? (
-                  <p className="calendar-empty">—</p>
-                ) : (
-                  <ul className="calendar-events">
-                    {dayEvents.map((event) => (
-                      <li key={`${event.source}-${event.id}`} className={`calendar-event source-${event.source}`}>
-                        <span className="calendar-event-time">{eventTimeLabel(event)}</span>
-                        <span className="calendar-event-title">{event.title}</span>
-                        {event.location ? (
-                          <span className="calendar-event-location">{event.location}</span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+          return (
+            <div key={key} className={`calendar-day ${key === todayKeyValue ? 'today' : ''}`}>
+              <div className="calendar-day-head">
+                <span className="calendar-weekday">
+                  {day.toLocaleDateString(undefined, { weekday: 'short' })}
+                </span>
+                <span className="calendar-date">{day.getDate()}</span>
               </div>
-            )
-          })}
-        </div>
-      </article>
+
+              {dayEvents.length === 0 ? (
+                <p className="calendar-empty">—</p>
+              ) : (
+                <ul className="calendar-events">
+                  {dayEvents.map((event) => (
+                    <li key={`${event.source}-${event.id}`} className={`calendar-event source-${event.source}`}>
+                      <span className="calendar-event-time">{eventTimeLabel(event)}</span>
+                      <span className="calendar-event-title">{event.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )
+        })}
+      </div>
 
       {googleStatus.state !== 'connected' ? (
-        <article className="info-card admin-card">
-          <h3>Google Calendar</h3>
-          <ConnectPanel name="Google Calendar" status={googleStatus} />
-        </article>
+        <ConnectPanel name="Google Calendar" status={googleStatus} />
       ) : null}
 
       {appleStatus.state !== 'connected' ? (
-        <article className="info-card admin-card">
-          <h3>Apple Calendar</h3>
-          <ConnectPanel name="Apple Calendar" status={appleStatus} />
-        </article>
+        <ConnectPanel name="Apple Calendar" status={appleStatus} />
       ) : null}
-    </PageFrame>
+    </article>
   )
 }

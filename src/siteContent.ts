@@ -6,12 +6,13 @@ import {
 } from './siteContent/experiences'
 import { navSections } from './siteContent/home'
 import { personalSiteEntries, personalSitesSectionPage } from './siteContent/personalSites'
-import { adminDashboards, adminDashboardsById, adminHomeContent } from './siteContent/admin'
+import { adminDashboards, adminDashboardsById } from './siteContent/admin'
 import type { PageContent, SectionId } from './siteContent/shared'
 
 export type {
   AdminDashboardId,
   AdminDashboardMeta,
+  AdminIconId,
   EducationEntry,
   NavSection,
   PageCard,
@@ -24,7 +25,6 @@ export type {
 export {
   adminDashboards,
   adminDashboardsById,
-  adminHomeContent,
   educationEntries,
   navSections,
   personalSiteEntries,

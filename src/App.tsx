@@ -1,13 +1,19 @@
 import React, { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  Activity,
   BookOpen,
+  Briefcase,
   Check,
   ExternalLink,
-  LayoutGrid,
+  House,
+  List,
+  NotebookPen,
   Pencil,
   RotateCcw,
   SquareCheck,
+  Wallet,
   X,
+  type LucideIcon,
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
@@ -40,8 +46,8 @@ import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
-import { AdminHome } from './admin/AdminHome'
-import { CalendarDashboard } from './admin/CalendarDashboard'
+import { AdminPage } from './admin/AdminPage'
+import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
@@ -55,6 +61,7 @@ import {
   personalSiteEntries,
   professionalExperienceEntries,
   sectionPages,
+  type AdminIconId,
   type EducationEntry,
   type PersonalSiteEntry,
   type ProfessionalExperienceEntry,
@@ -236,7 +243,16 @@ function App() {
       )}
       <Routes>
         <Route element={<SiteLayout isAdmin={isAdmin} googleIdToken={googleIdToken} />}>
-          <Route index element={<HomePage isAdmin={isAdmin} />} />
+          <Route
+            index
+            element={
+              isAdmin ? (
+                <AdminHomePage profile={profile} googleIdToken={googleIdToken} />
+              ) : (
+                <HomePage />
+              )
+            }
+          />
           <Route
             path="login"
             element={(
@@ -259,12 +275,11 @@ function App() {
 
           {/* Private dashboards */}
           <Route path="admin" element={<AdminGate isAdmin={isAdmin} />}>
-            <Route index element={<AdminHome />} />
-            <Route
-              path="tasks"
-              element={<AdminTasksPage profile={profile} googleIdToken={googleIdToken} />}
-            />
-            <Route path="calendar" element={<CalendarDashboard />} />
+            {/* Home is the daily dashboard now, so the old hub and the pages that
+                merged into it all land back on `/`. */}
+            <Route index element={<Navigate replace to="/" />} />
+            <Route path="tasks" element={<Navigate replace to="/" />} />
+            <Route path="calendar" element={<Navigate replace to="/" />} />
             <Route
               path="journal"
               element={<JournalDashboard canWrite={isAdmin} idToken={googleIdToken} />}
@@ -339,47 +354,46 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
   return <Outlet />
 }
 
-function AdminTasksPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
-  const meta = adminDashboardsById.tasks
-
+/**
+ * What the admin sees at `/` instead of the public sections: today's tasks, a
+ * recap of yesterday, the inbox, and the week's calendar.
+ */
+function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   return (
-    <PageFrame
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      summary={meta.intro}
-      accent={meta.accent}
-      backLink="/admin"
-      backLabel="Back to dashboards"
-      note={meta.note}
-    >
-      <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
-      <YesterdayRecapCard title="Yesterday" configured={isTodoistConfigured()} />
-      <GmailSummaryCard title="Inbox" />
+    <div className="admin-page admin-home">
+      {/* Reuses the public home-top-row layout: equal columns and a fixed height
+          on desktop, so switching tabs inside the tasks card cannot resize the row. */}
+      <div className="home-top-row">
+        <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+        <WeatherCard />
+      </div>
 
-      <Link to="/tasks" className="info-card section-child-card">
-        <p className="section-child-label">Open page</p>
-        <h3>Full task manager</h3>
-        <p>Today, tomorrow, upcoming, and per-project views with reordering.</p>
-      </Link>
-    </PageFrame>
+      <div className="admin-home-split">
+        <YesterdayRecapCard title="Yesterday" configured={isTodoistConfigured()} />
+        <GmailSummaryCard title="Inbox" />
+      </div>
+
+      <CalendarWeekCard title="This week" />
+
+      <div className="admin-home-links">
+        <Link to="/tasks" className="admin-quick-link">
+          <List size={15} strokeWidth={1.8} aria-hidden="true" />
+          <span>Full task manager</span>
+        </Link>
+        <Link to="/weekly-reset" className="admin-quick-link">
+          <RotateCcw size={15} strokeWidth={1.8} aria-hidden="true" />
+          <span>Weekly reset</span>
+        </Link>
+      </div>
+    </div>
   )
 }
 
 function AdminFinancePage({ googleIdToken }: { googleIdToken: string }) {
-  const meta = adminDashboardsById.finance
-
   return (
-    <PageFrame
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      summary={meta.intro}
-      accent={meta.accent}
-      backLink="/admin"
-      backLabel="Back to dashboards"
-      note={meta.note}
-    >
+    <AdminPage meta={adminDashboardsById.finance}>
       <FinancesHubCard idToken={googleIdToken} />
-    </PageFrame>
+    </AdminPage>
   )
 }
 
@@ -389,25 +403,48 @@ function AdminFinancePage({ googleIdToken }: { googleIdToken: string }) {
  * it leads.
  */
 function AdminTrainingPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
-  const meta = adminDashboardsById.training
   const canWrite = profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL
 
   return (
-    <PageFrame
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      summary={meta.intro}
-      accent={meta.accent}
-      backLink="/admin"
-      backLabel="Back to dashboards"
-      note={meta.note}
-    >
+    <AdminPage meta={adminDashboardsById.training}>
       <HealthDataCard title="Health Data" />
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
       <TrainingLogCard title="Training Log" canWrite={canWrite} idToken={googleIdToken} />
       <MilestonesCard title="Milestones" />
       <EquipmentCard title="Equipment" />
-    </PageFrame>
+    </AdminPage>
+  )
+}
+
+/** Minimal line icons for the admin top bar, keyed off AdminDashboardMeta.icon. */
+const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
+  home: House,
+  journal: NotebookPen,
+  finance: Wallet,
+  training: Activity,
+  work: Briefcase,
+}
+
+function AdminNav() {
+  return (
+    <nav className="admin-nav" aria-label="Dashboards">
+      {adminDashboards.map((dashboard) => {
+        const Icon = ADMIN_NAV_ICONS[dashboard.icon]
+
+        return (
+          <NavLink
+            key={dashboard.id}
+            to={dashboard.path}
+            end={dashboard.path === '/'}
+            className={({ isActive }) => `admin-nav-link ${isActive ? 'active' : ''}`}
+            title={dashboard.title}
+          >
+            <Icon size={17} strokeWidth={1.7} aria-hidden="true" />
+            <span>{dashboard.title}</span>
+          </NavLink>
+        )
+      })}
+    </nav>
   )
 }
 
@@ -460,7 +497,7 @@ function SiteLayout({
 
   return (
     <div className="app-shell">
-      <header className="topbar">
+      <header className={`topbar ${isAdmin ? 'topbar-admin' : ''}`}>
         <Link to="/" className="brand" aria-label="Go to home page">
           <span className="brand-mark">{brandMark}</span>
           <span className="brand-copy">
@@ -469,27 +506,9 @@ function SiteLayout({
           </span>
         </Link>
 
+        {isAdmin ? <AdminNav /> : null}
+
         <div className="topbar-actions">
-          {isAdmin ? (
-            <>
-              <NavLink
-                to="/admin"
-                className="reset-link"
-                aria-label="Dashboards"
-                title="Dashboards"
-              >
-                <LayoutGrid size={18} strokeWidth={1.8} aria-hidden="true" />
-              </NavLink>
-              <NavLink
-                to="/weekly-reset"
-                className="reset-link"
-                aria-label="Weekly reset"
-                title="Weekly reset"
-              >
-                <RotateCcw size={18} strokeWidth={1.8} aria-hidden="true" />
-              </NavLink>
-            </>
-          ) : null}
           <button
             type="button"
             className="theme-toggle"
@@ -506,18 +525,21 @@ function SiteLayout({
               <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
             </svg>
           </NavLink>
-          <button
-            type="button"
-            className="menu-toggle"
-            aria-expanded={menuOpen}
-            aria-controls="site-menu"
-            onClick={() => setMenuOpen((value) => !value)}
-          >
-            <span />
-            <span />
-            <span />
-            <span className="sr-only">Toggle navigation</span>
-          </button>
+          {/* Admins navigate with the icon bar; only guests get the section menu. */}
+          {isAdmin ? null : (
+            <button
+              type="button"
+              className="menu-toggle"
+              aria-expanded={menuOpen}
+              aria-controls="site-menu"
+              onClick={() => setMenuOpen((value) => !value)}
+            >
+              <span />
+              <span />
+              <span />
+              <span className="sr-only">Toggle navigation</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -527,59 +549,35 @@ function SiteLayout({
         </p>
       ) : null}
 
-      <div className={`menu-backdrop ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
+      {/* Guests browse with the slide-out menu; admins use the icon bar instead. */}
+      {isAdmin ? null : (
+        <>
+          <div className={`menu-backdrop ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
 
-      <aside id="site-menu" className={`menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="menu-panel-header">
-          <p>Browse pages</p>
-          <button type="button" className="menu-close" onClick={() => setMenuOpen(false)}>
-            Close
-          </button>
-        </div>
-
-        <nav className="menu-root" aria-label="Primary">
-          {navSections.map((section) => (
-            <div key={section.id} className="menu-section-card">
-              <div className="menu-section-row">
-                <Link to={section.path} className="menu-main-link">
-                  {section.title}
-                </Link>
-              </div>
-
-              <p className="menu-section-summary">{section.summary}</p>
+          <aside id="site-menu" className={`menu-panel ${menuOpen ? 'open' : ''}`}>
+            <div className="menu-panel-header">
+              <p>Browse pages</p>
+              <button type="button" className="menu-close" onClick={() => setMenuOpen(false)}>
+                Close
+              </button>
             </div>
-          ))}
 
-          {isAdmin ? (
-            <div className="menu-section-card">
-              <div className="menu-section-row">
-                <NavLink
-                  to="/admin"
-                  end
-                  className={({ isActive }) => `menu-main-link ${isActive ? 'active' : ''}`}
-                >
-                  Dashboards
-                </NavLink>
-              </div>
+            <nav className="menu-root" aria-label="Primary">
+              {navSections.map((section) => (
+                <div key={section.id} className="menu-section-card">
+                  <div className="menu-section-row">
+                    <Link to={section.path} className="menu-main-link">
+                      {section.title}
+                    </Link>
+                  </div>
 
-              <p className="menu-section-summary">Private — visible only while signed in as admin</p>
-
-              <div className="menu-children">
-                {adminDashboards.map((dashboard) => (
-                  <NavLink
-                    key={dashboard.path}
-                    to={dashboard.path}
-                    className={({ isActive }) => `menu-child-link ${isActive ? 'active' : ''}`}
-                  >
-                    <span>{dashboard.title}</span>
-                    <small>{dashboard.summary}</small>
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </nav>
-      </aside>
+                  <p className="menu-section-summary">{section.summary}</p>
+                </div>
+              ))}
+            </nav>
+          </aside>
+        </>
+      )}
 
       <main className="page-shell">
         <Outlet />
@@ -710,7 +708,8 @@ function HomeSection({
 
 const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming']
 
-function HomePage({ isAdmin }: { isAdmin: boolean }) {
+/** The public home page: three collapsible sections. Admins get AdminHomePage. */
+function HomePage() {
   const location = useLocation()
   // Sections start collapsed; the page opens as a short index.
   const [openSections, setOpenSections] = useState<SectionId[]>([])
@@ -746,17 +745,6 @@ function HomePage({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <div className="page home-page">
-      {isAdmin ? (
-        <div className="home-top-row">
-          <Link to="/admin" className="info-card section-child-card">
-            <p className="section-child-label">Private</p>
-            <h3>Dashboards</h3>
-            <p>Tasks, calendar, journal, finance, training, and work.</p>
-          </Link>
-          <WeatherCard />
-        </div>
-      ) : null}
-
       {/* The sections carry the page; the h1 is for assistive tech and SEO. */}
       <h1 className="sr-only">mrpasionfruit</h1>
 
@@ -2641,6 +2629,7 @@ function TrainingLogCard({
                 <button
                   type="button"
                   className="secondary-action"
+                  aria-label="Previous quarter"
                   onClick={() => setMobilePage((p) => Math.max(0, p - 1))}
                   disabled={mobilePage === 0}
                 >
@@ -2650,6 +2639,7 @@ function TrainingLogCard({
                 <button
                   type="button"
                   className="secondary-action"
+                  aria-label="Next quarter"
                   onClick={() => setMobilePage((p) => Math.min(3, p + 1))}
                   disabled={mobilePage === 3}
                 >

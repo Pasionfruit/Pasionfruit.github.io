@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PageFrame } from '../components/PageFrame'
+import { AdminPage } from './AdminPage'
 import { adminDashboardsById } from '../siteContent'
 import {
   createWorkItem,
@@ -236,15 +236,7 @@ export function WorkDashboard({ canWrite, idToken }: { canWrite: boolean; idToke
   const isEditorOpen = isComposing || editingId !== null
 
   return (
-    <PageFrame
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      summary={meta.intro}
-      accent={meta.accent}
-      backLink="/admin"
-      backLabel="Back to dashboards"
-      note={meta.note}
-    >
+    <AdminPage meta={meta}>
       <article className="info-card admin-card admin-card-wide">
         <div className="admin-card-head">
           <h3>In flight</h3>
@@ -454,6 +446,6 @@ export function WorkDashboard({ canWrite, idToken }: { canWrite: boolean; idToke
           ))}
         </div>
       </article>
-    </PageFrame>
+    </AdminPage>
   )
 }

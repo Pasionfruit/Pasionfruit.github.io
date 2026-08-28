@@ -22,21 +22,31 @@ target section and scrolls to it. Collapsed panels keep their content in the DOM
 (hidden via the `hidden` attribute) rather than unmounting it, so `/` still ships
 the full page to crawlers — it is the only indexed URL on the site.
 
-### Private (`/admin`, admin Google account only)
+### Private (admin Google account only)
 
-| Route | Dashboard | Data source |
+Signing in as admin replaces the public site entirely — no sections, no
+hamburger menu. The top bar becomes an icon nav and `/` becomes the daily
+dashboard.
+
+| Nav item | Route | Contents |
 | --- | --- | --- |
-| `/admin/tasks` | Tasks of the day, yesterday's recap, inbox summary | Todoist (live) + Gmail (needs scope) |
-| `/admin/calendar` | Google and Apple calendars merged into one week | Google Calendar / Apple `.ics` (both need setup) |
-| `/admin/journal` | Daily entries with mood and tags | Sheets `journal_entries` |
-| `/admin/finance` | Budget, spending by category, money calendar | Sheets transaction + budget tabs |
-| `/admin/training` | Garmin, RingConn, and Apple Health plus the session log | Sheets health tabs |
-| `/admin/work` | Projects, deadlines, morning links | Sheets `work_items` |
+| Home | `/` | Tasks of the day, yesterday's recap, inbox, and the week's calendar |
+| Journal | `/admin/journal` | Daily entries with mood and tags |
+| Finance | `/admin/finance` | Budget, spending by category, money calendar |
+| Training | `/admin/training` | Garmin, RingConn, and Apple Health plus the session log |
+| Work | `/admin/work` | Projects, deadlines, morning links |
 
-`/tasks` (full Todoist manager) and `/weekly-reset` are also admin-only.
+The Calendar dashboard was merged into Home rather than getting its own tab, so
+`/admin`, `/admin/tasks`, and `/admin/calendar` all redirect to `/`. The full
+Todoist manager (`/tasks`) and `/weekly-reset` are linked from the bottom of the
+Home dashboard.
 
-Everything under `/admin` is gated by `AdminGate` in [src/App.tsx](src/App.tsx); guests
-are redirected to `/`. The dashboards are `noindex` and never load ads.
+Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card and
+no back link, since the icon bar is always on screen. Below ~640px the nav labels
+drop and the icons carry it.
+
+Access is gated by `AdminGate` in [src/App.tsx](src/App.tsx); guests are
+redirected to `/`. The dashboards are `noindex` and never load ads.
 
 ### Retired
 
@@ -286,6 +296,32 @@ the source. `.env` is gitignored.
 
 Only `VITE_TODOIST_API_TOKEN` needs a dev-server restart to take effect — it
 configures a proxy in `vite.config.ts` rather than being read in the browser.
+
+## Mobile layout
+
+Every route is checked at 360, 390, 412, and 768px wide, for both the guest and
+admin shells, with editors and collapsed sections opened so hidden layout gets
+measured too. The check fails on horizontal page overflow or touch targets under
+24x24 CSS px.
+
+```bash
+npm install --no-save playwright-core   # not a project dependency
+npm run dev                             # in another terminal
+BASE=http://localhost:5173 node scripts/mobile-audit.mjs
+```
+
+It drives the locally installed Chrome, so no browser download is needed; set
+`CHROME_PATH` if Chrome lives somewhere unusual.
+
+Notes on the responsive behaviour:
+
+- The admin icon nav drops its labels below 768px and scrolls horizontally
+  rather than widening the top bar. The brand wordmark hides too, leaving the
+  mark.
+- The calendar week is a 7-column grid on desktop and a day list below 960px,
+  so the week never has to be scrolled sideways.
+- Journal and Work editors stack their paired fields below 512px, and Work rows
+  move their controls under the item below 640px.
 
 ## Gmail and calendar integrations
 
