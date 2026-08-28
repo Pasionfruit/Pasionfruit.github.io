@@ -10,6 +10,9 @@ import {
 import type { ConnectionStatus } from './integrations/types'
 import { REPLY_TEMPLATES, fillTemplate, senderFirstName } from './mail/replyTemplates'
 
+/** Rows shown per page in the inbox list. */
+const PAGE_SIZE = 5
+
 function timeLabel(iso: string) {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) {
@@ -55,12 +58,13 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
   const [notice, setNotice] = useState('')
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   const [busyId, setBusyId] = useState('')
+  const [page, setPage] = useState(0)
   /** Thread the reply-template picker is open for. */
   const [composingId, setComposingId] = useState('')
 
   async function load() {
     try {
-      const rows = await getMail(idToken)
+      const rows = await getMail(idToken, PAGE_SIZE * 5)
       setMail(rows)
       setError('')
     } catch (caught) {
@@ -79,7 +83,7 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
 
     void (async () => {
       try {
-        const rows = await getMail(idToken)
+        const rows = await getMail(idToken, PAGE_SIZE * 5)
         if (!cancelled) {
           setMail(rows)
           setError('')
@@ -181,6 +185,9 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
   }
 
   const unreadCount = mail.filter((message) => message.unread).length
+  const pageCount = Math.max(1, Math.ceil(mail.length / PAGE_SIZE))
+  const safePage = Math.min(page, pageCount - 1)
+  const visibleMail = mail.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE)
 
   return (
     <article className="info-card admin-card">
@@ -217,7 +224,7 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
             <p className="sheets-meta">Inbox is empty.</p>
           ) : (
             <ul className="mail-list">
-              {mail.map((message) => (
+              {visibleMail.map((message) => (
                 <li key={message.id} className={`mail-row ${message.unread ? 'unread' : ''}`}>
                   <div className="mail-row-head">
                     <span className="mail-from">{senderFirstName(message.from)}</span>
@@ -282,6 +289,29 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
               ))}
             </ul>
           )}
+
+          {mail.length > PAGE_SIZE ? (
+            <div className="mail-pager">
+              <button
+                type="button"
+                onClick={() => setPage((value) => Math.max(0, value - 1))}
+                disabled={safePage === 0}
+              >
+                ‹ Newer
+              </button>
+              <span className="sheets-meta">
+                {safePage * PAGE_SIZE + 1}–{Math.min(mail.length, (safePage + 1) * PAGE_SIZE)} of{' '}
+                {mail.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))}
+                disabled={safePage >= pageCount - 1}
+              >
+                Older ›
+              </button>
+            </div>
+          ) : null}
 
           <a
             href="https://mail.google.com/mail/u/0/#inbox"

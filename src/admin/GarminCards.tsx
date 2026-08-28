@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { getGarminWellness } from '../data/sheets/repositories'
 import type { GarminWellnessRecord } from '../data/sheets/types'
 
@@ -197,17 +197,53 @@ function latestDateLabel(rows: GarminWellnessRecord[]) {
   })
 }
 
-export function GarminSleepCard({ title }: { title: string }) {
-  const { rows, isLoading, error } = useGarminWellness()
+/**
+ * Shared shell matching the collapse behaviour of the other Health cards
+ * (`.section-collapse-btn` with ▾/▸), so every section on the page folds away.
+ */
+function GarminCard({
+  title,
+  pill,
+  defaultCollapsed = false,
+  children,
+}: {
+  title: string
+  pill?: string
+  defaultCollapsed?: boolean
+  children: ReactNode
+}) {
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
 
   return (
     <article className="info-card admin-card">
       <div className="admin-card-head">
         <h3>{title}</h3>
-        {rows.length > 0 ? <span className="admin-pill">{latestDateLabel(rows)}</span> : null}
+        <div className="admin-card-actions">
+          {pill ? <span className="admin-pill">{pill}</span> : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? '▸' : '▾'}
+          </button>
+        </div>
       </div>
-      <MetricGrid rows={rows} metrics={SLEEP_METRICS} isLoading={isLoading} error={error} />
+
+      {isCollapsed ? null : children}
     </article>
+  )
+}
+
+export function GarminSleepCard({ title }: { title: string }) {
+  const { rows, isLoading, error } = useGarminWellness()
+
+  return (
+    <GarminCard title={title} pill={rows.length > 0 ? latestDateLabel(rows) : undefined}>
+      <MetricGrid rows={rows} metrics={SLEEP_METRICS} isLoading={isLoading} error={error} />
+    </GarminCard>
   )
 }
 
@@ -215,13 +251,9 @@ export function GarminWellnessCard({ title }: { title: string }) {
   const { rows, isLoading, error } = useGarminWellness()
 
   return (
-    <article className="info-card admin-card">
-      <div className="admin-card-head">
-        <h3>{title}</h3>
-        {rows.length > 0 ? <span className="admin-pill">{latestDateLabel(rows)}</span> : null}
-      </div>
+    <GarminCard title={title} pill={rows.length > 0 ? latestDateLabel(rows) : undefined}>
       <MetricGrid rows={rows} metrics={WELLNESS_METRICS} isLoading={isLoading} error={error} />
-    </article>
+    </GarminCard>
   )
 }
 
@@ -230,12 +262,8 @@ export function GarminPerformanceCard({ title }: { title: string }) {
   const status = rows.find((row) => row.training_status)?.training_status ?? ''
 
   return (
-    <article className="info-card admin-card">
-      <div className="admin-card-head">
-        <h3>{title}</h3>
-        {status ? <span className="admin-pill">{status}</span> : null}
-      </div>
+    <GarminCard title={title} pill={status || undefined}>
       <MetricGrid rows={rows} metrics={PERFORMANCE_METRICS} isLoading={isLoading} error={error} />
-    </article>
+    </GarminCard>
   )
 }

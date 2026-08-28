@@ -121,8 +121,20 @@ export function BreathingTimerCard({ title }: { title: string }) {
 
   const isInhale = phase.label === 'Inhale'
   const isExhale = phase.label === 'Exhale'
-  // The ring holds its size through a hold phase rather than snapping back.
-  const scale = isInhale ? 1 : isExhale ? 0.55 : phaseIndex === 1 ? 1 : 0.55
+  /*
+   * Rest small so the first inhale is visibly a growth, and hold the size
+   * through a hold phase rather than snapping back. `phaseIndex === 1` is the
+   * hold that follows the inhale, so it stays large.
+   */
+  const scale = !isRunning
+    ? 0.55
+    : isInhale
+      ? 1
+      : isExhale
+        ? 0.55
+        : phaseIndex === 1
+          ? 1
+          : 0.55
 
   return (
     <article className="info-card admin-card breathing-card">
@@ -144,7 +156,11 @@ export function BreathingTimerCard({ title }: { title: string }) {
         />
         <div className="breathing-readout">
           <p className="breathing-phase">{isDone ? 'Finished' : isRunning ? phase.label : 'Ready'}</p>
-          <p className="breathing-count">{isRunning ? phaseRemaining : pattern.label.split(' ')[0]}</p>
+          {isRunning ? (
+            <p className="breathing-count">{phaseRemaining}</p>
+          ) : (
+            <p className="breathing-idle">{isDone ? 'Well done' : `${minutes} min`}</p>
+          )}
         </div>
       </div>
 
@@ -154,17 +170,26 @@ export function BreathingTimerCard({ title }: { title: string }) {
       </p>
 
       <div className="breathing-controls">
-        <button
-          type="button"
-          className="primary-action"
-          onClick={() => (isDone ? reset() : setIsRunning((value) => !value))}
-        >
-          {isDone ? 'Restart' : isRunning ? 'Pause' : elapsed > 0 ? 'Resume' : 'Start'}
-        </button>
-        <button type="button" className="secondary-action" onClick={() => reset()} disabled={elapsed === 0}>
-          Reset
-        </button>
-        <span className="admin-pill">{cycles} cycles</span>
+        <div className="breathing-buttons">
+          <button
+            type="button"
+            className="breathing-btn breathing-btn-primary"
+            onClick={() => (isDone ? reset() : setIsRunning((value) => !value))}
+          >
+            {isDone ? 'Restart' : isRunning ? 'Pause' : elapsed > 0 ? 'Resume' : 'Start'}
+          </button>
+          <button
+            type="button"
+            className="breathing-btn"
+            onClick={() => reset()}
+            disabled={elapsed === 0}
+          >
+            Reset
+          </button>
+        </div>
+        <span className="admin-pill">
+          {cycles} cycle{cycles === 1 ? '' : 's'}
+        </span>
       </div>
 
       <div className="breathing-options">

@@ -2576,19 +2576,53 @@ function TrainingLogCard({
   const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   const monthGroups = useMemo(() => {
-    const grouped = new Map<number, TrainingRecord[]>()
+    const year = Number(yearFilter)
+    const byDate = new Map<string, TrainingRecord>()
+
     for (const row of filteredRows) {
-      const parsedDate = parseTrainingDate(row.date)
-      if (!parsedDate) continue
-      const m = parsedDate.getMonth()
-      const curr = grouped.get(m) ?? []
-      curr.push(row)
-      grouped.set(m, curr)
+      const key = toDateOnlyKey(row.date)
+      if (key) {
+        byDate.set(key, row)
+      }
     }
+
+    const now = new Date()
+    const isCurrentYear = year === now.getFullYear()
+
     return MONTH_LABELS.map((label, monthIndex) => {
       // How many empty Mon-anchored cells precede day 1 (Mon=0 … Sun=6)
-      const firstDayOffset = (new Date(Number(yearFilter), monthIndex, 1).getDay() + 6) % 7
-      return { monthIndex, label, rows: grouped.get(monthIndex) ?? [], firstDayOffset }
+      const firstDayOffset = (new Date(year, monthIndex, 1).getDay() + 6) % 7
+      const daysInMonth = new Date(year, monthIndex + 1, 0).getDate()
+
+      // Days beyond today have not happened yet, so they get no tile at all.
+      const lastDay =
+        isCurrentYear && monthIndex > now.getMonth()
+          ? 0
+          : isCurrentYear && monthIndex === now.getMonth()
+            ? now.getDate()
+            : daysInMonth
+
+      /*
+       * One tile per day, whether or not anything was recorded. Garmin only
+       * returns rows for days with an activity, so without this padding the
+       * grid renders as scattered dots instead of a contribution calendar.
+       */
+      const rows: TrainingRecord[] = []
+      for (let day = 1; day <= lastDay; day += 1) {
+        const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        rows.push(
+          byDate.get(key) ?? {
+            training_id: key,
+            date: key,
+            morning_workout: '',
+            evening_workout: '',
+            completed_morning: false,
+            completed_evening: false,
+          },
+        )
+      }
+
+      return { monthIndex, label, rows, firstDayOffset }
     })
   }, [filteredRows, yearFilter])
 
@@ -2706,7 +2740,10 @@ function TrainingLogCard({
                         >
                           {group.rows.map((row) => {
                             const tileLevel = getTrainingTileLevel(row)
-                            const label = `${formatSheetDate(row.date)} activity level ${tileLevel}`
+                            const activities = [row.morning_workout, row.evening_workout].filter(Boolean)
+                            const label = activities.length
+                              ? `${formatSheetDate(row.date)} — ${activities.join(', ')}`
+                              : `${formatSheetDate(row.date)} — no activity`
                             const parsedDate = parseTrainingDate(row.date)
                             const gridColumn = parsedDate ? (parsedDate.getDay() + 6) % 7 + 1 : undefined
                             const gridRow = parsedDate
@@ -3909,6 +3946,7 @@ const CHART_CFG: Record<HealthSource, { label: string; color: string; unit: stri
 }
 
 function HealthDataCard({ title }: { title: string }) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const [source,     setSource]     = useState<HealthSource>('garmin')
   const [page,       setPage]       = useState(0)
   const [chartScale, setChartScale] = useState<ChartScale>('1M')
@@ -4046,7 +4084,21 @@ function HealthDataCard({ title }: { title: string }) {
 
   return (
     <article className="info-card section-page-card health-data-card">
-      <h3>{title}</h3>
+      <div className="section-card-header">
+        <h3>{title}</h3>
+        <button
+          type="button"
+          className="section-collapse-btn"
+          aria-expanded={!isCollapsed}
+          aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
+          onClick={() => setIsCollapsed((value) => !value)}
+        >
+          {isCollapsed ? '▸' : '▾'}
+        </button>
+      </div>
+
+      {isCollapsed ? null : (
+      <>
 
       {/* ── Well-being overview ── */}
       {!allLoading && anyData && (
@@ -4179,6 +4231,8 @@ function HealthDataCard({ title }: { title: string }) {
             <p className="health-desktop-note">More data analysis available on desktop.</p>
           )}
         </>
+      )}
+      </>
       )}
     </article>
   )

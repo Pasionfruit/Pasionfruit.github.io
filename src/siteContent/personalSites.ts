@@ -35,7 +35,7 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
     status: 'live',
   },
   {
-    name: 'TextHero',
+    name: 'Type to Beat',
     url: 'https://texthero.onrender.com/',
     tagline: 'Rythm game with keyboard inputs',
     description: 'A rythm game that uses a keyboard to play',

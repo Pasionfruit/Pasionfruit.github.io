@@ -13,8 +13,8 @@ export const gamingSectionPage: PageContent = {
   eyebrow: 'Game hub',
   title: 'Gaming',
   summary:
-    'The Minecraft server runs on Aternos, which means it shuts down when it is empty and has to be started before anyone can connect. Check the status below, start it from the control dashboard if it is offline, then join with the address in the connection guide.',
+    'Locally hosted Minecraft server, configured to shut down when it is empty for 5 minutes and has to be started before anyone can connect. Check the status below, start it from the control dashboard if it is offline, then join with the address in the connection guide.',
   accent: '#9333ea',
   cards: [],
-  callout: 'Startup usually takes a minute or two.',
+  callout: 'Startup usually takes a minute or two, Please read the connection guide before trying to connect.',
 }
