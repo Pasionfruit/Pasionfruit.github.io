@@ -10,15 +10,16 @@ export const experiencesNavSection: NavSection = {
   title: 'Experiences',
   path: '/#experiences',
   summary: 'Professional experiences, education, and the practical things I\'ve learned along the way',
-  accent: '#2563eb',
+  accent: '#1fcecb',
   children: [],
 }
 
 export const experiencesSectionPage: PageContent = {
   eyebrow: 'Work and study',
   title: 'Experiences',
-  summary: '• Florida || pasionabe@gmail.com\n• LinkedIn: abe-pasion\n• GitHub: Pasionfruit',
-  accent: '#2563eb',
+  summary:
+    'Six years across BI development, data analysis, and cybersecurity. Most of the work is the same shape: take messy operational data, make it trustworthy, and turn it into something a decision can rest on.',
+  accent: '#1fcecb',
   cards: [
     {
       title: 'Education',

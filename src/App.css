@@ -5893,3 +5893,217 @@ button svg,
   font-size: 0.82rem;
   line-height: 1.45;
 }
+
+/* ── Home palette ─────────────────────────────────────────────────────────
+   The base theme is already warm sand, so the guest page leans into it: robin
+   egg blue as the accent, seafoam and coral as secondaries. Scoped to
+   .home-page so the admin dashboards keep their own accents.
+
+   The blue is bright enough to fail contrast as text on cream, so it is used
+   for surfaces and borders only — `--beach-ink` is the readable partner for
+   anything that has to be legible. */
+.home-page {
+  --robin-egg: #1fcecb;
+  --beach-ink: #0a5c5b;
+  --seafoam: #2a9d8f;
+  --coral: #e76f51;
+  --sand: #e9c46a;
+  --accent: var(--robin-egg);
+}
+
+:root[data-theme='dark'] .home-page {
+  --beach-ink: #7fe3e1;
+}
+
+/* ── Home hero ────────────────────────────────────────────────────────────
+   The public front door: name, role, and contact above the fold. Replaces the
+   screen-reader-only h1 the page used to have, which meant a visitor could
+   land here and never see whose site it is. */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1.15rem;
+  margin-top: 1rem;
+  padding: 1.35rem 1.25rem 1.4rem;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--robin-egg);
+  border-radius: 0.9rem;
+  /* Sea-to-sand wash, kept faint so text contrast is unaffected. */
+  background:
+    radial-gradient(
+      120% 90% at 0% 0%,
+      color-mix(in srgb, var(--robin-egg) 16%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      90% 80% at 100% 100%,
+      color-mix(in srgb, var(--sand) 20%, transparent),
+      transparent 60%
+    ),
+    var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.home-hero-copy {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.home-hero-aside {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+
+.home-hero-portrait {
+  width: 8.25rem;
+  height: 8.25rem;
+  border-radius: 50%;
+  object-fit: cover;
+  /* The source is a 2:3 portrait with the face in the upper third, so a
+     centred square crop lands on the tie. 4% puts the face in the middle of
+     the circle with a little headroom — compared against 0/4/8/14%. */
+  object-position: 50% 4%;
+  /* The headshot sits on black, so the ring reads as a horizon line. */
+  border: 3px solid color-mix(in srgb, var(--robin-egg) 55%, var(--surface));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sand) 35%, transparent);
+}
+
+/* Portrait moves above the copy once the two no longer fit side by side. */
+@media (max-width: 34rem) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 0.9rem;
+  }
+
+  /* Stacked, the photo and its links belong above the name. */
+  .home-hero-aside {
+    order: -1;
+    justify-items: start;
+  }
+
+  .home-hero-portrait {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+}
+
+.home-hero-eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.home-hero-name {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: clamp(1.9rem, 6vw, 2.9rem);
+  font-weight: 650;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.home-hero-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.1rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.home-hero-tagline {
+  margin: 0.5rem 0 0;
+  max-width: 60ch;
+  color: var(--text-strong);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.home-hero-currently {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0.55rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.home-hero-currently-label {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--seafoam) 40%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--seafoam) 14%, var(--surface));
+  color: var(--beach-ink);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.95rem;
+}
+
+/* Keeps the résumé buttons aligned with the bottom of the portrait column
+   rather than floating mid-card on a tall viewport. */
+.home-hero-copy {
+  align-content: center;
+}
+
+.home-hero-resume {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--robin-egg) 55%, var(--border-strong));
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--robin-egg) 22%, var(--surface));
+  color: var(--text-strong);
+  font-size: 0.88rem;
+  font-weight: 550;
+  text-decoration: none;
+}
+
+.home-hero-resume.secondary {
+  background: var(--surface);
+  font-weight: 500;
+}
+
+.home-hero-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.home-hero-links a {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  color: var(--text-muted);
+}
+
+@media (hover: hover) {
+  .home-hero-links a:hover {
+    background: color-mix(in srgb, var(--robin-egg) 18%, var(--surface));
+    color: var(--beach-ink);
+  }
+}
+
+/* On a phone the icon row wraps under the buttons rather than being pushed
+   to a far edge that no longer exists. */
+

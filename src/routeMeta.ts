@@ -23,7 +23,7 @@ const ROUTE_META: Record<string, RouteMeta> = {
   '/': {
     title: `${SITE_NAME} — experience, side projects, and gaming`,
     description:
-      'Abe Pasion: BI developer and data analyst in Florida. Professional background and education, deployed side projects worth trying, and the Minecraft server I run for friends.',
+      'Abe Pasion — BI developer and data analyst in Florida. Professional background, education, and technical skills, plus deployed side projects you can try and the game server I run for friends.',
     ads: true,
     index: true,
   },

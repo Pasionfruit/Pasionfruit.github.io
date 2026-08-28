@@ -43,6 +43,7 @@ import './App.css'
 import './admin/admin.css'
 import { sounds } from './sounds'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
+import { HomeHero } from './components/HomeHero'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
@@ -714,8 +715,11 @@ const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming']
 /** The public home page: three collapsible sections. Admins get AdminHomePage. */
 function HomePage() {
   const location = useLocation()
-  // Sections start collapsed; the page opens as a short index.
-  const [openSections, setOpenSections] = useState<SectionId[]>([])
+  /*
+   * Experiences opens by default — it is the resume, and the reason most
+   * visitors are here. The other two stay collapsed so the page stays scannable.
+   */
+  const [openSections, setOpenSections] = useState<SectionId[]>(['experiences'])
 
   const requestedSection = ALL_SECTION_IDS.find(
     (id) => id === location.hash.replace('#', ''),
@@ -748,15 +752,13 @@ function HomePage() {
 
   return (
     <div className="page home-page">
-      {/* The sections carry the page; the h1 is for assistive tech and SEO. */}
-      <h1 className="sr-only">mrpasionfruit</h1>
+      <HomeHero />
 
+      {/* Résumé downloads live in the hero now, not on the section header. */}
       <HomeSection
         id="experiences"
         isOpen={openSections.includes('experiences')}
         onToggle={() => toggleSection('experiences')}
-        downloadPdfHref="/files/abe-pasion-resume.pdf"
-        downloadWordHref="/files/abe-pasion-resume.docx"
       >
         {sectionPages.experiences.cards.map((card) => {
           if (card.title === 'Education') {

@@ -64,6 +64,7 @@ vi.mock('@react-oauth/google', () => ({
 }))
 
 import App from './App'
+import { personalSiteEntries } from './siteContent'
 
 const ADMIN_EMAIL = 'pasionabe@gmail.com'
 const GUEST_EMAIL = 'someoneelse@gmail.com'
@@ -95,8 +96,8 @@ function renderAt(path: string, email?: string) {
   )
 }
 
-/** The home page's h1 is visually hidden — the tiles carry the page. */
-const HOME_TITLE = 'mrpasionfruit'
+/** The home page's h1 is the hero name. */
+const HOME_TITLE = 'Abe Pasion'
 
 /** The page heading rendered by PageFrame, or the home page's own h1. */
 function pageTitle() {
@@ -130,15 +131,26 @@ afterEach(() => {
 })
 
 describe('guest home page', () => {
-  it('starts every section collapsed', () => {
+  it('leads with the hero so the page names its owner above the fold', () => {
     renderAt('/')
 
-    for (const id of ['experiences', 'personal-sites', 'gaming']) {
-      const section = document.getElementById(id)
-      expect(section).not.toBeNull()
-      expect(section?.querySelector('.home-section-toggle')?.getAttribute('aria-expanded')).toBe('false')
-      expect(document.getElementById(`${id}-panel`)?.hasAttribute('hidden')).toBe(true)
-    }
+    expect(screen.getByRole('heading', { level: 1, name: 'Abe Pasion' })).toBeTruthy()
+    expect(screen.getByText('BI Developer & Data Analyst')).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Résumé (PDF)' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'LinkedIn' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'GitHub' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Email' })).toBeTruthy()
+  })
+
+  it('opens Experiences by default and leaves the others collapsed', () => {
+    renderAt('/')
+
+    const expanded = (id: string) =>
+      document.querySelector(`#${id} .home-section-toggle`)?.getAttribute('aria-expanded')
+
+    expect(expanded('experiences')).toBe('true')
+    expect(expanded('personal-sites')).toBe('false')
+    expect(expanded('gaming')).toBe('false')
   })
 
   it('expands and re-collapses a section', async () => {
@@ -169,12 +181,13 @@ describe('guest home page', () => {
     expect(screen.getByRole('heading', { name: 'Server Status', hidden: true })).toBeTruthy()
   })
 
-  it('shows the resume downloads in the section header, outside the panel', () => {
+  it('puts the resume downloads in the hero, not behind a section', () => {
     renderAt('/')
 
-    const download = screen.getByRole('link', { name: 'Download PDF' })
-    expect(download.closest('.home-section-panel')).toBeNull()
-    expect(download.closest('#experiences')).not.toBeNull()
+    const pdf = screen.getByRole('link', { name: 'Résumé (PDF)' })
+    expect(pdf.getAttribute('href')).toBe('/files/abe-pasion-resume.pdf')
+    expect(pdf.closest('.home-section-panel')).toBeNull()
+    expect(pdf.closest('.home-hero')).not.toBeNull()
   })
 
   it('lists the deployed side projects with outbound links', async () => {
@@ -187,9 +200,10 @@ describe('guest home page', () => {
       .getAllByRole('link', { name: 'Try it' })
       .map((link) => link.getAttribute('href'))
 
-    expect(hrefs).toContain('https://pov-cooking.vercel.app/')
-    expect(hrefs).toContain('https://texthero.onrender.com/')
-    expect(hrefs).toContain('https://mahjong-xmhv.onrender.com/')
+    // Derived from the content, so editing the project list cannot make this
+    // assert a URL that no longer exists.
+    expect(hrefs).toEqual(personalSiteEntries.map((entry) => entry.url))
+    expect(hrefs.length).toBeGreaterThan(0)
   })
 
   it('puts the section note above the cards', () => {
@@ -227,9 +241,11 @@ describe('guest home page', () => {
   it('opens the section a /#anchor link points at', () => {
     renderAt('/#gaming')
 
-    const toggle = document.querySelector('#gaming .home-section-toggle')
-    expect(toggle?.getAttribute('aria-expanded')).toBe('true')
-    expect(document.querySelector('#experiences .home-section-toggle')?.getAttribute('aria-expanded')).toBe('false')
+    expect(document.querySelector('#gaming .home-section-toggle')?.getAttribute('aria-expanded')).toBe('true')
+    // personal-sites is the one section not opened by default or by the anchor
+    expect(
+      document.querySelector('#personal-sites .home-section-toggle')?.getAttribute('aria-expanded'),
+    ).toBe('false')
   })
 
   it('no longer offers a Studying page', () => {

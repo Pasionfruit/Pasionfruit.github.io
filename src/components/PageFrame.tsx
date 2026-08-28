@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
-function LinkedInIcon() {
+export function LinkedInIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="social-icon">
       <path
@@ -12,7 +12,7 @@ function LinkedInIcon() {
   )
 }
 
-function GitHubIcon() {
+export function GitHubIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="social-icon">
       <path

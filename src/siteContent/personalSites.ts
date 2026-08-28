@@ -5,7 +5,7 @@ export const personalSitesNavSection: NavSection = {
   title: 'Personal Sites',
   path: '/#personal-sites',
   summary: 'Side projects that are deployed and open to try',
-  accent: '#0ea5e9',
+  accent: '#2a9d8f',
   children: [],
 }
 
@@ -14,7 +14,7 @@ export const personalSitesSectionPage: PageContent = {
   title: 'Personal Sites',
   summary:
     'Projects I built outside of work that are deployed somewhere public. Each one is linked below — they are open to try, no sign-in required.',
-  accent: '#0ea5e9',
+  accent: '#2a9d8f',
   cards: [],
   callout:
     'Most of these run on free hosting tiers, so the first request after a quiet period can take a few seconds while the instance wakes up.',
@@ -43,7 +43,7 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
   },
   {
     name: 'LocalRot',
-    url: 'https://mahjong.onrender.com/',
+    url: 'https://mahjong-xmhv.onrender.com/',
     tagline: 'Browser game night — party, solo, and daily puzzles',
     description: 'A game-night arcade in the browser with three wings: room-based real-time multiplayer (Mahjong, Bomberman, Tetris, Quoridor and more) behind a 4-letter room code, a solo offline-capable arcade with global leaderboards, and one shared daily puzzle per game per UTC day with streak tracking. All multiplayer rule legality is computed server-side over Socket.IO; solo games run client-authoritative on deterministic seeds and sync through an IndexedDB outbox.',
     stack: ['TypeScript', 'React', 'Vite', 'zustand', 'Canvas', 'SVG', 'Node.js', 'Express', 'Socket.IO', 'Supabase', 'Postgres', 'IndexedDB', 'PWA', 'Render'],
