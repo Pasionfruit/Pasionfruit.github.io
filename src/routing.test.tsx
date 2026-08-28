@@ -327,7 +327,7 @@ describe('admin routing', () => {
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
       link.textContent?.trim(),
     )
-    expect(labels).toEqual(['Home', 'Journal', 'Finance', 'Training', 'Work'])
+    expect(labels).toEqual(['Home', 'Personal', 'Finance', 'Health', 'Work'])
   })
 
   it('points each nav item at its dashboard', () => {
@@ -336,15 +336,23 @@ describe('admin routing', () => {
     const hrefs = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
       link.getAttribute('href'),
     )
-    expect(hrefs).toEqual(['/', '/admin/journal', '/admin/finance', '/admin/training', '/admin/work'])
+    expect(hrefs).toEqual(['/', '/admin/personal', '/admin/finance', '/admin/health', '/admin/work'])
   })
 
   it.each([
-    ['/admin/journal', 'Journal'],
+    ['/admin/personal', 'Personal'],
     ['/admin/finance', 'Finance'],
-    ['/admin/training', 'Training'],
+    ['/admin/health', 'Health'],
     ['/admin/work', 'Work'],
   ])('renders %s for the admin account', (path, title) => {
+    renderAt(path, ADMIN_EMAIL)
+    expect(pageTitle()).toBe(title)
+  })
+
+  it.each([
+    ['/admin/journal', 'Personal'],
+    ['/admin/training', 'Health'],
+  ])('redirects the renamed route %s to %s', (path, title) => {
     renderAt(path, ADMIN_EMAIL)
     expect(pageTitle()).toBe(title)
   })
@@ -359,7 +367,7 @@ describe('admin routing', () => {
 
   it('sends the retired /training and /finances routes to their dashboards', () => {
     renderAt('/training', ADMIN_EMAIL)
-    expect(pageTitle()).toBe('Training')
+    expect(pageTitle()).toBe('Health')
 
     cleanup()
 

@@ -11,7 +11,6 @@ export function AdminPage({ meta, children }: { meta: AdminDashboardMeta; childr
       <header className="admin-page-head">
         <p className="eyebrow">{meta.eyebrow}</p>
         <h1>{meta.title}</h1>
-        {meta.intro ? <p className="admin-page-intro">{meta.intro}</p> : null}
       </header>
 
       <div className="page-grid">{children}</div>

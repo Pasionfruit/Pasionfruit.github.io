@@ -118,7 +118,7 @@ function renderAdminPage(path: string, email = 'pasionabe@gmail.com') {
 }
 
 function renderTrainingPage(email = 'pasionabe@gmail.com') {
-  return renderAdminPage('/admin/training', email)
+  return renderAdminPage('/admin/health', email)
 }
 
 function renderAdminTasksPage(email = 'pasionabe@gmail.com') {

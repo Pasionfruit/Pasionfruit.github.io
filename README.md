@@ -30,20 +30,27 @@ dashboard.
 
 | Nav item | Route | Contents |
 | --- | --- | --- |
-| Home | `/` | Tasks of the day, yesterday's recap, inbox, and the week's calendar |
-| Journal | `/admin/journal` | Daily entries with mood and tags |
+| Home | `/` | The month's calendar, today's tasks, yesterday's recap, and the inbox |
+| Personal | `/admin/personal` | Journal entries, mood tracker, gratitude prompts, breathing timer |
 | Finance | `/admin/finance` | Budget, spending by category, money calendar |
-| Training | `/admin/training` | Garmin, RingConn, and Apple Health plus the session log |
+| Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log, milestones |
 | Work | `/admin/work` | Projects, deadlines, morning links |
+
+`/admin/journal` and `/admin/training` redirect to their renamed routes.
 
 The Calendar dashboard was merged into Home rather than getting its own tab, so
 `/admin`, `/admin/tasks`, and `/admin/calendar` all redirect to `/`. The full
 Todoist manager (`/tasks`) and `/weekly-reset` are linked from the bottom of the
 Home dashboard.
 
-Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card and
-no back link, since the icon bar is always on screen. Below ~640px the nav labels
-drop and the icons carry it.
+Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card, no
+back link, and no intro paragraph, since the icon bar is always on screen. Below
+~768px the nav labels drop and the icons carry it.
+
+The Home calendar reuses the Finance calendar's month grid (compact day cells,
+dots for events, tap for a dialog listing the day) so it fits a phone without
+horizontal scrolling. Today is highlighted blue there rather than Finance's
+green.
 
 Access is gated by `AdminGate` in [src/App.tsx](src/App.tsx); guests are
 redirected to `/`. The dashboards are `noindex` and never load ads.

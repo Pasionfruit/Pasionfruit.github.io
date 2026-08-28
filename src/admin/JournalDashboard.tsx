@@ -88,7 +88,7 @@ function parseTags(value: string) {
 }
 
 export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idToken: string }) {
-  const meta = adminDashboardsById.journal
+  const meta = adminDashboardsById.personal
   const [entries, setEntries] = useState<JournalEntryRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState('')

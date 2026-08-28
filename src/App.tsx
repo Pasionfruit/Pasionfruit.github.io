@@ -281,9 +281,10 @@ function App() {
             <Route path="tasks" element={<Navigate replace to="/" />} />
             <Route path="calendar" element={<Navigate replace to="/" />} />
             <Route
-              path="journal"
+              path="personal"
               element={<JournalDashboard canWrite={isAdmin} idToken={googleIdToken} />}
             />
+            <Route path="journal" element={<Navigate replace to="/admin/personal" />} />
             <Route
               path="finance"
               element={
@@ -295,9 +296,10 @@ function App() {
               }
             />
             <Route
-              path="training"
-              element={<AdminTrainingPage profile={profile} googleIdToken={googleIdToken} />}
+              path="health"
+              element={<AdminHealthPage profile={profile} googleIdToken={googleIdToken} />}
             />
+            <Route path="training" element={<Navigate replace to="/admin/health" />} />
             <Route path="work" element={<WorkDashboard canWrite={isAdmin} idToken={googleIdToken} />} />
           </Route>
 
@@ -328,8 +330,8 @@ function App() {
           {/* Sections that moved or were retired. */}
           <Route path="finances" element={<Navigate replace to="/admin/finance" />} />
           <Route path="mrpasionfruit/finances" element={<Navigate replace to="/admin/finance" />} />
-          <Route path="training" element={<Navigate replace to="/admin/training" />} />
-          <Route path="training/*" element={<Navigate replace to="/admin/training" />} />
+          <Route path="training" element={<Navigate replace to="/admin/health" />} />
+          <Route path="training/*" element={<Navigate replace to="/admin/health" />} />
           <Route path="mrpasionfruit" element={<Navigate replace to="/" />} />
           <Route path="mrpasionfruit/*" element={<Navigate replace to="/" />} />
           <Route path="cooking" element={<Navigate replace to="/#personal-sites" />} />
@@ -402,16 +404,15 @@ function AdminFinancePage({ googleIdToken }: { googleIdToken: string }) {
  * /training/records, and /training/data — the wearable data is the point, so
  * it leads.
  */
-function AdminTrainingPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   const canWrite = profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL
 
   return (
-    <AdminPage meta={adminDashboardsById.training}>
-      <HealthDataCard title="Health Data" />
+    <AdminPage meta={adminDashboardsById.health}>
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
+      <HealthDataCard title="Health Data" />
       <TrainingLogCard title="Training Log" canWrite={canWrite} idToken={googleIdToken} />
       <MilestonesCard title="Milestones" />
-      <EquipmentCard title="Equipment" />
     </AdminPage>
   )
 }
@@ -419,9 +420,9 @@ function AdminTrainingPage({ profile, googleIdToken }: { profile: UserProfile; g
 /** Minimal line icons for the admin top bar, keyed off AdminDashboardMeta.icon. */
 const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   home: House,
-  journal: NotebookPen,
+  personal: NotebookPen,
   finance: Wallet,
-  training: Activity,
+  health: Activity,
   work: Briefcase,
 }
 
@@ -3653,104 +3654,6 @@ function MilestonesCard({ title }: { title: string }) {
                     <div className="milestone-content">
                       <p className="milestone-name">{entry.name}</p>
                       <p className="milestone-value">{entry.value || '—'}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        )
-      )}
-    </article>
-  )
-}
-
-function EquipmentCard({ title }: { title: string }) {
-  const [records, setRecords] = useState<PersonalTrainingRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [category, setCategory] = useState<string>('all')
-  const [isCollapsed, setIsCollapsed] = useState(false)
-
-  useEffect(() => {
-    let isMounted = true
-    getPersonalTraining()
-      .then((data) => {
-        if (isMounted) setRecords(data.filter((r) => r.type === 'equipment'))
-      })
-      .catch(() => {
-        if (isMounted) setRecords([])
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false)
-      })
-    return () => { isMounted = false }
-  }, [])
-
-  const categories = useMemo(() => {
-    const seen = new Set<string>()
-    for (const r of records) {
-      if (r.category) seen.add(r.category)
-    }
-    return Array.from(seen).sort()
-  }, [records])
-
-  const visible = useMemo(
-    () => (category === 'all' ? records : records.filter((r) => r.category === category)),
-    [records, category],
-  )
-
-  return (
-    <article className="info-card section-page-card milestones-card">
-      <div className="section-card-header">
-        <h3>{title}</h3>
-        <button
-          type="button"
-          className="section-collapse-btn"
-          aria-expanded={!isCollapsed}
-          onClick={() => setIsCollapsed((c) => !c)}
-        >
-          {isCollapsed ? '▸' : '▾'}
-        </button>
-      </div>
-
-      {!isCollapsed && (
-        isLoading ? (
-          <p className="sheets-meta">Loading equipment...</p>
-        ) : records.length === 0 ? (
-          <p className="sheets-meta">No equipment data found.</p>
-        ) : (
-          <>
-            <div className="milestones-toggle" role="tablist" aria-label="Equipment category filter">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={category === 'all'}
-                className={`milestones-toggle-btn ${category === 'all' ? 'active' : ''}`}
-                onClick={() => setCategory('all')}
-              >
-                All
-              </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  role="tab"
-                  aria-selected={category === cat}
-                  className={`milestones-toggle-btn ${category === cat ? 'active' : ''}`}
-                  onClick={() => setCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="milestones-list-scroll">
-              <ul className="milestones-list">
-                {visible.map((item) => (
-                  <li key={`${item.category}-${item.name}`} className="milestone-item">
-                    <div className="milestone-content">
-                      <p className="milestone-name">{item.name}</p>
-                      <p className="milestone-value">{item.value || '—'}</p>
                     </div>
                   </li>
                 ))}
