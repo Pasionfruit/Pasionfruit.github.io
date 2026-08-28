@@ -78,28 +78,6 @@ vi.mock('./data/todoist/repositories', () => todoistMocks)
 vi.mock('@react-oauth/google', () => ({
   GoogleLogin: () => <button type="button">Google Login</button>,
 }))
-vi.mock('topojson-client', () => ({
-  feature: vi.fn(() => ({
-    features: [
-      {
-        id: '1',
-        properties: { name: 'Japan' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[0, 0], [0, 10], [10, 10], [10, 0], [0, 0]]],
-        },
-      },
-      {
-        id: '2',
-        properties: { name: 'New Zealand' },
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[20, 0], [20, 10], [30, 10], [30, 0], [20, 0]]],
-        },
-      },
-    ],
-  })),
-}))
 
 import App from './App'
 
@@ -133,6 +111,15 @@ function renderFinancesPageWithEmail(email: string, path = '/admin/finance') {
       <App />
     </MemoryRouter>,
   )
+}
+
+/**
+ * A date key in the month the finance calendar opens on. Pinned literals here
+ * made the calendar test pass only during that one calendar month.
+ */
+function dayOfCurrentMonth(day: number) {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
 function makeFakeGoogleIdToken(email: string) {
@@ -367,7 +354,7 @@ beforeEach(() => {
   repoMocks.setBucketCompleted.mockResolvedValue(undefined)
   repoMocks.getAbeTransactions.mockResolvedValue([
     {
-      date: '2026-06-01',
+      date: dayOfCurrentMonth(1),
       description: 'Abe groceries',
       amount: 120,
       category: 'Grocery',
@@ -376,7 +363,7 @@ beforeEach(() => {
   ])
   repoMocks.getCiaraTransactions.mockResolvedValue([
     {
-      date: '2026-06-02',
+      date: dayOfCurrentMonth(2),
       description: 'Ciara coffee',
       amount: 8.75,
       category: 'Food',
@@ -457,9 +444,10 @@ describe('site sections and dashboards', () => {
   it('shows the private Finances page only for approved Google accounts', async () => {
     renderFinancesPageWithEmail('pixielee1000@gmail.com')
 
-    expect(await screen.findByRole('tab', { name: 'Dashboard view' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Calendar view' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Purchases tab' })).toBeTruthy()
+    expect(await screen.findByRole('tab', { name: 'Dashboard' })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'Calendar' })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'Purchases' })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'Trips' })).toBeTruthy()
   })
 
   it('filters dashboard transactions by Abe, Ciara, and Both (default Both)', async () => {
@@ -489,7 +477,7 @@ describe('site sections and dashboards', () => {
     const user = userEvent.setup()
     renderFinancesPageWithEmail('pixielee1000@gmail.com')
 
-    await user.click(screen.getByRole('tab', { name: 'Calendar view' }))
+    await user.click(await screen.findByRole('tab', { name: 'Calendar' }))
 
     const dayWithTransactions = (await screen.findAllByRole('button', {
       name: /has 1 transaction/i,
@@ -528,8 +516,18 @@ describe('site sections and dashboards', () => {
   it('blocks Todoist editing for non-authorized account', async () => {
     renderAdminTasksPage('pixielee1000@gmail.com')
 
-    expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
-    expect(screen.queryByText('Edit access restricted to admin.')).toBeNull()
+    /*
+     * The admin shell is gated on the stored profile, so a non-editor account
+     * still reaches the dashboard — it is the write path that is closed. The
+     * card renders, and says so in place of the editing controls.
+     */
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Tasks of the Day card not found')
+    }
+
+    expect(within(card).getByText('Edit access restricted to admin.')).toBeTruthy()
   })
 
   it('shows missing token guidance when Todoist env token is not set', async () => {
@@ -575,6 +573,9 @@ describe('site sections and dashboards', () => {
     if (!card) {
       throw new Error('Tasks of the Day card not found')
     }
+
+    // Todoist is the default view; training sits behind its own tab.
+    await user.click(within(card).getByRole('tab', { name: 'Training' }))
 
     const markButtons = await within(card).findAllByRole('button', { name: 'Mark Complete' })
     await user.click(markButtons[0])
@@ -648,125 +649,143 @@ describe('site sections and dashboards', () => {
     ).toBeTruthy()
   })
 
+  /*
+   * The log is a contribution calendar built from Garmin *activities*, one tile
+   * per day of the selected year whether or not anything was recorded. A day's
+   * tile id is its date key, and its level is how many activities it holds.
+   *
+   * Fixtures sit in past years so they are never in the future — the grid stops
+   * at today, so a current-year date would only exist for part of the year.
+   */
+  const LAST_YEAR = new Date().getFullYear() - 1
+  const TWO_YEARS_AGO = LAST_YEAR - 1
+  const TWO_ACTIVITY_DAY = `${LAST_YEAR}-01-15`
+  const ONE_ACTIVITY_DAY = `${LAST_YEAR}-03-03`
+  const EARLIER_YEAR_DAY = `${TWO_YEARS_AGO}-11-10`
+
+  function seedGarminActivities() {
+    const activity = (date: string, title: string) => ({
+      date,
+      activity_type: 'running',
+      title,
+      distance_mi: '3.1',
+      duration_min: '30',
+      avg_hr: '145',
+      max_hr: '170',
+      calories: '300',
+      tss: '40',
+    })
+
+    repoMocks.getGarminHealth.mockResolvedValue([
+      activity(TWO_ACTIVITY_DAY, 'Morning Run'),
+      activity(TWO_ACTIVITY_DAY, 'Evening Shakeout'),
+      activity(ONE_ACTIVITY_DAY, 'Tempo Run'),
+      activity(EARLIER_YEAR_DAY, 'Long Run'),
+    ])
+  }
+
+  function findTrainingLogCard() {
+    const heading = screen.getByRole('heading', { name: 'Training Log' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Training Log card not found')
+    }
+    return card as HTMLElement
+  }
+
+  function tile(card: HTMLElement, dateKey: string) {
+    return card.querySelector(`[data-training-id="${dateKey}"]`) as HTMLElement | null
+  }
+
+  async function openTrainingLogAtYear(year: number) {
+    const user = userEvent.setup()
+    seedGarminActivities()
+    renderTrainingPage()
+
+    await screen.findByRole('heading', { name: 'Training Log' })
+    const card = findTrainingLogCard()
+    await waitFor(() => expect(repoMocks.getGarminHealth).toHaveBeenCalled())
+
+    const yearPicker = within(card).getByRole('listbox', { name: 'Select year' })
+    await user.click(await within(yearPicker).findByRole('option', { name: String(year) }))
+
+    return { card, user }
+  }
+
   it('renders Training Log card and loads records on training page', async () => {
-    const user = userEvent.setup()
+    seedGarminActivities()
     renderTrainingPage()
 
-    const heading = await screen.findByRole('heading', { name: 'Training Log' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Training Log card not found')
-    }
+    await screen.findByRole('heading', { name: 'Training Log' })
+    const card = findTrainingLogCard()
 
-    await user.click(within(card).getByRole('button', { name: '▾' }))
-    await user.click(within(card).getByRole('button', { name: '▸' }))
+    await waitFor(() => expect(repoMocks.getGarminHealth).toHaveBeenCalled())
 
-    const seasonSelect = within(card).getAllByRole('combobox')[0]
-    await user.selectOptions(seasonSelect, 'all')
+    // Opens on the current year even when every activity is older.
+    const yearPicker = within(card).getByRole('listbox', { name: 'Select year' })
+    const selected = within(yearPicker).getAllByRole('option', { selected: true })
+    expect(selected).toHaveLength(1)
+    expect(selected[0].textContent).toBe(String(new Date().getFullYear()))
 
-    const tiles = within(card).getAllByRole('listitem')
-
-    expect(tiles.length).toBe(2)
-    expect(repoMocks.getTrainingRecords).toHaveBeenCalled()
-
-    const yearSelect = within(card).getAllByRole('combobox')[1] as HTMLSelectElement
-    expect(yearSelect.value).toBe('2026')
+    // The years that do have activity are offered alongside it.
+    await waitFor(() =>
+      expect(within(yearPicker).getByRole('option', { name: String(LAST_YEAR) })).toBeTruthy(),
+    )
   })
 
-  it('filters Training Log by season and year together', async () => {
-    const user = userEvent.setup()
-    renderTrainingPage()
+  it('filters Training Log tiles by the selected year', async () => {
+    const { card, user } = await openTrainingLogAtYear(LAST_YEAR)
 
-    const heading = await screen.findByRole('heading', { name: 'Training Log' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Training Log card not found')
-    }
+    await waitFor(() => expect(tile(card, TWO_ACTIVITY_DAY)).toBeTruthy())
+    expect(tile(card, ONE_ACTIVITY_DAY)).toBeTruthy()
+    // A day from another year is not in this year's grid.
+    expect(tile(card, EARLIER_YEAR_DAY)).toBeNull()
 
-    const comboboxes = within(card).getAllByRole('combobox')
-    const seasonSelect = comboboxes[0]
-    const yearSelect = comboboxes[1]
+    const yearPicker = within(card).getByRole('listbox', { name: 'Select year' })
+    await user.click(within(yearPicker).getByRole('option', { name: String(TWO_YEARS_AGO) }))
 
-    await user.selectOptions(seasonSelect, 'Q1')
-    await user.selectOptions(yearSelect, '2026')
-
-    const filteredTiles = within(card).getAllByRole('listitem')
-    expect(filteredTiles.length).toBe(1)
-
-    const onlyTile = filteredTiles[0] as HTMLElement
-    expect(onlyTile.dataset.trainingId).toBe('training-1')
-    expect(onlyTile.dataset.level).toBe('1')
+    await waitFor(() => expect(tile(card, EARLIER_YEAR_DAY)).toBeTruthy())
+    await waitFor(() => expect(tile(card, TWO_ACTIVITY_DAY)).toBeNull(), { timeout: 2000 })
+    expect(tile(card, ONE_ACTIVITY_DAY)).toBeNull()
   })
 
-  it('uses light tile for rest day and dark tile for both workouts completed', async () => {
-    const user = userEvent.setup()
-    renderTrainingPage()
+  it('uses light tile for one activity and dark tile for two in a day', async () => {
+    const { card } = await openTrainingLogAtYear(LAST_YEAR)
 
-    const heading = await screen.findByRole('heading', { name: 'Training Log' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Training Log card not found')
-    }
-
-    const seasonSelect = within(card).getAllByRole('combobox')[0]
-    const yearSelect = within(card).getAllByRole('combobox')[1]
-
-    await user.selectOptions(seasonSelect, 'all')
-
-    await user.selectOptions(yearSelect, '2026')
-    const darkTile = card.querySelector('[data-training-id="training-2"]') as HTMLElement | null
-
-    if (!darkTile) {
-      throw new Error('Dark completion tile not found')
-    }
-
-    expect(darkTile.dataset.trainingId).toBe('training-2')
-    expect(darkTile.dataset.level).toBe('2')
-
-    await user.selectOptions(yearSelect, '2025')
-    const restDayTile = card.querySelector('[data-training-id="training-3"]') as HTMLElement | null
-
-    if (!restDayTile) {
-      throw new Error('Rest-day tile not found')
-    }
-
-    expect(restDayTile.dataset.trainingId).toBe('training-3')
-    expect(restDayTile.dataset.level).toBe('1')
+    // Two activities in a day reads as the darkest level.
+    await waitFor(() => expect(tile(card, TWO_ACTIVITY_DAY)?.dataset.level).toBe('2'))
+    // One activity is the lighter level.
+    expect(tile(card, ONE_ACTIVITY_DAY)?.dataset.level).toBe('1')
+    // A day with nothing recorded still gets a tile, at the empty level.
+    expect(tile(card, `${LAST_YEAR}-03-04`)?.dataset.level).toBe('0')
   })
 
   it('does not allow selecting all years', async () => {
+    seedGarminActivities()
     renderTrainingPage()
 
-    const heading = await screen.findByRole('heading', { name: 'Training Log' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Training Log card not found')
+    await screen.findByRole('heading', { name: 'Training Log' })
+    const card = findTrainingLogCard()
+
+    const yearPicker = within(card).getByRole('listbox', { name: 'Select year' })
+    expect(within(yearPicker).queryByRole('option', { name: /all years/i })).toBeNull()
+    for (const option of within(yearPicker).getAllByRole('option')) {
+      expect(option.textContent).toMatch(/^\d{4}$/)
     }
-
-    const yearSelect = within(card).getAllByRole('combobox')[1]
-
-    expect(within(yearSelect).queryByRole('option', { name: 'All years' })).toBeNull()
   })
 
   it('renders chronological tiles left-to-right by month row', async () => {
-    const user = userEvent.setup()
-    renderTrainingPage()
+    const { card } = await openTrainingLogAtYear(LAST_YEAR)
 
-    const heading = await screen.findByRole('heading', { name: 'Training Log' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Training Log card not found')
-    }
+    await waitFor(() => expect(tile(card, TWO_ACTIVITY_DAY)).toBeTruthy())
 
-    const seasonSelect = within(card).getAllByRole('combobox')[0]
-    await user.selectOptions(seasonSelect, 'all')
+    // January's day has to precede March's in document order, and each day
+    // must appear exactly once.
+    const ids = Array.from(card.querySelectorAll('.training-log-tile'))
+      .map((el) => (el as HTMLElement).dataset.trainingId)
+      .filter((id): id is string => id === TWO_ACTIVITY_DAY || id === ONE_ACTIVITY_DAY)
 
-    await waitFor(() => {
-      const tileElements = Array.from(card.querySelectorAll('.training-log-tile')) as HTMLElement[]
-      expect(tileElements.length).toBe(2)
-      expect(tileElements[0].dataset.trainingId).toBe('training-1')
-      expect(tileElements[1].dataset.trainingId).toBe('training-2')
-    })
+    expect(ids).toEqual([TWO_ACTIVITY_DAY, ONE_ACTIVITY_DAY])
   })
 
   it('shows countdown edit fields only after pressing pencil in admin view', async () => {

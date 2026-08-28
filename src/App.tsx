@@ -2406,8 +2406,10 @@ function formatSheetDate(value?: string) {
     return 'Pending'
   }
 
-  const parsedDate = new Date(value)
-  if (Number.isNaN(parsedDate.getTime())) {
+  // Date-only strings have to be read in local time, or every one displays a
+  // day early west of UTC.
+  const parsedDate = parseTrainingDate(value)
+  if (!parsedDate) {
     return value
   }
 
@@ -2753,7 +2755,13 @@ function TrainingLogCard({
                     const desktopPg = Math.floor(group.monthIndex / 6)
                     return (
                       <div
-                        key={group.monthIndex}
+                        /*
+                         * Keyed by year as well as month so switching years
+                         * remounts the column. Keyed by month alone, React
+                         * reconciled the new year's days against the old ones
+                         * and left the previous year's activity tiles behind.
+                         */
+                        key={`${yearFilter}-${group.monthIndex}`}
                         className={[
                           'training-log-month-col',
                           mobilePg !== mobilePage ? 'training-log-month-col--hidden' : '',
@@ -2766,7 +2774,7 @@ function TrainingLogCard({
                           role="list"
                           aria-label={`${group.label} training activity`}
                         >
-                          {group.rows.map((row) => {
+                          {group.rows.map((row, dayIndex) => {
                             const tileLevel = getTrainingTileLevel(row)
                             const activities = [row.morning_workout, row.evening_workout].filter(Boolean)
                             const label = activities.length
@@ -2780,7 +2788,15 @@ function TrainingLogCard({
 
                             return (
                               <div
-                                key={row.training_id}
+                                /*
+                                 * Keyed by day slot, not by record id. The list
+                                 * is one fixed slot per day of the month, and a
+                                 * day's row swaps between a padded placeholder
+                                 * and a real record — keying on the id made
+                                 * React treat that as two different children
+                                 * and leave both tiles in the grid.
+                                 */
+                                key={dayIndex}
                                 role="listitem"
                                 className={`training-log-tile level-${tileLevel}`}
                                 style={{ gridColumn, gridRow }}
@@ -3772,8 +3788,14 @@ function toDateOnlyKey(value?: string) {
     return ''
   }
 
-  const parsed = new Date(value)
-  if (Number.isNaN(parsed.getTime())) {
+  /*
+   * Must parse the same way the grid does. `new Date('2026-08-02')` is UTC
+   * midnight, which in a negative-offset zone is the previous day locally — so
+   * a record keyed here landed one slot earlier than the tile that rendered it,
+   * leaving the real day padded and the record duplicated a day early.
+   */
+  const parsed = parseTrainingDate(value)
+  if (!parsed) {
     return ''
   }
 
