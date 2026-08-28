@@ -6,7 +6,7 @@ import {
   experiencesSectionPage,
   professionalExperienceEntries,
 } from './siteContent/experiences'
-import { homeHighlights, homeIntro, navSections } from './siteContent/home'
+import { navSections } from './siteContent/home'
 import { personalSiteEntries, personalSitesSectionPage } from './siteContent/personalSites'
 import { adminDashboards, adminDashboardsById, adminHomeContent } from './siteContent/admin'
 import type { PageContent, SectionId, SubpageContent } from './siteContent/shared'
@@ -31,8 +31,6 @@ export {
   adminDashboardsById,
   adminHomeContent,
   educationEntries,
-  homeHighlights,
-  homeIntro,
   navSections,
   personalSiteEntries,
   professionalExperienceEntries,

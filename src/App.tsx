@@ -52,8 +52,6 @@ import {
   adminDashboardsById,
   detailPages,
   educationEntries,
-  homeHighlights,
-  homeIntro,
   navSections,
   personalSiteEntries,
   professionalExperienceEntries,
@@ -734,12 +732,8 @@ function HomePage({ isAdmin }: { isAdmin: boolean }) {
         </div>
       ) : null}
 
-      <section className="home-intro">
-        <h1>{homeIntro.title}</h1>
-        {homeIntro.paragraphs.map((paragraph) => (
-          <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-        ))}
-      </section>
+      {/* The page leads with the section tiles; the h1 is for assistive tech and SEO. */}
+      <h1 className="sr-only">mrpasionfruit</h1>
 
       <section id="sections" className="section-block">
         <div className="section-grid">
@@ -754,18 +748,6 @@ function HomePage({ isAdmin }: { isAdmin: boolean }) {
               <span className="tile-summary">{section.summary}</span>
               <span className="tile-open" aria-hidden="true">→</span>
             </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-highlights">
-        <h2>What you&apos;ll find here</h2>
-        <div className="home-highlight-grid">
-          {homeHighlights.map((highlight) => (
-            <article key={highlight.title} className="info-card">
-              <h3>{highlight.title}</h3>
-              <p>{highlight.body}</p>
-            </article>
           ))}
         </div>
       </section>

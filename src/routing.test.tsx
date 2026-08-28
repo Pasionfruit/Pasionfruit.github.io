@@ -95,6 +95,9 @@ function renderAt(path: string, email?: string) {
   )
 }
 
+/** The home page's h1 is visually hidden — the tiles carry the page. */
+const HOME_TITLE = 'mrpasionfruit'
+
 /** The page heading rendered by PageFrame, or the home page's own h1. */
 function pageTitle() {
   return screen.getAllByRole('heading', { level: 1 })[0]?.textContent ?? ''
@@ -138,7 +141,7 @@ describe('guest routing', () => {
 
   it.each(['/experiences', '/personal-sites', '/gaming'])('renders the public section %s', (path) => {
     renderAt(path)
-    expect(pageTitle()).not.toBe('Living with Passion')
+    expect(pageTitle()).not.toBe(HOME_TITLE)
   })
 
   it('lists the deployed side projects with outbound links', () => {
@@ -157,7 +160,7 @@ describe('guest routing', () => {
     'redirects a signed-out visitor away from %s',
     (path) => {
       renderAt(path)
-      expect(pageTitle()).toBe('Living with Passion')
+      expect(pageTitle()).toBe(HOME_TITLE)
     },
   )
 
@@ -165,7 +168,7 @@ describe('guest routing', () => {
     'redirects a signed-in non-admin away from %s',
     (path) => {
       renderAt(path, GUEST_EMAIL)
-      expect(pageTitle()).toBe('Living with Passion')
+      expect(pageTitle()).toBe(HOME_TITLE)
     },
   )
 
@@ -186,7 +189,7 @@ describe('guest routing', () => {
     'sends a guest home from the retired route %s',
     (path) => {
       renderAt(path)
-      expect(pageTitle()).toBe('Living with Passion')
+      expect(pageTitle()).toBe(HOME_TITLE)
     },
   )
 })
