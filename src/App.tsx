@@ -699,13 +699,11 @@ function HomeSection({
         ) : null}
       </div>
 
-      {isOpen ? (
-        <div id={`${id}-panel`} className="home-section-panel">
-          <SummaryText summary={section.summary} />
-          <div className="page-grid">{children}</div>
-          {section.callout ? <p className="page-note">{section.callout}</p> : null}
-        </div>
-      ) : null}
+      <div id={`${id}-panel`} className="home-section-panel" hidden={!isOpen}>
+        <SummaryText summary={section.summary} />
+        {section.callout ? <p className="page-note">{section.callout}</p> : null}
+        <div className="page-grid">{children}</div>
+      </div>
     </section>
   )
 }
@@ -714,8 +712,8 @@ const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming']
 
 function HomePage({ isAdmin }: { isAdmin: boolean }) {
   const location = useLocation()
-  // Sections start open so the page reads as one document rather than an index.
-  const [openSections, setOpenSections] = useState<SectionId[]>(ALL_SECTION_IDS)
+  // Sections start collapsed; the page opens as a short index.
+  const [openSections, setOpenSections] = useState<SectionId[]>([])
 
   const requestedSection = ALL_SECTION_IDS.find(
     (id) => id === location.hash.replace('#', ''),

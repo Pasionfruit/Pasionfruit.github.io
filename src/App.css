@@ -5813,6 +5813,11 @@ button svg,
   padding: 0 1rem 1rem;
 }
 
+/* Collapsed panels stay in the DOM so their content is still crawlable. */
+.home-section-panel[hidden] {
+  display: none;
+}
+
 .home-section-panel .page-summary {
   margin-top: 0;
 }

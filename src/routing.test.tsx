@@ -130,17 +130,18 @@ afterEach(() => {
 })
 
 describe('guest home page', () => {
-  it('renders all three sections as collapsible blocks', () => {
+  it('starts every section collapsed', () => {
     renderAt('/')
 
     for (const id of ['experiences', 'personal-sites', 'gaming']) {
       const section = document.getElementById(id)
       expect(section).not.toBeNull()
-      expect(section?.querySelector('.home-section-toggle')?.getAttribute('aria-expanded')).toBe('true')
+      expect(section?.querySelector('.home-section-toggle')?.getAttribute('aria-expanded')).toBe('false')
+      expect(document.getElementById(`${id}-panel`)?.hasAttribute('hidden')).toBe(true)
     }
   })
 
-  it('collapses and re-expands a section', async () => {
+  it('expands and re-collapses a section', async () => {
     const user = userEvent.setup()
     renderAt('/')
 
@@ -149,28 +150,38 @@ describe('guest home page', () => {
       throw new Error('Gaming section toggle not found')
     }
 
-    expect(document.getElementById('gaming-panel')).not.toBeNull()
+    await user.click(toggle)
+    expect(toggle.getAttribute('aria-expanded')).toBe('true')
+    expect(document.getElementById('gaming-panel')?.hasAttribute('hidden')).toBe(false)
 
     await user.click(toggle)
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
-    expect(document.getElementById('gaming-panel')).toBeNull()
-
-    await user.click(toggle)
-    expect(toggle.getAttribute('aria-expanded')).toBe('true')
-    expect(document.getElementById('gaming-panel')).not.toBeNull()
+    expect(document.getElementById('gaming-panel')?.hasAttribute('hidden')).toBe(true)
   })
 
-  it('shows the experience cards and resume downloads', () => {
+  it('keeps collapsed content in the DOM so it stays crawlable', () => {
     renderAt('/')
 
-    expect(screen.getByRole('heading', { name: 'Education' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Technical Skills' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Professional Experience' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Download PDF' })).toBeTruthy()
+    // Present in the markup but hidden from the a11y tree, hence `hidden: true`.
+    // This is the only indexed page on the site, so the content has to ship.
+    expect(screen.getByRole('heading', { name: 'Professional Experience', hidden: true })).toBeTruthy()
+    expect(screen.getAllByRole('link', { name: 'Try it', hidden: true }).length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { name: 'Server Status', hidden: true })).toBeTruthy()
   })
 
-  it('lists the deployed side projects with outbound links', () => {
+  it('shows the resume downloads in the section header, outside the panel', () => {
     renderAt('/')
+
+    const download = screen.getByRole('link', { name: 'Download PDF' })
+    expect(download.closest('.home-section-panel')).toBeNull()
+    expect(download.closest('#experiences')).not.toBeNull()
+  })
+
+  it('lists the deployed side projects with outbound links', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+
+    await user.click(document.querySelector<HTMLButtonElement>('#personal-sites .home-section-toggle')!)
 
     const hrefs = screen
       .getAllByRole('link', { name: 'Try it' })
@@ -181,25 +192,53 @@ describe('guest home page', () => {
     expect(hrefs).toContain('https://mahjong-xmhv.onrender.com/')
   })
 
-  it('shows only the server cards under Gaming', () => {
+  it('puts the section note above the cards', () => {
     renderAt('/')
+
+    const panel = document.getElementById('personal-sites-panel')
+    const note = panel?.querySelector('.page-note')
+    const grid = panel?.querySelector('.page-grid')
+
+    if (!note || !grid) {
+      throw new Error('Personal Sites note or card grid not found')
+    }
+
+    expect(note.textContent).toContain('free hosting tiers')
+    expect(note.compareDocumentPosition(grid) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('shows only the server cards under Gaming', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+
+    await user.click(document.querySelector<HTMLButtonElement>('#gaming .home-section-toggle')!)
 
     expect(screen.getByRole('heading', { name: 'Server Status' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'How to Connect' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Open Control Dashboard' })).toBeTruthy()
 
-    // Removed with the games lists and the player-stats sync.
-    expect(screen.queryByRole('heading', { name: 'Player Insights' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Games I Like to Play' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Personally Developed Games' })).toBeNull()
+    // `hidden: true` so these assert real removal rather than just a collapsed panel.
+    expect(screen.queryByRole('heading', { name: 'Player Insights', hidden: true })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Games I Like to Play', hidden: true })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Personally Developed Games', hidden: true })).toBeNull()
+    expect(screen.queryByText(/Aternos is busy/)).toBeNull()
+  })
+
+  it('opens the section a /#anchor link points at', () => {
+    renderAt('/#gaming')
+
+    const toggle = document.querySelector('#gaming .home-section-toggle')
+    expect(toggle?.getAttribute('aria-expanded')).toBe('true')
+    expect(document.querySelector('#experiences .home-section-toggle')?.getAttribute('aria-expanded')).toBe('false')
   })
 
   it('no longer offers a Studying page', () => {
     renderAt('/')
 
-    expect(screen.queryByRole('heading', { name: 'Studying' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Actuary Exams' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Pomodoro Timer' })).toBeNull()
+    // `hidden: true` — otherwise a collapsed panel would satisfy these trivially.
+    expect(screen.queryByRole('heading', { name: 'Studying', hidden: true })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Actuary Exams', hidden: true })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Pomodoro Timer', hidden: true })).toBeNull()
   })
 
   it('links each section from the menu as an in-page anchor', () => {

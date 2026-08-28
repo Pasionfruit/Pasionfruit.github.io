@@ -16,6 +16,5 @@ export const gamingSectionPage: PageContent = {
     'The Minecraft server runs on Aternos, which means it shuts down when it is empty and has to be started before anyone can connect. Check the status below, start it from the control dashboard if it is offline, then join with the address in the connection guide.',
   accent: '#9333ea',
   cards: [],
-  callout:
-    'Startup usually takes a minute or two. If the status stays stuck on queued, Aternos is busy and it is worth trying again shortly.',
+  callout: 'Startup usually takes a minute or two.',
 }

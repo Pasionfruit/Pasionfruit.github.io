@@ -17,8 +17,10 @@ are no separate section routes any more.
 | Personal Sites | `/#personal-sites` | Deployed side projects, linked out for anyone to try |
 | Gaming | `/#gaming` | Minecraft connection guide and live server status with a link to the control dashboard |
 
-Sections start expanded. The side menu links to each anchor, which expands the
-target section and scrolls to it.
+Sections start collapsed. The side menu links to each anchor, which expands the
+target section and scrolls to it. Collapsed panels keep their content in the DOM
+(hidden via the `hidden` attribute) rather than unmounting it, so `/` still ships
+the full page to crawlers — it is the only indexed URL on the site.
 
 ### Private (`/admin`, admin Google account only)
 

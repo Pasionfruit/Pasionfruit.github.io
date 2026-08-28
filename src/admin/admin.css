@@ -588,7 +588,8 @@
 /* ── Personal sites (public) ───────────────────────────────────────────── */
 
 .project-card {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.45rem;
 }
 
@@ -620,8 +621,10 @@
   font-size: 0.7rem;
 }
 
+/* Pinned to the bottom-right corner of the card. */
 .project-visit {
-  justify-self: start;
+  align-self: flex-end;
+  margin-top: auto;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
