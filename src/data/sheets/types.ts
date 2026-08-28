@@ -228,3 +228,37 @@ export type WorkItemRecord = {
   notes?: string
   link?: string
 }
+
+/**
+ * One row per day of Garmin wellness data — the metrics the watch records
+ * passively, as opposed to `GarminHealthRecord` which is one row per activity.
+ *
+ * Every field is a string because the Sheets API returns formatted values and
+ * any of them can be blank on a day the watch was not worn.
+ */
+export type GarminWellnessRecord = {
+  date: string
+  // Sleep & recovery
+  sleep_score: string
+  sleep_duration_h: string
+  deep_sleep_h: string
+  rem_sleep_h: string
+  light_sleep_h: string
+  awake_h: string
+  resting_hr: string
+  hrv: string
+  body_battery_high: string
+  body_battery_low: string
+  // Daily wellness
+  stress_avg: string
+  spo2_avg: string
+  respiration_avg: string
+  steps: string
+  intensity_minutes: string
+  calories: string
+  // Training & performance
+  vo2_max: string
+  training_readiness: string
+  training_status: string
+  endurance_score: string
+}

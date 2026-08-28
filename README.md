@@ -47,10 +47,45 @@ Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card, 
 back link, and no intro paragraph, since the icon bar is always on screen. Below
 ~768px the nav labels drop and the icons carry it.
 
-The Home calendar reuses the Finance calendar's month grid (compact day cells,
-dots for events, tap for a dialog listing the day) so it fits a phone without
-horizontal scrolling. Today is highlighted blue there rather than Finance's
-green.
+The Home "Month View" reuses the Finance calendar's month grid (compact day
+cells, dots for events, tap for a dialog listing the day) so it fits a phone
+without horizontal scrolling. Today is highlighted in the same `#00cccc` accent
+as the Tasks of the Day tab selector, rather than Finance's green.
+
+### Garmin wellness
+
+`ingest_garmin.py` writes one row per *activity* to `garmin_health`.
+[ingest_garmin_wellness.py](scripts/health-ingestion/ingest_garmin_wellness.py)
+writes one row per *day* to `garmin_wellness` — the passive metrics the watch
+records: sleep stages and score, HRV, resting HR, body battery, stress, SpO2,
+respiration, steps, intensity minutes, VO2 max, training readiness, training
+status, endurance score.
+
+Create the sheet with this header row first:
+
+```
+date  sleep_score  sleep_duration_h  deep_sleep_h  rem_sleep_h  light_sleep_h
+awake_h  resting_hr  hrv  body_battery_high  body_battery_low  stress_avg
+spo2_avg  respiration_avg  steps  intensity_minutes  calories  vo2_max
+training_readiness  training_status  endurance_score
+```
+
+Then:
+
+```bash
+cd scripts/health-ingestion
+python ingest_garmin_wellness.py --days 7 --dry-run   # confirm it works
+python ingest_garmin_wellness.py --days 30            # backfill
+```
+
+It makes several API calls per day of history and Garmin rate-limits hard, so it
+sleeps a second between days and defaults to a 7-day window. Any metric your
+watch does not record degrades to a blank cell rather than failing the day.
+
+The data surfaces as **Sleep & recovery** on Personal and **Daily wellness** plus
+**Training & performance** on Health. The Training Log contribution grid is also
+derived from Garmin now — a day counts because an activity was recorded, so it is
+read-only rather than something you tick off.
 
 Access is gated by `AdminGate` in [src/App.tsx](src/App.tsx); guests are
 redirected to `/`. The dashboards are `noindex` and never load ads.

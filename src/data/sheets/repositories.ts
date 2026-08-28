@@ -9,6 +9,7 @@ import type {
   EventRecord,
   FinanceTransactionRecord,
   GarminHealthRecord,
+  GarminWellnessRecord,
   GroceryListRecord,
   JournalEntryRecord,
   MealPlanRecord,
@@ -177,6 +178,39 @@ export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
       tss:           String(row.tss ?? '').trim(),
     }))
     .filter((row) => row.date)
+}
+
+export async function getGarminWellness(): Promise<GarminWellnessRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('garmin_wellness')
+
+  const text = (value: unknown) => String(value ?? '').trim()
+
+  return rows
+    .map((row) => ({
+      date:               text(row.date).slice(0, 10),
+      sleep_score:        text(row.sleep_score),
+      sleep_duration_h:   text(row.sleep_duration_h),
+      deep_sleep_h:       text(row.deep_sleep_h),
+      rem_sleep_h:        text(row.rem_sleep_h),
+      light_sleep_h:      text(row.light_sleep_h),
+      awake_h:            text(row.awake_h),
+      resting_hr:         text(row.resting_hr),
+      hrv:                text(row.hrv),
+      body_battery_high:  text(row.body_battery_high),
+      body_battery_low:   text(row.body_battery_low),
+      stress_avg:         text(row.stress_avg),
+      spo2_avg:           text(row.spo2_avg),
+      respiration_avg:    text(row.respiration_avg),
+      steps:              text(row.steps),
+      intensity_minutes:  text(row.intensity_minutes),
+      calories:           text(row.calories),
+      vo2_max:            text(row.vo2_max),
+      training_readiness: text(row.training_readiness),
+      training_status:    text(row.training_status),
+      endurance_score:    text(row.endurance_score),
+    }))
+    .filter((row) => row.date)
+    .sort((a, b) => b.date.localeCompare(a.date))
 }
 
 export async function getRingconnHealth(): Promise<RingconnHealthRecord[]> {

@@ -14,8 +14,6 @@ export function AdminPage({ meta, children }: { meta: AdminDashboardMeta; childr
       </header>
 
       <div className="page-grid">{children}</div>
-
-      {meta.note ? <p className="admin-page-note">{meta.note}</p> : null}
     </div>
   )
 }

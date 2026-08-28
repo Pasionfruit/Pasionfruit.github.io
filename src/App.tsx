@@ -48,6 +48,7 @@ import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
+import { GarminPerformanceCard, GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
@@ -363,7 +364,7 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   return (
     <div className="admin-page admin-home">
-      <CalendarWeekCard title="This week" idToken={googleIdToken} />
+      <CalendarWeekCard title="Month View" idToken={googleIdToken} />
 
       {/* Reuses the public home-top-row layout: equal columns and a fixed height
           on desktop, so switching tabs inside the tasks card cannot resize the row. */}
@@ -411,8 +412,10 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
     <AdminPage meta={adminDashboardsById.health}>
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
       <HealthDataCard title="Health Data" />
-      <TrainingLogCard title="Training Log" canWrite={canWrite} idToken={googleIdToken} />
+      <TrainingLogCard title="Training Log" canWrite={false} idToken={googleIdToken} />
       <MilestonesCard title="Milestones" />
+      <GarminWellnessCard title="Daily wellness" />
+      <GarminPerformanceCard title="Training & performance" />
     </AdminPage>
   )
 }
@@ -2428,6 +2431,39 @@ function isRestDayWorkout(value?: string) {
   return value.trim().toLowerCase() === 'rest day'
 }
 
+/**
+ * Collapse Garmin activity rows into one record per day so the contribution
+ * grid can render them unchanged.
+ *
+ * Garmin is the source of truth now — a day counts because an activity was
+ * actually recorded, not because a box was ticked. The completed flags are
+ * therefore derived, and the card is rendered read-only.
+ */
+function garminToTrainingRows(rows: GarminHealthRecord[]): TrainingRecord[] {
+  const byDay = new Map<string, GarminHealthRecord[]>()
+
+  for (const row of rows) {
+    const key = String(row.date ?? '').slice(0, 10)
+    if (!key) continue
+    byDay.set(key, [...(byDay.get(key) ?? []), row])
+  }
+
+  const describe = (row: GarminHealthRecord) => {
+    const name = (row.title || row.activity_type || 'Activity').trim()
+    const minutes = Number(row.duration_min)
+    return Number.isFinite(minutes) && minutes > 0 ? `${name} · ${Math.round(minutes)} min` : name
+  }
+
+  return [...byDay.entries()].map(([date, dayRows]) => ({
+    training_id: date,
+    date,
+    morning_workout: dayRows[0] ? describe(dayRows[0]) : '',
+    evening_workout: dayRows[1] ? describe(dayRows[1]) : '',
+    completed_morning: dayRows.length >= 1,
+    completed_evening: dayRows.length >= 2,
+  }))
+}
+
 function getTrainingTileLevel(row: TrainingRecord) {
   const completedCount = Number(row.completed_morning) + Number(row.completed_evening)
   const isRestDay = isRestDayWorkout(row.morning_workout) || isRestDayWorkout(row.evening_workout)
@@ -2468,9 +2504,9 @@ function TrainingLogCard({
 
     async function loadTrainingLog() {
       try {
-        const data = await getTrainingRecords()
+        const data = await getGarminHealth()
         if (isMounted) {
-          setRows(data)
+          setRows(garminToTrainingRows(data))
         }
       } catch {
         if (isMounted) {
@@ -3572,7 +3608,7 @@ function MilestonesCard({ title }: { title: string }) {
   const [records, setRecords] = useState<PersonalTrainingRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [category, setCategory] = useState<string>('all')
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   useEffect(() => {
     let isMounted = true
@@ -3774,7 +3810,7 @@ function HealthLineChart({
           backgroundColor:      fillColor,
           borderWidth:          2,
           fill:                 true,
-          tension:              0.35,
+          tension:              0,
           pointRadius:          points.length > 60 ? 0 : 3,
           pointHoverRadius:     5,
           pointBackgroundColor: color,

@@ -12,6 +12,7 @@ import { BreathingTimerCard } from './BreathingTimerCard'
 import { MoodTrackerCard } from './MoodTrackerCard'
 import { MOOD_SCALE } from './journal/moods'
 import { VerseOfTheDayCard } from './VerseOfTheDayCard'
+import { GarminSleepCard } from './GarminCards'
 import { GRATITUDE_LINE_COUNT, getPromptOfTheDay } from './journal/prompts'
 
 /** Best first in the picker; MOOD_SCALE is ordered worst-first for scoring. */
@@ -232,8 +233,11 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
   return (
     <AdminPage meta={meta}>
+      {/* Verse spans the full width; sleep and the timer share the row below. */}
+      <VerseOfTheDayCard title="Verse of the day" />
+
       <div className="journal-top-row">
-        <VerseOfTheDayCard title="Verse of the day" />
+        <GarminSleepCard title="Sleep & recovery" />
         <BreathingTimerCard title="Breathe" />
       </div>
 

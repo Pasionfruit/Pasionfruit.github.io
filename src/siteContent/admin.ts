@@ -14,9 +14,8 @@ export const adminDashboards: AdminDashboardMeta[] = [
     path: '/',
     icon: 'home',
     summary: "The week ahead, today's tasks, yesterday's recap, and the inbox",
-    accent: '#2563eb',
+    accent: '#00cccc',
     eyebrow: 'Daily driver',
-    note: '',
   },
   {
     id: 'personal',
@@ -26,7 +25,6 @@ export const adminDashboards: AdminDashboardMeta[] = [
     summary: 'Journal entries, mood, gratitude, and a breathing timer',
     accent: '#a855f7',
     eyebrow: 'Writing',
-    note: 'Entries are stored in the private journal sheet and are never rendered for signed-out visitors.',
   },
   {
     id: 'finance',
@@ -36,7 +34,6 @@ export const adminDashboards: AdminDashboardMeta[] = [
     summary: 'Budget targets, spending by category, and the money calendar',
     accent: '#16a34a',
     eyebrow: 'Money',
-    note: 'Visible only to approved Google accounts.',
   },
   {
     id: 'health',
@@ -46,7 +43,6 @@ export const adminDashboards: AdminDashboardMeta[] = [
     summary: 'Garmin, Apple Health, and RingConn data plus the session log',
     accent: '#14b8a6',
     eyebrow: 'Body',
-    note: 'Single days are noise. Read anything here as a multi-week trend.',
   },
   {
     id: 'work',
@@ -56,7 +52,6 @@ export const adminDashboards: AdminDashboardMeta[] = [
     summary: 'Active projects, deadlines, and the links I open every morning',
     accent: '#f97316',
     eyebrow: 'Day job',
-    note: 'Deliberately light on detail — nothing client-identifying belongs in a browser tab.',
   },
 ]
 

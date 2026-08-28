@@ -35,3 +35,6 @@ credentials*.json
 service-account*.json
 scripts/gaming/mc_server.env
 scripts/health-ingestion/config.env
+# Python
+__pycache__/
+*.pyc

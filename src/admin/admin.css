@@ -98,12 +98,6 @@
   line-height: 1.55;
 }
 
-.admin-page-note {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
 /* ── Admin home ───────────────────────────────────────────────────────────
    Tasks lead, yesterday and inbox sit side by side, the week runs full width. */
 .admin-home-split {
@@ -351,20 +345,27 @@
   margin-top: 0.8rem;
 }
 
-/* Today is blue here rather than Finance's green, matching the Home accent. */
+/* Today uses the same accent as the Tasks of the Day tab selector, rather than
+   Finance's green — see .experience-toggle-btn.active in App.css. */
 .admin-calendar-day.is-today {
-  background: color-mix(in srgb, #2563eb 14%, var(--surface));
-  border-color: #2563eb;
+  background: color-mix(in srgb, #00cccc 20%, var(--surface));
+  border-color: #00cccc;
+  color: #007f7f;
   font-weight: 700;
+}
+
+:root[data-theme='dark'] .admin-calendar-day.is-today {
+  background: color-mix(in srgb, #00cccc 26%, var(--surface));
+  color: #6ee7e7;
 }
 
 .admin-calendar-day.has-events {
   cursor: pointer;
-  border-color: color-mix(in srgb, #2563eb 40%, var(--border));
+  border-color: color-mix(in srgb, #00cccc 45%, var(--border));
 }
 
 .admin-calendar-day.is-today.has-events {
-  border-color: #2563eb;
+  border-color: #00cccc;
 }
 
 .calendar-event-dots {
@@ -1130,4 +1131,60 @@
   color: var(--text-muted);
   font-size: 0.8rem;
   text-decoration: none;
+}
+
+/* ── Garmin metric cards ──────────────────────────────────────────────────
+   Sleep & recovery, daily wellness, and training & performance all render the
+   same compact metric grid. */
+.garmin-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.garmin-metric {
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.55rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.garmin-metric-label {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.garmin-metric-value {
+  color: var(--text-strong);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.garmin-metric-value small {
+  margin-left: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.garmin-metric-trend {
+  min-height: 1rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.garmin-metric-trend.good {
+  color: #16a34a;
+}
+
+.garmin-metric-trend.bad {
+  color: #d1451b;
 }

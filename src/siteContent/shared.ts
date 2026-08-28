@@ -44,7 +44,6 @@ export type AdminDashboardMeta = {
   summary: string
   accent: string
   eyebrow: string
-  note: string
 }
 
 /** A deployed side project linked from the public Personal sites section. */

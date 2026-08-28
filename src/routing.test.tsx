@@ -303,7 +303,7 @@ describe('admin routing', () => {
     expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Yesterday' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Inbox' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'This week' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Month View' })).toBeTruthy()
   })
 
   it('hides the public sections from the admin home page', () => {
