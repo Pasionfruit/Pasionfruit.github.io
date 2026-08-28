@@ -18,9 +18,9 @@ type RouteMeta = {
 
 const ROUTE_META: Record<string, RouteMeta> = {
   '/': {
-    title: `${SITE_NAME} — training, cooking, and engineering notes`,
+    title: `${SITE_NAME} — experience, side projects, and gaming`,
     description:
-      'A personal site where Abe Pasion writes up endurance training, recipes and grocery cost research, actuarial study notes, and the software projects behind it all.',
+      'A personal site where Abe Pasion writes up his BI and data analysis background, the side projects he has deployed, and the game servers he runs.',
     ads: false,
     index: true,
   },
@@ -29,57 +29,6 @@ const ROUTE_META: Record<string, RouteMeta> = {
     description: 'Sign in to access private sections of the site.',
     ads: false,
     index: false,
-  },
-
-  '/mrpasionfruit': {
-    title: `About Abe Pasion — ${SITE_NAME}`,
-    description:
-      'Who I am, how I spend my time, the cats I live with, and the running bucket list of things I still want to build, visit, and learn.',
-    ads: true,
-    index: true,
-  },
-  '/mrpasionfruit/oreo-gang': {
-    title: `Oreo Gang — ${SITE_NAME}`,
-    description:
-      'The cats I live with, how they ended up here, and what daily life with them actually looks like.',
-    ads: true,
-    index: true,
-  },
-  '/mrpasionfruit/interests': {
-    title: `Interests — ${SITE_NAME}`,
-    description:
-      'The books, projects, and creators I keep returning to, and what each of them changed about how I work.',
-    ads: true,
-    index: true,
-  },
-
-  '/training': {
-    title: `Training — ${SITE_NAME}`,
-    description:
-      'How I structure endurance and strength training around a full-time job: the weekly layout, the events I am pointing at, and what the log actually shows.',
-    ads: true,
-    index: true,
-  },
-  '/training/records': {
-    title: `Training records and personal bests — ${SITE_NAME}`,
-    description:
-      'Personal bests, training consistency over time, race history, and the gear and nutrition I have settled on after testing.',
-    ads: true,
-    index: true,
-  },
-  '/training/data': {
-    title: `Training data analysis — ${SITE_NAME}`,
-    description:
-      'What I do with data from Garmin, RingConn, and Apple Health: which metrics are worth watching, what the common terms mean, and how to read the trends without over-fitting.',
-    ads: true,
-    index: true,
-  },
-  '/training/learn': {
-    title: `Training notes and lessons — ${SITE_NAME}`,
-    description:
-      'Technique cues, mistakes worth remembering, and small training experiments with their results.',
-    ads: true,
-    index: true,
   },
 
   '/experiences': {
@@ -97,39 +46,13 @@ const ROUTE_META: Record<string, RouteMeta> = {
     index: true,
   },
 
-  '/cooking': {
-    title: `Cooking — ${SITE_NAME}`,
+  // A directory of outbound project links rather than published writing, so it
+  // stays indexable but carries no ads.
+  '/personal-sites': {
+    title: `Personal sites and side projects — ${SITE_NAME}`,
     description:
-      'Recipes I actually repeat, a weekly meal plan that survives a work week, kitchen technique notes, and grocery price research across four stores.',
-    ads: true,
-    index: true,
-  },
-  '/cooking/recipes': {
-    title: `Recipes worth repeating — ${SITE_NAME}`,
-    description:
-      'A working collection of meals kept for being good, practical, or cheap, with cook times, tools, storage life, and notes from each attempt.',
-    ads: true,
-    index: true,
-  },
-  '/cooking/plan': {
-    title: `Weekly meal plan — ${SITE_NAME}`,
-    description:
-      'The weekly cooking map: what gets cooked which night, the grocery list it produces, and what the week costs.',
-    ads: true,
-    index: true,
-  },
-  '/cooking/learn': {
-    title: `Cooking techniques and lessons — ${SITE_NAME}`,
-    description:
-      'Technique notes, how individual ingredients change a dish, equipment that earned its place, and the trial and error behind both.',
-    ads: true,
-    index: true,
-  },
-  '/cooking/deals': {
-    title: `Grocery price tracking and deals — ${SITE_NAME}`,
-    description:
-      'Grocery prices compared across Walmart, Target, Publix, and Aldi, with current store deals and manufacturer coupons refreshed daily.',
-    ads: true,
+      'Side projects that are deployed and open to try: POV Cooking for recipes and grocery costs, TextHero, LocalRot, and this site.',
+    ads: false,
     index: true,
   },
 
@@ -148,14 +71,52 @@ const ROUTE_META: Record<string, RouteMeta> = {
     index: true,
   },
 
-  '/finances': {
-    title: `Finances — ${SITE_NAME}`,
+  // Private dashboards. Never indexed, never carry ads.
+  '/admin': {
+    title: `Dashboards — ${SITE_NAME}`,
+    description: 'Private dashboards for the admin account.',
+    ads: false,
+    index: false,
+  },
+  '/admin/tasks': {
+    title: `Tasks — ${SITE_NAME}`,
+    description: 'Private daily task dashboard.',
+    ads: false,
+    index: false,
+  },
+  '/admin/calendar': {
+    title: `Calendar — ${SITE_NAME}`,
+    description: 'Private merged calendar view.',
+    ads: false,
+    index: false,
+  },
+  '/admin/journal': {
+    title: `Journal — ${SITE_NAME}`,
+    description: 'Private journal.',
+    ads: false,
+    index: false,
+  },
+  '/admin/finance': {
+    title: `Finance — ${SITE_NAME}`,
     description: 'Private budget and spending dashboard for approved accounts.',
     ads: false,
     index: false,
   },
+  '/admin/training': {
+    title: `Training — ${SITE_NAME}`,
+    description: 'Private training and health data dashboard.',
+    ads: false,
+    index: false,
+  },
+  '/admin/work': {
+    title: `Work — ${SITE_NAME}`,
+    description: 'Private work project tracker.',
+    ads: false,
+    index: false,
+  },
+
   '/tasks': {
-    title: `Tasks — ${SITE_NAME}`,
+    title: `Task manager — ${SITE_NAME}`,
     description: 'Personal task list.',
     ads: false,
     index: false,

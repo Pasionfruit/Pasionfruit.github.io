@@ -18,7 +18,7 @@ describe('useRouteMeta', () => {
     document.head.innerHTML = ''
   })
 
-  it.each(['/', '/login', '/finances', '/tasks', '/weekly-reset', '/gaming/server', '/unknown-route'])(
+  it.each(['/', '/login', '/admin', '/admin/finance', '/tasks', '/weekly-reset', '/personal-sites', '/gaming/server', '/unknown-route'])(
     'does not load ads on non-content route %s',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -26,7 +26,7 @@ describe('useRouteMeta', () => {
     },
   )
 
-  it.each(['/cooking/recipes', '/training/records', '/experiences', '/mrpasionfruit'])(
+  it.each(['/experiences', '/experiences/studying', '/gaming'])(
     'loads ads on content route %s',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -36,7 +36,7 @@ describe('useRouteMeta', () => {
 
   it('removes the ad script when navigating from a content route to a utility route', () => {
     const { rerender } = renderHook(({ path }) => useRouteMeta(path), {
-      initialProps: { path: '/cooking/recipes' },
+      initialProps: { path: '/experiences' },
     })
     expect(hasAdScript()).toBe(true)
 
@@ -44,7 +44,7 @@ describe('useRouteMeta', () => {
     expect(hasAdScript()).toBe(false)
   })
 
-  it.each(['/login', '/finances', '/tasks', '/weekly-reset', '/unknown-route'])(
+  it.each(['/login', '/admin', '/admin/journal', '/admin/training', '/tasks', '/weekly-reset', '/unknown-route'])(
     'marks private route %s noindex',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -52,7 +52,7 @@ describe('useRouteMeta', () => {
     },
   )
 
-  it.each(['/', '/cooking', '/training/data', '/gaming/server'])(
+  it.each(['/', '/experiences', '/personal-sites', '/gaming/server'])(
     'marks public route %s indexable',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -61,7 +61,7 @@ describe('useRouteMeta', () => {
   )
 
   it('gives each route a unique title and description', () => {
-    const paths = ['/', '/cooking', '/cooking/recipes', '/training', '/experiences']
+    const paths = ['/', '/experiences', '/experiences/studying', '/personal-sites', '/gaming']
     const titles = new Set<string>()
 
     for (const path of paths) {
@@ -77,10 +77,10 @@ describe('useRouteMeta', () => {
   })
 
   it('normalizes trailing slashes', () => {
-    renderHook(() => useRouteMeta('/cooking/recipes/'))
+    renderHook(() => useRouteMeta('/experiences/studying/'))
     expect(hasAdScript()).toBe(true)
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      'https://pasionfruit.github.io/cooking/recipes',
+      'https://pasionfruit.github.io/experiences/studying',
     )
   })
 })

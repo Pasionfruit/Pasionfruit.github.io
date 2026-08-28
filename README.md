@@ -2,7 +2,41 @@
 
 Personal website built with React + TypeScript + Vite.
 
+## Site structure
+
+The site has two faces, decided by which Google account is signed in.
+
+### Public (everyone, signed out included)
+
+| Route | What it is |
+| --- | --- |
+| `/` | Home — intro and the three section tiles |
+| `/experiences`, `/experiences/studying` | Resume, education, skills, and actuarial exam prep |
+| `/personal-sites` | Deployed side projects, linked out for anyone to try |
+| `/gaming`, `/gaming/server` | Games in rotation and the Minecraft server |
+
+### Private (`/admin`, admin Google account only)
+
+| Route | Dashboard | Data source |
+| --- | --- | --- |
+| `/admin/tasks` | Tasks of the day, yesterday's recap, inbox summary | Todoist (live) + Gmail (needs scope) |
+| `/admin/calendar` | Google and Apple calendars merged into one week | Google Calendar / Apple `.ics` (both need setup) |
+| `/admin/journal` | Daily entries with mood and tags | Sheets `journal_entries` |
+| `/admin/finance` | Budget, spending by category, money calendar | Sheets transaction + budget tabs |
+| `/admin/training` | Garmin, RingConn, and Apple Health plus the session log | Sheets health tabs |
+| `/admin/work` | Projects, deadlines, morning links | Sheets `work_items` |
+
+`/tasks` (full Todoist manager) and `/weekly-reset` are also admin-only.
+
+Everything under `/admin` is gated by `AdminGate` in [src/App.tsx](src/App.tsx); guests
+are redirected to `/`. The dashboards are `noindex` and never load ads.
+
+Removed in the guest/admin split: the Cooking section (superseded by the
+standalone POV Cooking site, now linked from Personal Sites) and the public
+About Me pages. Old URLs redirect rather than 404.
+
 ## Local Setup
+
 
 1. Install dependencies:
 
@@ -18,7 +52,10 @@ VITE_SHEETS_API_KEY=REPLACE_WITH_YOUR_GOOGLE_SHEETS_API_KEY
 VITE_SHEETS_API_BASE_URL=https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT/exec
 VITE_GOOGLE_CLIENT_ID=REPLACE_WITH_YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com
 VITE_TODOIST_API_TOKEN=REPLACE_WITH_YOUR_TODOIST_API_TOKEN
+VITE_APPLE_CALENDAR_ICS_URL=
 ```
+
+See `.env.example` for the full list including the Minecraft server manager.
 
 3. Start development server:
 
@@ -65,7 +102,22 @@ When offline, the app displays a banner and users should expect read-only cached
 
 ## Google Sheets API Setup (Apps Script)
 
-This app expects REST-style read endpoints for these tables:
+Reads go through the Sheets API v4; writes go through the Apps Script Web App.
+The tab names and column ranges are listed in
+[src/data/sheets/client.ts](src/data/sheets/client.ts).
+
+Two tabs are new with the admin dashboards and must be created by hand:
+
+| Tab | Header row |
+| --- | --- |
+| `journal_entries` | `journal_id`, `entry_date`, `title`, `mood`, `body`, `tags`, `created_at` |
+| `work_items` | `work_id`, `project`, `item`, `status`, `due_date`, `priority`, `notes`, `link` |
+
+Their write handlers (`createJournalEntry`, `updateWorkItem`, and the rest) are in
+[updated_code.gs](updated_code.gs) — redeploy the Apps Script Web App after adding
+the tabs, or the dashboards will load empty and saving will report an unknown action.
+
+Older read endpoints still expected:
 
 - `polls`
 - `bucket_list`
@@ -175,6 +227,26 @@ Then set repository variable:
 - Settings -> Secrets and variables -> Actions -> Variables
 - Name: `VITE_SHEETS_API_BASE_URL`
 - Value: your Apps Script Web App URL
+
+## Gmail and calendar integrations
+
+Both are built but not connected. The dashboards render a panel naming exactly
+what is missing instead of an empty list, so a blank inbox is never mistaken for
+a quiet one.
+
+- **Gmail** ([src/admin/integrations/gmail.ts](src/admin/integrations/gmail.ts)) —
+  needs the `gmail.readonly` scope on the OAuth consent screen and an OAuth flow
+  that issues an *access* token. Google Sign-In currently only produces an ID
+  token, which carries identity but no API scopes. Once an access token is in
+  `sessionStorage` under `gmail-access-token`, mail loads. Reads are metadata-only
+  (sender, subject, snippet) and nothing is ever sent or archived.
+- **Google Calendar** ([src/admin/integrations/calendars.ts](src/admin/integrations/calendars.ts)) —
+  same story with `calendar.readonly` and `google-calendar-access-token`.
+- **Apple Calendar** — no public API. The route is a published calendar's `.ics`
+  URL, but iCloud serves those without CORS headers, so it has to come through a
+  proxy (the existing Cloudflare Worker is the natural place). Point
+  `VITE_APPLE_CALENDAR_ICS_URL` at the proxied URL and the parser in
+  `calendars.ts` handles the rest. Recurrence rules are not expanded.
 
 ## Troubleshooting
 

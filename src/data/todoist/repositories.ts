@@ -256,3 +256,24 @@ export async function deleteTask(taskId: string) {
     method: 'DELETE',
   })
 }
+
+/**
+ * Tasks closed inside a local-day window, used for the "yesterday" recap.
+ *
+ * `by_completion_date` wants ISO datetimes and caps the window at six weeks.
+ * The response shape has moved around between API versions, so `items`,
+ * `results`, and a bare array are all accepted.
+ */
+export async function getCompletedTasks(sinceKey: string, untilKey: string): Promise<TodoistTask[]> {
+  const since = `${sinceKey}T00:00:00`
+  const until = `${untilKey}T23:59:59`
+  const query = new URLSearchParams({ since, until, limit: '200' })
+
+  const response = await todoistRequest<
+    TodoistTaskApi[] | { items?: TodoistTaskApi[]; results?: TodoistTaskApi[] }
+  >(`/tasks/completed/by_completion_date?${query.toString()}`, { method: 'GET' })
+
+  const rows = Array.isArray(response) ? response : (response.items ?? response.results ?? [])
+
+  return rows.map((row) => ({ ...normalizeTask(row), is_completed: true }))
+}

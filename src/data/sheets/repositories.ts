@@ -10,6 +10,7 @@ import type {
   FinanceTransactionRecord,
   GarminHealthRecord,
   GroceryListRecord,
+  JournalEntryRecord,
   McPlayerStatsRecord,
   MealPlanRecord,
   PersonalTrainingRecord,
@@ -21,6 +22,7 @@ import type {
   StoreDealRecord,
   TrainingRecord,
   TripRecord,
+  WorkItemRecord,
 } from './types'
 
 function parseBoolean(value: unknown) {
@@ -1125,4 +1127,141 @@ export async function getMcPlayerStats(): Promise<McPlayerStatsRecord[]> {
     playtime_hours: Number(r.playtime_hours ?? 0),
     last_updated:   String(r.last_updated   ?? ''),
   }))
+}
+
+// ── Journal ───────────────────────────────────────────────────────────────
+
+function parseTags(value: unknown): string[] {
+  if (typeof value !== 'string') {
+    return []
+  }
+
+  return value
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+}
+
+/** Newest entry first, so the journal opens on the most recent day. */
+export async function getJournalEntries(): Promise<JournalEntryRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('journal_entries')
+
+  return rows
+    .map((row) => ({
+      journal_id: String(row.journal_id ?? ''),
+      entry_date: String(row.entry_date ?? '').slice(0, 10),
+      title: String(row.title ?? ''),
+      mood: String(row.mood ?? ''),
+      body: String(row.body ?? ''),
+      tags: parseTags(row.tags),
+      created_at: row.created_at ? String(row.created_at) : undefined,
+    }))
+    .filter((row) => row.journal_id && row.entry_date)
+    .sort((a, b) => b.entry_date.localeCompare(a.entry_date))
+}
+
+export async function createJournalEntry(
+  idToken: string,
+  entry: { entryDate: string; title: string; mood: string; body: string; tags: string[] },
+) {
+  await runWrite({
+    action: 'createJournalEntry',
+    idToken,
+    entry_date: entry.entryDate,
+    title: entry.title,
+    mood: entry.mood,
+    body: entry.body,
+    tags: entry.tags.join(', '),
+  })
+}
+
+export async function updateJournalEntry(
+  idToken: string,
+  journalId: string,
+  entry: { entryDate: string; title: string; mood: string; body: string; tags: string[] },
+) {
+  await runWrite({
+    action: 'updateJournalEntry',
+    idToken,
+    journal_id: journalId,
+    entry_date: entry.entryDate,
+    title: entry.title,
+    mood: entry.mood,
+    body: entry.body,
+    tags: entry.tags.join(', '),
+  })
+}
+
+export async function deleteJournalEntry(idToken: string, journalId: string) {
+  await runWrite({
+    action: 'deleteJournalEntry',
+    idToken,
+    journal_id: journalId,
+  })
+}
+
+// ── Work ──────────────────────────────────────────────────────────────────
+
+export async function getWorkItems(): Promise<WorkItemRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('work_items')
+
+  return rows
+    .map((row) => ({
+      work_id: String(row.work_id ?? ''),
+      project: String(row.project ?? ''),
+      item: String(row.item ?? ''),
+      status: String(row.status ?? 'Not started'),
+      due_date: row.due_date ? String(row.due_date).slice(0, 10) : undefined,
+      priority: parseNumber(row.priority) ?? 1,
+      notes: row.notes ? String(row.notes) : undefined,
+      link: row.link ? String(row.link) : undefined,
+    }))
+    .filter((row) => row.work_id && row.item)
+}
+
+type WorkItemDraft = {
+  project: string
+  item: string
+  status: string
+  dueDate?: string
+  priority: number
+  notes?: string
+  link?: string
+}
+
+export async function createWorkItem(idToken: string, draft: WorkItemDraft) {
+  await runWrite({
+    action: 'createWorkItem',
+    idToken,
+    project: draft.project,
+    item: draft.item,
+    status: draft.status,
+    due_date: draft.dueDate ?? '',
+    priority: draft.priority,
+    notes: draft.notes ?? '',
+    link: draft.link ?? '',
+  })
+}
+
+export async function updateWorkItem(idToken: string, workId: string, draft: WorkItemDraft) {
+  await runWrite({
+    action: 'updateWorkItem',
+    idToken,
+    work_id: workId,
+    project: draft.project,
+    item: draft.item,
+    status: draft.status,
+    due_date: draft.dueDate ?? '',
+    priority: draft.priority,
+    notes: draft.notes ?? '',
+    link: draft.link ?? '',
+  })
+}
+
+export async function deleteWorkItem(idToken: string, workId: string) {
+  await runWrite({
+    action: 'deleteWorkItem',
+    idToken,
+    work_id: workId,
+  })
 }

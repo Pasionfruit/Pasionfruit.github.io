@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /login
-Disallow: /finances
+Disallow: /admin
 Disallow: /tasks
 Disallow: /weekly-reset
 

@@ -202,3 +202,28 @@ export type CouponRecord = {
 export type SheetsCollectionResponse<T> = {
   data: T[]
 }
+
+/** One journal entry per day. `entry_date` is the natural key the UI edits by. */
+export type JournalEntryRecord = {
+  journal_id: string
+  entry_date: string
+  title: string
+  mood: string
+  /** Free-form body. Newlines are preserved when rendered. */
+  body: string
+  /** Comma-separated in the sheet, split into a list on read. */
+  tags: string[]
+  created_at?: string
+}
+
+export type WorkItemRecord = {
+  work_id: string
+  project: string
+  item: string
+  status: string
+  due_date?: string
+  /** 1 (lowest) through 4 (highest), matching the Todoist convention used elsewhere. */
+  priority: number
+  notes?: string
+  link?: string
+}

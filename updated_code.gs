@@ -182,6 +182,24 @@ function doPost(e) {
       case 'deleteRecipeStep':
         return jsonResponse_(deleteRecipeStep_(payload))
 
+      case 'createJournalEntry':
+        return jsonResponse_(createJournalEntry_(payload))
+
+      case 'updateJournalEntry':
+        return jsonResponse_(updateJournalEntry_(payload))
+
+      case 'deleteJournalEntry':
+        return jsonResponse_(deleteJournalEntry_(payload))
+
+      case 'createWorkItem':
+        return jsonResponse_(createWorkItem_(payload))
+
+      case 'updateWorkItem':
+        return jsonResponse_(updateWorkItem_(payload))
+
+      case 'deleteWorkItem':
+        return jsonResponse_(deleteWorkItem_(payload))
+
       case 'createTrip':
         return jsonResponse_(createTrip_(payload))
 
@@ -1287,6 +1305,143 @@ function deleteTrip_(payload) {
   var nameCol = requireHeader_(h, 'name')
   var row = findRowById_(sheet, nameCol, name)
   if (row < 0) return { ok: false, error: 'Trip not found' }
+
+  sheet.deleteRow(row)
+  return { ok: true }
+}
+
+// ── Journal ───────────────────────────────────────────────────────────────
+
+function journalFields_(payload) {
+  return {
+    entry_date: String(payload.entry_date || '').slice(0, 10),
+    title:      String(payload.title || '').trim(),
+    mood:       String(payload.mood || '').trim(),
+    body:       String(payload.body || ''),
+    tags:       String(payload.tags || '').trim()
+  }
+}
+
+function createJournalEntry_(payload) {
+  var fields = journalFields_(payload)
+  if (!fields.entry_date) return { ok: false, error: 'entry_date is required' }
+
+  var sheet = getSheet_('journal_entries')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    journal_id: Utilities.getUuid(),
+    entry_date: fields.entry_date,
+    title:      fields.title,
+    mood:       fields.mood,
+    body:       fields.body,
+    tags:       fields.tags,
+    created_at: nowIso_()
+  })
+
+  return { ok: true }
+}
+
+function updateJournalEntry_(payload) {
+  var journalId = String(payload.journal_id || '').trim()
+  if (!journalId) return { ok: false, error: 'journal_id is required' }
+
+  var fields = journalFields_(payload)
+  if (!fields.entry_date) return { ok: false, error: 'entry_date is required' }
+
+  var sheet = getSheet_('journal_entries')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'journal_id'), journalId)
+  if (row < 0) return { ok: false, error: 'Journal entry not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'entry_date')).setValue(fields.entry_date)
+  sheet.getRange(row, requireHeader_(h, 'title')).setValue(fields.title)
+  sheet.getRange(row, requireHeader_(h, 'mood')).setValue(fields.mood)
+  sheet.getRange(row, requireHeader_(h, 'body')).setValue(fields.body)
+  sheet.getRange(row, requireHeader_(h, 'tags')).setValue(fields.tags)
+
+  return { ok: true }
+}
+
+function deleteJournalEntry_(payload) {
+  var journalId = String(payload.journal_id || '').trim()
+  if (!journalId) return { ok: false, error: 'journal_id is required' }
+
+  var sheet = getSheet_('journal_entries')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'journal_id'), journalId)
+  if (row < 0) return { ok: false, error: 'Journal entry not found' }
+
+  sheet.deleteRow(row)
+  return { ok: true }
+}
+
+// ── Work ──────────────────────────────────────────────────────────────────
+
+function workFields_(payload) {
+  return {
+    project:  String(payload.project || '').trim(),
+    item:     String(payload.item || '').trim(),
+    status:   String(payload.status || 'Not started').trim(),
+    due_date: String(payload.due_date || '').slice(0, 10),
+    priority: Number(payload.priority) || 1,
+    notes:    String(payload.notes || ''),
+    link:     String(payload.link || '').trim()
+  }
+}
+
+function createWorkItem_(payload) {
+  var fields = workFields_(payload)
+  if (!fields.item) return { ok: false, error: 'item is required' }
+
+  var sheet = getSheet_('work_items')
+  var h = headerMap_(sheet)
+
+  appendByHeaders_(sheet, h, {
+    work_id:  Utilities.getUuid(),
+    project:  fields.project,
+    item:     fields.item,
+    status:   fields.status,
+    due_date: fields.due_date,
+    priority: fields.priority,
+    notes:    fields.notes,
+    link:     fields.link
+  })
+
+  return { ok: true }
+}
+
+function updateWorkItem_(payload) {
+  var workId = String(payload.work_id || '').trim()
+  if (!workId) return { ok: false, error: 'work_id is required' }
+
+  var fields = workFields_(payload)
+  if (!fields.item) return { ok: false, error: 'item is required' }
+
+  var sheet = getSheet_('work_items')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'work_id'), workId)
+  if (row < 0) return { ok: false, error: 'Work item not found' }
+
+  sheet.getRange(row, requireHeader_(h, 'project')).setValue(fields.project)
+  sheet.getRange(row, requireHeader_(h, 'item')).setValue(fields.item)
+  sheet.getRange(row, requireHeader_(h, 'status')).setValue(fields.status)
+  sheet.getRange(row, requireHeader_(h, 'due_date')).setValue(fields.due_date)
+  sheet.getRange(row, requireHeader_(h, 'priority')).setValue(fields.priority)
+  sheet.getRange(row, requireHeader_(h, 'notes')).setValue(fields.notes)
+  sheet.getRange(row, requireHeader_(h, 'link')).setValue(fields.link)
+
+  return { ok: true }
+}
+
+function deleteWorkItem_(payload) {
+  var workId = String(payload.work_id || '').trim()
+  if (!workId) return { ok: false, error: 'work_id is required' }
+
+  var sheet = getSheet_('work_items')
+  var h = headerMap_(sheet)
+  var row = findRowById_(sheet, requireHeader_(h, 'work_id'), workId)
+  if (row < 0) return { ok: false, error: 'Work item not found' }
 
   sheet.deleteRow(row)
   return { ok: true }

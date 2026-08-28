@@ -37,6 +37,27 @@ const repoMocks = vi.hoisted(() => ({
   updateMealPlan: vi.fn(),
   createPoll: vi.fn(),
   deletePoll: vi.fn(),
+  getJournalEntries: vi.fn(),
+  createJournalEntry: vi.fn(),
+  updateJournalEntry: vi.fn(),
+  deleteJournalEntry: vi.fn(),
+  getWorkItems: vi.fn(),
+  createWorkItem: vi.fn(),
+  updateWorkItem: vi.fn(),
+  deleteWorkItem: vi.fn(),
+  getGarminHealth: vi.fn(),
+  getRingconnHealth: vi.fn(),
+  getAppleHealth: vi.fn(),
+  getPersonalTraining: vi.fn(),
+  getBudgetTargets: vi.fn(),
+  saveBudgetTarget: vi.fn(),
+  getTrips: vi.fn(),
+  createTrip: vi.fn(),
+  updateTrip: vi.fn(),
+  deleteTrip: vi.fn(),
+  getMcPlayerStats: vi.fn(),
+  upsertTrainingRecord: vi.fn(),
+  replaceCurrentStudyForDate: vi.fn(),
 }))
 
 const todoistMocks = vi.hoisted(() => ({
@@ -50,6 +71,7 @@ const todoistMocks = vi.hoisted(() => ({
   rescheduleTask: vi.fn(),
   closeTask: vi.fn(),
   deleteTask: vi.fn(),
+  getCompletedTasks: vi.fn(),
 }))
 
 vi.mock('./data/sheets/repositories', () => repoMocks)
@@ -84,14 +106,6 @@ import App from './App'
 
 vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
 
-function renderAdminAboutMePage() {
-  return render(
-    <MemoryRouter initialEntries={['/mrpasionfruit']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
 function renderAdminStudyingPage() {
   return render(
     <MemoryRouter initialEntries={['/experiences/studying']}>
@@ -100,49 +114,9 @@ function renderAdminStudyingPage() {
   )
 }
 
-function renderHomePage() {
-  return render(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
-function renderHomePageWithEmail(email: string) {
-  localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
-
-  return render(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
-function renderTrainingPage() {
-  return render(
-    <MemoryRouter initialEntries={['/training']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
-function renderCookingPage() {
-  return render(
-    <MemoryRouter initialEntries={['/cooking']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
-function renderCookingPlanPage() {
-  return render(
-    <MemoryRouter initialEntries={['/cooking/plan']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
-function renderAboutMePageWithEmail(email: string, path = '/mrpasionfruit') {
+/** /admin/* is admin-gated, so every dashboard render has to sign in first. */
+function renderAdminPage(path: string, email = 'pasionabe@gmail.com') {
+  localStorage.setItem('demo-profile', 'admin')
   localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
 
   return render(
@@ -152,7 +126,15 @@ function renderAboutMePageWithEmail(email: string, path = '/mrpasionfruit') {
   )
 }
 
-function renderFinancesPageWithEmail(email: string, path = '/finances') {
+function renderTrainingPage(email = 'pasionabe@gmail.com') {
+  return renderAdminPage('/admin/training', email)
+}
+
+function renderAdminTasksPage(email = 'pasionabe@gmail.com') {
+  return renderAdminPage('/admin/tasks', email)
+}
+
+function renderFinancesPageWithEmail(email: string, path = '/admin/finance') {
   localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
 
   return render(
@@ -177,21 +159,6 @@ function makeFakeGoogleIdToken(email: string) {
       .replace(/=+$/g, '')
 
   return `${toBase64Url(header)}.${toBase64Url(payload)}.signature`
-}
-
-async function openPlacesVisitedEditor() {
-  const user = userEvent.setup()
-  renderAdminAboutMePage()
-
-  const placesCards = await screen.findAllByRole('heading', { name: 'Places visited' })
-  const placesCard = placesCards[0]
-  const card = placesCard.closest('article')
-  if (!card) {
-    throw new Error('Places visited card not found')
-  }
-
-  await user.click(within(card).getByTitle('Edit values'))
-  return { user, card }
 }
 
 beforeEach(() => {
@@ -219,6 +186,18 @@ beforeEach(() => {
       json: async () => ({}),
     })) as unknown as typeof fetch,
   )
+
+  // Health and trip data are read by the training and finance dashboards.
+  repoMocks.getGarminHealth.mockResolvedValue([])
+  repoMocks.getRingconnHealth.mockResolvedValue([])
+  repoMocks.getAppleHealth.mockResolvedValue([])
+  repoMocks.getPersonalTraining.mockResolvedValue([])
+  repoMocks.getBudgetTargets.mockResolvedValue([])
+  repoMocks.getTrips.mockResolvedValue([])
+  repoMocks.getMcPlayerStats.mockResolvedValue([])
+  repoMocks.getJournalEntries.mockResolvedValue([])
+  repoMocks.getWorkItems.mockResolvedValue([])
+  todoistMocks.getCompletedTasks.mockResolvedValue([])
 
   repoMocks.getBucketList.mockResolvedValue([
     {
@@ -484,142 +463,7 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-describe('admin about me page', () => {
-  it('shows the guest-style Places visited card and opens the contained edit table', async () => {
-    const { card, user } = await openPlacesVisitedEditor()
-    const table = within(card).getByRole('table')
-
-    expect(within(card).getByText('1 place visited')).toBeTruthy()
-    expect(within(card).getByPlaceholderText('Filter by name')).toBeTruthy()
-    expect(table).toBeTruthy()
-
-    await user.type(within(card).getByPlaceholderText('Filter by name'), 'Japan')
-
-    expect(within(table).getByDisplayValue('Japan')).toBeTruthy()
-    expect(within(table).queryByDisplayValue('New Zealand')).toBeNull()
-  })
-
-  it('creates, updates, and deletes places from the contained admin table', async () => {
-    const { card, user } = await openPlacesVisitedEditor()
-    const table = within(card).getByRole('table')
-
-    await user.clear(within(card).getByPlaceholderText('Filter by name'))
-
-    await user.type(within(card).getByPlaceholderText('New place'), 'Portugal')
-    await user.click(within(card).getByRole('button', { name: 'Add' }))
-
-    await waitFor(() => {
-      expect(repoMocks.createCountry).toHaveBeenCalledWith('valid-token', 'Portugal', false)
-    })
-
-    const japanInput = within(table).getByDisplayValue('Japan') as HTMLInputElement
-    const japanRow = japanInput.closest('tr')
-    if (!japanRow) {
-      throw new Error('Japan row not found')
-    }
-
-    await user.clear(japanInput)
-    await user.type(japanInput, 'Japan Updated')
-    await user.click(within(japanRow).getByRole('button', { name: 'Save' }))
-
-    await waitFor(() => {
-      expect(repoMocks.updateCountry).toHaveBeenCalledWith('valid-token', 'country-1', 'Japan Updated')
-    })
-
-    await user.click(within(japanRow).getByRole('button', { name: 'Delete' }))
-
-    await waitFor(() => {
-      expect(repoMocks.deleteCountry).toHaveBeenCalledWith('valid-token', 'country-1')
-    })
-  })
-
-  it('shows Backpack table and filters by storage and type', async () => {
-    const user = userEvent.setup()
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
-    renderAdminAboutMePage()
-
-    const heading = await screen.findByRole('heading', { name: 'Backpack' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Backpack card not found')
-    }
-
-    expect(within(card).getByText('Socks')).toBeTruthy()
-    expect(within(card).getByText('Toothbrush')).toBeTruthy()
-
-    await user.selectOptions(within(card).getByLabelText('Filter by storage'), 'Carry-on')
-    await user.selectOptions(within(card).getByLabelText('Filter by type'), 'Tech')
-
-    expect(within(card).getByText('Charger')).toBeTruthy()
-    expect(within(card).queryByText('Socks')).toBeNull()
-    expect(within(card).queryByText('Toothbrush')).toBeNull()
-  })
-
-  it('allows authorized admin to edit Backpack fields except item', async () => {
-    const user = userEvent.setup()
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
-    renderAdminAboutMePage()
-
-    const heading = await screen.findByRole('heading', { name: 'Backpack' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Backpack card not found')
-    }
-
-    await user.click(within(card).getByTitle('Edit values'))
-
-    const socksCell = within(card).getByText('Socks')
-    const socksRow = socksCell.closest('tr')
-    if (!socksRow) {
-      throw new Error('Socks row not found')
-    }
-
-    const storageInput = within(socksRow).getByDisplayValue('Carry-on') as HTMLInputElement
-    const typeInput = within(socksRow).getByDisplayValue('Clothing') as HTMLInputElement
-    const quantityInput = within(socksRow).getByDisplayValue('4') as HTMLInputElement
-
-    await user.clear(storageInput)
-    await user.type(storageInput, 'Weekender')
-    await user.clear(typeInput)
-    await user.type(typeInput, 'Essentials')
-    await user.clear(quantityInput)
-    await user.type(quantityInput, '5')
-    await user.click(within(socksRow).getByRole('button', { name: 'Save' }))
-
-    await waitFor(() => {
-      expect(repoMocks.updateBackpackItem).toHaveBeenCalledWith(expect.stringContaining('.'), {
-        originalStorage: 'Carry-on',
-        originalType: 'Clothing',
-        originalItem: 'Socks',
-        storage: 'Weekender',
-        type: 'Essentials',
-        quantity: '5',
-      })
-    })
-  })
-
-  it('blocks Backpack edit mode for non-authorized account', async () => {
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
-    renderAdminAboutMePage()
-
-    const heading = await screen.findByRole('heading', { name: 'Backpack' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Backpack card not found')
-    }
-
-    expect(within(card).queryByTitle('Edit values')).toBeNull()
-    expect(
-      within(card).getByText('Edit access restricted to admin.'),
-    ).toBeTruthy()
-  })
-
-  it('does not show the private Finances section inside About Me', async () => {
-    renderAboutMePageWithEmail('pixielee1000@gmail.com')
-
-    expect(screen.queryByRole('link', { name: 'Open private finances' })).toBeNull()
-  })
-
+describe('site sections and dashboards', () => {
   it('shows the private Finances page only for approved Google accounts', async () => {
     renderFinancesPageWithEmail('pixielee1000@gmail.com')
 
@@ -667,196 +511,6 @@ describe('admin about me page', () => {
     expect(screen.getByText(/Abe groceries|Ciara coffee/)).toBeTruthy()
   })
 
-  it('shows an access denied popup when an unauthorized user clicks the home Finances tile', async () => {
-    const user = userEvent.setup()
-    renderHomePageWithEmail('someoneelse@gmail.com')
-
-    const financesTile = await screen.findByRole('button', { name: /Finances/ })
-    await user.click(financesTile)
-
-    expect(await screen.findByRole('dialog', { name: 'Access denied' })).toBeTruthy()
-    expect(screen.getByText("You don't have access to Finances.")).toBeTruthy()
-  })
-
-  it('uses Add New Poll and creates a poll from the admin edit form', async () => {
-    const user = userEvent.setup()
-    renderAdminAboutMePage()
-
-    const pollHeading = (await screen.findAllByRole('heading', { name: 'Question of the Day' }))[0]
-    const card = pollHeading.closest('article')
-    if (!card) {
-      throw new Error('Poll card not found')
-    }
-
-    await user.click(within(card).getByTitle('Edit values'))
-
-    expect(within(card).getByRole('button', { name: 'Add New Poll' })).toBeTruthy()
-
-    await user.clear(within(card).getByLabelText('Question'))
-    await user.type(within(card).getByLabelText('Question'), 'What should I build next?')
-    await user.clear(within(card).getByLabelText('Option A'))
-    await user.type(within(card).getByLabelText('Option A'), 'Garden')
-    await user.clear(within(card).getByLabelText('Option B'))
-    await user.type(within(card).getByLabelText('Option B'), 'NAS')
-
-    await user.click(within(card).getByRole('button', { name: 'Add New Poll' }))
-
-    await waitFor(() => {
-      expect(repoMocks.createPoll).toHaveBeenCalledWith(
-        'valid-token',
-        'What should I build next?',
-        'Garden',
-        'NAS',
-      )
-    })
-  })
-
-  it('shows today meal plan on the cooking section and not another day by default', async () => {
-    renderCookingPage()
-
-    const heading = await screen.findByRole('heading', { name: 'Meal Plan for the Day' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Meal Plan for the Day card not found')
-    }
-
-    expect(within(card).getByText('Greek yogurt bowl')).toBeTruthy()
-    expect(within(card).getByText('Chicken wrap')).toBeTruthy()
-    expect(within(card).getByText('Salmon rice bowl')).toBeTruthy()
-    expect(within(card).getByText('Protein bar')).toBeTruthy()
-    expect(within(card).queryByText('Overnight oats')).toBeNull()
-    expect(within(card).queryByRole('button', { name: 'Show' })).toBeNull()
-    expect(within(card).queryByTitle('Edit values')).toBeNull()
-  })
-
-  it('shows expandable weekly meal plan table and allows authorized admin edits', async () => {
-    const user = userEvent.setup()
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
-    renderCookingPlanPage()
-
-    const heading = await screen.findByRole('heading', { name: 'Meal Plan for the Week' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Meal Plan for the Week card not found')
-    }
-
-    expect(within(card).getByTitle('Edit values')).toBeTruthy()
-
-    expect(within(card).getByText('Greek yogurt bowl')).toBeTruthy()
-    expect(within(card).getByText('Overnight oats')).toBeTruthy()
-
-    await user.click(within(card).getByTitle('Edit values'))
-
-    const breakfastInput = within(card).getByDisplayValue('Greek yogurt bowl') as HTMLInputElement
-    const row = breakfastInput.closest('tr')
-    if (!row) {
-      throw new Error('Meal plan row not found')
-    }
-
-    await user.clear(breakfastInput)
-    await user.type(breakfastInput, 'Protein pancakes')
-    await user.click(within(row).getByRole('button', { name: 'Save' }))
-
-    const todayDay = new Date().toLocaleDateString('en-US', { weekday: 'long' })
-
-    await waitFor(() => {
-      expect(repoMocks.updateMealPlan).toHaveBeenCalledWith(expect.stringContaining('.'), {
-        originalDayOfTheWeek: todayDay,
-        dayOfTheWeek: todayDay,
-        breakfast: 'Protein pancakes',
-        lunch: 'Chicken wrap',
-        dinner: 'Salmon rice bowl',
-        snack: 'Protein bar',
-      })
-    })
-  })
-
-  it('shows Grocery list in cooking plan and allows authorized admin catalog edits', async () => {
-    const user = userEvent.setup()
-    const idToken = makeFakeGoogleIdToken('pasionabe@gmail.com')
-    localStorage.setItem('google-id-token', idToken)
-    renderCookingPlanPage()
-
-    const heading = await screen.findByRole('heading', { name: 'Grocery list' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Grocery list card not found')
-    }
-
-    expect(await within(card).findByText('MEAT')).toBeTruthy()
-    expect(within(card).queryByText('DAIRY')).toBeNull()
-
-    const initialChickenRowText = within(card).getByText('Chicken breast')
-    expect(initialChickenRowText.getAttribute('style')).toContain('line-through')
-    const initialChickenRow = initialChickenRowText.closest('.grocery-catalog-row') as HTMLElement | null
-    if (!initialChickenRow) {
-      throw new Error('Chicken row not found')
-    }
-
-    await user.click(within(initialChickenRow).getByRole('checkbox'))
-
-    await waitFor(() => {
-      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
-        originalItem: 'Chicken breast',
-        item: 'Chicken breast',
-        type: 'MEAT',
-        completed: false,
-        include: true,
-      })
-    })
-
-    await user.click(within(card).getByTitle('Edit grocery list'))
-
-    expect(within(card).getByText('DAIRY')).toBeTruthy()
-
-    await user.click(within(card).getByRole('button', { name: 'Add Greek yogurt' }))
-
-    await waitFor(() => {
-      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
-        originalItem: 'Greek yogurt',
-        item: 'Greek yogurt',
-        type: 'DAIRY',
-        completed: false,
-        include: true,
-      })
-    })
-
-    await user.click(within(card).getByRole('button', { name: 'Remove Chicken breast' }))
-
-    await waitFor(() => {
-      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
-        originalItem: 'Chicken breast',
-        item: 'Chicken breast',
-        type: 'MEAT',
-        completed: true,
-        include: false,
-      })
-    })
-
-    await user.type(within(card).getByPlaceholderText('Item name'), 'Bananas')
-    await user.click(within(card).getByRole('button', { name: 'Add custom grocery item' }))
-
-    await waitFor(() => {
-      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'ETC', 'Bananas', false, true)
-    })
-  })
-
-  it('blocks weekly meal plan editing for non-authorized account', async () => {
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
-    renderCookingPlanPage()
-
-    const heading = await screen.findByRole('heading', { name: 'Meal Plan for the Week' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Meal Plan for the Week card not found')
-    }
-
-    expect(within(card).queryByTitle('Edit values')).toBeNull()
-    expect(
-      within(card).getByText('Edit access restricted to admin.'),
-    ).toBeTruthy()
-  })
-
   it('allows admin to mark today lesson completed or not completed', async () => {
     const user = userEvent.setup()
     renderAdminStudyingPage()
@@ -896,9 +550,7 @@ describe('admin about me page', () => {
 
   it('shows the Home Todoist summary with overdue counts and supports completing a task', async () => {
     const user = userEvent.setup()
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
-    renderHomePage()
+    renderAdminTasksPage()
 
     const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
     const card = heading.closest('article')
@@ -920,84 +572,8 @@ describe('admin about me page', () => {
     })
   })
 
-  it('shows grocery list inside Tasks of the Day when Grocery List tab is selected', async () => {
-    const user = userEvent.setup()
-    const idToken = makeFakeGoogleIdToken('pasionabe@gmail.com')
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', idToken)
-    renderHomePage()
-
-    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Todoist card not found')
-    }
-
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
-    await user.click(within(card).getByRole('tab', { name: 'Grocery List' }))
-
-    const chickenText = await within(card).findByText('Chicken breast')
-    expect(chickenText.getAttribute('style')).toContain('line-through')
-    expect(within(card).getByText('MEAT')).toBeTruthy()
-    expect(within(card).queryByText('Greek yogurt')).toBeNull()
-
-    const initialChickenRow = chickenText.closest('.grocery-catalog-row') as HTMLElement | null
-    if (!initialChickenRow) {
-      throw new Error('Chicken row not found')
-    }
-
-    await user.click(within(initialChickenRow).getByRole('checkbox'))
-
-    await waitFor(() => {
-      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
-        originalItem: 'Chicken breast',
-        item: 'Chicken breast',
-        type: 'MEAT',
-        completed: false,
-        include: true,
-      })
-    })
-
-    await user.click(within(card).getByTitle('Edit values'))
-
-    expect(within(card).getByText('DAIRY')).toBeTruthy()
-
-    await user.click(within(card).getByRole('button', { name: 'Add Greek yogurt' }))
-
-    await waitFor(() => {
-      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
-        originalItem: 'Greek yogurt',
-        item: 'Greek yogurt',
-        type: 'DAIRY',
-        completed: false,
-        include: true,
-      })
-    })
-
-    await user.click(within(card).getByRole('button', { name: 'Remove Chicken breast' }))
-
-    await waitFor(() => {
-      expect(repoMocks.updateGroceryListItem).toHaveBeenCalledWith(idToken, {
-        originalItem: 'Chicken breast',
-        item: 'Chicken breast',
-        type: 'MEAT',
-        completed: true,
-        include: false,
-      })
-    })
-
-    await user.type(within(card).getByPlaceholderText('Item name'), 'Bananas')
-    await user.click(within(card).getByRole('button', { name: 'Add custom grocery item' }))
-
-    await waitFor(() => {
-      expect(repoMocks.createGroceryListItem).toHaveBeenCalledWith(idToken, 'ETC', 'Bananas', false, true)
-    })
-  })
-
   it('blocks Todoist editing for non-authorized account', async () => {
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
-    renderHomePage()
+    renderAdminTasksPage('pixielee1000@gmail.com')
 
     expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
     expect(screen.queryByText('Edit access restricted to admin.')).toBeNull()
@@ -1006,10 +582,7 @@ describe('admin about me page', () => {
   it('shows missing token guidance when Todoist env token is not set', async () => {
     vi.unstubAllEnvs()
     vi.stubEnv('VITE_TODOIST_API_TOKEN', '')
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
-
-    renderHomePage()
+    renderAdminTasksPage()
 
     const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
     const card = heading.closest('article')
@@ -1025,10 +598,8 @@ describe('admin about me page', () => {
     vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
   })
 
-  it('shows Home training table and allows authorized admin to mark workout complete', async () => {
+  it('shows the training tab and allows authorized admin to mark workout complete', async () => {
     const user = userEvent.setup()
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
 
     const today = new Date()
     const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
@@ -1044,15 +615,13 @@ describe('admin about me page', () => {
       },
     ])
 
-    renderHomePage()
+    renderAdminTasksPage()
 
-    const heading = await screen.findByRole('heading', { name: 'Productive Tasks' })
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
     const card = heading.closest('article')
     if (!card) {
-      throw new Error('Home training/studying card not found')
+      throw new Error('Tasks of the Day card not found')
     }
-
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     const markButtons = await within(card).findAllByRole('button', { name: 'Mark Complete' })
     await user.click(markButtons[0])
@@ -1067,20 +636,16 @@ describe('admin about me page', () => {
     })
   })
 
-  it('shows Home studying table and allows authorized admin to mark lesson complete', async () => {
+  it('shows the studying tab and allows authorized admin to mark lesson complete', async () => {
     const user = userEvent.setup()
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
 
-    renderHomePage()
+    renderAdminTasksPage()
 
-    const heading = await screen.findByRole('heading', { name: 'Productive Tasks' })
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
     const card = heading.closest('article')
     if (!card) {
-      throw new Error('Home training/studying card not found')
+      throw new Error('Tasks of the Day card not found')
     }
-
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     await user.click(within(card).getByRole('tab', { name: 'Studying' }))
 
@@ -1101,11 +666,7 @@ describe('admin about me page', () => {
     })
   })
 
-  it('blocks Home training/studying completion editing for non-authorized account', async () => {
-    const user = userEvent.setup()
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
-
+  it('blocks training/studying completion editing for non-authorized account', async () => {
     const today = new Date()
     const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
 
@@ -1120,15 +681,13 @@ describe('admin about me page', () => {
       },
     ])
 
-    renderHomePage()
+    renderAdminTasksPage('pixielee1000@gmail.com')
 
-    const heading = await screen.findByRole('heading', { name: 'Productive Tasks' })
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
     const card = heading.closest('article')
     if (!card) {
-      throw new Error('Home training/studying card not found')
+      throw new Error('Tasks of the Day card not found')
     }
-
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
 
     expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
     expect(
@@ -1146,8 +705,8 @@ describe('admin about me page', () => {
       throw new Error('Training Log card not found')
     }
 
-    await user.click(within(card).getByRole('button', { name: 'Hide' }))
-    await user.click(within(card).getByRole('button', { name: 'Show' }))
+    await user.click(within(card).getByRole('button', { name: '▾' }))
+    await user.click(within(card).getByRole('button', { name: '▸' }))
 
     const seasonSelect = within(card).getAllByRole('combobox')[0]
     await user.selectOptions(seasonSelect, 'all')
@@ -1259,8 +818,6 @@ describe('admin about me page', () => {
 
   it('shows countdown edit fields only after pressing pencil in admin view', async () => {
     const user = userEvent.setup()
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
     renderTrainingPage()
 
     const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
@@ -1293,8 +850,6 @@ describe('admin about me page', () => {
 
   it('allows authorized admin to create/update/delete and set active event', async () => {
     const user = userEvent.setup()
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('pasionabe@gmail.com'))
     renderTrainingPage()
 
     const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
@@ -1387,9 +942,6 @@ describe('admin about me page', () => {
   })
 
   it('blocks training completion editing for non-authorized account', async () => {
-    localStorage.setItem('demo-profile', 'admin')
-    localStorage.setItem('google-id-token', makeFakeGoogleIdToken('someoneelse@gmail.com'))
-
     const today = new Date()
     const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
 
@@ -1404,7 +956,7 @@ describe('admin about me page', () => {
       },
     ])
 
-    renderTrainingPage()
+    renderTrainingPage('pixielee1000@gmail.com')
 
     const heading = await screen.findByRole('heading', { name: 'Training Log' })
     const card = heading.closest('article')

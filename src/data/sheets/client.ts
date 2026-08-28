@@ -84,6 +84,8 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     trips:             'trips!A1:E10000',
     mc_server_log:     'mc_server_log!A1:C10000',
     mc_player_stats:   'mc_player_stats!A1:E10000',
+    journal_entries:   'journal_entries!A1:G10000',
+    work_items:        'work_items!A1:H10000',
   }
   
   const range = ranges[tableName]

@@ -1,6 +1,3 @@
-import { aboutMeDetailPages, aboutMeSectionPage } from './siteContent/aboutMe'
-import { cookingDetailPages, cookingSectionPage } from './siteContent/cooking'
-import { financesSectionPage } from './siteContent/finances'
 import { gamingDetailPages, gamingSectionPage } from './siteContent/gaming'
 import {
   actuaryExamEntries,
@@ -10,15 +7,19 @@ import {
   professionalExperienceEntries,
 } from './siteContent/experiences'
 import { homeHighlights, homeIntro, navSections } from './siteContent/home'
-import { trainingDetailPages, trainingSectionPage } from './siteContent/training'
+import { personalSiteEntries, personalSitesSectionPage } from './siteContent/personalSites'
+import { adminDashboards, adminDashboardsById, adminHomeContent } from './siteContent/admin'
 import type { PageContent, SectionId, SubpageContent } from './siteContent/shared'
 
 export type {
   ActuaryExamEntry,
+  AdminDashboardId,
+  AdminDashboardMeta,
   EducationEntry,
   NavSection,
   PageCard,
   PageContent,
+  PersonalSiteEntry,
   ProfessionalExperienceEntry,
   SectionId,
   SubpageContent,
@@ -26,26 +27,24 @@ export type {
 
 export {
   actuaryExamEntries,
+  adminDashboards,
+  adminDashboardsById,
+  adminHomeContent,
   educationEntries,
   homeHighlights,
   homeIntro,
   navSections,
+  personalSiteEntries,
   professionalExperienceEntries,
 }
 
 export const sectionPages: Record<SectionId, PageContent> = {
-  mrpasionfruit: aboutMeSectionPage,
-  training: trainingSectionPage,
   experiences: experiencesSectionPage,
-  cooking: cookingSectionPage,
-  finances: financesSectionPage,
+  'personal-sites': personalSitesSectionPage,
   gaming: gamingSectionPage,
 }
 
 export const detailPages: Record<string, SubpageContent> = {
-  ...aboutMeDetailPages,
-  ...trainingDetailPages,
   ...experiencesDetailPages,
-  ...cookingDetailPages,
   ...gamingDetailPages,
 }
