@@ -24,18 +24,10 @@ export type PageContent = {
   callout: string
 }
 
-export type SubpageContent = {
-  eyebrow: string
-  title: string
-  summary: string
-  accent: string
-  cards: PageCard[]
-  note: string
-}
-
 export type NavSection = {
   id: SectionId
   title: string
+  /** In-page anchor on the home page — the sections no longer have their own routes. */
   path: string
   summary: string
   accent: string
@@ -74,12 +66,6 @@ export type ProfessionalExperienceEntry = {
   date: string
   category: 'technical' | 'other'
   note?: string
-}
-
-export type ActuaryExamEntry = {
-  exam: string
-  topic: string
-  status: string
 }
 
 export type EducationEntry = {

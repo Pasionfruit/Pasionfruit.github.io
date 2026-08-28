@@ -3,7 +3,7 @@ import type { NavSection, PageContent, PersonalSiteEntry } from './shared'
 export const personalSitesNavSection: NavSection = {
   id: 'personal-sites',
   title: 'Personal Sites',
-  path: '/personal-sites',
+  path: '/#personal-sites',
   summary: 'Side projects that are deployed and open to try',
   accent: '#0ea5e9',
   children: [],

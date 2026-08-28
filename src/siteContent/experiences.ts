@@ -1,25 +1,17 @@
 import type {
-  ActuaryExamEntry,
   EducationEntry,
   NavSection,
   PageContent,
   ProfessionalExperienceEntry,
-  SubpageContent,
 } from './shared'
 
 export const experiencesNavSection: NavSection = {
   id: 'experiences',
   title: 'Experiences',
-  path: '/experiences',
+  path: '/#experiences',
   summary: 'Professional experiences, education, and the practical things I\'ve learned along the way',
   accent: '#2563eb',
-  children: [
-    {
-      label: 'Studying',
-      path: '/experiences/studying',
-      summary: 'Personal study notes, resources, pomodoro timer',
-    },
-  ],
+  children: [],
 }
 
 export const experiencesSectionPage: PageContent = {
@@ -44,43 +36,6 @@ export const experiencesSectionPage: PageContent = {
   callout:
     'I like to use technical tools, mathematics, and statistical reasoning to understand data, improve systems, and solve complex problems. I enjoy mastering new skills, collaborating with like-minded individuals, and sharing what I learned along the way.',
 }
-
-export const experiencesDetailPages: Record<string, SubpageContent> = {
-  '/experiences/studying': {
-    eyebrow: 'Academic path',
-    title: 'Studying',
-    summary:
-      'Studying for actuarial exams alongside a full-time job comes down to protecting a small amount of time and using it well. This page holds the exam track I am on, what I am working through now, and the materials and session structure that have held up so far.',
-    accent: '#7a62ff',
-    cards: [
-      {
-        title: 'Actuary Exams',
-        body: 'The exam sequence, where I am in it, and target sitting dates.',
-      },
-      {
-        title: 'Current Study Plan',
-        body: 'The topics in front of me right now and how the weeks between here and the next sitting are allocated.',
-      },
-      {
-        title: 'Pomodoro Timer',
-        body: 'A timer for focused sessions. Long blocks were never realistic on weeknights, so short and repeatable wins.',
-      },
-      {
-        title: 'Study Materials',
-        body: 'Notes and past study trackers, updated as each notebook fills up.',
-      },
-    ],
-    note: 'Consistency beats intensity here — a handful of protected hours a week has done more than any single long weekend of cramming.',
-  },
-}
-
-export const actuaryExamEntries: ActuaryExamEntry[] = [
-  {
-    exam: 'Exam P',
-    topic: 'Probability',
-    status: 'Pending',
-  },
-]
 
 export const educationEntries: EducationEntry[] = [
   {

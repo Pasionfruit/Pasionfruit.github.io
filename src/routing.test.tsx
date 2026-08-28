@@ -2,6 +2,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { cleanup, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 const repoMocks = vi.hoisted(() => {
   const empty = () => vi.fn().mockResolvedValue([])
@@ -17,7 +18,6 @@ const repoMocks = vi.hoisted(() => {
     getAppleHealth: empty(),
     getBudgetTargets: empty(),
     getTrips: empty(),
-    getMcPlayerStats: empty(),
     getJournalEntries: empty(),
     getWorkItems: empty(),
     createEvent: vi.fn(),
@@ -105,6 +105,8 @@ function pageTitle() {
 
 beforeEach(() => {
   localStorage.clear()
+  // jsdom does not implement scrollIntoView; the hash-anchor effect calls it.
+  Element.prototype.scrollIntoView = vi.fn()
   vi.stubGlobal(
     'matchMedia',
     vi.fn(() => ({
@@ -127,25 +129,48 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-describe('guest routing', () => {
-  it('shows exactly the three public sections on the home page', () => {
+describe('guest home page', () => {
+  it('renders all three sections as collapsible blocks', () => {
     renderAt('/')
 
-    const tiles = [...document.querySelectorAll('a.section-tile')]
-    expect(tiles.map((tile) => tile.getAttribute('href'))).toEqual([
-      '/experiences',
-      '/personal-sites',
-      '/gaming',
-    ])
+    for (const id of ['experiences', 'personal-sites', 'gaming']) {
+      const section = document.getElementById(id)
+      expect(section).not.toBeNull()
+      expect(section?.querySelector('.home-section-toggle')?.getAttribute('aria-expanded')).toBe('true')
+    }
   })
 
-  it.each(['/experiences', '/personal-sites', '/gaming'])('renders the public section %s', (path) => {
-    renderAt(path)
-    expect(pageTitle()).not.toBe(HOME_TITLE)
+  it('collapses and re-expands a section', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+
+    const toggle = document.querySelector<HTMLButtonElement>('#gaming .home-section-toggle')
+    if (!toggle) {
+      throw new Error('Gaming section toggle not found')
+    }
+
+    expect(document.getElementById('gaming-panel')).not.toBeNull()
+
+    await user.click(toggle)
+    expect(toggle.getAttribute('aria-expanded')).toBe('false')
+    expect(document.getElementById('gaming-panel')).toBeNull()
+
+    await user.click(toggle)
+    expect(toggle.getAttribute('aria-expanded')).toBe('true')
+    expect(document.getElementById('gaming-panel')).not.toBeNull()
+  })
+
+  it('shows the experience cards and resume downloads', () => {
+    renderAt('/')
+
+    expect(screen.getByRole('heading', { name: 'Education' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Technical Skills' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Professional Experience' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Download PDF' })).toBeTruthy()
   })
 
   it('lists the deployed side projects with outbound links', () => {
-    renderAt('/personal-sites')
+    renderAt('/')
 
     const hrefs = screen
       .getAllByRole('link', { name: 'Try it' })
@@ -154,6 +179,60 @@ describe('guest routing', () => {
     expect(hrefs).toContain('https://pov-cooking.vercel.app/')
     expect(hrefs).toContain('https://texthero.onrender.com/')
     expect(hrefs).toContain('https://mahjong-xmhv.onrender.com/')
+  })
+
+  it('shows only the server cards under Gaming', () => {
+    renderAt('/')
+
+    expect(screen.getByRole('heading', { name: 'Server Status' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'How to Connect' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Open Control Dashboard' })).toBeTruthy()
+
+    // Removed with the games lists and the player-stats sync.
+    expect(screen.queryByRole('heading', { name: 'Player Insights' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Games I Like to Play' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Personally Developed Games' })).toBeNull()
+  })
+
+  it('no longer offers a Studying page', () => {
+    renderAt('/')
+
+    expect(screen.queryByRole('heading', { name: 'Studying' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Actuary Exams' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Pomodoro Timer' })).toBeNull()
+  })
+
+  it('links each section from the menu as an in-page anchor', () => {
+    renderAt('/')
+
+    const hrefs = [...document.querySelectorAll('.menu-main-link')].map((link) =>
+      link.getAttribute('href'),
+    )
+
+    expect(hrefs).toContain('/#experiences')
+    expect(hrefs).toContain('/#personal-sites')
+    expect(hrefs).toContain('/#gaming')
+  })
+})
+
+describe('guest routing', () => {
+  it.each([
+    '/experiences',
+    '/experiences/studying',
+    '/experience/studying',
+    '/personal-sites',
+    '/gaming',
+    '/gaming/server',
+    '/cooking',
+    '/cooking/recipes',
+    '/mrpasionfruit',
+    '/mrpasionfruit/oreo-gang',
+    '/training',
+    '/finances',
+    '/unknown',
+  ])('sends %s back to the home page', (path) => {
+    renderAt(path)
+    expect(pageTitle()).toBe(HOME_TITLE)
   })
 
   it.each(['/admin', '/admin/journal', '/admin/finance', '/admin/work', '/tasks', '/weekly-reset'])(
@@ -176,22 +255,6 @@ describe('guest routing', () => {
     renderAt('/')
     expect(screen.queryByRole('link', { name: 'Dashboards' })).toBeNull()
   })
-
-  it.each([
-    ['/cooking', 'Personal Sites'],
-    ['/cooking/recipes', 'Personal Sites'],
-  ])('redirects the retired route %s to %s', (path, expected) => {
-    renderAt(path)
-    expect(pageTitle()).toBe(expected)
-  })
-
-  it.each(['/mrpasionfruit', '/mrpasionfruit/oreo-gang', '/training', '/finances'])(
-    'sends a guest home from the retired route %s',
-    (path) => {
-      renderAt(path)
-      expect(pageTitle()).toBe(HOME_TITLE)
-    },
-  )
 })
 
 describe('admin routing', () => {

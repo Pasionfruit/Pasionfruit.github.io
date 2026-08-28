@@ -6,14 +6,19 @@ Personal website built with React + TypeScript + Vite.
 
 The site has two faces, decided by which Google account is signed in.
 
-### Public (everyone, signed out included)
+### Public
 
-| Route | What it is |
-| --- | --- |
-| `/` | Home — intro and the three section tiles |
-| `/experiences`, `/experiences/studying` | Resume, education, skills, and actuarial exam prep |
-| `/personal-sites` | Deployed side projects, linked out for anyone to try |
-| `/gaming`, `/gaming/server` | Games in rotation and the Minecraft server |
+Everything public lives on the home page as three collapsible sections — there
+are no separate section routes any more.
+
+| Section | Anchor | Contents |
+| --- | --- | --- |
+| Experiences | `/#experiences` | Education, technical skills, professional history, resume downloads |
+| Personal Sites | `/#personal-sites` | Deployed side projects, linked out for anyone to try |
+| Gaming | `/#gaming` | Minecraft connection guide and live server status with a link to the control dashboard |
+
+Sections start expanded. The side menu links to each anchor, which expands the
+target section and scrolls to it.
 
 ### Private (`/admin`, admin Google account only)
 
@@ -31,9 +36,19 @@ The site has two faces, decided by which Google account is signed in.
 Everything under `/admin` is gated by `AdminGate` in [src/App.tsx](src/App.tsx); guests
 are redirected to `/`. The dashboards are `noindex` and never load ads.
 
-Removed in the guest/admin split: the Cooking section (superseded by the
-standalone POV Cooking site, now linked from Personal Sites) and the public
-About Me pages. Old URLs redirect rather than 404.
+### Retired
+
+Removed along the way, with old URLs redirecting rather than 404ing:
+
+- **Cooking** — superseded by the standalone POV Cooking site, linked from Personal Sites.
+- **About Me** — the public cats, bucket list, countries, and backpack pages.
+- **Studying** — the actuarial exam table, study plan, and pomodoro timer.
+- **Games lists and player leaderboards** — along with `scripts/gaming/sync_player_stats.py`,
+  the `mc_player_stats` sheet reads, and the `updateMcPlayerStats` Apps Script action.
+
+Because the three sections collapsed into the home page, `/` is now the only
+indexed URL and the only one that loads AdSense. Previously the section pages
+carried the ads; see `ROUTE_META` in [src/routeMeta.ts](src/routeMeta.ts) to change that.
 
 ## Local Setup
 

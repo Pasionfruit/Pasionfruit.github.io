@@ -17,11 +17,14 @@ type RouteMeta = {
 }
 
 const ROUTE_META: Record<string, RouteMeta> = {
+  // The three public sections are collapsible blocks on this page rather than
+  // routes of their own, so the home page is now the site's only content page —
+  // and the only one carrying ads.
   '/': {
     title: `${SITE_NAME} — experience, side projects, and gaming`,
     description:
-      'A personal site where Abe Pasion writes up his BI and data analysis background, the side projects he has deployed, and the game servers he runs.',
-    ads: false,
+      'Abe Pasion: BI developer and data analyst in Florida. Professional background and education, deployed side projects worth trying, and the Minecraft server I run for friends.',
+    ads: true,
     index: true,
   },
   '/login': {
@@ -29,46 +32,6 @@ const ROUTE_META: Record<string, RouteMeta> = {
     description: 'Sign in to access private sections of the site.',
     ads: false,
     index: false,
-  },
-
-  '/experiences': {
-    title: `Experience and background — ${SITE_NAME}`,
-    description:
-      'Professional background in BI development, data analysis, and cybersecurity, plus education and the technical skills behind the work.',
-    ads: true,
-    index: true,
-  },
-  '/experiences/studying': {
-    title: `Actuarial exam studying — ${SITE_NAME}`,
-    description:
-      'How I study for actuarial exams alongside a full-time job: the current plan, the materials that worked, and the session structure I use.',
-    ads: true,
-    index: true,
-  },
-
-  // A directory of outbound project links rather than published writing, so it
-  // stays indexable but carries no ads.
-  '/personal-sites': {
-    title: `Personal sites and side projects — ${SITE_NAME}`,
-    description:
-      'Side projects that are deployed and open to try: POV Cooking for recipes and grocery costs, TextHero, LocalRot, and this site.',
-    ads: false,
-    index: true,
-  },
-
-  '/gaming': {
-    title: `Gaming — ${SITE_NAME}`,
-    description:
-      'The games I keep coming back to and the servers I run for friends.',
-    ads: true,
-    index: true,
-  },
-  '/gaming/server': {
-    title: `Minecraft server status and how to join — ${SITE_NAME}`,
-    description:
-      'Live status for the Minecraft server, how it is hosted, and step-by-step connection instructions.',
-    ads: false,
-    index: true,
   },
 
   // Private dashboards. Never indexed, never carry ads.

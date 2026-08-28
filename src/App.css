@@ -5753,3 +5753,74 @@ button svg,
     flex: 0 0 155px;
   }
 }
+
+/* ── Home page sections ───────────────────────────────────────────────────
+   The three public sections live on the home page as collapsible blocks
+   rather than separate routes. */
+.home-section {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--page-accent, var(--accent));
+  border-radius: 0.9rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.home-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+}
+
+.home-section-toggle {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.home-section-caret {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.home-section-titles {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.home-section-title {
+  color: var(--text-strong);
+  font-size: clamp(1.4rem, 4.5vw, 2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.home-section-panel {
+  padding: 0 1rem 1rem;
+}
+
+.home-section-panel .page-summary {
+  margin-top: 0;
+}
+
+.home-section-panel .page-grid {
+  margin-top: 0.85rem;
+}
+
+.home-section-panel .page-note {
+  margin-top: 0.85rem;
+}

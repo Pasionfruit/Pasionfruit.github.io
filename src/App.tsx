@@ -37,7 +37,7 @@ import './App.css'
 import './admin/admin.css'
 import { sounds } from './sounds'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
-import { PageFrame } from './components/PageFrame'
+import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
 import { AdminHome } from './admin/AdminHome'
@@ -48,16 +48,13 @@ import { WorkDashboard } from './admin/WorkDashboard'
 import { YesterdayRecapCard } from './admin/YesterdayRecapCard'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
-  actuaryExamEntries,
   adminDashboards,
   adminDashboardsById,
-  detailPages,
   educationEntries,
   navSections,
   personalSiteEntries,
   professionalExperienceEntries,
   sectionPages,
-  type ActuaryExamEntry,
   type EducationEntry,
   type PersonalSiteEntry,
   type ProfessionalExperienceEntry,
@@ -88,7 +85,6 @@ import {
   createTrip,
   updateTrip,
   deleteTrip,
-  getMcPlayerStats,
 } from './data/sheets/repositories'
 import type {
   AppleHealthRecord,
@@ -96,7 +92,6 @@ import type {
   EventRecord,
   FinanceTransactionRecord,
   GarminHealthRecord,
-  McPlayerStatsRecord,
   PersonalTrainingRecord,
   RingconnHealthRecord,
   TrainingRecord,
@@ -170,12 +165,6 @@ function getInitialGoogleToken() {
   }
 
   return token
-}
-
-function getActiveSectionId(pathname: string): SectionId | undefined {
-  return navSections.find(
-    (section) => pathname === section.path || pathname.startsWith(`${section.path}/`),
-  )?.id
 }
 
 function getGoogleTokenEmail(token: string) {
@@ -259,25 +248,14 @@ function App() {
             )}
           />
 
-          {/* Public sections */}
-          <Route
-            path="experiences"
-            element={<SectionPage sectionId="experiences" profile={profile} googleIdToken={googleIdToken} />}
-          />
-          <Route
-            path="experiences/studying"
-            element={<DetailPage path="/experiences/studying" profile={profile} googleIdToken={googleIdToken} />}
-          />
-          <Route path="experience/studying" element={<Navigate replace to="/experiences/studying" />} />
-          <Route
-            path="personal-sites"
-            element={<SectionPage sectionId="personal-sites" profile={profile} googleIdToken={googleIdToken} />}
-          />
-          <Route
-            path="gaming"
-            element={<SectionPage sectionId="gaming" profile={profile} googleIdToken={googleIdToken} />}
-          />
-          <Route path="gaming/server" element={<GamingServerPage />} />
+          {/* The public sections live on the home page now; old URLs keep working
+              by landing on the matching anchor. */}
+          <Route path="experiences" element={<Navigate replace to="/#experiences" />} />
+          <Route path="experiences/studying" element={<Navigate replace to="/#experiences" />} />
+          <Route path="experience/studying" element={<Navigate replace to="/#experiences" />} />
+          <Route path="personal-sites" element={<Navigate replace to="/#personal-sites" />} />
+          <Route path="gaming" element={<Navigate replace to="/#gaming" />} />
+          <Route path="gaming/server" element={<Navigate replace to="/#gaming" />} />
 
           {/* Private dashboards */}
           <Route path="admin" element={<AdminGate isAdmin={isAdmin} />}>
@@ -339,8 +317,8 @@ function App() {
           <Route path="training/*" element={<Navigate replace to="/admin/training" />} />
           <Route path="mrpasionfruit" element={<Navigate replace to="/" />} />
           <Route path="mrpasionfruit/*" element={<Navigate replace to="/" />} />
-          <Route path="cooking" element={<Navigate replace to="/personal-sites" />} />
-          <Route path="cooking/*" element={<Navigate replace to="/personal-sites" />} />
+          <Route path="cooking" element={<Navigate replace to="/#personal-sites" />} />
+          <Route path="cooking/*" element={<Navigate replace to="/#personal-sites" />} />
 
           <Route path="*" element={<Navigate replace to="/" />} />
         </Route>
@@ -454,21 +432,11 @@ function SiteLayout({
     typeof navigator === 'undefined' ? true : navigator.onLine,
   )
   const location = useLocation()
-  const activeSectionId = getActiveSectionId(location.pathname)
-  const [expandedSectionIds, setExpandedSectionIds] = useState<SectionId[]>(() =>
-    activeSectionId ? [activeSectionId] : [],
-  )
 
   useRouteMeta(location.pathname)
 
   useEffect(() => {
     setMenuOpen(false)
-
-    if (activeSectionId) {
-      setExpandedSectionIds((previous) =>
-        previous.includes(activeSectionId) ? previous : [...previous, activeSectionId],
-      )
-    }
   }, [location.pathname])
 
   useEffect(() => {
@@ -489,19 +457,6 @@ function SiteLayout({
       window.removeEventListener('offline', handleOffline)
     }
   }, [])
-
-  function toggleSection(sectionId: SectionId) {
-    if (expandedSectionIds.includes(sectionId)) {
-      sounds.sectionCollapse()
-    } else {
-      sounds.sectionExpand()
-    }
-    setExpandedSectionIds((previous) =>
-      previous.includes(sectionId)
-        ? previous.filter((id) => id !== sectionId)
-        : [...previous, sectionId],
-    )
-  }
 
   return (
     <div className="app-shell">
@@ -583,52 +538,17 @@ function SiteLayout({
         </div>
 
         <nav className="menu-root" aria-label="Primary">
-          {navSections.map((section) => {
-            const hasChildren = section.children.length > 0
-            const isExpanded = hasChildren && expandedSectionIds.includes(section.id)
-
-            return (
-              <div key={section.id} className="menu-section-card">
-                <div className="menu-section-row">
-                  {hasChildren ? (
-                    <button
-                      type="button"
-                      className="menu-expander"
-                      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${section.title}`}
-                      aria-expanded={isExpanded}
-                      onClick={() => toggleSection(section.id)}
-                    >
-                      {isExpanded ? '▾' : '▸'}
-                    </button>
-                  ) : null}
-
-                  <NavLink
-                    to={section.path}
-                    className={({ isActive }) => `menu-main-link ${isActive ? 'active' : ''}`}
-                  >
-                    {section.title}
-                  </NavLink>
-                </div>
-
-                <p className="menu-section-summary">{section.summary}</p>
-
-                {hasChildren && isExpanded ? (
-                  <div className="menu-children">
-                    {section.children.map((child) => (
-                      <NavLink
-                        key={child.path}
-                        to={child.path}
-                        className={({ isActive }) => `menu-child-link ${isActive ? 'active' : ''}`}
-                      >
-                        <span>{child.label}</span>
-                        <small>{child.summary}</small>
-                      </NavLink>
-                    ))}
-                  </div>
-                ) : null}
+          {navSections.map((section) => (
+            <div key={section.id} className="menu-section-card">
+              <div className="menu-section-row">
+                <Link to={section.path} className="menu-main-link">
+                  {section.title}
+                </Link>
               </div>
-            )
-          })}
+
+              <p className="menu-section-summary">{section.summary}</p>
+            </div>
+          ))}
 
           {isAdmin ? (
             <div className="menu-section-card">
@@ -719,7 +639,113 @@ function MoonIcon({ active }: { active: boolean }) {
   )
 }
 
+/**
+ * One collapsible block on the home page. Open state is lifted to HomePage so a
+ * `#section` link from the menu can expand the right one before scrolling to it.
+ */
+function HomeSection({
+  id,
+  isOpen,
+  onToggle,
+  downloadPdfHref,
+  downloadWordHref,
+  children,
+}: {
+  id: SectionId
+  isOpen: boolean
+  onToggle: () => void
+  downloadPdfHref?: string
+  downloadWordHref?: string
+  children: ReactNode
+}) {
+  const section = sectionPages[id]
+  const headingId = `${id}-heading`
+
+  return (
+    <section
+      id={id}
+      className="home-section"
+      style={{ '--page-accent': section.accent } as CSSProperties}
+      aria-labelledby={headingId}
+    >
+      <div className="home-section-header">
+        <button
+          type="button"
+          className="home-section-toggle"
+          aria-expanded={isOpen}
+          aria-controls={`${id}-panel`}
+          onClick={onToggle}
+        >
+          <span className="home-section-caret" aria-hidden="true">{isOpen ? '▾' : '▸'}</span>
+          <span className="home-section-titles">
+            <span className="eyebrow">{section.eyebrow}</span>
+            <span id={headingId} className="home-section-title">{section.title}</span>
+          </span>
+        </button>
+
+        {downloadPdfHref || downloadWordHref ? (
+          <div className="download-actions" aria-label="Download files">
+            {downloadPdfHref ? (
+              <a href={downloadPdfHref} className="download-link" download>
+                Download PDF
+              </a>
+            ) : null}
+            {downloadWordHref ? (
+              <a href={downloadWordHref} className="download-link" download>
+                Download Word
+              </a>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+
+      {isOpen ? (
+        <div id={`${id}-panel`} className="home-section-panel">
+          <SummaryText summary={section.summary} />
+          <div className="page-grid">{children}</div>
+          {section.callout ? <p className="page-note">{section.callout}</p> : null}
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming']
+
 function HomePage({ isAdmin }: { isAdmin: boolean }) {
+  const location = useLocation()
+  // Sections start open so the page reads as one document rather than an index.
+  const [openSections, setOpenSections] = useState<SectionId[]>(ALL_SECTION_IDS)
+
+  const requestedSection = ALL_SECTION_IDS.find(
+    (id) => id === location.hash.replace('#', ''),
+  )
+
+  // A /#gaming link from the menu expands that section and scrolls to it.
+  useEffect(() => {
+    if (!requestedSection) {
+      return
+    }
+
+    setOpenSections((previous) =>
+      previous.includes(requestedSection) ? previous : [...previous, requestedSection],
+    )
+    document.getElementById(requestedSection)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [requestedSection])
+
+  function toggleSection(id: SectionId) {
+    const isOpen = openSections.includes(id)
+    if (isOpen) {
+      sounds.sectionCollapse()
+    } else {
+      sounds.sectionExpand()
+    }
+
+    setOpenSections((previous) =>
+      isOpen ? previous.filter((value) => value !== id) : [...previous, id],
+    )
+  }
+
   return (
     <div className="page home-page">
       {isAdmin ? (
@@ -733,25 +759,55 @@ function HomePage({ isAdmin }: { isAdmin: boolean }) {
         </div>
       ) : null}
 
-      {/* The page leads with the section tiles; the h1 is for assistive tech and SEO. */}
+      {/* The sections carry the page; the h1 is for assistive tech and SEO. */}
       <h1 className="sr-only">mrpasionfruit</h1>
 
-      <section id="sections" className="section-block">
-        <div className="section-grid">
-          {navSections.map((section) => (
-            <Link
-              key={section.id}
-              to={section.path}
-              className="section-tile"
-              style={{ '--tile-accent': section.accent } as CSSProperties}
-            >
-              <span className="tile-title">{section.title}</span>
-              <span className="tile-summary">{section.summary}</span>
-              <span className="tile-open" aria-hidden="true">→</span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <HomeSection
+        id="experiences"
+        isOpen={openSections.includes('experiences')}
+        onToggle={() => toggleSection('experiences')}
+        downloadPdfHref="/files/abe-pasion-resume.pdf"
+        downloadWordHref="/files/abe-pasion-resume.docx"
+      >
+        {sectionPages.experiences.cards.map((card) => {
+          if (card.title === 'Education') {
+            return <EducationCard key={card.title} title={card.title} />
+          }
+
+          if (card.title === 'Professional Experience') {
+            return <ProfessionalExperienceCard key={card.title} title={card.title} />
+          }
+
+          if (card.title === 'Technical Skills') {
+            return <TechnicalSkillsCard key={card.title} title={card.title} body={card.body} />
+          }
+
+          return (
+            <article key={card.title} className="info-card section-page-card">
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+            </article>
+          )
+        })}
+      </HomeSection>
+
+      <HomeSection
+        id="personal-sites"
+        isOpen={openSections.includes('personal-sites')}
+        onToggle={() => toggleSection('personal-sites')}
+      >
+        {personalSiteEntries.map((entry) => (
+          <PersonalSiteCard key={entry.url} entry={entry} />
+        ))}
+      </HomeSection>
+
+      <HomeSection
+        id="gaming"
+        isOpen={openSections.includes('gaming')}
+        onToggle={() => toggleSection('gaming')}
+      >
+        <MinecraftServerCards />
+      </HomeSection>
     </div>
   )
 }
@@ -1146,88 +1202,6 @@ function TodoistTasksCard({
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
       </div>
     </article>
-  )
-}
-
-function SectionPage({
-  sectionId,
-  profile,
-  googleIdToken,
-}: {
-  sectionId: SectionId
-  profile: UserProfile
-  googleIdToken: string
-}) {
-  const section = sectionPages[sectionId]
-  const navSection = navSections.find((item) => item.id === sectionId)
-  const experienceDownloads =
-    sectionId === 'experiences'
-      ? {
-          pdfHref: '/files/abe-pasion-resume.pdf',
-          wordHref: '/files/abe-pasion-resume.docx',
-        }
-      : undefined
-
-  return (
-    <PageFrame
-      eyebrow={section.eyebrow}
-      title={section.title}
-      summary={section.summary}
-      accent={section.accent}
-      backLink="/"
-      backLabel="Back home"
-      note={section.callout}
-      downloadPdfHref={experienceDownloads?.pdfHref}
-      downloadWordHref={experienceDownloads?.wordHref}
-    >
-      {sectionId === 'personal-sites'
-        ? personalSiteEntries.map((entry) => <PersonalSiteCard key={entry.url} entry={entry} />)
-        : null}
-
-      {section.cards.map((card) => {
-        if (sectionId === 'experiences' && card.title === 'Education') {
-          return <EducationCard key={card.title} title={card.title} />
-        }
-
-        if (sectionId === 'experiences' && card.title === 'Professional Experience') {
-          return <ProfessionalExperienceCard key={card.title} title={card.title} />
-        }
-
-        if (sectionId === 'experiences' && card.title === 'Technical Skills') {
-          return <TechnicalSkillsCard key={card.title} title={card.title} body={card.body} />
-        }
-
-        if (sectionId === 'gaming' && card.title === 'Games I Like to Play') {
-          return <GamesCarouselCard key={card.title} title={card.title} />
-        }
-
-        return (
-          <article key={card.title} className="info-card section-page-card">
-            <h3>{card.title}</h3>
-            <p>{card.body}</p>
-          </article>
-        )
-      })}
-
-      {navSection?.children.map((child) => (
-        <Link key={child.path} to={child.path} className="info-card section-child-card">
-          <p className="section-child-label">Open page</p>
-          <h3>{child.label}</h3>
-          <p>{child.summary}</p>
-        </Link>
-      ))}
-
-      {sectionId === 'gaming' ? <PersonalGamesCard title="Personally Developed Games" /> : null}
-
-      {/* Studying is admin-editable, so the section page keeps the token around. */}
-      {sectionId === 'experiences' && profile === 'admin' && googleIdToken ? (
-        <Link to="/admin" className="info-card section-child-card">
-          <p className="section-child-label">Private</p>
-          <h3>Dashboards</h3>
-          <p>Tasks, calendar, journal, finance, training, and work.</p>
-        </Link>
-      ) : null}
-    </PageFrame>
   )
 }
 
@@ -3329,32 +3303,6 @@ function NextEventCountdownCard({
   )
 }
 
-function ActuaryExamsCard({ title }: { title: string }) {
-  return (
-    <CollapsibleSectionCard title={title} className="experience-card">
-      <ul className="experience-list">
-        {actuaryExamEntries.map((entry) => (
-          <ActuaryExamRow
-            key={`${entry.exam}-${entry.topic}`}
-            entry={entry}
-          />
-        ))}
-      </ul>
-    </CollapsibleSectionCard>
-  )
-}
-
-function ActuaryExamRow({ entry }: { entry: ActuaryExamEntry }) {
-  return (
-    <li className="experience-item">
-      <div className="experience-header">
-        <p className="experience-role">{entry.exam} — {entry.topic}</p>
-        <p className="experience-date">{entry.status}</p>
-      </div>
-    </li>
-  )
-}
-
 function EducationCard({ title }: { title: string }) {
   return (
     <CollapsibleSectionCard title={title} className="experience-card">
@@ -3827,245 +3775,6 @@ function EquipmentCard({ title }: { title: string }) {
   )
 }
 
-function formatClock(totalSeconds: number) {
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-}
-
-function clampMinutes(value: number) {
-  if (!Number.isFinite(value)) {
-    return 1
-  }
-
-  return Math.min(120, Math.max(1, Math.round(value)))
-}
-
-function PomodoroTimerCard({ title, body }: { title: string; body: string }) {
-  const [isCollapsed, setIsCollapsed] = useState(true)
-  const [focusMinutes, setFocusMinutes] = useState(25)
-  const [breakMinutes, setBreakMinutes] = useState(5)
-  const [mode, setMode] = useState<'focus' | 'break'>('focus')
-  const [isRunning, setIsRunning] = useState(false)
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60)
-  const [hourglassCycle, setHourglassCycle] = useState(0)
-  const [isPreFlip, setIsPreFlip] = useState(false)
-  const [isUpright, setIsUpright] = useState(false)
-  const flipResetTimerRef = useRef<number | null>(null)
-  const hasStartedSinceResetRef = useRef(false)
-
-  const totalSeconds = (mode === 'focus' ? focusMinutes : breakMinutes) * 60
-  const progressRatio = totalSeconds > 0 ? 1 - secondsLeft / totalSeconds : 0
-  const clampedProgress = Math.min(1, Math.max(0, progressRatio))
-  const topSand = Math.round((1 - clampedProgress) * 100)
-  const bottomSand = Math.round(clampedProgress * 100)
-  const displayTopSand = topSand
-  const displayBottomSand = bottomSand
-
-  function clearHourglassAnimationTimer() {
-    if (flipResetTimerRef.current !== null) {
-      window.clearTimeout(flipResetTimerRef.current)
-      flipResetTimerRef.current = null
-    }
-  }
-
-  function restartHourglassAnimation() {
-    clearHourglassAnimationTimer()
-
-    setIsUpright(true)
-    setIsPreFlip(true)
-    setHourglassCycle((previous) => previous + 1)
-
-    flipResetTimerRef.current = window.setTimeout(() => {
-      setIsPreFlip(false)
-      flipResetTimerRef.current = null
-    }, 940)
-  }
-
-  useEffect(() => {
-    if (!isRunning) {
-      return
-    }
-
-    const timer = window.setInterval(() => {
-      setSecondsLeft((previous) => {
-        if (previous <= 1) {
-          return 0
-        }
-
-        return previous - 1
-      })
-    }, 1000)
-
-    return () => window.clearInterval(timer)
-  }, [isRunning])
-
-  useEffect(() => {
-    if (!isRunning || secondsLeft !== 0) {
-      return
-    }
-
-    const nextMode = mode === 'focus' ? 'break' : 'focus'
-    const nextSeconds = (nextMode === 'focus' ? focusMinutes : breakMinutes) * 60
-    restartHourglassAnimation()
-    setMode(nextMode)
-    setSecondsLeft(nextSeconds)
-  }, [secondsLeft, isRunning, mode, focusMinutes, breakMinutes])
-
-  useEffect(() => {
-    return () => {
-      if (flipResetTimerRef.current !== null) {
-        window.clearTimeout(flipResetTimerRef.current)
-      }
-    }
-  }, [])
-
-  function updateFocus(value: string) {
-    const nextValue = clampMinutes(Number(value))
-    setFocusMinutes(nextValue)
-
-    if (!isRunning && mode === 'focus') {
-      setSecondsLeft(nextValue * 60)
-    }
-  }
-
-  function updateBreak(value: string) {
-    const nextValue = clampMinutes(Number(value))
-    setBreakMinutes(nextValue)
-
-    if (!isRunning && mode === 'break') {
-      setSecondsLeft(nextValue * 60)
-    }
-  }
-
-  function switchMode(nextMode: 'focus' | 'break') {
-    restartHourglassAnimation()
-    hasStartedSinceResetRef.current = false
-    setIsUpright(false)
-    setMode(nextMode)
-    setIsRunning(false)
-    setSecondsLeft((nextMode === 'focus' ? focusMinutes : breakMinutes) * 60)
-  }
-
-  function resetTimer() {
-    clearHourglassAnimationTimer()
-    setIsPreFlip(false)
-    setIsUpright(false)
-    hasStartedSinceResetRef.current = false
-    setIsRunning(false)
-    setSecondsLeft((mode === 'focus' ? focusMinutes : breakMinutes) * 60)
-  }
-
-  function toggleRunning() {
-    if (!isRunning) {
-      if (!hasStartedSinceResetRef.current) {
-        restartHourglassAnimation()
-        hasStartedSinceResetRef.current = true
-      }
-    }
-
-    setIsRunning((value) => !value)
-  }
-
-  return (
-    <article className="info-card pomodoro-card">
-      <div className="pomodoro-header">
-        <h3>{title}</h3>
-        <button
-          type="button"
-          className="pomodoro-collapse-btn"
-          aria-expanded={!isCollapsed}
-          aria-controls="pomodoro-panel"
-          onClick={() => setIsCollapsed((value) => !value)}
-        >
-          {isCollapsed ? 'Show Timer' : 'Hide Timer'}
-        </button>
-      </div>
-
-      <p>{body}</p>
-
-      {!isCollapsed ? (
-        <div id="pomodoro-panel" className="pomodoro-panel">
-          <div className="pomodoro-settings" role="group" aria-label="Pomodoro duration settings">
-            <label>
-              <span>Focus (min)</span>
-              <input
-                type="number"
-                min={1}
-                max={120}
-                value={focusMinutes}
-                onChange={(event) => updateFocus(event.target.value)}
-              />
-            </label>
-            <label>
-              <span>Break (min)</span>
-              <input
-                type="number"
-                min={1}
-                max={120}
-                value={breakMinutes}
-                onChange={(event) => updateBreak(event.target.value)}
-              />
-            </label>
-          </div>
-
-          <div
-            key={`${mode}-${isRunning ? 'running' : 'paused'}-${hourglassCycle}`}
-            className={`pomodoro-hourglass ${isRunning ? 'running' : ''} ${isUpright ? 'upright' : ''} ${isPreFlip ? 'preflip' : ''}`}
-            style={{ '--sand-top': `${displayTopSand}%`, '--sand-bottom': `${displayBottomSand}%` } as CSSProperties}
-            aria-hidden="true"
-          >
-            <div className="hourglass-chamber top">
-              <span className="hourglass-sand top" />
-            </div>
-            <span className="hourglass-stream" />
-            <div className="hourglass-chamber bottom">
-              <span className="hourglass-sand bottom" />
-            </div>
-          </div>
-
-          <p className="pomodoro-status">{mode === 'focus' ? 'Focus Session' : 'Break Session'}</p>
-          <p className="pomodoro-time" aria-live="polite">{formatClock(secondsLeft)}</p>
-
-          <div className="pomodoro-mode-toggle" role="tablist" aria-label="Pomodoro mode">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'focus'}
-              className={`experience-toggle-btn ${mode === 'focus' ? 'active' : ''}`}
-              onClick={() => switchMode('focus')}
-            >
-              Focus
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'break'}
-              className={`experience-toggle-btn ${mode === 'break' ? 'active' : ''}`}
-              onClick={() => switchMode('break')}
-            >
-              Break
-            </button>
-          </div>
-
-          <div className="pomodoro-controls">
-            <button type="button" className="primary-action" onClick={toggleRunning}>
-              {isRunning ? 'Pause' : 'Start'}
-            </button>
-            <button type="button" className="secondary-action" onClick={resetTimer}>
-              Reset
-            </button>
-          </div>
-        </div>
-      ) : (
-        <p className="pomodoro-collapsed-meta">
-          {mode === 'focus' ? 'Focus' : 'Break'} | {formatClock(secondsLeft)}
-        </p>
-      )}
-    </article>
-  )
-}
-
 function toDateOnlyKey(value?: string) {
   if (!value) {
     return ''
@@ -4079,130 +3788,7 @@ function toDateOnlyKey(value?: string) {
   return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`
 }
 
-function CurrentStudyPlanCard({
-  title,
-  body,
-  canWrite,
-  idToken,
-}: {
-  title: string
-  body: string
-  canWrite: boolean
-  idToken: string
-}) {
-  const [rows, setRows] = useState<CurrentStudyRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isWriting, setIsWriting] = useState(false)
-  const [writeError, setWriteError] = useState('')
-
-  async function loadCurrentStudy() {
-    try {
-      const data = await getCurrentStudy()
-      setRows(data)
-    } catch {
-      setRows([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadCurrentStudy()
-  }, [])
-
-  async function handleToggleCompleted(row: CurrentStudyRecord) {
-    if (!canWrite || !idToken || isWriting) {
-      return
-    }
-
-    const previousRows = rows
-    const nextCompleted = !row.completed
-    setIsWriting(true)
-    setWriteError('')
-    setRows((currentRows) =>
-      currentRows.map((currentRow) =>
-        currentRow.study_id === row.study_id ? { ...currentRow, completed: nextCompleted } : currentRow,
-      ),
-    )
-
-    try {
-      await setCurrentStudyCompleted(idToken, row.study_id, nextCompleted)
-      void loadCurrentStudy()
-    } catch (error) {
-      setRows(previousRows)
-      setWriteError(error instanceof Error ? error.message : 'Unable to update completion state')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  const todayKey = toDateOnlyKey(new Date().toISOString())
-  const todaysLessons = rows
-    .filter((row) => toDateOnlyKey(row.date) === todayKey && row.topic.trim().length > 0)
-    .sort((a, b) => a.topic.localeCompare(b.topic))
-
-  return (
-    <article className="info-card section-page-card sheets-card">
-      <h3>{title}</h3>
-
-      {isLoading ? <p className="sheets-meta">Loading current study...</p> : null}
-
-      {!isLoading ? (
-        <>
-          <p className="sheets-meta">Today's Lesson</p>
-          {todaysLessons.length > 0 ? (
-            <div className="study-today-shell">
-              <table className="study-today-table">
-                <thead>
-                  <tr>
-                    <th>Topic</th>
-                    <th>Completed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {todaysLessons.map((row) => (
-                    <tr key={row.study_id}>
-                      <td>{row.topic}</td>
-                      <td className="study-complete-cell" aria-label={row.completed ? 'Completed' : 'Not completed'}>
-                        {canWrite ? (
-                          <button
-                            type="button"
-                            className="secondary-action study-complete-btn"
-                            onClick={() => void handleToggleCompleted(row)}
-                            disabled={!idToken || isWriting}
-                          >
-                            {row.completed ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                          </button>
-                        ) : row.completed ? (
-                          <Check size={14} aria-hidden="true" />
-                        ) : (
-                          ''
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="sheets-meta">No lesson scheduled for today.</p>
-          )}
-
-          {canWrite && !idToken ? (
-            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
-          ) : null}
-        </>
-      ) : null}
-
-      {!isLoading && rows.length === 0 ? <p>{body}</p> : null}
-      {writeError ? <p className="sheets-error">{writeError}</p> : null}
-    </article>
-  )
-}
-
 Chart.register(CategoryScale, LinearScale, LineController, LineElement, PointElement, Filler, Tooltip, TimeScale)
-
-// ── Health dashboard helpers ───────────────────────────────────────────────
 
 // Normalise sheet date strings (MM/DD/YYYY or YYYY-MM-DD) → YYYY-MM-DD for
 // consistent sorting and Chart.js time scale parsing.
@@ -4668,93 +4254,6 @@ function HealthDataCard({ title }: { title: string }) {
         </>
       )}
     </article>
-  )
-}
-
-function DetailPage({
-  path,
-  profile = 'guest',
-  googleIdToken = '',
-}: {
-  path: string
-  profile?: UserProfile
-  googleIdToken?: string
-}) {
-  const page = detailPages[path]
-  const parentPath = path.split('/').slice(0, 2).join('/')
-  const parentSection = navSections.find((section) => section.path === parentPath)
-
-  if (!page || !parentSection) {
-    return <Navigate replace to="/" />
-  }
-
-  return (
-    <PageFrame
-      eyebrow={page.eyebrow}
-      title={page.title}
-      summary={page.summary}
-      accent={page.accent}
-      backLink={parentSection.path}
-      backLabel={`Back to ${parentSection.title}`}
-      note={page.note}
-    >
-      {page.cards.map((card) => {
-        if (path === '/experiences/studying' && card.title === 'Actuary Exams') {
-          return <ActuaryExamsCard key={card.title} title={card.title} />
-        }
-
-        if (path === '/experiences/studying' && card.title === 'Current Study Plan') {
-          return (
-            <CurrentStudyPlanCard
-              key={card.title}
-              title={card.title}
-              body={card.body}
-              canWrite={profile === 'admin'}
-              idToken={googleIdToken}
-            />
-          )
-        }
-
-        if (path === '/experiences/studying' && card.title === 'Pomodoro Timer') {
-          return <PomodoroTimerCard key={card.title} title={card.title} body={card.body} />
-        }
-
-        if (path === '/experiences/studying' && card.title === 'Study Materials') {
-          return (
-            <article key={card.title} className="info-card">
-              <h3>{card.title}</h3>
-              <p>{card.body}</p>
-              <a
-                href="https://drive.google.com/drive/folders/1mbcZlFIksypI088sjbO5q14xp6s0M6Fz?usp=drive_link"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="study-drive-link"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.6rem', fontWeight: 500 }}
-              >
-                <span aria-hidden="true" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  {/* Google Drive SVG icon */}
-                  <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="25,8 39,32 33,32 19,8" fill="#2196F3"/>
-                    <polygon points="19,8 5,32 11,32 25,8" fill="#4CAF50"/>
-                    <polygon points="5,32 11,32 17,42 11,42" fill="#FFC107"/>
-                    <polygon points="39,32 33,32 27,42 33,42" fill="#FFC107"/>
-                    <polygon points="17,42 27,42 33,32 11,32" fill="#F44336"/>
-                  </svg>
-                </span>
-                <span>Study Notes (Google Drive)</span>
-              </a>
-            </article>
-          )
-        }
-
-        return (
-          <article key={card.title} className="info-card section-page-card">
-            <h3>{card.title}</h3>
-            <p>{card.body}</p>
-          </article>
-        )
-      })}
-    </PageFrame>
   )
 }
 
@@ -5384,100 +4883,18 @@ function LoginPage({
   )
 }
 
-// ── Gaming ────────────────────────────────────────────────────────────────
-
-const FAVORITE_GAMES = [
-  { name: 'Minecraft',         cover: '/game-covers/minecraft.jpg' },
-  { name: 'Valorant',          cover: '/game-covers/valorant.jpg' },
-  { name: 'Among Us',          cover: '/game-covers/among-us.jpg' },
-  { name: 'Rocket League',     cover: '/game-covers/rocket-league.jpg' },
-  { name: 'Plants vs Zombies', cover: '/game-covers/plants-vs-zombies.jpg' },
-  { name: 'Meccha Chameleon',  cover: '/game-covers/meccha-chameleon.jpg' },
-  { name: 'Pico Park',         cover: '/game-covers/pico-park.jpg' },
-  { name: 'R.E.P.O',           cover: '/game-covers/repo.jpg' },
-]
-
-function GamesCarouselCard({ title }: { title: string }) {
-  const trackRef = useRef<HTMLDivElement>(null)
-
-  function scroll(dir: 'left' | 'right') {
-    const track = trackRef.current
-    if (!track) return
-    const card = track.querySelector('.game-cover-slide') as HTMLElement | null
-    const cardW = card ? card.offsetWidth + 16 : 220
-    track.scrollBy({ left: dir === 'right' ? cardW : -cardW, behavior: 'smooth' })
-  }
-
-  return (
-    <article className="info-card section-page-card game-carousel-card">
-      <h3>{title}</h3>
-      <div className="game-carousel-wrapper">
-        <button className="game-carousel-arrow left" onClick={() => scroll('left')} aria-label="Previous">&#8249;</button>
-        <div className="game-carousel-track" ref={trackRef}>
-          {FAVORITE_GAMES.map((g) => (
-            <div key={g.name} className="game-cover-slide">
-              <img
-                src={g.cover}
-                alt={g.name}
-                className="game-cover-img"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '' ; e.currentTarget.classList.add('missing') }}
-              />
-              <span className="game-cover-label">{g.name}</span>
-            </div>
-          ))}
-        </div>
-        <button className="game-carousel-arrow right" onClick={() => scroll('right')} aria-label="Next">&#8250;</button>
-      </div>
-    </article>
-  )
-}
-
-const PERSONAL_GAMES = [
-  {
-    name: 'Type-to-beat',
-    url: 'https://texthero.onrender.com/',
-    description: 'A rhythm game — type along to the beat.',
-    note: 'Hosted on Render, so it may take up to 5 minutes to load and import songs. Legal disclaimer: I do not claim any of the songs as my own.',
-  },
-  {
-    name: 'Game Night',
-    url: 'https://mahjong-xmhv.onrender.com/',
-    description:
-      'Published with some games and still in development — the goal is a hybrid of phone games and a personal board game.',
-    note: '',
-  },
-]
-
-function PersonalGamesCard({ title }: { title: string }) {
-  return (
-    <article className="info-card section-page-card personal-games-card">
-      <h3>{title}</h3>
-      <ul className="personal-games-list">
-        {PERSONAL_GAMES.map((game) => (
-          <li key={game.name} className="personal-games-item">
-            <a href={game.url} target="_blank" rel="noopener noreferrer" className="personal-games-link">
-              {game.name}
-              <ExternalLink size={13} aria-hidden="true" />
-            </a>
-            <p className="personal-games-desc">{game.description}</p>
-            {game.note ? <p className="personal-games-note">{game.note}</p> : null}
-          </li>
-        ))}
-      </ul>
-    </article>
-  )
-}
-
 const MC_DOC_URL    = 'https://docs.google.com/document/d/1yUUUDR1jYHLBj_nu-0Rqnf9_e5c3vfgSlqXv8i2Eegw/edit?tab=t.0'
 
 type McServerStatus = { online: boolean; players?: { online: number; max: number }; version?: string }
 
-function GamingServerPage() {
+/**
+ * The Gaming section of the home page: how to connect, plus live server status
+ * with a link into the control dashboard.
+ */
+function MinecraftServerCards() {
   const [srvStatus,      setSrvStatus]      = useState<McServerStatus | null>(null)
   const [srvChecking,    setSrvChecking]    = useState(true)
   const [srvLastChecked, setSrvLastChecked] = useState<Date | null>(null)
-
-  const [playerStats, setPlayerStats] = useState<McPlayerStatsRecord[]>([])
 
   async function checkServerStatus() {
     setSrvChecking(true)
@@ -5500,20 +4917,11 @@ function GamingServerPage() {
   }
 
   useEffect(() => {
-    checkServerStatus()
-    getMcPlayerStats().then(setPlayerStats).catch(() => {})
+    void checkServerStatus()
   }, [])
 
   return (
-    <PageFrame
-      eyebrow="Minecraft"
-      title="Minecraft Server"
-      summary="Check server status, get connection instructions, and open the control dashboard."
-      accent="#7e22ce"
-      backLink="/gaming"
-      backLabel="Back to Gaming"
-      note=""
-    >
+    <>
       {/* ── How to Connect ── */}
       <div className="info-card section-page-card mc-doc-card">
         <h3>How to Connect</h3>
@@ -5530,10 +4938,8 @@ function GamingServerPage() {
         </div>
       </div>
 
-      {/* ── Server Status + Start (merged) ── */}
+      {/* ── Server Status + Control Dashboard ── */}
       <div className="info-card section-page-card mc-server-card">
-
-        {/* Status row */}
         <div className="mc-srvstatus-header">
           <h3>Server Status</h3>
           <button
@@ -5583,56 +4989,7 @@ function GamingServerPage() {
           </a>
         </div>
       </div>
-
-      {/* ── Player Insights ── */}
-      <div className="info-card section-page-card mc-insights-card">
-          <h3>Player Insights</h3>
-          <div className="mc-leaderboards">
-            <McLeaderboard
-              title="Player Kills"
-              rows={[...playerStats].sort((a, b) => b.kills - a.kills).slice(0, 3)}
-              getValue={r => r.kills}
-              unit="kills"
-            />
-            <McLeaderboard
-              title="Deaths"
-              rows={[...playerStats].sort((a, b) => b.deaths - a.deaths).slice(0, 3)}
-              getValue={r => r.deaths}
-              unit="deaths"
-            />
-            <McLeaderboard
-              title="Playtime"
-              rows={[...playerStats].sort((a, b) => b.playtime_hours - a.playtime_hours).slice(0, 3)}
-              getValue={r => r.playtime_hours}
-              unit="hrs"
-              formatValue={v => v.toFixed(1)}
-            />
-          </div>
-        </div>
-    </PageFrame>
-  )
-}
-
-function McLeaderboard({ title, rows, getValue, unit, formatValue }: {
-  title: string
-  rows: McPlayerStatsRecord[]
-  getValue: (r: McPlayerStatsRecord) => number
-  unit: string
-  formatValue?: (v: number) => string
-}) {
-  const medals = ['1st', '2nd', '3rd']
-  return (
-    <div className="mc-lb-col">
-      <p className="mc-lb-title">{title}</p>
-      {rows.map((r, i) => (
-        <div key={r.player_name} className="mc-lb-row">
-          <span className={`mc-lb-rank mc-lb-rank--${i + 1}`}>{medals[i]}</span>
-          <span className="mc-lb-name">{r.player_name}</span>
-          <span className="mc-lb-value">{formatValue ? formatValue(getValue(r)) : getValue(r)} {unit}</span>
-        </div>
-      ))}
-      {rows.length === 0 && <p className="mc-lb-empty">No data yet</p>}
-    </div>
+    </>
   )
 }
 

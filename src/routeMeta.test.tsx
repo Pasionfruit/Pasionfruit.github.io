@@ -18,7 +18,7 @@ describe('useRouteMeta', () => {
     document.head.innerHTML = ''
   })
 
-  it.each(['/', '/login', '/admin', '/admin/finance', '/tasks', '/weekly-reset', '/personal-sites', '/gaming/server', '/unknown-route'])(
+  it.each(['/login', '/admin', '/admin/finance', '/tasks', '/weekly-reset', '/unknown-route'])(
     'does not load ads on non-content route %s',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -26,7 +26,7 @@ describe('useRouteMeta', () => {
     },
   )
 
-  it.each(['/experiences', '/experiences/studying', '/gaming'])(
+  it.each(['/'])(
     'loads ads on content route %s',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -36,7 +36,7 @@ describe('useRouteMeta', () => {
 
   it('removes the ad script when navigating from a content route to a utility route', () => {
     const { rerender } = renderHook(({ path }) => useRouteMeta(path), {
-      initialProps: { path: '/experiences' },
+      initialProps: { path: '/' },
     })
     expect(hasAdScript()).toBe(true)
 
@@ -52,7 +52,7 @@ describe('useRouteMeta', () => {
     },
   )
 
-  it.each(['/', '/experiences', '/personal-sites', '/gaming/server'])(
+  it.each(['/'])(
     'marks public route %s indexable',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -61,7 +61,7 @@ describe('useRouteMeta', () => {
   )
 
   it('gives each route a unique title and description', () => {
-    const paths = ['/', '/experiences', '/experiences/studying', '/personal-sites', '/gaming']
+    const paths = ['/', '/login', '/admin/tasks', '/admin/journal', '/admin/work']
     const titles = new Set<string>()
 
     for (const path of paths) {
@@ -77,10 +77,15 @@ describe('useRouteMeta', () => {
   })
 
   it('normalizes trailing slashes', () => {
-    renderHook(() => useRouteMeta('/experiences/studying/'))
-    expect(hasAdScript()).toBe(true)
+    renderHook(() => useRouteMeta('/admin/tasks/'))
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      'https://pasionfruit.github.io/experiences/studying',
+      'https://pasionfruit.github.io/admin/tasks',
     )
+  })
+
+  it('keeps the home page the only indexed, ad-bearing route', () => {
+    renderHook(() => useRouteMeta('/'))
+    expect(hasAdScript()).toBe(true)
+    expect(robots()).toBe('index,follow')
   })
 })

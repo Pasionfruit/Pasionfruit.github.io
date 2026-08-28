@@ -55,7 +55,6 @@ const repoMocks = vi.hoisted(() => ({
   createTrip: vi.fn(),
   updateTrip: vi.fn(),
   deleteTrip: vi.fn(),
-  getMcPlayerStats: vi.fn(),
   upsertTrainingRecord: vi.fn(),
   replaceCurrentStudyForDate: vi.fn(),
 }))
@@ -105,14 +104,6 @@ vi.mock('topojson-client', () => ({
 import App from './App'
 
 vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
-
-function renderAdminStudyingPage() {
-  return render(
-    <MemoryRouter initialEntries={['/experiences/studying']}>
-      <App />
-    </MemoryRouter>,
-  )
-}
 
 /** /admin/* is admin-gated, so every dashboard render has to sign in first. */
 function renderAdminPage(path: string, email = 'pasionabe@gmail.com') {
@@ -194,7 +185,6 @@ beforeEach(() => {
   repoMocks.getPersonalTraining.mockResolvedValue([])
   repoMocks.getBudgetTargets.mockResolvedValue([])
   repoMocks.getTrips.mockResolvedValue([])
-  repoMocks.getMcPlayerStats.mockResolvedValue([])
   repoMocks.getJournalEntries.mockResolvedValue([])
   repoMocks.getWorkItems.mockResolvedValue([])
   todoistMocks.getCompletedTasks.mockResolvedValue([])
@@ -509,43 +499,6 @@ describe('site sections and dashboards', () => {
 
     expect(await screen.findByRole('dialog', { name: /Transactions for/i })).toBeTruthy()
     expect(screen.getByText(/Abe groceries|Ciara coffee/)).toBeTruthy()
-  })
-
-  it('allows admin to mark today lesson completed or not completed', async () => {
-    const user = userEvent.setup()
-    renderAdminStudyingPage()
-
-    const heading = await screen.findByRole('heading', { name: 'Current Study Plan' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Current Study Plan card not found')
-    }
-
-    const interestTopic = within(card).getByText('Interest Theory')
-    const interestRow = interestTopic.closest('tr')
-    if (!interestRow) {
-      throw new Error('Interest Theory row not found')
-    }
-
-    const markCompleteButton = within(interestRow).getByRole('button', { name: 'Mark Complete' })
-    await user.click(markCompleteButton)
-
-    await waitFor(() => {
-      expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith('valid-token', 'study-1', true)
-    })
-
-    const bayesTopic = within(card).getByText('Bayes Rule')
-    const bayesRow = bayesTopic.closest('tr')
-    if (!bayesRow) {
-      throw new Error('Bayes Rule row not found')
-    }
-
-    const markIncompleteButton = within(bayesRow).getByRole('button', { name: 'Completed' })
-    await user.click(markIncompleteButton)
-
-    await waitFor(() => {
-      expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith('valid-token', 'study-2', false)
-    })
   })
 
   it('shows the Home Todoist summary with overdue counts and supports completing a task', async () => {
