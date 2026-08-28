@@ -199,10 +199,19 @@ export type SheetsCollectionResponse<T> = {
 export type JournalEntryRecord = {
   journal_id: string
   entry_date: string
-  title: string
   mood: string
+  title: string
   /** Free-form body. Newlines are preserved when rendered. */
   body: string
+  /** Newline-separated in the sheet, split into a list on read. */
+  gratitude: string[]
+  /**
+   * The reflection question this entry answered. Stored with the entry rather
+   * than derived from the date, so an old entry keeps the prompt it was written
+   * against even as the daily rotation moves on.
+   */
+  prompt: string
+  reflection: string
   /** Comma-separated in the sheet, split into a list on read. */
   tags: string[]
   created_at?: string

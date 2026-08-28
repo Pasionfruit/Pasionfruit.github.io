@@ -137,7 +137,7 @@ Two tabs are new with the admin dashboards and must be created by hand:
 
 | Tab | Header row |
 | --- | --- |
-| `journal_entries` | `journal_id`, `entry_date`, `title`, `mood`, `body`, `tags`, `created_at` |
+| `journal_entries` | `journal_id`, `entry_date`, `title`, `mood`, `body`, `gratitude`, `prompt`, `reflection`, `tags`, `created_at` |
 | `work_items` | `work_id`, `project`, `item`, `status`, `due_date`, `priority`, `notes`, `link` |
 
 Their write handlers (`createJournalEntry`, `updateWorkItem`, and the rest) are in
@@ -296,6 +296,31 @@ the source. `.env` is gitignored.
 
 Only `VITE_TODOIST_API_TOKEN` needs a dev-server restart to take effect — it
 configures a proxy in `vite.config.ts` rather than being read in the browser.
+
+## Journal
+
+Beyond the entry list, the Journal dashboard has:
+
+- **Verse of the day (KJV)** — from a local list in
+  [src/admin/journal/verses.ts](src/admin/journal/verses.ts), picked by local
+  calendar day. Kept offline rather than fetched: the KJV is public domain, the
+  site is a PWA that has to work without a network, and a free Bible API is one
+  more thing that can go down. It repeats once past the list length; add verses
+  to lengthen the cycle.
+- **Mood tracker** — the last 30 days as one bar per day, coloured and sized by
+  mood, with a breakdown and average. Gaps are days with no entry.
+- **Gratitude prompts** — three "grateful for" lines plus a reflection question
+  that rotates daily
+  ([src/admin/journal/prompts.ts](src/admin/journal/prompts.ts)). The question
+  text is saved with the entry, so an old entry keeps the prompt it was written
+  against rather than being re-labelled by whatever falls on that date later.
+- **Breathing timer** — box 4-4-4-4, relaxing 4-7-8, or coherent 5-5, over 1 to
+  10 minutes, with an expanding ring and a live phase announcement for screen
+  readers. The ring animation respects `prefers-reduced-motion`.
+
+The gratitude fields need three new columns on the `journal_entries` sheet
+(`gratitude`, `prompt`, `reflection`) and a redeployed Apps Script. Existing
+entries without them still load; the fields simply render empty.
 
 ## Mobile layout
 

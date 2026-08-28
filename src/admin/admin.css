@@ -69,6 +69,13 @@
   gap: 1rem;
 }
 
+/* Same min-width:auto blowout guard as .page-grid. */
+.admin-page > *,
+.admin-home-split > *,
+.journal-top-row > * {
+  min-width: 0;
+}
+
 .admin-page-head {
   display: grid;
   gap: 0.2rem;
@@ -814,4 +821,278 @@
   font-size: 0.83rem;
   font-weight: 500;
   text-decoration: none;
+}
+
+/* ── Journal: verse, breathing, mood ──────────────────────────────────────── */
+
+.journal-top-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+@media (min-width: 52rem) {
+  .journal-top-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.verse-text {
+  margin: 0.7rem 0 0;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--page-accent, var(--accent));
+}
+
+.verse-text p {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.verse-text cite {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  letter-spacing: 0.03em;
+}
+
+/* Breathing timer */
+.breathing-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 11rem;
+  margin-top: 0.8rem;
+}
+
+.breathing-ring {
+  position: absolute;
+  width: 9.5rem;
+  height: 9.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--page-accent, var(--accent));
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--page-accent, var(--accent)) 16%, transparent),
+    transparent 70%
+  );
+  transition-property: transform;
+  transition-timing-function: ease-in-out;
+  will-change: transform;
+}
+
+/* An expanding circle is the point of the exercise, but honour the setting. */
+@media (prefers-reduced-motion: reduce) {
+  .breathing-ring {
+    transition-duration: 0s !important;
+  }
+}
+
+.breathing-readout {
+  position: relative;
+  display: grid;
+  gap: 0.1rem;
+  text-align: center;
+}
+
+.breathing-phase {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.breathing-count {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.breathing-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+}
+
+.breathing-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+.breathing-options label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.breathing-options select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.breathing-durations {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.breathing-durations button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.breathing-durations button.active {
+  border-color: var(--page-accent, var(--accent));
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+/* Mood tracker */
+.mood-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 4.5rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mood-cell {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 2px;
+  background: var(--surface-muted);
+}
+
+.mood-cell.empty {
+  height: 18%;
+  background: var(--border);
+  opacity: 0.55;
+}
+
+.mood-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+.mood-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.mood-legend-item small {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+.mood-swatch {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+}
+
+/* Gratitude prompts inside the entry editor */
+.gratitude-block {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.7rem 0.75rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+
+.gratitude-block legend {
+  padding: 0 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gratitude-block input {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.reflection-field > span {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-size: 0.84rem !important;
+  color: var(--text-strong) !important;
+}
+
+/* Saved gratitude and reflection on an entry */
+.journal-gratitude,
+.journal-reflection {
+  margin-top: 0.7rem;
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--border-strong);
+}
+
+.journal-gratitude h5,
+.journal-reflection h5 {
+  margin: 0 0 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.journal-gratitude ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text-strong);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.journal-reflection p {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
 }

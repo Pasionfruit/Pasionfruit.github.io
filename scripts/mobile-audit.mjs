@@ -83,12 +83,29 @@ const findOverflow = `() => {
   }
 }`
 
-/** Interactive targets smaller than the 24x24 CSS px minimum (WCAG 2.2 AA). */
+/**
+ * Interactive targets smaller than the 24x24 CSS px minimum (WCAG 2.2 AA).
+ *
+ * A control may keep a small visual box while extending its hit area with an
+ * absolutely positioned ::before/::after, which is a legitimate pattern - so the
+ * pseudo-element box counts toward the target size.
+ */
 const findTinyTargets = `() => {
   const small = []
+  const pseudoSize = (el, which) => {
+    const cs = getComputedStyle(el, which)
+    if (cs.content === 'none' || cs.position !== 'absolute') return { w: 0, h: 0 }
+    return { w: parseFloat(cs.width) || 0, h: parseFloat(cs.height) || 0 }
+  }
   for (const el of document.querySelectorAll('a, button, input, select, textarea, [role="tab"], [role="button"]')) {
-    const r = el.getBoundingClientRect()
-    if (r.width === 0 || r.height === 0) continue
+    const box = el.getBoundingClientRect()
+    if (box.width === 0 || box.height === 0) continue
+    const before = pseudoSize(el, '::before')
+    const after = pseudoSize(el, '::after')
+    const r = {
+      width: Math.max(box.width, before.w, after.w),
+      height: Math.max(box.height, before.h, after.h),
+    }
     if (r.width < 24 || r.height < 24) {
       small.push({
         tag: el.tagName.toLowerCase(),
@@ -130,8 +147,11 @@ for (const vp of VIEWPORTS) {
     const page = await context.newPage()
 
     for (const route of routes) {
-      await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle' }).catch(() => {})
-      await page.waitForTimeout(350)
+      // `networkidle` can hang on a dev server that keeps connections open, and
+      // Playwright discourages it; settle on the shell then give data a beat.
+      await page.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {})
+      await page.waitForLoadState('load').catch(() => {})
+      await page.waitForTimeout(600)
 
       // On the guest home page, open the sections so their content is measured too.
       if (label === 'guest' && route === '/') {

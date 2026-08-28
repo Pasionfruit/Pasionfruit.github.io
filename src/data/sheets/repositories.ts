@@ -1124,6 +1124,18 @@ function parseTags(value: unknown): string[] {
     .filter(Boolean)
 }
 
+/** Gratitude lines are newline-separated so an entry can contain commas. */
+function parseLines(value: unknown): string[] {
+  if (typeof value !== 'string') {
+    return []
+  }
+
+  return value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+}
+
 /** Newest entry first, so the journal opens on the most recent day. */
 export async function getJournalEntries(): Promise<JournalEntryRecord[]> {
   const rows = await fetchSheetTable<Record<string, unknown>>('journal_entries')
@@ -1135,6 +1147,9 @@ export async function getJournalEntries(): Promise<JournalEntryRecord[]> {
       title: String(row.title ?? ''),
       mood: String(row.mood ?? ''),
       body: String(row.body ?? ''),
+      gratitude: parseLines(row.gratitude),
+      prompt: String(row.prompt ?? ''),
+      reflection: String(row.reflection ?? ''),
       tags: parseTags(row.tags),
       created_at: row.created_at ? String(row.created_at) : undefined,
     }))
@@ -1142,35 +1157,48 @@ export async function getJournalEntries(): Promise<JournalEntryRecord[]> {
     .sort((a, b) => b.entry_date.localeCompare(a.entry_date))
 }
 
-export async function createJournalEntry(
-  idToken: string,
-  entry: { entryDate: string; title: string; mood: string; body: string; tags: string[] },
-) {
-  await runWrite({
-    action: 'createJournalEntry',
-    idToken,
+export type JournalEntryDraft = {
+  entryDate: string
+  title: string
+  mood: string
+  body: string
+  gratitude: string[]
+  prompt: string
+  reflection: string
+  tags: string[]
+}
+
+function journalPayload(entry: JournalEntryDraft) {
+  return {
     entry_date: entry.entryDate,
     title: entry.title,
     mood: entry.mood,
     body: entry.body,
+    gratitude: entry.gratitude.filter(Boolean).join('\n'),
+    prompt: entry.prompt,
+    reflection: entry.reflection,
     tags: entry.tags.join(', '),
+  }
+}
+
+export async function createJournalEntry(idToken: string, entry: JournalEntryDraft) {
+  await runWrite({
+    action: 'createJournalEntry',
+    idToken,
+    ...journalPayload(entry),
   })
 }
 
 export async function updateJournalEntry(
   idToken: string,
   journalId: string,
-  entry: { entryDate: string; title: string; mood: string; body: string; tags: string[] },
+  entry: JournalEntryDraft,
 ) {
   await runWrite({
     action: 'updateJournalEntry',
     idToken,
     journal_id: journalId,
-    entry_date: entry.entryDate,
-    title: entry.title,
-    mood: entry.mood,
-    body: entry.body,
-    tags: entry.tags.join(', '),
+    ...journalPayload(entry),
   })
 }
 

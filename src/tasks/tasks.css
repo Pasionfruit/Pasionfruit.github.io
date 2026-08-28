@@ -181,6 +181,21 @@
   transition: border-color 0.15s, background 0.15s;
 }
 
+/*
+ * The circle stays small so the list keeps its density, but the tappable area
+ * is expanded past it — a 22px control is under the 24px minimum and awkward
+ * to hit on a phone.
+ */
+.task-check::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2.75rem;
+  height: 2.75rem;
+  transform: translate(-50%, -50%);
+}
+
 .task-check[data-priority='1'] { border-color: var(--p1); }
 .task-check[data-priority='2'] { border-color: var(--p2); }
 .task-check[data-priority='3'] { border-color: var(--p3); }

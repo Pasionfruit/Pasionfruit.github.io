@@ -1285,6 +1285,9 @@ function journalFields_(payload) {
     title:      String(payload.title || '').trim(),
     mood:       String(payload.mood || '').trim(),
     body:       String(payload.body || ''),
+    gratitude:  String(payload.gratitude || ''),
+    prompt:     String(payload.prompt || '').trim(),
+    reflection: String(payload.reflection || ''),
     tags:       String(payload.tags || '').trim()
   }
 }
@@ -1302,6 +1305,9 @@ function createJournalEntry_(payload) {
     title:      fields.title,
     mood:       fields.mood,
     body:       fields.body,
+    gratitude:  fields.gratitude,
+    prompt:     fields.prompt,
+    reflection: fields.reflection,
     tags:       fields.tags,
     created_at: nowIso_()
   })
@@ -1325,6 +1331,9 @@ function updateJournalEntry_(payload) {
   sheet.getRange(row, requireHeader_(h, 'title')).setValue(fields.title)
   sheet.getRange(row, requireHeader_(h, 'mood')).setValue(fields.mood)
   sheet.getRange(row, requireHeader_(h, 'body')).setValue(fields.body)
+  sheet.getRange(row, requireHeader_(h, 'gratitude')).setValue(fields.gratitude)
+  sheet.getRange(row, requireHeader_(h, 'prompt')).setValue(fields.prompt)
+  sheet.getRange(row, requireHeader_(h, 'reflection')).setValue(fields.reflection)
   sheet.getRange(row, requireHeader_(h, 'tags')).setValue(fields.tags)
 
   return { ok: true }

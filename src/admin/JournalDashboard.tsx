@@ -8,14 +8,23 @@ import {
   updateJournalEntry,
 } from '../data/sheets/repositories'
 import type { JournalEntryRecord } from '../data/sheets/types'
+import { BreathingTimerCard } from './BreathingTimerCard'
+import { MoodTrackerCard } from './MoodTrackerCard'
+import { MOOD_SCALE } from './journal/moods'
+import { VerseOfTheDayCard } from './VerseOfTheDayCard'
+import { GRATITUDE_LINE_COUNT, getPromptOfTheDay } from './journal/prompts'
 
-const MOODS = ['Great', 'Good', 'Flat', 'Tired', 'Rough'] as const
+/** Best first in the picker; MOOD_SCALE is ordered worst-first for scoring. */
+const MOODS = [...MOOD_SCALE].reverse()
 
 type Draft = {
   entryDate: string
   title: string
   mood: string
   body: string
+  gratitude: string[]
+  prompt: string
+  reflection: string
   tags: string
 }
 
@@ -26,15 +35,33 @@ function localDayKey(date: Date) {
 }
 
 function emptyDraft(): Draft {
-  return { entryDate: localDayKey(new Date()), title: '', mood: 'Good', body: '', tags: '' }
+  return {
+    entryDate: localDayKey(new Date()),
+    title: '',
+    mood: 'Good',
+    body: '',
+    gratitude: Array(GRATITUDE_LINE_COUNT).fill(''),
+    prompt: getPromptOfTheDay(),
+    reflection: '',
+    tags: '',
+  }
 }
 
 function toDraft(entry: JournalEntryRecord): Draft {
+  const gratitude = Array(GRATITUDE_LINE_COUNT).fill('')
+  entry.gratitude.slice(0, GRATITUDE_LINE_COUNT).forEach((line, index) => {
+    gratitude[index] = line
+  })
+
   return {
     entryDate: entry.entry_date,
     title: entry.title,
     mood: entry.mood || 'Good',
     body: entry.body,
+    gratitude,
+    // Older entries predate the prompt, so fall back to today's question.
+    prompt: entry.prompt || getPromptOfTheDay(),
+    reflection: entry.reflection,
     tags: entry.tags.join(', '),
   }
 }
@@ -153,6 +180,9 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
       title: draft.title.trim(),
       mood: draft.mood,
       body: draft.body,
+      gratitude: draft.gratitude.map((line) => line.trim()).filter(Boolean),
+      prompt: draft.prompt,
+      reflection: draft.reflection.trim(),
       tags: parseTags(draft.tags),
     }
 
@@ -202,6 +232,13 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
   return (
     <AdminPage meta={meta}>
+      <div className="journal-top-row">
+        <VerseOfTheDayCard title="Verse of the day" />
+        <BreathingTimerCard title="Breathe" />
+      </div>
+
+      <MoodTrackerCard title="Mood" entries={entries} isLoading={isLoading} />
+
       <article className="info-card admin-card admin-card-wide">
         <div className="admin-card-head">
           <h3>Entries</h3>
@@ -297,6 +334,34 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
               />
             </label>
 
+            <fieldset className="gratitude-block">
+              <legend>Grateful for</legend>
+              {draft.gratitude.map((line, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={line}
+                  aria-label={`Grateful for, item ${index + 1}`}
+                  placeholder={index === 0 ? 'Something small counts' : ''}
+                  onChange={(event) => {
+                    const gratitude = [...draft.gratitude]
+                    gratitude[index] = event.target.value
+                    setDraft({ ...draft, gratitude })
+                  }}
+                />
+              ))}
+            </fieldset>
+
+            <label className="reflection-field">
+              <span>{draft.prompt}</span>
+              <textarea
+                rows={3}
+                value={draft.reflection}
+                placeholder="A sentence is enough."
+                onChange={(event) => setDraft({ ...draft, reflection: event.target.value })}
+              />
+            </label>
+
             <label>
               <span>Tags</span>
               <input
@@ -366,6 +431,24 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
                 </div>
 
                 {entry.body ? <p className="journal-entry-body">{entry.body}</p> : null}
+
+                {entry.gratitude.length > 0 ? (
+                  <div className="journal-gratitude">
+                    <h5>Grateful for</h5>
+                    <ul>
+                      {entry.gratitude.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {entry.reflection ? (
+                  <div className="journal-reflection">
+                    <h5>{entry.prompt || 'Reflection'}</h5>
+                    <p>{entry.reflection}</p>
+                  </div>
+                ) : null}
 
                 {entry.tags.length > 0 ? (
                   <div className="journal-entry-tags">
