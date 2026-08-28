@@ -1111,6 +1111,52 @@ export async function logMcServerStart(playerName: string): Promise<{ serverStar
   return { serverStarted: result.serverStarted ?? false }
 }
 
+// ── Gmail ─────────────────────────────────────────────────────────────────
+
+export type MailSummaryRecord = {
+  id: string
+  threadId: string
+  from: string
+  subject: string
+  snippet: string
+  receivedAt: string
+  unread: boolean
+  important: boolean
+}
+
+/**
+ * Recent inbox mail, read by the Apps Script Web App running as the owner.
+ *
+ * Goes through the same authenticated POST as every write: the script verifies
+ * the Google ID token against Google before it touches the mailbox, so no Gmail
+ * scope or access token is ever needed in the browser.
+ */
+export async function getMail(idToken: string, limit = 10): Promise<MailSummaryRecord[]> {
+  const result = await postSheetsAction<
+    SheetsWriteResponse & { messages?: MailSummaryRecord[] }
+  >({ action: 'getMail', idToken, limit })
+
+  if (!result.ok) {
+    const error = result.error || 'Unable to read mail'
+
+    if (/unknown action/i.test(error)) {
+      throw new Error(
+        'The Apps Script deployment has no getMail action yet. Add it and redeploy the Web App.',
+      )
+    }
+
+    if (/permission|scope|authoriz/i.test(error)) {
+      throw new Error(
+        'Apps Script is not authorised for Gmail. Add the gmail.readonly scope to appsscript.json, run any function once to accept the prompt, then redeploy.',
+      )
+    }
+
+    throw new Error(error)
+  }
+
+  return result.messages ?? []
+}
+
 // ── Journal ───────────────────────────────────────────────────────────────
 
 function parseTags(value: unknown): string[] {

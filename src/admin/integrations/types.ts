@@ -22,18 +22,6 @@ export type ConnectionStatus = {
   steps: string[]
 }
 
-export type MailSummary = {
-  id: string
-  threadId: string
-  from: string
-  subject: string
-  snippet: string
-  /** ISO timestamp. */
-  receivedAt: string
-  unread: boolean
-  important: boolean
-}
-
 export type CalendarSource = 'google' | 'apple'
 
 export type CalendarEvent = {

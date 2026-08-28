@@ -1,5 +1,12 @@
 var ALLOWED_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
 
+/**
+ * Bump this whenever you paste a new version in. `ping` echoes it back, so
+ * "is the code I just pasted actually live?" is answerable in one request
+ * instead of guessing from a failing feature.
+ */
+var SCRIPT_BUILD = '2026-08-28-gmail'
+
 function doPost(e) {
   try {
     var payload = parsePayload_(e)
@@ -10,7 +17,7 @@ function doPost(e) {
     }
 
     if (action === 'ping') {
-      return jsonResponse_({ ok: true })
+      return jsonResponse_({ ok: true, build: SCRIPT_BUILD })
     }
 
     if (action === 'pollVote') {
@@ -148,6 +155,9 @@ function doPost(e) {
 
       case 'deleteRecipeStep':
         return jsonResponse_(deleteRecipeStep_(payload))
+
+      case 'getMail':
+        return jsonResponse_(getMail_(payload))
 
       case 'createJournalEntry':
         return jsonResponse_(createJournalEntry_(payload))
@@ -1421,6 +1431,76 @@ function deleteWorkItem_(payload) {
 
   sheet.deleteRow(row)
   return { ok: true }
+}
+
+// ── Gmail ─────────────────────────────────────────────────────────────────
+
+/**
+ * Recent inbox threads for the admin dashboard.
+ *
+ * This script runs as the owner, so it reads the owner's own mailbox with no
+ * OAuth consent-screen scope and no access token in the browser. The body is
+ * read here only to cut a short preview — the full text never leaves Apps
+ * Script, and nothing is ever sent, archived, or marked read.
+ *
+ * Requires "https://www.googleapis.com/auth/gmail.readonly" in the manifest's
+ * oauthScopes, then one manual run to accept the permission prompt.
+ */
+function getMail_(payload) {
+  var limit = Math.min(Math.max(Number(payload.limit) || 10, 1), 25)
+
+  var threads = GmailApp.getInboxThreads(0, limit)
+  if (!threads.length) {
+    return { ok: true, messages: [] }
+  }
+
+  // Batched — one call for all threads rather than one per thread.
+  var perThread = GmailApp.getMessagesForThreads(threads)
+  var out = []
+
+  for (var i = 0; i < threads.length; i += 1) {
+    var messages = perThread[i] || []
+    if (!messages.length) continue
+
+    var message = messages[messages.length - 1]
+    var preview = ''
+    try {
+      preview = String(message.getPlainBody() || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 140)
+    } catch (err) {
+      preview = ''
+    }
+
+    out.push({
+      id:         message.getId(),
+      threadId:   threads[i].getId(),
+      from:       String(message.getFrom() || ''),
+      subject:    String(message.getSubject() || ''),
+      snippet:    preview,
+      receivedAt: message.getDate().toISOString(),
+      unread:     threads[i].isUnread(),
+      important:  threads[i].isImportant()
+    })
+  }
+
+  return { ok: true, messages: out }
+}
+
+/**
+ * Run this once from the editor after adding gmail.readonly to appsscript.json.
+ *
+ * Every other function here ends in an underscore, which makes it private and
+ * unselectable in the Run dropdown — so this exists purely to trigger the
+ * consent prompt. It touches Gmail and Sheets so a single approval covers both.
+ *
+ * Check the execution log: it should print a thread count, not an error.
+ */
+function authorizeGmail() {
+  var threads = GmailApp.getInboxThreads(0, 1)
+  Logger.log('Gmail OK — inbox threads readable: ' + threads.length)
+  Logger.log('Sheets OK — spreadsheet: ' + getSpreadsheet_().getName())
 }
 
 // Keep the Apps Script runtime warm so writes don't hit a cold start.

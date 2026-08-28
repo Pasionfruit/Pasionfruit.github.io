@@ -370,7 +370,7 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
 
       <div className="admin-home-split">
         <YesterdayRecapCard title="Yesterday" configured={isTodoistConfigured()} />
-        <GmailSummaryCard title="Inbox" />
+        <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
       </div>
 
       <CalendarWeekCard title="This week" />

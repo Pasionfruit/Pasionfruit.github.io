@@ -354,12 +354,24 @@ Both are built but not connected. The dashboards render a panel naming exactly
 what is missing instead of an empty list, so a blank inbox is never mistaken for
 a quiet one.
 
-- **Gmail** ([src/admin/integrations/gmail.ts](src/admin/integrations/gmail.ts)) —
-  needs the `gmail.readonly` scope on the OAuth consent screen and an OAuth flow
-  that issues an *access* token. Google Sign-In currently only produces an ID
-  token, which carries identity but no API scopes. Once an access token is in
-  `sessionStorage` under `gmail-access-token`, mail loads. Reads are metadata-only
-  (sender, subject, snippet) and nothing is ever sent or archived.
+- **Gmail** — read by the Apps Script Web App, not the browser. The script runs
+  as the account that owns it and re-verifies the admin ID token before touching
+  the mailbox, so no Gmail scope is needed on the site's OAuth client and no
+  access token is ever issued to the browser. To enable it:
+
+  1. Apps Script editor → **Project Settings** → tick *Show `appsscript.json`*.
+  2. Add `"https://www.googleapis.com/auth/gmail.readonly"` to `oauthScopes`.
+  3. Run any function once and accept the new permission prompt.
+  4. **Deploy → Manage deployments** → edit → **New version** → Deploy.
+
+  Reads are inbox-only and capped at 25 threads. The message body is read inside
+  Apps Script solely to cut a 140-character preview; the full text never leaves
+  the script, and nothing is sent, archived, or marked read.
+
+  This deliberately avoids the browser OAuth route: `gmail.readonly` is a
+  *restricted* scope, and requesting it from a published web client triggers
+  Google app verification plus an annual third-party security assessment.
+
 - **Google Calendar** ([src/admin/integrations/calendars.ts](src/admin/integrations/calendars.ts)) —
   same story with `calendar.readonly` and `google-calendar-access-token`.
 - **Apple Calendar** — no public API. The route is a published calendar's `.ics`
