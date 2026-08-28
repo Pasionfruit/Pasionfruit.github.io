@@ -739,6 +739,29 @@
   gap: 0.5rem;
 }
 
+/* Groups the icon with the name so the status pill still sits hard right. */
+.project-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.project-card-title h3 {
+  min-width: 0;
+}
+
+/* The sources are square app icons; the rounded square keeps them reading as
+   product marks rather than photos. */
+.project-logo {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.45rem;
+  object-fit: cover;
+  background: var(--surface-muted);
+}
+
 .project-tagline {
   margin: 0;
   color: var(--text-muted);

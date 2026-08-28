@@ -28,14 +28,16 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
   {
     name: 'POV Cooking',
     url: 'https://pov-cooking.vercel.app/',
+    logo: '/POV_Cooking.png',
     tagline: 'Personal cookbook, meal plan, and pantry — desktop and phone',
-    description: 'A personal recipe cookbook that also plans the week and tracks what is in the kitchen. Recipes are semi-structured JSON (only a title is required, unknown fields are preserved) with checkable ingredients and steps, a dial kitchen timer, and filtering by meal type, cuisine, time, saved, or never-cooked. A meal plan lays recipes out day by day with two randomizers — a spin wheel and a build-a-meal roller that picks a carb, protein, sauce, and vegetable — and exports as copyable text or a grocery list. The pantry tracks purchase dates and shelf life, warns on items to use soon, and answers "what can I make right now" by matching unexpired items against recipes; items go in by hand, by barcode scan, or by OCR of a receipt photo. Admins import recipes from any URL by reading the page schema.org data behind an SSRF-guarded fetch, review user suggestions, and pin the latest attempt. The API is a single Express instance whose whole data layer is one synchronous write-through cache that swaps JSON files for MongoDB by env var alone, and user emails are stored AES-256-GCM encrypted with an HMAC blind index for lookup.',
+    description: 'A personal recipe cookbook with weekly meal planning and pantry tracking. It features checkable recipes, kitchen timers, meal randomizers, grocery-list exports, pantry expiration alerts, and ingredient-based recipe matching. Recipes can be imported from URLs, while admins manage suggestions and imports. The app uses an Express API with a swappable JSON/MongoDB data layer and encrypted user emails with blind-index lookup.',
     stack: ['JavaScript', 'React', 'React Router', 'Vite', 'Context API', 'CSS', 'SVG', 'Node.js', 'Express', 'MongoDB', 'JWT', 'bcrypt', 'Google OAuth', 'Tesseract.js', 'ZXing', 'PWA', 'Vercel', 'Render'],
     status: 'live',
   },
   {
     name: 'Type to Beat',
     url: 'https://texthero.onrender.com/',
+    logo: '/Text-To-Beat.png',
     tagline: 'Rhythm game played with keyboard inputs',
     description: 'A browser rhythm game where you hit notes by typing. Charts are generated automatically from any song you upload via Web Audio onset detection, and a WebSocket lobby lets you race others in real time.',
     stack: ['TypeScript', 'Vite', 'Canvas', 'Web Audio API', 'Node.js', 'WebSocket', 'Postgres', 'Render'],
@@ -44,17 +46,18 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
   {
     name: 'LocalRot',
     url: 'https://mahjong-xmhv.onrender.com/',
+    logo: '/LocalRot.png',
     tagline: 'Browser game night — party, solo, and daily puzzles',
     description: 'A game-night arcade in the browser with three wings: room-based real-time multiplayer (Mahjong, Bomberman, Tetris, Quoridor and more) behind a 4-letter room code, a solo offline-capable arcade with global leaderboards, and one shared daily puzzle per game per UTC day with streak tracking. All multiplayer rule legality is computed server-side over Socket.IO; solo games run client-authoritative on deterministic seeds and sync through an IndexedDB outbox.',
     stack: ['TypeScript', 'React', 'Vite', 'zustand', 'Canvas', 'SVG', 'Node.js', 'Express', 'Socket.IO', 'Supabase', 'Postgres', 'IndexedDB', 'PWA', 'Render'],
     status: 'live',
   },
   {
-    name: 'mrpasionfruit',
+    name: 'abepasion.com',
     url: 'https://pasionfruit.github.io',
     tagline: 'This site',
     description:
-      'The site you are on. React and TypeScript on GitHub Pages, with a Google Sheets and Apps Script backend, Todoist for tasks, and daily sync jobs for training and health data.',
+      'The site you are on. React and TypeScript on GitHub Pages, with a Google Sheets and Apps Script backend, Todoist for tasks, and daily sync jobs for training and health data. There is actually an admin side to this site that is not public, which is where I manage the content and sync jobs, and use a locally hosted AI assistant to manage training, work, and personal projects.',
     stack: ['React', 'TypeScript', 'Vite', 'Apps Script'],
     status: 'live',
   },

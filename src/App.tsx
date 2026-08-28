@@ -1206,7 +1206,21 @@ function PersonalSiteCard({ entry }: { entry: PersonalSiteEntry }) {
   return (
     <article className="info-card project-card">
       <div className="project-card-head">
-        <h3>{entry.name}</h3>
+        <div className="project-card-title">
+          {/* Decorative: the name beside it already identifies the project. */}
+          {entry.logo ? (
+            <img
+              className="project-logo"
+              src={entry.logo}
+              alt=""
+              width={192}
+              height={192}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : null}
+          <h3>{entry.name}</h3>
+        </div>
         <span className="admin-pill">{STATUS_LABELS[entry.status]}</span>
       </div>
 

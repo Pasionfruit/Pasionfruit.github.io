@@ -56,6 +56,8 @@ export type PersonalSiteEntry = {
   stack: string[]
   /** Live sites get a "Try it" call to action; archived ones do not. */
   status: 'live' | 'in-progress' | 'archived'
+  /** Square site icon shown beside the name. Omitted where there isn't one. */
+  logo?: string
 }
 
 export type ProfessionalExperienceEntry = {
