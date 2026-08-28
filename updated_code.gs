@@ -5,7 +5,7 @@ var ALLOWED_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
  * "is the code I just pasted actually live?" is answerable in one request
  * instead of guessing from a failing feature.
  */
-var SCRIPT_BUILD = '2026-08-28-gmail'
+var SCRIPT_BUILD = '2026-08-28-mail-actions-calendar'
 
 function doPost(e) {
   try {
@@ -158,6 +158,15 @@ function doPost(e) {
 
       case 'getMail':
         return jsonResponse_(getMail_(payload))
+
+      case 'archiveMail':
+        return jsonResponse_(archiveMail_(payload))
+
+      case 'createDraftReply':
+        return jsonResponse_(createDraftReply_(payload))
+
+      case 'getCalendarEvents':
+        return jsonResponse_(getCalendarEvents_(payload))
 
       case 'createJournalEntry':
         return jsonResponse_(createJournalEntry_(payload))
@@ -1488,19 +1497,242 @@ function getMail_(payload) {
   return { ok: true, messages: out }
 }
 
+// ── Gmail actions ─────────────────────────────────────────────────────────
+
 /**
- * Run this once from the editor after adding gmail.readonly to appsscript.json.
+ * Archive threads out of the inbox.
+ *
+ * Archiving only removes the INBOX label — the mail stays in All Mail and is
+ * recoverable. Nothing here deletes, and nothing here sends.
+ */
+function archiveMail_(payload) {
+  var ids = payload.thread_ids
+  if (!Array.isArray(ids) || !ids.length) {
+    return { ok: false, error: 'thread_ids array is required' }
+  }
+
+  var archived = []
+  var failed = []
+
+  for (var i = 0; i < ids.length; i += 1) {
+    var id = String(ids[i] || '').trim()
+    if (!id) continue
+
+    try {
+      var thread = GmailApp.getThreadById(id)
+      if (!thread) {
+        failed.push(id)
+        continue
+      }
+      thread.moveToArchive()
+      archived.push(id)
+    } catch (err) {
+      failed.push(id)
+    }
+  }
+
+  return { ok: true, archived: archived, failed: failed }
+}
+
+/**
+ * Save a reply draft on a thread. Deliberately does not send: the draft lands
+ * in Gmail's Drafts, and the response carries a permalink so the dashboard can
+ * hand off to Gmail for the final read-and-send.
+ */
+function createDraftReply_(payload) {
+  var threadId = String(payload.thread_id || '').trim()
+  var body = String(payload.body || '')
+
+  if (!threadId) return { ok: false, error: 'thread_id is required' }
+  if (!body.trim()) return { ok: false, error: 'body is required' }
+
+  var thread = GmailApp.getThreadById(threadId)
+  if (!thread) return { ok: false, error: 'Thread not found' }
+
+  var draft = thread.createDraftReply(body)
+
+  return {
+    ok: true,
+    draftId: draft.getId(),
+    permalink: thread.getPermalink()
+  }
+}
+
+// ── Calendars ─────────────────────────────────────────────────────────────
+
+function calendarIsoDate_(date, allDay) {
+  if (allDay) {
+    return Utilities.formatDate(date, Session.getScriptTimeZone(), 'yyyy-MM-dd')
+  }
+  return date.toISOString()
+}
+
+/**
+ * Events from every Google calendar the owner can see, plus any published
+ * Apple/iCloud feed configured in Script Properties.
+ *
+ * Running server-side removes the browser problem entirely: no OAuth scope on
+ * the site's client, and no CORS on the Apple `.ics` feed, which iCloud serves
+ * without the headers a browser would demand.
+ */
+function getCalendarEvents_(payload) {
+  var start = new Date(String(payload.start || ''))
+  var end = new Date(String(payload.end || ''))
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    return { ok: false, error: 'start and end must be ISO date strings' }
+  }
+
+  var out = []
+  var errors = []
+
+  try {
+    var calendars = CalendarApp.getAllCalendars()
+    for (var c = 0; c < calendars.length; c += 1) {
+      var cal = calendars[c]
+      var name = cal.getName()
+      var events = cal.getEvents(start, end)
+
+      for (var e = 0; e < events.length; e += 1) {
+        var ev = events[e]
+        var allDay = ev.isAllDayEvent()
+
+        out.push({
+          id: ev.getId(),
+          source: 'google',
+          title: ev.getTitle() || '(no title)',
+          start: calendarIsoDate_(ev.getStartTime(), allDay),
+          end: calendarIsoDate_(ev.getEndTime(), allDay),
+          allDay: allDay,
+          location: ev.getLocation() || '',
+          calendarName: name
+        })
+      }
+    }
+  } catch (err) {
+    errors.push('Google Calendar: ' + (err && err.message ? err.message : err))
+  }
+
+  var icsUrl = String(
+    PropertiesService.getScriptProperties().getProperty('APPLE_CALENDAR_ICS_URL') || ''
+  ).trim()
+
+  if (icsUrl) {
+    try {
+      out = out.concat(fetchAppleEvents_(icsUrl, start, end))
+    } catch (err) {
+      errors.push('Apple Calendar: ' + (err && err.message ? err.message : err))
+    }
+  }
+
+  out.sort(function (a, b) { return String(a.start).localeCompare(String(b.start)) })
+
+  return { ok: true, events: out, errors: errors, appleConfigured: Boolean(icsUrl) }
+}
+
+/** 'YYYYMMDD' or 'YYYYMMDDTHHMMSSZ' from an ICS DTSTART/DTEND. */
+function parseIcsDate_(value) {
+  var trimmed = String(value || '').trim()
+
+  if (/^[0-9]{8}$/.test(trimmed)) {
+    return {
+      iso: trimmed.slice(0, 4) + '-' + trimmed.slice(4, 6) + '-' + trimmed.slice(6, 8),
+      allDay: true,
+      date: new Date(
+        Number(trimmed.slice(0, 4)),
+        Number(trimmed.slice(4, 6)) - 1,
+        Number(trimmed.slice(6, 8))
+      )
+    }
+  }
+
+  var m = /^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})(Z?)$/.exec(trimmed)
+  if (!m) return null
+
+  var iso = m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + m[6] + (m[7] ? 'Z' : '')
+  var parsed = new Date(iso)
+  if (isNaN(parsed.getTime())) return null
+
+  return { iso: iso, allDay: false, date: parsed }
+}
+
+/**
+ * Minimal VEVENT reader — enough for a read-only week view. Recurrence rules
+ * are not expanded, so a repeating event shows on its first date only.
+ */
+function fetchAppleEvents_(icsUrl, start, end) {
+  var response = UrlFetchApp.fetch(icsUrl, { muteHttpExceptions: true })
+  if (response.getResponseCode() !== 200) {
+    throw new Error('feed returned ' + response.getResponseCode())
+  }
+
+  // Unfold RFC 5545 continuation lines before splitting into properties.
+  var text = response.getContentText().replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '')
+  var lines = text.split(/\r?\n/)
+  var events = []
+  var current = null
+
+  for (var i = 0; i < lines.length; i += 1) {
+    var line = lines[i].trim()
+
+    if (line === 'BEGIN:VEVENT') { current = {}; continue }
+
+    if (line === 'END:VEVENT') {
+      if (current) {
+        var s = parseIcsDate_(current.DTSTART)
+        var e = parseIcsDate_(current.DTEND || current.DTSTART)
+
+        if (s && s.date >= start && s.date < end) {
+          events.push({
+            id: current.UID || (s.iso + '-' + (current.SUMMARY || '')),
+            source: 'apple',
+            title: current.SUMMARY || '(no title)',
+            start: s.iso,
+            end: e ? e.iso : s.iso,
+            allDay: s.allDay,
+            location: current.LOCATION || '',
+            calendarName: 'Apple'
+          })
+        }
+      }
+      current = null
+      continue
+    }
+
+    if (!current) continue
+
+    var sep = line.indexOf(':')
+    if (sep < 0) continue
+
+    // Strip property parameters: 'DTSTART;TZID=America/New_York' -> 'DTSTART'.
+    var key = line.slice(0, sep).split(';')[0].toUpperCase()
+    current[key] = line.slice(sep + 1)
+  }
+
+  return events
+}
+
+/**
+ * Run this once from the editor after changing oauthScopes in appsscript.json.
  *
  * Every other function here ends in an underscore, which makes it private and
  * unselectable in the Run dropdown — so this exists purely to trigger the
- * consent prompt. It touches Gmail and Sheets so a single approval covers both.
+ * consent prompt. It touches every service the script uses so one approval
+ * covers all of them.
  *
- * Check the execution log: it should print a thread count, not an error.
+ * Read-only: it never archives, drafts, sends, or writes a calendar event.
+ * Check the execution log — every line should say OK.
  */
 function authorizeGmail() {
-  var threads = GmailApp.getInboxThreads(0, 1)
-  Logger.log('Gmail OK — inbox threads readable: ' + threads.length)
   Logger.log('Sheets OK — spreadsheet: ' + getSpreadsheet_().getName())
+  Logger.log('Gmail OK — inbox threads readable: ' + GmailApp.getInboxThreads(0, 1).length)
+  Logger.log('Gmail drafts OK — existing drafts: ' + GmailApp.getDrafts().length)
+  Logger.log('Calendar OK — calendars visible: ' + CalendarApp.getAllCalendars().length)
+
+  var ics = PropertiesService.getScriptProperties().getProperty('APPLE_CALENDAR_ICS_URL')
+  Logger.log(ics
+    ? 'Apple feed OK — APPLE_CALENDAR_ICS_URL is set'
+    : 'Apple feed not configured (optional) — set APPLE_CALENDAR_ICS_URL in Project Settings → Script Properties')
 }
 
 // Keep the Apps Script runtime warm so writes don't hit a cold start.

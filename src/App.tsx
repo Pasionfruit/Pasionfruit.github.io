@@ -361,6 +361,8 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   return (
     <div className="admin-page admin-home">
+      <CalendarWeekCard title="This week" idToken={googleIdToken} />
+
       {/* Reuses the public home-top-row layout: equal columns and a fixed height
           on desktop, so switching tabs inside the tasks card cannot resize the row. */}
       <div className="home-top-row">
@@ -372,8 +374,6 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
         <YesterdayRecapCard title="Yesterday" configured={isTodoistConfigured()} />
         <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
       </div>
-
-      <CalendarWeekCard title="This week" />
 
       <div className="admin-home-links">
         <Link to="/tasks" className="admin-quick-link">

@@ -79,7 +79,6 @@ VITE_SHEETS_API_KEY=REPLACE_WITH_YOUR_GOOGLE_SHEETS_API_KEY
 VITE_SHEETS_API_BASE_URL=https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT/exec
 VITE_GOOGLE_CLIENT_ID=REPLACE_WITH_YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com
 VITE_TODOIST_API_TOKEN=REPLACE_WITH_YOUR_TODOIST_API_TOKEN
-VITE_APPLE_CALENDAR_ICS_URL=
 ```
 
 See `.env.example` for the full list including the Minecraft server manager.
@@ -321,6 +320,106 @@ Beyond the entry list, the Journal dashboard has:
 The gratitude fields need three new columns on the `journal_entries` sheet
 (`gratitude`, `prompt`, `reflection`) and a redeployed Apps Script. Existing
 entries without them still load; the fields simply render empty.
+
+## Mobile layout
+
+Every route is checked at 360, 390, 412, and 768px wide, for both the guest and
+admin shells, with editors and collapsed sections opened so hidden layout gets
+measured too. The check fails on horizontal page overflow or touch targets under
+24x24 CSS px.
+
+```bash
+npm install --no-save playwright-core   # not a project dependency
+npm run dev                             # in another terminal
+BASE=http://localhost:5173 node scripts/mobile-audit.mjs
+```
+
+It drives the locally installed Chrome, so no browser download is needed; set
+`CHROME_PATH` if Chrome lives somewhere unusual.
+
+Notes on the responsive behaviour:
+
+- The admin icon nav drops its labels below 768px and scrolls horizontally
+  rather than widening the top bar. The brand wordmark hides too, leaving the
+  mark.
+- The calendar week is a 7-column grid on desktop and a day list below 960px,
+  so the week never has to be scrolled sideways.
+- Journal and Work editors stack their paired fields below 512px, and Work rows
+  move their controls under the item below 640px.
+
+## Gmail and calendar integrations
+
+Both are built but not connected. The dashboards render a panel naming exactly
+what is missing instead of an empty list, so a blank inbox is never mistaken for
+a quiet one.
+
+Everything below is read and written by the Apps Script Web App, which runs as
+the account that owns it and re-verifies the admin ID token before touching
+anything. No Google API scopes live on the site's OAuth client, and no access
+token is ever issued to the browser.
+
+**Required `oauthScopes` in `appsscript.json`:**
+
+```json
+"oauthScopes": [
+  "https://www.googleapis.com/auth/script.external_request",
+  "https://www.googleapis.com/auth/spreadsheets",
+  "https://www.googleapis.com/auth/gmail.modify",
+  "https://www.googleapis.com/auth/gmail.compose",
+  "https://www.googleapis.com/auth/calendar.readonly"
+]
+```
+
+`oauthScopes` **replaces** automatic scope detection rather than adding to it —
+every scope the script needs has to be in that list, including the two Sheets
+ones, or writes break.
+
+After changing it: run `authorizeGmail` from the editor once and accept the
+prompt, then **Deploy → Manage deployments → pencil → New version → Deploy**.
+Confirm with `ping`, which echoes `SCRIPT_BUILD` so you can tell whether the
+code you pasted is actually live.
+
+### Gmail
+
+- **Read** — inbox threads, capped at 25. The body is read inside Apps Script
+  only to cut a 140-character preview; the full text never leaves the script.
+- **Archive** — `gmail.modify`. Removes the INBOX label only; mail stays in All
+  Mail and is recoverable. "Clear inbox" archives everything currently listed.
+- **Draft replies** — `gmail.compose`. Picks a canned opener from
+  [replyTemplates.ts](src/admin/mail/replyTemplates.ts), saves it as a Gmail
+  draft, and opens the thread.
+
+**There is no send capability, by design.** The script never calls `send()`, so
+a bug or a mis-tap cannot email anyone from your address. Drafts are finished
+and sent in Gmail.
+
+### Calendars
+
+`CalendarApp` reads every Google calendar the owner can see. Apple is a
+published iCloud `.ics` feed fetched server-side by `UrlFetchApp` — which is
+what makes it work at all: iCloud serves those feeds without CORS headers, so a
+browser cannot fetch one directly.
+
+To link Apple Calendar:
+
+1. iPhone → Calendar → the calendar's ⓘ → **Public Calendar** on → copy the link.
+2. Change the `webcal://` prefix to `https://`.
+3. Apps Script → **Project Settings → Script Properties** → add
+   `APPLE_CALENDAR_ICS_URL` with that link.
+
+Until that property is set, the card shows Google events and a panel with these
+steps. Recurrence rules are not expanded, so a repeating Apple event appears on
+its first date only.
+
+`VITE_APPLE_CALENDAR_ICS_URL` in `.env` is no longer used — the URL lives in
+Script Properties now, where the browser never sees it.
+
+### Email summarisation (not built)
+
+Summarising mail into to-dos and generating reply drafts is deferred pending a
+self-hosted model. Note that neither GitHub Pages nor Apps Script can reach
+`localhost`, so that will need either a tunnel with auth in front of it or a
+local batch job that pushes results to the datastore.
 
 ## Mobile layout
 

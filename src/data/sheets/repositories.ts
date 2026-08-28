@@ -1157,6 +1157,95 @@ export async function getMail(idToken: string, limit = 10): Promise<MailSummaryR
   return result.messages ?? []
 }
 
+/**
+ * Archive threads out of the inbox. Archiving removes the INBOX label only —
+ * the mail stays in All Mail and is recoverable. Nothing here deletes.
+ */
+export async function archiveMail(idToken: string, threadIds: string[]) {
+  const result = await postSheetsAction<
+    SheetsWriteResponse & { archived?: string[]; failed?: string[] }
+  >({ action: 'archiveMail', idToken, thread_ids: threadIds })
+
+  if (!result.ok) {
+    throw new Error(result.error || 'Unable to archive mail')
+  }
+
+  return { archived: result.archived ?? [], failed: result.failed ?? [] }
+}
+
+/**
+ * Save a reply draft on a thread. Never sends — the draft lands in Gmail and
+ * the returned permalink is how the UI hands off for the final read-and-send.
+ */
+export async function createDraftReply(idToken: string, threadId: string, body: string) {
+  const result = await postSheetsAction<
+    SheetsWriteResponse & { draftId?: string; permalink?: string }
+  >({ action: 'createDraftReply', idToken, thread_id: threadId, body })
+
+  if (!result.ok) {
+    throw new Error(result.error || 'Unable to create draft')
+  }
+
+  return { draftId: result.draftId ?? '', permalink: result.permalink ?? '' }
+}
+
+// ── Calendar ──────────────────────────────────────────────────────────────
+
+export type CalendarEventRecord = {
+  id: string
+  source: 'google' | 'apple'
+  title: string
+  start: string
+  end: string
+  allDay: boolean
+  location?: string
+  calendarName?: string
+}
+
+/**
+ * Events across every Google calendar plus the optional published Apple feed.
+ *
+ * Read server-side by Apps Script, which sidesteps both problems the browser
+ * route had: no Calendar scope on the site's OAuth client, and no CORS on the
+ * iCloud `.ics` feed.
+ */
+export async function getCalendarEvents(
+  idToken: string,
+  start: Date,
+  end: Date,
+): Promise<{ events: CalendarEventRecord[]; errors: string[]; appleConfigured: boolean }> {
+  const result = await postSheetsAction<
+    SheetsWriteResponse & {
+      events?: CalendarEventRecord[]
+      errors?: string[]
+      appleConfigured?: boolean
+    }
+  >({
+    action: 'getCalendarEvents',
+    idToken,
+    start: start.toISOString(),
+    end: end.toISOString(),
+  })
+
+  if (!result.ok) {
+    const error = result.error || 'Unable to read calendars'
+
+    if (/unknown action/i.test(error)) {
+      throw new Error(
+        'The Apps Script deployment has no getCalendarEvents action yet. Paste the latest code and redeploy.',
+      )
+    }
+
+    throw new Error(error)
+  }
+
+  return {
+    events: result.events ?? [],
+    errors: result.errors ?? [],
+    appleConfigured: Boolean(result.appleConfigured),
+  }
+}
+
 // ── Journal ───────────────────────────────────────────────────────────────
 
 function parseTags(value: unknown): string[] {

@@ -1096,3 +1096,86 @@
   line-height: 1.55;
   white-space: pre-wrap;
 }
+
+/* ── Mail actions ─────────────────────────────────────────────────────────
+   Archive and draft-reply controls. There is deliberately no send control —
+   the Apps Script has no send capability. */
+.mail-notice {
+  margin: 0.5rem 0 0;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.4rem;
+  background: var(--surface-muted);
+}
+
+.mail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.mail-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .mail-action:hover:not(:disabled) {
+    color: var(--text-strong);
+    border-color: var(--border-strong);
+  }
+}
+
+.mail-action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mail-templates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.45rem;
+  padding: 0.55rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: 0.5rem;
+  background: var(--surface-muted);
+}
+
+.mail-templates button {
+  min-height: 2rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.mail-templates .sheets-meta {
+  flex-basis: 100%;
+  margin: 0.2rem 0 0;
+}
+
+.mail-open-gmail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  margin-top: 0.7rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+}

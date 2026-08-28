@@ -1,14 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
-import {
-  getAppleCalendarStatus,
-  getAppleCalendarUrl,
-  getAppleEvents,
-  getGoogleCalendarStatus,
-  getGoogleEvents,
-  readCalendarAccessToken,
-} from './integrations/calendars'
-import type { CalendarEvent } from './integrations/types'
+import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
+import type { ConnectionStatus } from './integrations/types'
+
+type CalendarEvent = CalendarEventRecord
 
 const DAY_MS = 86_400_000
 
@@ -51,18 +46,39 @@ function eventTimeLabel(event: CalendarEvent) {
 }
 
 /**
- * The week ahead, Google and Apple overlaid. Lives on the admin home page
- * rather than a route of its own.
+ * Calendars are read by the Apps Script Web App, which runs as the owner. That
+ * removes both browser obstacles at once: no Calendar scope on the site's OAuth
+ * client, and no CORS problem on the iCloud `.ics` feed, which is fetched
+ * server-side.
  */
-export function CalendarWeekCard({ title }: { title: string }) {
-  const googleStatus = getGoogleCalendarStatus()
-  const appleStatus = getAppleCalendarStatus()
-  const anyConnected = googleStatus.state === 'connected' || appleStatus.state === 'connected'
+function getStatus(idToken: string): ConnectionStatus {
+  if (!import.meta.env.VITE_SHEETS_API_BASE_URL?.trim()) {
+    return {
+      state: 'not-configured',
+      message: 'No Apps Script endpoint is configured for this build.',
+      steps: ['Set VITE_SHEETS_API_BASE_URL to your deployed Apps Script Web App URL.'],
+    }
+  }
+
+  if (!idToken) {
+    return {
+      state: 'needs-auth',
+      message: 'Sign in with the admin Google account to read your calendars.',
+      steps: ['Open /login and sign in.'],
+    }
+  }
+
+  return { state: 'connected', message: 'Reading your Google and Apple calendars.', steps: [] }
+}
+
+export function CalendarWeekCard({ title, idToken }: { title: string; idToken: string }) {
+  const status = getStatus(idToken)
 
   const [weekOffset, setWeekOffset] = useState(0)
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [errors, setErrors] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(anyConnected)
+  const [appleConfigured, setAppleConfigured] = useState(true)
+  const [isLoading, setIsLoading] = useState(status.state === 'connected')
 
   const weekStart = useMemo(() => {
     const base = startOfWeek(new Date())
@@ -76,7 +92,7 @@ export function CalendarWeekCard({ title }: { title: string }) {
   )
 
   useEffect(() => {
-    if (!anyConnected) {
+    if (status.state !== 'connected') {
       return
     }
 
@@ -85,44 +101,30 @@ export function CalendarWeekCard({ title }: { title: string }) {
 
     void (async () => {
       setIsLoading(true)
-      const collected: CalendarEvent[] = []
-      const failures: string[] = []
 
-      if (googleStatus.state === 'connected') {
-        try {
-          collected.push(...(await getGoogleEvents(readCalendarAccessToken(), weekStart, weekEnd)))
-        } catch (caught) {
-          failures.push(caught instanceof Error ? caught.message : 'Google Calendar failed')
+      try {
+        const result = await getCalendarEvents(idToken, weekStart, weekEnd)
+        if (!cancelled) {
+          setEvents(result.events)
+          setErrors(result.errors)
+          setAppleConfigured(result.appleConfigured)
         }
-      }
-
-      if (appleStatus.state === 'connected') {
-        try {
-          const appleEvents = await getAppleEvents(getAppleCalendarUrl())
-          const startKey = dayKey(weekStart)
-          const endKey = dayKey(weekEnd)
-          collected.push(
-            ...appleEvents.filter((event) => {
-              const key = eventDayKey(event)
-              return key >= startKey && key < endKey
-            }),
-          )
-        } catch (caught) {
-          failures.push(caught instanceof Error ? caught.message : 'Apple Calendar failed')
+      } catch (caught) {
+        if (!cancelled) {
+          setEvents([])
+          setErrors([caught instanceof Error ? caught.message : 'Unable to read calendars'])
         }
-      }
-
-      if (!cancelled) {
-        setEvents(collected)
-        setErrors(failures)
-        setIsLoading(false)
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       }
     })()
 
     return () => {
       cancelled = true
     }
-  }, [anyConnected, appleStatus.state, googleStatus.state, weekStart])
+  }, [status.state, idToken, weekStart])
 
   const eventsByDay = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {}
@@ -175,7 +177,7 @@ export function CalendarWeekCard({ title }: { title: string }) {
 
       {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
 
-      <div className="calendar-week">
+      <div className="calendar-week" hidden={status.state !== 'connected'}>
         {days.map((day) => {
           const key = dayKey(day)
           const dayEvents = eventsByDay[key] ?? []
@@ -206,12 +208,21 @@ export function CalendarWeekCard({ title }: { title: string }) {
         })}
       </div>
 
-      {googleStatus.state !== 'connected' ? (
-        <ConnectPanel name="Google Calendar" status={googleStatus} />
-      ) : null}
+      {status.state !== 'connected' ? <ConnectPanel name="Calendars" status={status} /> : null}
 
-      {appleStatus.state !== 'connected' ? (
-        <ConnectPanel name="Apple Calendar" status={appleStatus} />
+      {status.state === 'connected' && !appleConfigured ? (
+        <ConnectPanel
+          name="Apple Calendar"
+          status={{
+            state: 'not-configured',
+            message: 'Google calendars are connected. Apple is not linked yet.',
+            steps: [
+              'On iPhone: Calendar → the calendar → Share Calendar → turn on Public Calendar, then copy the link.',
+              'Change the webcal:// prefix to https://',
+              'Apps Script → Project Settings → Script Properties → add APPLE_CALENDAR_ICS_URL with that link.',
+            ],
+          }}
+        />
       ) : null}
     </article>
   )
