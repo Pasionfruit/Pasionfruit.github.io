@@ -224,7 +224,14 @@ export function renderAceContext(context: AceContext) {
       wellness.training_status && `training status ${wellness.training_status}`,
     ].filter(Boolean)
 
-    parts.push(`## Last night and recovery (${wellness.date})\n${metrics.join(', ') || 'No metrics recorded.'}`)
+    const stale = wellness.date < addDaysToKey(todayKey(), -1)
+    parts.push(
+      `## Last night and recovery (${wellness.date})\n${metrics.join(', ') || 'No metrics recorded.'}${
+        stale
+          ? `\nNOTE: the watch has not synced since ${wellness.date}. This is not last night's data - say so if you mention it.`
+          : ''
+      }`,
+    )
   }
 
   if (context.gaps.length > 0) {

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import type { JournalEntryRecord } from '../data/sheets/types'
 import { MOOD_COLORS, MOOD_SCALE, moodScore, type Mood } from './journal/moods'
 
@@ -23,7 +24,7 @@ export function MoodTrackerCard({
   entries: JournalEntryRecord[]
   isLoading: boolean
 }) {
-  const { days, counts, average, logged } = useMemo(() => {
+  const { days, counts, average, logged, trend } = useMemo(() => {
     const byDate = new Map(entries.map((entry) => [entry.entry_date, entry]))
     const today = new Date()
 
@@ -51,7 +52,23 @@ export function MoodTrackerCard({
       logged += 1
     }
 
-    return { days, counts, average: logged > 0 ? total / logged : 0, logged }
+    // Trend: the newest half of the window against the half before it.
+    const half = WINDOW_DAYS / 2
+    const earlier = days.slice(0, half).filter((day) => day.score !== null)
+    const recent = days.slice(half).filter((day) => day.score !== null)
+
+    let trend: { direction: 'up' | 'down'; recentAvg: number; earlierAvg: number } | null = null
+    if (earlier.length >= 3 && recent.length >= 3) {
+      const mean = (list: typeof days) => list.reduce((sum, day) => sum + (day.score ?? 0), 0) / list.length
+      const earlierAvg = mean(earlier)
+      const recentAvg = mean(recent)
+      // Half a mood step is a real shift; anything less is noise, so no note.
+      if (Math.abs(recentAvg - earlierAvg) >= 0.5) {
+        trend = { direction: recentAvg > earlierAvg ? 'up' : 'down', recentAvg, earlierAvg }
+      }
+    }
+
+    return { days, counts, average: logged > 0 ? total / logged : 0, logged, trend }
   }, [entries])
 
   return (
@@ -103,6 +120,21 @@ export function MoodTrackerCard({
               </span>
             ))}
           </div>
+
+          {trend ? (
+            <p className={`mood-trend-note mood-trend-note--${trend.direction}`}>
+              {trend.direction === 'up' ? (
+                <TrendingUp size={14} aria-hidden="true" />
+              ) : (
+                <TrendingDown size={14} aria-hidden="true" />
+              )}
+              <span>
+                Mood is trending {trend.direction}: the last {WINDOW_DAYS / 2} days average{' '}
+                {trend.recentAvg.toFixed(1)}, {trend.direction === 'up' ? 'up from' : 'down from'}{' '}
+                {trend.earlierAvg.toFixed(1)} in the {WINDOW_DAYS / 2} before.
+              </span>
+            </p>
+          ) : null}
         </>
       )}
     </article>

@@ -1842,3 +1842,67 @@
   flex-wrap: wrap;
   gap: 0.35rem;
 }
+
+/* ── Journal: one-entry-at-a-time pager ── */
+
+.journal-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.journal-pager-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.journal-pager-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.journal-pager-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  text-align: center;
+}
+
+.journal-pager-label small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Trend note under the mood strip. */
+.mood-trend-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mood-trend-note--up svg {
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+.mood-trend-note--down svg {
+  color: #dc2626;
+  flex-shrink: 0;
+}
