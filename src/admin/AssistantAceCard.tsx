@@ -156,6 +156,76 @@ export function AssistantAceCard({
     return Boolean(w.SpeechRecognition ?? w.webkitSpeechRecognition) && 'speechSynthesis' in window
   }, [])
 
+  /*
+   * Voice quality: the default system voice is the robotic one. Prefer the
+   * "natural" neural voices Edge ships, then Google's, then any English voice.
+   * getVoices() is empty until the browser fires voiceschanged, so keep a ref.
+   */
+  const voicesRef = useRef<SpeechSynthesisVoice[]>([])
+
+  useEffect(() => {
+    if (!('speechSynthesis' in window)) return
+    const load = () => {
+      voicesRef.current = window.speechSynthesis.getVoices()
+    }
+    load()
+    window.speechSynthesis.addEventListener('voiceschanged', load)
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', load)
+  }, [])
+
+  function pickVoice(): SpeechSynthesisVoice | null {
+    const english = voicesRef.current.filter((voice) => voice.lang.toLowerCase().startsWith('en'))
+    return (
+      english.find((voice) => /natural/i.test(voice.name) && /en-US/i.test(voice.lang)) ??
+      english.find((voice) => /natural/i.test(voice.name)) ??
+      english.find((voice) => /Google US English/i.test(voice.name)) ??
+      english.find((voice) => /Google/i.test(voice.name)) ??
+      english[0] ??
+      null
+    )
+  }
+
+  /*
+   * Rocky's signature: he speaks in musical chords. A short bell-like arpeggio
+   * marks the start and end of Ace's speech — synthesized here, so it works
+   * offline and costs nothing.
+   */
+  const audioCtxRef = useRef<AudioContext | null>(null)
+
+  function playChord(frequencies: number[], duration = 0.55) {
+    try {
+      const w = window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }
+      const Ctx = w.AudioContext ?? w.webkitAudioContext
+      if (!Ctx) return
+      const ctx = audioCtxRef.current ?? new Ctx()
+      audioCtxRef.current = ctx
+      void ctx.resume()
+
+      const now = ctx.currentTime
+      frequencies.forEach((frequency, index) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.value = frequency
+        const start = now + index * 0.08
+        gain.gain.setValueAtTime(0, start)
+        gain.gain.linearRampToValueAtTime(0.1, start + 0.05)
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(start)
+        osc.stop(start + duration + 0.05)
+      })
+    } catch {
+      // A blocked or missing AudioContext should never break speech itself.
+    }
+  }
+
+  /** Bright rising chord: Ace is about to speak. */
+  const CHORD_SPEAK = [659.25, 783.99, 987.77] // E5 · G5 · B5
+  /** Soft settling chord: your turn. */
+  const CHORD_DONE = [523.25, 659.25, 783.99] // C5 · E5 · G5
+
   useEffect(() => {
     let cancelled = false
 
@@ -243,13 +313,20 @@ export function AssistantAceCard({
     if (!text || !('speechSynthesis' in window)) return
 
     window.speechSynthesis.cancel()
+    playChord(CHORD_SPEAK)
+
     const utterance = new SpeechSynthesisUtterance(text)
-    utterance.rate = 1.04
+    const voice = pickVoice()
+    if (voice) utterance.voice = voice
+    utterance.pitch = 0.92
+    utterance.rate = 1.02
     utterance.onend = () => {
+      playChord(CHORD_DONE, 0.45)
       if (voiceOnRef.current) startListening()
     }
     setVoiceState('speaking')
-    window.speechSynthesis.speak(utterance)
+    // Let the chord ring for a beat before the words begin.
+    window.setTimeout(() => window.speechSynthesis.speak(utterance), 380)
   }
 
   function startListening() {
@@ -317,6 +394,7 @@ export function AssistantAceCard({
     } else {
       voiceOnRef.current = true
       setChatError('')
+      playChord(CHORD_DONE, 0.4)
       startListening()
     }
   }
