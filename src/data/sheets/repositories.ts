@@ -1399,8 +1399,8 @@ function parseLines(value: unknown): string[] {
 }
 
 /** Newest entry first, so the journal opens on the most recent day. */
-export async function getJournalEntries(): Promise<JournalEntryRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('journal_entries')
+export async function getJournalEntries(idToken: string): Promise<JournalEntryRecord[]> {
+  const rows = await dbRead<Record<string, unknown>>('journal_entries', idToken)
 
   return rows
     .map((row) => ({
@@ -1444,9 +1444,9 @@ function journalPayload(entry: JournalEntryDraft) {
 }
 
 export async function createJournalEntry(idToken: string, entry: JournalEntryDraft) {
-  await runWrite({
-    action: 'createJournalEntry',
-    idToken,
+  await dbWrite('journal_entries', 'POST', idToken, {
+    journal_id: crypto.randomUUID(),
+    created_at: new Date().toISOString(),
     ...journalPayload(entry),
   })
 }
@@ -1456,18 +1456,19 @@ export async function updateJournalEntry(
   journalId: string,
   entry: JournalEntryDraft,
 ) {
-  await runWrite({
-    action: 'updateJournalEntry',
-    idToken,
+  // The worker replaces the whole row, so carry the original created_at over.
+  const rows = await dbRead<Record<string, unknown>>('journal_entries', idToken)
+  const existing = rows.find((row) => String(row.journal_id) === journalId)
+
+  await dbWrite('journal_entries', 'PUT', idToken, {
     journal_id: journalId,
+    created_at: String(existing?.created_at ?? ''),
     ...journalPayload(entry),
   })
 }
 
 export async function deleteJournalEntry(idToken: string, journalId: string) {
-  await runWrite({
-    action: 'deleteJournalEntry',
-    idToken,
+  await dbWrite('journal_entries', 'DELETE', idToken, {
     journal_id: journalId,
   })
 }

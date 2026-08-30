@@ -41,6 +41,11 @@ const TABLES = {
     ints: ['completed_morning', 'completed_evening'],
     read: 'public',
   },
+  journal_entries: {
+    key: 'journal_id',
+    columns: ['journal_id', 'entry_date', 'mood', 'title', 'body', 'gratitude', 'prompt', 'reflection', 'tags', 'created_at'],
+    read: 'admin',
+  },
   budget_targets: {
     key: ['user', 'category'],
     columns: ['user', 'category', 'budget_amount'],

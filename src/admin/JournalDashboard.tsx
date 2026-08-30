@@ -102,7 +102,7 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
   async function load() {
     try {
-      setEntries(await getJournalEntries())
+      setEntries(await getJournalEntries(idToken))
       setLoadError('')
     } catch (caught) {
       setEntries([])
@@ -117,7 +117,7 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
     void (async () => {
       try {
-        const rows = await getJournalEntries()
+        const rows = await getJournalEntries(idToken)
         if (!cancelled) {
           setEntries(rows)
           setLoadError('')
