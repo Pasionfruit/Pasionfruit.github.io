@@ -14,3 +14,8 @@ ALLOWED_ORIGINS = "https://abepasion.com,https://www.abepasion.com,http://localh
 #   GOOGLE_CLIENT_ID      the same web client id the site signs in with
 #   TUNNEL_CLIENT_ID      optional, only if the tunnel is behind CF Access
 #   TUNNEL_CLIENT_SECRET  optional, pairs with TUNNEL_CLIENT_ID
+
+[[d1_databases]]
+binding = "SYSTEM_DB"
+database_name = "ace-system"
+database_id = "fda04161-388b-4919-903e-808f8f76fd8b"

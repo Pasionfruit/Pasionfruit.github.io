@@ -53,6 +53,15 @@ export const adminDashboards: AdminDashboardMeta[] = [
     accent: '#f97316',
     eyebrow: 'Day job',
   },
+  {
+    id: 'system',
+    title: 'System',
+    path: '/admin/system',
+    icon: 'system',
+    summary: 'Every machine on the network: health, services, and the MC server',
+    accent: '#2563eb',
+    eyebrow: 'Infrastructure',
+  },
 ]
 
 export const adminDashboardsById: Record<AdminDashboardId, AdminDashboardMeta> =

@@ -83,6 +83,99 @@ async function verifyAdmin(request, env) {
   return { ok: true }
 }
 
+function json(payload, request, env, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(request, env) },
+  })
+}
+
+function num(value) {
+  const n = Number(value)
+  return Number.isFinite(n) ? n : null
+}
+
+/** Heartbeat ingest from machine agents; authenticated by the shared key. */
+async function systemReport(request, env) {
+  if (request.method !== 'POST') return deny(405, 'POST only', request, env)
+  if (!env.REPORT_KEY || request.headers.get('X-Report-Key') !== env.REPORT_KEY) {
+    return deny(403, 'Bad report key', request, env)
+  }
+
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return deny(400, 'Invalid JSON', request, env)
+  }
+
+  const machine = String(body.machine ?? '').slice(0, 64)
+  if (!machine) return deny(400, 'machine is required', request, env)
+
+  const at = Math.floor(Date.now() / 1000)
+  await env.SYSTEM_DB.prepare(
+    `INSERT OR REPLACE INTO samples
+       (machine, at, cpu, ram_used_gb, ram_total_gb, disk_used_gb, disk_total_gb, gpu, uptime_s, services, mc_state)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      machine,
+      at,
+      num(body.cpu),
+      num(body.ram_used_gb),
+      num(body.ram_total_gb),
+      num(body.disk_used_gb),
+      num(body.disk_total_gb),
+      body.gpu ? String(body.gpu).slice(0, 200) : null,
+      num(body.uptime_s),
+      JSON.stringify(body.services ?? {}).slice(0, 2000),
+      body.mc_state ? String(body.mc_state).slice(0, 40) : null,
+    )
+    .run()
+
+  // Keep two weeks of samples so the tab has history without unbounded growth.
+  await env.SYSTEM_DB.prepare('DELETE FROM samples WHERE at < ?').bind(at - 14 * 86400).run()
+
+  return json({ ok: true }, request, env)
+}
+
+/** Latest sample per machine (even long-offline ones) plus 24h history. Admin only. */
+async function systemMachines(request, env) {
+  const auth = await verifyAdmin(request, env)
+  if (!auth.ok) return deny(403, auth.reason, request, env)
+
+  const latest = await env.SYSTEM_DB.prepare(
+    `SELECT s.* FROM samples s
+       JOIN (SELECT machine, MAX(at) AS mat FROM samples GROUP BY machine) m
+         ON s.machine = m.machine AND s.at = m.mat`,
+  ).all()
+
+  const since = Math.floor(Date.now() / 1000) - 24 * 3600
+  const history = await env.SYSTEM_DB.prepare(
+    'SELECT machine, at, cpu, ram_used_gb FROM samples WHERE at >= ? ORDER BY at ASC',
+  )
+    .bind(since)
+    .all()
+
+  const machines = {}
+  for (const row of latest.results ?? []) {
+    machines[row.machine] = { ...row, services: safeParse(row.services), history: [] }
+  }
+  for (const row of history.results ?? []) {
+    machines[row.machine]?.history.push({ at: row.at, cpu: row.cpu, ram_used_gb: row.ram_used_gb })
+  }
+
+  return json({ now: Math.floor(Date.now() / 1000), machines: Object.values(machines) }, request, env)
+}
+
+function safeParse(text) {
+  try {
+    return JSON.parse(text ?? '{}')
+  } catch {
+    return {}
+  }
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
@@ -90,6 +183,14 @@ export default {
     }
 
     const url = new URL(request.url)
+
+    if (url.pathname === '/system/report') {
+      return systemReport(request, env)
+    }
+
+    if (url.pathname === '/system/machines') {
+      return systemMachines(request, env)
+    }
 
     if (!ALLOWED_PATHS.has(url.pathname)) {
       return deny(404, 'No such route', request, env)

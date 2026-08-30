@@ -14,6 +14,7 @@ import {
   Wallet,
   X,
   type LucideIcon,
+  Server,
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
@@ -53,6 +54,7 @@ import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
+import { SystemDashboard } from './admin/SystemDashboard'
 import { AssistantAceCard } from './admin/AssistantAceCard'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
@@ -303,6 +305,7 @@ function App() {
             />
             <Route path="training" element={<Navigate replace to="/admin/health" />} />
             <Route path="work" element={<WorkDashboard canWrite={isAdmin} idToken={googleIdToken} />} />
+            <Route path="system" element={<SystemDashboard idToken={googleIdToken} />} />
           </Route>
 
           <Route
@@ -438,6 +441,7 @@ const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   finance: Wallet,
   health: Activity,
   work: Briefcase,
+  system: Server,
 }
 
 function AdminNav() {

@@ -5,10 +5,10 @@ export type SectionId = 'experiences' | 'personal-sites' | 'gaming'
  * The private dashboards, available only to the admin Google account.
  * 'home' is the signed-in landing page — tasks, yesterday, inbox, and the week.
  */
-export type AdminDashboardId = 'home' | 'personal' | 'finance' | 'health' | 'work'
+export type AdminDashboardId = 'home' | 'personal' | 'finance' | 'health' | 'work' | 'system'
 
 /** Icon key for the admin top-bar nav, mapped to a component in App.tsx. */
-export type AdminIconId = 'home' | 'personal' | 'finance' | 'health' | 'work'
+export type AdminIconId = 'home' | 'personal' | 'finance' | 'health' | 'work' | 'system'
 
 export type PageCard = {
   title: string
