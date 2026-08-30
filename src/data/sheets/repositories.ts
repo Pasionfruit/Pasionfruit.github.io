@@ -66,13 +66,28 @@ const DB_BASE_URL =
   (import.meta.env.VITE_DB_BASE_URL as string | undefined)?.trim().replace(/\/+$/, '') ||
   'https://db.abepasion.workers.dev'
 
-async function dbRead<T>(table: string): Promise<T[]> {
-  const response = await fetch(`${DB_BASE_URL}/db/${table}`)
+async function dbRead<T>(table: string, idToken?: string): Promise<T[]> {
+  const response = await fetch(`${DB_BASE_URL}/db/${table}`, {
+    headers: idToken ? { Authorization: `Bearer ${idToken}` } : undefined,
+  })
   if (!response.ok) {
     throw new Error(`Database read failed: ${response.status}`)
   }
   const data = (await response.json()) as { rows?: T[] }
   return data.rows ?? []
+}
+
+/** Local-time date-key comparison for date-matched upserts. */
+function sameDateKey(a?: string, b?: string) {
+  if (!a || !b) return false
+  const first = new Date(a)
+  const second = new Date(b)
+  if (Number.isNaN(first.getTime()) || Number.isNaN(second.getTime())) return false
+  return (
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate()
+  )
 }
 
 async function dbWrite(
@@ -141,7 +156,7 @@ export async function getCountries(): Promise<CountryRecord[]> {
 }
 
 export async function getCurrentStudy(): Promise<CurrentStudyRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('current_study')
+  const rows = await dbRead<Record<string, unknown>>('current_study')
 
   return rows
     .map((row) => ({
@@ -155,7 +170,7 @@ export async function getCurrentStudy(): Promise<CurrentStudyRecord[]> {
 }
 
 export async function getTrainingRecords(): Promise<TrainingRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('training_records')
+  const rows = await dbRead<Record<string, unknown>>('training_records')
 
   return rows
     .map((row) => ({
@@ -375,8 +390,8 @@ export type BudgetTargetRecord = {
   budget_amount: number
 }
 
-export async function getBudgetTargets(): Promise<BudgetTargetRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('budget_targets')
+export async function getBudgetTargets(idToken: string): Promise<BudgetTargetRecord[]> {
+  const rows = await dbRead<Record<string, unknown>>('budget_targets', idToken)
   return rows
     .map((row) => ({
       user: String(row.user ?? '').toLowerCase().trim(),
@@ -392,22 +407,31 @@ export async function saveBudgetTarget(
   budgetAmount: number | null,
   user: string,
 ) {
-  await runWrite({
-    action: 'setBudgetTarget',
-    idToken,
-    category: category.toLowerCase().trim(),
-    budget_amount: budgetAmount ?? 0,
-    user: user.toLowerCase().trim(),
+  const normalizedUser = user.toLowerCase().trim()
+  const normalizedCategory = category.toLowerCase().trim()
+
+  if (budgetAmount == null || budgetAmount <= 0) {
+    await dbWrite('budget_targets', 'DELETE', idToken, {
+      user: normalizedUser,
+      category: normalizedCategory,
+    })
+    return
+  }
+
+  await dbWrite('budget_targets', 'PUT', idToken, {
+    user: normalizedUser,
+    category: normalizedCategory,
+    budget_amount: budgetAmount,
   })
 }
 
-export async function getAbeTransactions(): Promise<FinanceTransactionRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('abe_transactions')
+export async function getAbeTransactions(idToken: string): Promise<FinanceTransactionRecord[]> {
+  const rows = await dbRead<Record<string, unknown>>('abe_transactions', idToken)
   return mapFinanceTransactions(rows)
 }
 
-export async function getCiaraTransactions(): Promise<FinanceTransactionRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('ciara_transactions')
+export async function getCiaraTransactions(idToken: string): Promise<FinanceTransactionRecord[]> {
+  const rows = await dbRead<Record<string, unknown>>('ciara_transactions', idToken)
   return mapFinanceTransactions(rows)
 }
 
@@ -462,10 +486,15 @@ export async function setCountryVisited(idToken: string, countryId: string, visi
 }
 
 export async function setCurrentStudyCompleted(idToken: string, studyId: string, completed: boolean) {
-  await runWrite({
-    action: 'setCurrentStudyCompleted',
-    idToken,
+  const rows = await dbRead<Record<string, unknown>>('current_study')
+  const row = rows.find((entry) => String(entry.study_id) === studyId)
+  if (!row) throw new Error('Study row not found')
+
+  await dbWrite('current_study', 'PUT', idToken, {
     study_id: studyId,
+    related_exam: String(row.related_exam ?? ''),
+    topic: String(row.topic ?? ''),
+    date: String(row.date ?? ''),
     completed,
   })
 }
@@ -476,12 +505,17 @@ export async function setTrainingWorkoutCompleted(
   workoutPeriod: 'morning' | 'evening',
   completed: boolean,
 ) {
-  await runWrite({
-    action: 'setTrainingWorkoutCompleted',
-    idToken,
+  const rows = await dbRead<Record<string, unknown>>('training_records')
+  const row = rows.find((entry) => String(entry.training_id) === trainingId)
+  if (!row) throw new Error('Training row not found')
+
+  await dbWrite('training_records', 'PUT', idToken, {
     training_id: trainingId,
-    workout_period: workoutPeriod,
-    completed,
+    date: String(row.date ?? ''),
+    morning_workout: String(row.morning_workout ?? ''),
+    evening_workout: String(row.evening_workout ?? ''),
+    completed_morning: workoutPeriod === 'morning' ? completed : Boolean(Number(row.completed_morning)),
+    completed_evening: workoutPeriod === 'evening' ? completed : Boolean(Number(row.completed_evening)),
   })
 }
 
@@ -489,12 +523,31 @@ export async function upsertTrainingRecord(
   idToken: string,
   input: { date: string; morningWorkout: string; eveningWorkout: string },
 ) {
-  await runWrite({
-    action: 'upsertTrainingRecord',
-    idToken,
+  const rows = await getTrainingRecords()
+  const existing = rows.find((row) => sameDateKey(row.date, input.date))
+
+  if (existing) {
+    await dbWrite('training_records', 'PUT', idToken, {
+      training_id: existing.training_id,
+      date: existing.date ?? input.date,
+      morning_workout: input.morningWorkout,
+      evening_workout: input.eveningWorkout,
+      completed_morning: existing.completed_morning,
+      completed_evening: existing.completed_evening,
+    })
+    return
+  }
+
+  // Nothing planned and no existing row: nothing to do.
+  if (!input.morningWorkout && !input.eveningWorkout) return
+
+  await dbWrite('training_records', 'POST', idToken, {
+    training_id: crypto.randomUUID(),
     date: input.date,
     morning_workout: input.morningWorkout,
     evening_workout: input.eveningWorkout,
+    completed_morning: false,
+    completed_evening: false,
   })
 }
 
@@ -502,13 +555,23 @@ export async function replaceCurrentStudyForDate(
   idToken: string,
   input: { date: string; relatedExam: string; topic: string },
 ) {
-  await runWrite({
-    action: 'replaceCurrentStudyForDate',
-    idToken,
-    date: input.date,
-    related_exam: input.relatedExam,
-    topic: input.topic,
-  })
+  const rows = await dbRead<Record<string, unknown>>('current_study')
+  const matches = rows.filter((row) => sameDateKey(String(row.date ?? ''), input.date))
+
+  for (const row of matches) {
+    await dbWrite('current_study', 'DELETE', idToken, { study_id: String(row.study_id) })
+  }
+
+  // An empty topic clears the day instead of writing a blank row.
+  if (input.topic.trim()) {
+    await dbWrite('current_study', 'POST', idToken, {
+      study_id: crypto.randomUUID(),
+      related_exam: input.relatedExam,
+      topic: input.topic,
+      date: input.date,
+      completed: false,
+    })
+  }
 }
 
 export async function createEvent(

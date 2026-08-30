@@ -195,11 +195,21 @@ function shouldUseAdminProfile(googleEmail: string) {
 
 function App() {
   const [profile, setProfile] = useState<UserProfile>(() => getInitialProfile())
+  // Admin-only: preview the site exactly as guests see it. Persisted so a
+  // reload keeps the chosen lens; cleared on sign-out.
+  const [viewAsGuest, setViewAsGuest] = useState(
+    () => typeof window !== 'undefined' && window.localStorage.getItem('view-as-guest') === 'true',
+  )
+
+  useEffect(() => {
+    window.localStorage.setItem('view-as-guest', viewAsGuest ? 'true' : 'false')
+  }, [viewAsGuest])
   const [googleIdToken, setGoogleIdToken] = useState(() => getInitialGoogleToken())
   const previousGoogleTokenRef = useRef<string | null>(null)
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const canViewPrivateFinances = canViewFinances(googleEmail)
-  const isAdmin = profile === 'admin' && shouldUseAdminProfile(googleEmail)
+  const trueAdmin = profile === 'admin' && shouldUseAdminProfile(googleEmail)
+  const isAdmin = trueAdmin && !viewAsGuest
 
   useEffect(() => {
     warmupAppsScript()
@@ -229,6 +239,7 @@ function App() {
       }
     } else if (hadPreviousGoogleToken && profile !== 'guest') {
       setProfile('guest')
+      setViewAsGuest(false)
     }
 
     previousGoogleTokenRef.current = googleIdToken || null
@@ -261,6 +272,9 @@ function App() {
             path="login"
             element={(
               <LoginPage
+              isTrueAdmin={trueAdmin}
+              viewAsGuest={viewAsGuest}
+              onToggleGuestView={() => setViewAsGuest((value) => !value)}
                 profile={profile}
                 googleIdToken={googleIdToken}
                 onGoogleTokenChange={setGoogleIdToken}
@@ -1519,7 +1533,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
   useEffect(() => {
     async function loadBudgets() {
       try {
-        const records = await getBudgetTargets()
+        const records = await getBudgetTargets(idToken)
         setAllBudgetRecords(records)
       } catch {}
     }
@@ -1536,7 +1550,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
   useEffect(() => {
     async function loadTransactions() {
       try {
-        const [abeData, ciaraData] = await Promise.all([getAbeTransactions(), getCiaraTransactions()])
+        const [abeData, ciaraData] = await Promise.all([getAbeTransactions(idToken), getCiaraTransactions(idToken)])
         setAbeTransactions(abeData)
         setCiaraTransactions(ciaraData)
         setTransactionError('')
@@ -4825,10 +4839,16 @@ function LoginPage({
   profile,
   googleIdToken,
   onGoogleTokenChange,
+  isTrueAdmin,
+  viewAsGuest,
+  onToggleGuestView,
 }: {
   profile: UserProfile
   googleIdToken: string
   onGoogleTokenChange: (token: string) => void
+  isTrueAdmin: boolean
+  viewAsGuest: boolean
+  onToggleGuestView: () => void
 }) {
   const navigate = useNavigate()
 
@@ -4853,7 +4873,14 @@ function LoginPage({
         note=""
       >
         <div className="login-card">
-          <p className="summary-line">Current profile: {profile.toUpperCase()}</p>
+          <p className="summary-line">
+            Current profile: {viewAsGuest ? 'GUEST VIEW (admin)' : profile.toUpperCase()}
+          </p>
+          {isTrueAdmin ? (
+            <button type="button" className="secondary-action" onClick={onToggleGuestView}>
+              {viewAsGuest ? 'Return to admin view' : 'View site as guest'}
+            </button>
+          ) : null}
           <div className="google-auth-block">
             <p className="summary-line">Google auth: {googleIdToken ? 'Connected' : 'Not connected'}</p>
             {googleClientConfigured && !googleIdToken ? (

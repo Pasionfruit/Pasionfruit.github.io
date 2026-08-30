@@ -2,30 +2,64 @@
  * Data API for abepasion.com, backed by Cloudflare D1 — the migration target
  * off Google Sheets.
  *
- * Access model mirrors the old one: reads are public (the Sheets API key was
- * public too), writes verify the caller's Google ID token against the admin
- * email — the same check the Ace worker and Apps Script make.
+ * Per-table access: `read: 'public'` mirrors the old public Sheets key;
+ * `read: 'admin'` (finance data) requires the admin's Google ID token, which
+ * every write requires regardless.
  *
- * Routes: GET/POST/PUT/DELETE /db/<table> for each table declared below.
- * Tables are added here as they migrate; anything undeclared is a 404, so a
- * typo can never touch data.
- *
+ * Routes: GET/POST/PUT/DELETE /db/<table>. Only tables declared below exist.
  * Secrets: ADMIN_EMAIL, GOOGLE_CLIENT_ID (same values as workers/ace).
  */
 
 const TOKEN_INFO = 'https://oauth2.googleapis.com/tokeninfo?id_token='
 
-/** key = primary key column; ints = columns stored as 0/1 integers. */
+/**
+ * key: primary key column, or an array for composite keys.
+ * auto: key is INTEGER AUTOINCREMENT — POST omits it, PUT/DELETE require it.
+ * ints: stored as 0/1; reals: stored as numbers.
+ */
 const TABLES = {
   meal_plan: {
     key: 'day_of_the_week',
     columns: ['day_of_the_week', 'breakfast', 'lunch', 'dinner', 'snack'],
-    ints: [],
+    read: 'public',
   },
   grocery_list: {
     key: 'item',
     columns: ['item', 'type', 'completed', 'include'],
     ints: ['completed', 'include'],
+    read: 'public',
+  },
+  current_study: {
+    key: 'study_id',
+    columns: ['study_id', 'related_exam', 'topic', 'date', 'completed'],
+    ints: ['completed'],
+    read: 'public',
+  },
+  training_records: {
+    key: 'training_id',
+    columns: ['training_id', 'date', 'morning_workout', 'evening_workout', 'completed_morning', 'completed_evening'],
+    ints: ['completed_morning', 'completed_evening'],
+    read: 'public',
+  },
+  budget_targets: {
+    key: ['user', 'category'],
+    columns: ['user', 'category', 'budget_amount'],
+    reals: ['budget_amount'],
+    read: 'admin',
+  },
+  abe_transactions: {
+    key: 'id',
+    auto: true,
+    columns: ['id', 'date', 'description', 'amount', 'category', 'card'],
+    reals: ['amount'],
+    read: 'admin',
+  },
+  ciara_transactions: {
+    key: 'id',
+    auto: true,
+    columns: ['id', 'date', 'description', 'amount', 'category', 'card'],
+    reals: ['amount'],
+    read: 'admin',
   },
 }
 
@@ -77,11 +111,18 @@ async function verifyAdmin(request, env) {
   return { ok: true }
 }
 
-/** Coerce a value for storage: ints columns become 0/1, everything else text. */
+function keyColumns(table) {
+  return Array.isArray(table.key) ? table.key : [table.key]
+}
+
+/** Coerce a value for storage according to the table's column types. */
 function storageValue(table, column, value) {
-  if (table.ints.includes(column)) {
-    if (value === true || value === 1 || value === '1' || value === 'true') return 1
-    return 0
+  if ((table.ints ?? []).includes(column)) {
+    return value === true || value === 1 || value === '1' || value === 'true' ? 1 : 0
+  }
+  if ((table.reals ?? []).includes(column)) {
+    const n = Number(value)
+    return Number.isFinite(n) ? n : 0
   }
   return String(value ?? '')
 }
@@ -100,8 +141,13 @@ export default {
 
     const name = match[1]
     const table = TABLES[name]
+    const keys = keyColumns(table)
 
     if (request.method === 'GET') {
+      if (table.read !== 'public') {
+        const auth = await verifyAdmin(request, env)
+        if (!auth.ok) return deny(403, auth.reason, request, env)
+      }
       const { results } = await env.DB.prepare(`SELECT * FROM ${name}`).all()
       return json({ rows: results ?? [] }, request, env)
     }
@@ -110,30 +156,49 @@ export default {
     if (!auth.ok) return deny(403, auth.reason, request, env)
 
     let body = {}
-    if (request.method !== 'DELETE' || request.headers.get('Content-Type')?.includes('json')) {
-      try {
-        body = await request.json()
-      } catch {
-        if (request.method !== 'DELETE') return deny(400, 'Invalid JSON', request, env)
-      }
+    try {
+      body = await request.json()
+    } catch {
+      if (request.method !== 'DELETE') return deny(400, 'Invalid JSON', request, env)
+    }
+
+    const whereClause = keys.map((k) => `${k} = ?`).join(' AND ')
+
+    if (request.method === 'POST' && table.auto) {
+      // Auto-key create: the database assigns the id.
+      const cols = table.columns.filter((c) => c !== table.key)
+      const values = cols.map((c) => storageValue(table, c, body[c]))
+      const result = await env.DB.prepare(
+        `INSERT INTO ${name} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`,
+      )
+        .bind(...values)
+        .run()
+      return json({ ok: true, id: result.meta?.last_row_id ?? null }, request, env)
     }
 
     if (request.method === 'POST' || request.method === 'PUT') {
-      const key = String(body[table.key] ?? '').trim()
-      if (!key) return deny(400, `${table.key} is required`, request, env)
-
-      // PUT may rename: original_<key> names the row being replaced.
-      const original = String(body[`original_${table.key}`] ?? key).trim()
-      if (request.method === 'PUT' && original !== key) {
-        await env.DB.prepare(`DELETE FROM ${name} WHERE ${table.key} = ?`).bind(original).run()
+      const keyValues = keys.map((k) => String(body[k] ?? '').trim())
+      if (keyValues.some((v) => !v)) {
+        return deny(400, `${keys.join(', ')} required`, request, env)
       }
 
-      const values = table.columns.map((column) =>
-        column === table.key ? key : storageValue(table, column, body[column]),
-      )
-      const placeholders = table.columns.map(() => '?').join(', ')
+      // Single-key tables may rename via original_<key>.
+      if (request.method === 'PUT' && keys.length === 1 && !table.auto) {
+        const original = String(body[`original_${keys[0]}`] ?? keyValues[0]).trim()
+        if (original !== keyValues[0]) {
+          await env.DB.prepare(`DELETE FROM ${name} WHERE ${whereClause}`).bind(original).run()
+        }
+      }
+
+      const values = table.columns.map((column) => {
+        const keyIndex = keys.indexOf(column)
+        if (keyIndex >= 0) {
+          return table.auto ? Number(keyValues[keyIndex]) : keyValues[keyIndex]
+        }
+        return storageValue(table, column, body[column])
+      })
       await env.DB.prepare(
-        `INSERT OR REPLACE INTO ${name} (${table.columns.join(', ')}) VALUES (${placeholders})`,
+        `INSERT OR REPLACE INTO ${name} (${table.columns.join(', ')}) VALUES (${table.columns.map(() => '?').join(', ')})`,
       )
         .bind(...values)
         .run()
@@ -142,9 +207,13 @@ export default {
     }
 
     if (request.method === 'DELETE') {
-      const key = String(body[table.key] ?? url.searchParams.get(table.key) ?? '').trim()
-      if (!key) return deny(400, `${table.key} is required`, request, env)
-      await env.DB.prepare(`DELETE FROM ${name} WHERE ${table.key} = ?`).bind(key).run()
+      const keyValues = keys.map((k) => String(body[k] ?? url.searchParams.get(k) ?? '').trim())
+      if (keyValues.some((v) => !v)) {
+        return deny(400, `${keys.join(', ')} required`, request, env)
+      }
+      await env.DB.prepare(`DELETE FROM ${name} WHERE ${whereClause}`)
+        .bind(...(table.auto ? keyValues.map(Number) : keyValues))
+        .run()
       return json({ ok: true }, request, env)
     }
 
