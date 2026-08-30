@@ -58,6 +58,44 @@ function parseNumber(value: unknown) {
   return undefined
 }
 
+// ── Cloudflare D1 data API (the migration target off Google Sheets) ─────────
+// Tables move here one at a time; each function keeps its exact signature so
+// call sites never change. Reads are public, writes carry the Google ID token.
+
+const DB_BASE_URL =
+  (import.meta.env.VITE_DB_BASE_URL as string | undefined)?.trim().replace(/\/+$/, '') ||
+  'https://db.abepasion.workers.dev'
+
+async function dbRead<T>(table: string): Promise<T[]> {
+  const response = await fetch(`${DB_BASE_URL}/db/${table}`)
+  if (!response.ok) {
+    throw new Error(`Database read failed: ${response.status}`)
+  }
+  const data = (await response.json()) as { rows?: T[] }
+  return data.rows ?? []
+}
+
+async function dbWrite(
+  table: string,
+  method: 'POST' | 'PUT' | 'DELETE',
+  idToken: string,
+  body: Record<string, unknown>,
+) {
+  const response = await fetch(`${DB_BASE_URL}/db/${table}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify(body),
+  })
+
+  const data = (await response.json().catch(() => null)) as { error?: string } | null
+  if (!response.ok) {
+    throw new Error(data?.error || `Database write failed: ${response.status}`)
+  }
+}
+
 export async function getPolls(): Promise<PollRecord[]> {
   const rows = await fetchSheetTable<Record<string, unknown>>('polls')
 
@@ -286,7 +324,7 @@ export async function setBackpackPacked(
 }
 
 export async function getMealPlan(): Promise<MealPlanRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('meal_plan')
+  const rows = await dbRead<Record<string, unknown>>('meal_plan')
 
   return rows
     .map((row) => ({
@@ -300,7 +338,7 @@ export async function getMealPlan(): Promise<MealPlanRecord[]> {
 }
 
 export async function getGroceryList(): Promise<GroceryListRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('grocery_list')
+  const rows = await dbRead<Record<string, unknown>>('grocery_list')
 
   return rows
     .map((row) => ({
@@ -665,9 +703,7 @@ export async function updateMealPlan(
     snack: string
   },
 ) {
-  await runWrite({
-    action: 'updateMealPlan',
-    idToken,
+  await dbWrite('meal_plan', 'PUT', idToken, {
     original_day_of_the_week: payload.originalDayOfTheWeek,
     day_of_the_week: payload.dayOfTheWeek,
     breakfast: payload.breakfast,
@@ -678,9 +714,7 @@ export async function updateMealPlan(
 }
 
 export async function createGroceryListItem(idToken: string, type: string, item: string, completed = false, include = false) {
-  await runWrite({
-    action: 'createGroceryListItem',
-    idToken,
+  await dbWrite('grocery_list', 'POST', idToken, {
     type,
     item,
     completed,
@@ -698,9 +732,7 @@ export async function updateGroceryListItem(
     include?: boolean
   },
 ) {
-  await runWrite({
-    action: 'updateGroceryListItem',
-    idToken,
+  await dbWrite('grocery_list', 'PUT', idToken, {
     original_item: payload.originalItem,
     item: payload.item,
     type: payload.type,
@@ -902,9 +934,7 @@ export async function deleteGroceryListItem(
     item: string
   },
 ) {
-  await runWrite({
-    action: 'deleteGroceryListItem',
-    idToken,
+  await dbWrite('grocery_list', 'DELETE', idToken, {
     item: payload.item,
   })
 }

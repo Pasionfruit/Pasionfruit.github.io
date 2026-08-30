@@ -551,12 +551,17 @@ export function AssistantAceCard({
     recognition.start()
   }
 
+  function endVoiceMode() {
+    voiceOnRef.current = false
+    setVoiceState('off')
+    recognitionRef.current?.stop()
+    stopSpeaking()
+    playChord(CHORD_DONE, 0.5)
+  }
+
   function toggleVoice() {
     if (voiceOnRef.current) {
-      voiceOnRef.current = false
-      setVoiceState('off')
-      recognitionRef.current?.stop()
-      stopSpeaking()
+      endVoiceMode()
     } else {
       voiceOnRef.current = true
       setChatError('')
@@ -568,6 +573,13 @@ export function AssistantAceCard({
   async function handleAsk(spoken?: string) {
     const question = (spoken ?? draft).trim()
     if (!config || !question || isThinking) return
+
+    // "End" closes the voice conversation outright.
+    if (voiceOnRef.current && /^(end|end (the )?conversation|stop listening|goodbye|bye)[\s.!]*$/i.test(question)) {
+      setDraft('')
+      endVoiceMode()
+      return
+    }
 
     // A pending confirmation chip can be answered by voice or text.
     const pendingYes = /^(yes|yeah|yep|sure|do it|confirm|check it|mark it|archive it)\b/i

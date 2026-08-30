@@ -1,0 +1,153 @@
+/**
+ * Data API for abepasion.com, backed by Cloudflare D1 — the migration target
+ * off Google Sheets.
+ *
+ * Access model mirrors the old one: reads are public (the Sheets API key was
+ * public too), writes verify the caller's Google ID token against the admin
+ * email — the same check the Ace worker and Apps Script make.
+ *
+ * Routes: GET/POST/PUT/DELETE /db/<table> for each table declared below.
+ * Tables are added here as they migrate; anything undeclared is a 404, so a
+ * typo can never touch data.
+ *
+ * Secrets: ADMIN_EMAIL, GOOGLE_CLIENT_ID (same values as workers/ace).
+ */
+
+const TOKEN_INFO = 'https://oauth2.googleapis.com/tokeninfo?id_token='
+
+/** key = primary key column; ints = columns stored as 0/1 integers. */
+const TABLES = {
+  meal_plan: {
+    key: 'day_of_the_week',
+    columns: ['day_of_the_week', 'breakfast', 'lunch', 'dinner', 'snack'],
+    ints: [],
+  },
+  grocery_list: {
+    key: 'item',
+    columns: ['item', 'type', 'completed', 'include'],
+    ints: ['completed', 'include'],
+  },
+}
+
+function corsHeaders(request, env) {
+  const origin = request.headers.get('Origin') ?? ''
+  const allowed = (env.ALLOWED_ORIGINS ?? 'https://abepasion.com')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean)
+
+  return {
+    'Access-Control-Allow-Origin': allowed.includes(origin) ? origin : allowed[0],
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Max-Age': '86400',
+    Vary: 'Origin',
+  }
+}
+
+function json(payload, request, env, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(request, env) },
+  })
+}
+
+function deny(status, message, request, env) {
+  return json({ error: message }, request, env, status)
+}
+
+async function verifyAdmin(request, env) {
+  const header = request.headers.get('Authorization') ?? ''
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : ''
+  if (!token) return { ok: false, reason: 'Missing bearer token' }
+
+  const response = await fetch(TOKEN_INFO + encodeURIComponent(token))
+  if (!response.ok) return { ok: false, reason: 'Invalid token' }
+
+  const info = await response.json()
+  if (env.GOOGLE_CLIENT_ID && info.aud !== env.GOOGLE_CLIENT_ID) {
+    return { ok: false, reason: 'Token was issued for a different client' }
+  }
+  if (info.email_verified !== 'true' && info.email_verified !== true) {
+    return { ok: false, reason: 'Email not verified' }
+  }
+  if ((info.email ?? '').toLowerCase() !== (env.ADMIN_EMAIL ?? '').toLowerCase()) {
+    return { ok: false, reason: 'Not an authorised account' }
+  }
+  return { ok: true }
+}
+
+/** Coerce a value for storage: ints columns become 0/1, everything else text. */
+function storageValue(table, column, value) {
+  if (table.ints.includes(column)) {
+    if (value === true || value === 1 || value === '1' || value === 'true') return 1
+    return 0
+  }
+  return String(value ?? '')
+}
+
+export default {
+  async fetch(request, env) {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders(request, env) })
+    }
+
+    const url = new URL(request.url)
+    const match = /^\/db\/([a-z_]+)$/.exec(url.pathname)
+    if (!match || !TABLES[match[1]]) {
+      return deny(404, 'No such route', request, env)
+    }
+
+    const name = match[1]
+    const table = TABLES[name]
+
+    if (request.method === 'GET') {
+      const { results } = await env.DB.prepare(`SELECT * FROM ${name}`).all()
+      return json({ rows: results ?? [] }, request, env)
+    }
+
+    const auth = await verifyAdmin(request, env)
+    if (!auth.ok) return deny(403, auth.reason, request, env)
+
+    let body = {}
+    if (request.method !== 'DELETE' || request.headers.get('Content-Type')?.includes('json')) {
+      try {
+        body = await request.json()
+      } catch {
+        if (request.method !== 'DELETE') return deny(400, 'Invalid JSON', request, env)
+      }
+    }
+
+    if (request.method === 'POST' || request.method === 'PUT') {
+      const key = String(body[table.key] ?? '').trim()
+      if (!key) return deny(400, `${table.key} is required`, request, env)
+
+      // PUT may rename: original_<key> names the row being replaced.
+      const original = String(body[`original_${table.key}`] ?? key).trim()
+      if (request.method === 'PUT' && original !== key) {
+        await env.DB.prepare(`DELETE FROM ${name} WHERE ${table.key} = ?`).bind(original).run()
+      }
+
+      const values = table.columns.map((column) =>
+        column === table.key ? key : storageValue(table, column, body[column]),
+      )
+      const placeholders = table.columns.map(() => '?').join(', ')
+      await env.DB.prepare(
+        `INSERT OR REPLACE INTO ${name} (${table.columns.join(', ')}) VALUES (${placeholders})`,
+      )
+        .bind(...values)
+        .run()
+
+      return json({ ok: true }, request, env)
+    }
+
+    if (request.method === 'DELETE') {
+      const key = String(body[table.key] ?? url.searchParams.get(table.key) ?? '').trim()
+      if (!key) return deny(400, `${table.key} is required`, request, env)
+      await env.DB.prepare(`DELETE FROM ${name} WHERE ${table.key} = ?`).bind(key).run()
+      return json({ ok: true }, request, env)
+    }
+
+    return deny(405, 'Method not allowed', request, env)
+  },
+}

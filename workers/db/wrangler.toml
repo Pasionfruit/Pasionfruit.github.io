@@ -1,0 +1,15 @@
+name = "db"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://abepasion.com,https://www.abepasion.com,http://localhost:5173,http://localhost:5174,http://localhost:5175"
+
+# Secrets (npx wrangler secret put NAME):
+#   ADMIN_EMAIL       pasionabe@gmail.com
+#   GOOGLE_CLIENT_ID  same web client id the site signs in with
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pasion-db"
+database_id = "f8d1ee38-8bee-4dd2-b62e-d13578b9c4d3"
