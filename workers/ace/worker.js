@@ -21,7 +21,7 @@
  */
 
 /** Only these reach Ollama; everything else is refused. */
-const ALLOWED_PATHS = new Set(['/api/chat', '/api/tags'])
+const ALLOWED_PATHS = new Set(['/api/chat', '/api/tags', '/api/tts'])
 
 const TOKEN_INFO = 'https://oauth2.googleapis.com/tokeninfo?id_token='
 

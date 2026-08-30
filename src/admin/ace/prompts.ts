@@ -75,6 +75,41 @@ export const REMINDER_SCHEMA = {
   required: ['isReminder', 'content', 'dueDate', 'priority'],
 } as const
 
+/** JSON schema for matching "I did X" against a real open task. */
+export const COMPLETION_SCHEMA = {
+  type: 'object',
+  properties: {
+    isCompletion: {
+      type: 'boolean',
+      description: 'True only if the message reports that a task was finished or done.',
+    },
+    taskId: {
+      type: 'string',
+      description: 'The id of the one open task the message refers to, or an empty string if none match.',
+    },
+  },
+  required: ['isCompletion', 'taskId'],
+} as const
+
+export type CompletionDraft = {
+  isCompletion: boolean
+  taskId: string
+}
+
+export function completionExtractionPrompt(message: string, tasks: { id: string; content: string }[]) {
+  const list = tasks.map((task) => `- id: ${task.id} | ${task.content}`).join('\n')
+
+  return `Abe said:
+"""
+${message}
+"""
+
+If he is reporting that he finished, did, or completed something, pick the ONE open task below he means. Match on meaning, not exact wording. If he is asking a question, making a request, or nothing below plausibly matches, set isCompletion to false and taskId to an empty string. Never guess a taskId that is not in the list.
+
+Open tasks:
+${list}`
+}
+
 export type ReminderDraft = {
   isReminder: boolean
   content: string

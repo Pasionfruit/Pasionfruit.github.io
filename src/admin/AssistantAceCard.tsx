@@ -1,20 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Mic, MicOff, Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
+import { Check, Mic, MicOff, Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
 import {
   aceChat,
   aceJson,
+  aceTts,
   getAceConfig,
   type AceMessage,
 } from './ace/client'
 import { buildAceContext, renderAceContext, type AceContext } from './ace/context'
 import {
   ACE_SYSTEM_PROMPT,
+  COMPLETION_SCHEMA,
   MORNING_REPORT_PROMPT,
   REMINDER_SCHEMA,
+  completionExtractionPrompt,
   reminderExtractionPrompt,
+  type CompletionDraft,
   type ReminderDraft,
 } from './ace/prompts'
-import { createTask } from '../data/todoist/repositories'
+import { closeTask, createTask } from '../data/todoist/repositories'
 import { todayKey } from '../data/todoist/dates'
 
 type ChatTurn = { id: string; role: 'user' | 'assistant'; content: string }
@@ -142,6 +146,9 @@ export function AssistantAceCard({
   const [isSavingReminder, setIsSavingReminder] = useState(false)
   const [reminderNotice, setReminderNotice] = useState('')
 
+  const [completion, setCompletion] = useState<{ id: string; content: string } | null>(null)
+  const [isClosingTask, setIsClosingTask] = useState(false)
+
   const abortRef = useRef<AbortController | null>(null)
   const transcriptRef = useRef<HTMLDivElement | null>(null)
 
@@ -261,6 +268,7 @@ export function AssistantAceCard({
       abortRef.current?.abort()
       voiceOnRef.current = false
       recognitionRef.current?.stop()
+      audioRef.current?.pause()
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel()
       }
@@ -299,6 +307,46 @@ export function AssistantAceCard({
     }
   }
 
+  /** Every open task Ace can be told about, deduplicated. */
+  function openTasks() {
+    if (!context) return []
+    const seen = new Set<string>()
+    return [...context.tasksToday, ...context.tasksOverdue, ...context.slippedYesterday].filter(
+      (task) => !seen.has(task.id) && Boolean(seen.add(task.id)),
+    )
+  }
+
+  async function handleConfirmComplete() {
+    if (!completion || isClosingTask) return
+    setIsClosingTask(true)
+    setChatError('')
+
+    try {
+      await closeTask(completion.id)
+      setTurns((current) => [
+        ...current,
+        { id: `a-${Date.now()}`, role: 'assistant', content: `Done — checked off **${completion.content}**.` },
+      ])
+      // Keep the local context honest so the same task cannot be matched twice.
+      setContext((current) =>
+        current
+          ? {
+              ...current,
+              tasksToday: current.tasksToday.filter((task) => task.id !== completion.id),
+              tasksOverdue: current.tasksOverdue.filter((task) => task.id !== completion.id),
+              slippedYesterday: current.slippedYesterday.filter((task) => task.id !== completion.id),
+            }
+          : current,
+      )
+      if (voiceOnRef.current) void speakReply(`Checked off ${completion.content}.`)
+      setCompletion(null)
+    } catch (caught) {
+      setChatError(caught instanceof Error ? caught.message : 'Could not close the task')
+    } finally {
+      setIsClosingTask(false)
+    }
+  }
+
   /** Markdown reads badly aloud; strip it before it reaches the voice. */
   function speechText(markdown: string) {
     return markdown
@@ -308,12 +356,17 @@ export function AssistantAceCard({
       .trim()
   }
 
-  function speakReply(markdown: string) {
-    const text = speechText(markdown)
-    if (!text || !('speechSynthesis' in window)) return
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-    window.speechSynthesis.cancel()
-    playChord(CHORD_SPEAK)
+  function stopSpeaking() {
+    audioRef.current?.pause()
+    audioRef.current = null
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+  }
+
+  /** Browser TTS — the fallback when the local Kokoro voice is unreachable. */
+  function fallbackSpeak(text: string) {
+    if (!('speechSynthesis' in window)) return
 
     const utterance = new SpeechSynthesisUtterance(text)
     const voice = pickVoice()
@@ -324,9 +377,42 @@ export function AssistantAceCard({
       playChord(CHORD_DONE, 0.45)
       if (voiceOnRef.current) startListening()
     }
-    setVoiceState('speaking')
     // Let the chord ring for a beat before the words begin.
     window.setTimeout(() => window.speechSynthesis.speak(utterance), 380)
+  }
+
+  /**
+   * Speak with the Kokoro model running next to Ollama (human-like), falling
+   * back to the browser's synthesis when the host or tunnel is down.
+   */
+  async function speakReply(markdown: string) {
+    const text = speechText(markdown)
+    if (!text) return
+
+    stopSpeaking()
+    playChord(CHORD_SPEAK)
+    setVoiceState('speaking')
+
+    try {
+      if (!config) throw new Error('not configured')
+      const blob = await aceTts({ config, idToken, text })
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audioRef.current = audio
+      audio.onended = () => {
+        URL.revokeObjectURL(url)
+        if (audioRef.current === audio) audioRef.current = null
+        playChord(CHORD_DONE, 0.45)
+        if (voiceOnRef.current) startListening()
+      }
+      audio.onerror = () => {
+        URL.revokeObjectURL(url)
+        fallbackSpeak(text)
+      }
+      await audio.play()
+    } catch {
+      fallbackSpeak(text)
+    }
   }
 
   function startListening() {
@@ -390,7 +476,7 @@ export function AssistantAceCard({
       voiceOnRef.current = false
       setVoiceState('off')
       recognitionRef.current?.stop()
-      window.speechSynthesis.cancel()
+      stopSpeaking()
     } else {
       voiceOnRef.current = true
       setChatError('')
@@ -403,6 +489,21 @@ export function AssistantAceCard({
     const question = (spoken ?? draft).trim()
     if (!config || !question || isThinking) return
 
+    // A pending "mark complete?" chip can be answered by voice or text.
+    if (completion) {
+      if (/^(yes|yeah|yep|sure|do it|confirm|check it|mark it)\b/i.test(question)) {
+        setDraft('')
+        void handleConfirmComplete()
+        return
+      }
+      if (/^(no|nope|cancel|leave it|not that)\b/i.test(question)) {
+        setCompletion(null)
+        setDraft('')
+        if (voiceOnRef.current) startListening()
+        return
+      }
+    }
+
     const turn: ChatTurn = { id: `u-${Date.now()}`, role: 'user', content: question }
     const history = [...turns, turn]
 
@@ -411,6 +512,39 @@ export function AssistantAceCard({
     setChatError('')
     setStreaming('')
     setIsThinking(true)
+
+    // "I did X" → offer to check off the matching task instead of chatting.
+    if (todoistConfigured && /\b(did|done|finished|finish|complete|completed|closed|checked)\b/i.test(question)) {
+      const open = openTasks()
+      if (open.length > 0) {
+        try {
+          const extracted = await aceJson<CompletionDraft>({
+            config,
+            idToken,
+            format: COMPLETION_SCHEMA,
+            messages: [
+              { role: 'system', content: ACE_SYSTEM_PROMPT },
+              {
+                role: 'user',
+                content: completionExtractionPrompt(
+                  question,
+                  open.map((task) => ({ id: task.id, content: task.content })),
+                ),
+              },
+            ],
+          })
+          const match = extracted.isCompletion ? open.find((task) => task.id === extracted.taskId) : undefined
+          if (match) {
+            setCompletion({ id: match.id, content: match.content })
+            setIsThinking(false)
+            if (voiceOnRef.current) void speakReply(`Should I check off ${match.content}?`)
+            return
+          }
+        } catch {
+          // Extraction is best-effort; fall through to a normal chat turn.
+        }
+      }
+    }
 
     const controller = new AbortController()
     abortRef.current = controller
@@ -433,7 +567,7 @@ export function AssistantAceCard({
       setTurns((current) => [...current, { id: `a-${Date.now()}`, role: 'assistant', content: answer }])
 
       if (voiceOnRef.current) {
-        speakReply(answer)
+        void speakReply(answer)
       }
     } catch (caught) {
       if (!controller.signal.aborted) {
@@ -675,6 +809,25 @@ export function AssistantAceCard({
                     >
                       <X size={13} strokeWidth={1.8} aria-hidden="true" />
                       <span>Discard</span>
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              {completion ? (
+                <div className="ace-reminder" role="group" aria-label="Task to complete">
+                  <div className="ace-reminder-body">
+                    <strong>{completion.content}</strong>
+                    <span className="ace-reminder-due">mark complete?</span>
+                  </div>
+                  <div className="ace-reminder-actions">
+                    <button type="button" onClick={() => void handleConfirmComplete()} disabled={isClosingTask}>
+                      <Check size={13} strokeWidth={1.8} aria-hidden="true" />
+                      <span>{isClosingTask ? 'Closing…' : 'Complete'}</span>
+                    </button>
+                    <button type="button" onClick={() => setCompletion(null)} disabled={isClosingTask}>
+                      <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                      <span>Not this</span>
                     </button>
                   </div>
                 </div>

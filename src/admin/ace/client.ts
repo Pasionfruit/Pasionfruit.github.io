@@ -184,6 +184,37 @@ export async function aceJson<T>(options: Omit<ChatOptions, 'onProgress'> & { fo
   }
 }
 
+/**
+ * Text to speech from the Kokoro model running beside Ollama. Same Worker,
+ * same auth; the tunnel routes /api/tts to the TTS server by path.
+ */
+export async function aceTts({
+  config,
+  idToken,
+  text,
+  voice,
+}: {
+  config: AceConfig
+  idToken: string
+  text: string
+  voice?: string
+}): Promise<Blob> {
+  const response = await fetch(`${config.baseUrl}/api/tts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ text, ...(voice ? { voice } : {}) }),
+  })
+
+  if (!response.ok) {
+    throw new Error(await readError(response))
+  }
+
+  return response.blob()
+}
+
 /** Whether the host is reachable and the configured model is present. */
 export async function aceHealth(config: AceConfig, idToken: string) {
   const response = await fetch(`${config.baseUrl}/api/tags`, {
