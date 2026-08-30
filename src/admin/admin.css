@@ -1603,3 +1603,76 @@
   justify-content: flex-end;
   gap: 0.4rem;
 }
+
+/* ── Ace: bouncing thinking dots ── */
+.ace-typing {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.28rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.ace-typing span {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: ace-bounce 1.15s ease-in-out infinite;
+}
+
+.ace-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ace-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes ace-bounce {
+  0%, 55%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  25% {
+    transform: translateY(-0.32rem);
+    opacity: 1;
+  }
+}
+
+/* ── Ace: voice mode ── */
+.ace-voice-btn {
+  margin-right: auto;
+}
+
+.ace-voice-btn.active {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  animation: ace-voice-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ace-voice-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ace-typing span,
+  .ace-voice-btn.active {
+    animation: none;
+  }
+}
+
+/* ── Ace: numbered list rendering ── */
+.ace-md-item-numbered {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.ace-md-num {
+  color: var(--text-muted);
+  font-weight: 600;
+}

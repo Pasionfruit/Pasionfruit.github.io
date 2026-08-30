@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
+import { Mic, MicOff, Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
 import {
   aceChat,
   aceJson,
@@ -89,6 +89,16 @@ function AceMarkdown({ text, className }: { text: string; className?: string }) 
           )
         }
 
+        const numbered = /^(\d+)[.)]\s+(.*)$/.exec(trimmed)
+        if (numbered) {
+          return (
+            <p key={index} className="ace-md-item ace-md-item-numbered">
+              <span className="ace-md-num">{numbered[1]}.</span>
+              <span>{inlineBold(numbered[2], `n${index}`)}</span>
+            </p>
+          )
+        }
+
         return <p key={index}>{inlineBold(trimmed, `p${index}`)}</p>
       })}
     </div>
@@ -135,6 +145,17 @@ export function AssistantAceCard({
   const abortRef = useRef<AbortController | null>(null)
   const transcriptRef = useRef<HTMLDivElement | null>(null)
 
+  /* ── Voice mode: press the mic, speak, hear the reply, speak again. ── */
+  const [voiceState, setVoiceState] = useState<'off' | 'listening' | 'speaking'>('off')
+  const voiceOnRef = useRef(false)
+  const recognitionRef = useRef<{ stop: () => void } | null>(null)
+
+  const speechSupported = useMemo(() => {
+    if (typeof window === 'undefined') return false
+    const w = window as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown }
+    return Boolean(w.SpeechRecognition ?? w.webkitSpeechRecognition) && 'speechSynthesis' in window
+  }, [])
+
   useEffect(() => {
     let cancelled = false
 
@@ -165,7 +186,17 @@ export function AssistantAceCard({
     }
   }, [turns, streaming])
 
-  useEffect(() => () => abortRef.current?.abort(), [])
+  useEffect(
+    () => () => {
+      abortRef.current?.abort()
+      voiceOnRef.current = false
+      recognitionRef.current?.stop()
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+    },
+    [],
+  )
 
   function contextBlock(current: AceContext) {
     return `Context for today:\n\n${renderAceContext(current)}`
@@ -198,8 +229,100 @@ export function AssistantAceCard({
     }
   }
 
-  async function handleAsk() {
-    const question = draft.trim()
+  /** Markdown reads badly aloud; strip it before it reaches the voice. */
+  function speechText(markdown: string) {
+    return markdown
+      .replace(/\*\*/g, '')
+      .replace(/^[-*]\s+/gm, '')
+      .replace(/`+/g, '')
+      .trim()
+  }
+
+  function speakReply(markdown: string) {
+    const text = speechText(markdown)
+    if (!text || !('speechSynthesis' in window)) return
+
+    window.speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 1.04
+    utterance.onend = () => {
+      if (voiceOnRef.current) startListening()
+    }
+    setVoiceState('speaking')
+    window.speechSynthesis.speak(utterance)
+  }
+
+  function startListening() {
+    type RecognitionLike = {
+      lang: string
+      interimResults: boolean
+      onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null
+      onerror: ((event: { error?: string }) => void) | null
+      onend: (() => void) | null
+      start: () => void
+      stop: () => void
+    }
+    const w = window as unknown as {
+      SpeechRecognition?: new () => RecognitionLike
+      webkitSpeechRecognition?: new () => RecognitionLike
+    }
+    const Recognition = w.SpeechRecognition ?? w.webkitSpeechRecognition
+    if (!Recognition || !voiceOnRef.current) return
+
+    const recognition = new Recognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = true
+
+    let finalText = ''
+    recognition.onresult = (event) => {
+      const spoken = Array.from({ length: event.results.length }, (_, i) => event.results[i][0].transcript)
+        .join(' ')
+        .trim()
+      setDraft(spoken)
+      if (event.results[event.results.length - 1].isFinal) {
+        finalText = spoken
+      }
+    }
+    recognition.onerror = (event) => {
+      // Silence and manual stops are routine; anything else ends voice mode.
+      if (event.error && event.error !== 'no-speech' && event.error !== 'aborted') {
+        voiceOnRef.current = false
+        setVoiceState('off')
+        setChatError(`Voice input failed (${event.error}).`)
+      }
+    }
+    recognition.onend = () => {
+      recognitionRef.current = null
+      if (!voiceOnRef.current) return
+      if (finalText) {
+        setDraft('')
+        void handleAsk(finalText)
+      } else {
+        // Silence timeout — keep the mic open while voice mode is on.
+        startListening()
+      }
+    }
+
+    recognitionRef.current = recognition
+    setVoiceState('listening')
+    recognition.start()
+  }
+
+  function toggleVoice() {
+    if (voiceOnRef.current) {
+      voiceOnRef.current = false
+      setVoiceState('off')
+      recognitionRef.current?.stop()
+      window.speechSynthesis.cancel()
+    } else {
+      voiceOnRef.current = true
+      setChatError('')
+      startListening()
+    }
+  }
+
+  async function handleAsk(spoken?: string) {
+    const question = (spoken ?? draft).trim()
     if (!config || !question || isThinking) return
 
     const turn: ChatTurn = { id: `u-${Date.now()}`, role: 'user', content: question }
@@ -230,9 +353,15 @@ export function AssistantAceCard({
       })
 
       setTurns((current) => [...current, { id: `a-${Date.now()}`, role: 'assistant', content: answer }])
+
+      if (voiceOnRef.current) {
+        speakReply(answer)
+      }
     } catch (caught) {
       if (!controller.signal.aborted) {
         setChatError(caught instanceof Error ? caught.message : 'Ace could not answer')
+        // Keep the conversation open: a failed turn should not strand the mic.
+        if (voiceOnRef.current) startListening()
       }
     } finally {
       setStreaming('')
@@ -437,7 +566,13 @@ export function AssistantAceCard({
                   <AceMarkdown text={streaming} className="ace-turn ace-turn-assistant" />
                 ) : null}
 
-                {isThinking && !streaming ? <p className="sheets-meta">Ace is thinking…</p> : null}
+                {isThinking && !streaming ? (
+                  <div className="ace-typing" role="status" aria-label="Ace is thinking">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                ) : null}
               </div>
 
               {reminder ? (
@@ -495,6 +630,23 @@ export function AssistantAceCard({
                   }}
                 />
                 <div className="ace-composer-actions">
+                  {speechSupported ? (
+                    <button
+                      type="button"
+                      className={`ace-ghost-btn ace-voice-btn${voiceState !== 'off' ? ' active' : ''}`}
+                      onClick={toggleVoice}
+                      title={voiceState === 'off' ? 'Talk to Ace' : 'End the voice conversation'}
+                    >
+                      {voiceState === 'off' ? (
+                        <Mic size={13} strokeWidth={1.8} aria-hidden="true" />
+                      ) : (
+                        <MicOff size={13} strokeWidth={1.8} aria-hidden="true" />
+                      )}
+                      <span>
+                        {voiceState === 'listening' ? 'Listening…' : voiceState === 'speaking' ? 'Speaking…' : 'Voice'}
+                      </span>
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     className="ace-ghost-btn"
