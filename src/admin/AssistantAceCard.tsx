@@ -28,6 +28,10 @@ import { todayKey } from '../data/todoist/dates'
 
 type ChatTurn = { id: string; role: 'user' | 'assistant'; content: string }
 
+/** One empty WAV, used only to unlock mobile audio from inside a tap. */
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA='
+
 const BRIEFING_KEYS = { morning: 'ace-briefing', evening: 'ace-briefing-evening' } as const
 type BriefingKind = keyof typeof BRIEFING_KEYS
 
@@ -164,6 +168,7 @@ export function AssistantAceCard({
 
   /* ── Voice mode: press the mic, speak, hear the reply, speak again. ── */
   const [voiceState, setVoiceState] = useState<'off' | 'listening' | 'speaking'>('off')
+  const [voiceNote, setVoiceNote] = useState('')
   const voiceOnRef = useRef(false)
   const recognitionRef = useRef<{ stop: () => void } | null>(null)
 
@@ -399,6 +404,23 @@ export function AssistantAceCard({
   /** Bumped to cancel any in-flight chunked speech session. */
   const speechSessionRef = useRef(0)
 
+  /*
+   * Mobile browsers only let audio start from a tap. A fresh new Audio() per
+   * chunk is exactly what iOS and Android block, so one element is created and
+   * unlocked inside the mic-button gesture, then reused for every chunk.
+   */
+  const speechAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  function unlockSpeechAudio() {
+    if (speechAudioRef.current) return
+    const audio = new Audio(SILENT_WAV)
+    void audio.play().catch(() => {
+      // Some engines reject even the silent unlock; real playback reports its
+      // own error through playBlob, so nothing to do here.
+    })
+    speechAudioRef.current = audio
+  }
+
   function stopSpeaking() {
     speechSessionRef.current += 1
     audioRef.current?.pause()
@@ -427,18 +449,32 @@ export function AssistantAceCard({
   }
 
   function playBlob(blob: Blob): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(blob)
-      const audio = new Audio(url)
+      const audio = speechAudioRef.current ?? new Audio()
       audioRef.current = audio
-      const finish = () => {
+      const cleanup = () => {
         URL.revokeObjectURL(url)
+        audio.onended = null
+        audio.onerror = null
         if (audioRef.current === audio) audioRef.current = null
+      }
+      audio.onended = () => {
+        cleanup()
         resolve()
       }
-      audio.onended = finish
-      audio.onerror = finish
-      void audio.play().catch(finish)
+      // A chunk that fails to decode is skipped rather than killing the reply.
+      audio.onerror = () => {
+        cleanup()
+        resolve()
+      }
+      audio.src = url
+      audio.play().catch((caught: unknown) => {
+        // A rejected play() is the autoplay policy, not a bad chunk — surface
+        // it so speakReply can fall back to the browser voice.
+        cleanup()
+        reject(caught instanceof Error ? caught : new Error('Audio playback was blocked'))
+      })
     })
   }
 
@@ -476,10 +512,13 @@ export function AssistantAceCard({
     playChord(CHORD_SPEAK)
     setVoiceState('speaking')
 
-    try {
-      if (!config) throw new Error('not configured')
+    let chunks: string[] = []
+    let spoken = 0
 
-      const chunks = splitForSpeech(text)
+    try {
+      if (!config) throw new Error('Ace is not configured')
+
+      chunks = splitForSpeech(text)
       let pending: Promise<Blob> = aceTts({ config, idToken, text: chunks[0] })
 
       for (let index = 0; index < chunks.length; index += 1) {
@@ -489,13 +528,20 @@ export function AssistantAceCard({
           pending = aceTts({ config, idToken, text: chunks[index + 1] })
         }
         await playBlob(blob)
+        spoken = index + 1
         if (session !== speechSessionRef.current) return
       }
 
+      setVoiceNote('')
       playChord(CHORD_DONE, 0.45)
       if (voiceOnRef.current) startListening()
-    } catch {
-      if (session === speechSessionRef.current) fallbackSpeak(text)
+    } catch (caught) {
+      if (session !== speechSessionRef.current) return
+      // Say why Kokoro was skipped — on a phone this note is the only clue.
+      setVoiceNote(
+        `Kokoro voice unavailable (${caught instanceof Error ? caught.message : 'unknown error'}) — using the browser voice.`,
+      )
+      fallbackSpeak(chunks.length > 0 ? chunks.slice(spoken).join(' ') : text)
     }
   }
 
@@ -569,6 +615,10 @@ export function AssistantAceCard({
     } else {
       voiceOnRef.current = true
       setChatError('')
+      setVoiceNote('')
+      // Inside the tap gesture: unlock the audio element and the chord
+      // context, or mobile browsers will refuse both later.
+      unlockSpeechAudio()
       playChord(CHORD_DONE, 0.4)
       startListening()
     }
@@ -1020,6 +1070,7 @@ export function AssistantAceCard({
 
               {reminderNotice ? <p className="sheets-meta">{reminderNotice}</p> : null}
               {chatError ? <p className="sheets-meta">{chatError}</p> : null}
+              {voiceNote ? <p className="sheets-meta">{voiceNote}</p> : null}
 
               <form
                 className="ace-composer"
