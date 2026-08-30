@@ -390,8 +390,8 @@ export type BudgetTargetRecord = {
   budget_amount: number
 }
 
-export async function getBudgetTargets(idToken: string): Promise<BudgetTargetRecord[]> {
-  const rows = await dbRead<Record<string, unknown>>('budget_targets', idToken)
+export async function getBudgetTargets(): Promise<BudgetTargetRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('budget_targets')
   return rows
     .map((row) => ({
       user: String(row.user ?? '').toLowerCase().trim(),
@@ -407,31 +407,22 @@ export async function saveBudgetTarget(
   budgetAmount: number | null,
   user: string,
 ) {
-  const normalizedUser = user.toLowerCase().trim()
-  const normalizedCategory = category.toLowerCase().trim()
-
-  if (budgetAmount == null || budgetAmount <= 0) {
-    await dbWrite('budget_targets', 'DELETE', idToken, {
-      user: normalizedUser,
-      category: normalizedCategory,
-    })
-    return
-  }
-
-  await dbWrite('budget_targets', 'PUT', idToken, {
-    user: normalizedUser,
-    category: normalizedCategory,
-    budget_amount: budgetAmount,
+  await runWrite({
+    action: 'setBudgetTarget',
+    idToken,
+    category: category.toLowerCase().trim(),
+    budget_amount: budgetAmount ?? 0,
+    user: user.toLowerCase().trim(),
   })
 }
 
-export async function getAbeTransactions(idToken: string): Promise<FinanceTransactionRecord[]> {
-  const rows = await dbRead<Record<string, unknown>>('abe_transactions', idToken)
+export async function getAbeTransactions(): Promise<FinanceTransactionRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('abe_transactions')
   return mapFinanceTransactions(rows)
 }
 
-export async function getCiaraTransactions(idToken: string): Promise<FinanceTransactionRecord[]> {
-  const rows = await dbRead<Record<string, unknown>>('ciara_transactions', idToken)
+export async function getCiaraTransactions(): Promise<FinanceTransactionRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('ciara_transactions')
   return mapFinanceTransactions(rows)
 }
 

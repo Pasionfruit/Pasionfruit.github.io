@@ -46,26 +46,8 @@ const TABLES = {
     columns: ['journal_id', 'entry_date', 'mood', 'title', 'body', 'gratitude', 'prompt', 'reflection', 'tags', 'created_at'],
     read: 'admin',
   },
-  budget_targets: {
-    key: ['user', 'category'],
-    columns: ['user', 'category', 'budget_amount'],
-    reals: ['budget_amount'],
-    read: 'admin',
-  },
-  abe_transactions: {
-    key: 'id',
-    auto: true,
-    columns: ['id', 'date', 'description', 'amount', 'category', 'card'],
-    reals: ['amount'],
-    read: 'admin',
-  },
-  ciara_transactions: {
-    key: 'id',
-    auto: true,
-    columns: ['id', 'date', 'description', 'amount', 'category', 'card'],
-    reals: ['amount'],
-    read: 'admin',
-  },
+  // Finances deliberately stay in Google Sheets — Abe's call: that data does
+  // not live on Cloudflare. Do not add transaction or budget tables here.
 }
 
 function corsHeaders(request, env) {

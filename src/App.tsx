@@ -1533,7 +1533,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
   useEffect(() => {
     async function loadBudgets() {
       try {
-        const records = await getBudgetTargets(idToken)
+        const records = await getBudgetTargets()
         setAllBudgetRecords(records)
       } catch {}
     }
@@ -1550,7 +1550,7 @@ function FinancesHubCard({ idToken }: { idToken: string }) {
   useEffect(() => {
     async function loadTransactions() {
       try {
-        const [abeData, ciaraData] = await Promise.all([getAbeTransactions(idToken), getCiaraTransactions(idToken)])
+        const [abeData, ciaraData] = await Promise.all([getAbeTransactions(), getCiaraTransactions()])
         setAbeTransactions(abeData)
         setCiaraTransactions(ciaraData)
         setTransactionError('')
