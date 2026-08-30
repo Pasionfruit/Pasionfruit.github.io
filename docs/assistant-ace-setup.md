@@ -264,3 +264,54 @@ calendar, then Ollama. Worth doing once the tunnel is proven, not before.
 
 **Ace on pages other than home.** The card only reads the home dashboard's
 sources today.
+
+---
+
+# Voice — Kokoro TTS beside Ollama
+
+The card speaks with a local [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M)
+model (82M params, near-human) instead of the browser's robotic synthesis; the
+browser voice remains the automatic fallback whenever the host is unreachable.
+
+```
+browser → Worker /api/tts → Access (same service token) → tunnel
+  → path /api/tts → Flask + Kokoro  http://127.0.0.1:8880
+  (all other paths → Ollama :11434 as before)
+```
+
+## Host setup (D:\ace-tts)
+
+Kokoro's dependency tree needs Python 3.12 (its pinned numpy has no 3.13
+wheels), so it lives in its own venv:
+
+```powershell
+winget install --id Python.Python.3.12
+py -3.12 -m venv D:\ace-tts\venv
+D:\ace-tts\venv\Scripts\python.exe -m pip install kokoro soundfile flask
+```
+
+`server.py` binds to loopback only and exposes `POST /api/tts {text, voice}` →
+WAV plus `GET /api/tts/health`. Default voice is `am_michael`; any tag from the
+Kokoro voice list works per-request. First synthesis downloads ~330 MB of
+weights from Hugging Face.
+
+Run it as a service (elevated):
+
+```powershell
+C:\nssm-2.24\win64\nssm.exe install AceTTS D:\ace-tts\start.bat
+C:\nssm-2.24\win64\nssm.exe set AceTTS AppStdout D:\ace-tts\logs\out.log
+C:\nssm-2.24\win64\nssm.exe set AceTTS AppStderr D:\ace-tts\logs\err.log
+C:\nssm-2.24\win64\nssm.exe start AceTTS
+```
+
+## Routing
+
+- `config.yml` gains a path rule **before** the Ollama rule:
+  `hostname ace-tunnel.abepasion.com, path ^/api/tts.* → http://localhost:8880`
+  (with `httpHostHeader` so Flask sees a local host). Restart cloudflared.
+- The Worker's `ALLOWED_PATHS` includes `/api/tts`; same Google-token auth and
+  Access service token as chat. No new hostname, DNS record, or secret.
+
+**Checkpoint:** with the service and tunnel up, the card's voice mode speaks
+with the Kokoro voice; killing the AceTTS service makes it fall back to the
+browser voice on the next reply.
