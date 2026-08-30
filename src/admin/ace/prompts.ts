@@ -110,6 +110,44 @@ Open tasks:
 ${list}`
 }
 
+/** JSON schema for matching "I addressed that email" against real inbox mail. */
+export const ARCHIVE_SCHEMA = {
+  type: 'object',
+  properties: {
+    isArchive: {
+      type: 'boolean',
+      description: 'True only if the message says an email has been handled, replied to, or is done with.',
+    },
+    threadId: {
+      type: 'string',
+      description: 'The threadId of the one mail item the message refers to, or an empty string if none match.',
+    },
+  },
+  required: ['isArchive', 'threadId'],
+} as const
+
+export type ArchiveDraft = {
+  isArchive: boolean
+  threadId: string
+}
+
+export function archiveExtractionPrompt(
+  message: string,
+  mail: { threadId: string; from: string; subject: string }[],
+) {
+  const list = mail.map((item) => `- threadId: ${item.threadId} | from ${item.from} | "${item.subject}"`).join('\n')
+
+  return `Abe said:
+"""
+${message}
+"""
+
+If he is saying he has addressed, replied to, handled, or finished with an email, pick the ONE inbox item below he means. Match on sender or subject meaning, not exact wording. If he is asking a question, or nothing below plausibly matches, set isArchive to false and threadId to an empty string. Never guess a threadId that is not in the list.
+
+Inbox:
+${list}`
+}
+
 export type ReminderDraft = {
   isReminder: boolean
   content: string

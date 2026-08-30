@@ -10,14 +10,18 @@ import {
 import { buildAceContext, renderAceContext, type AceContext } from './ace/context'
 import {
   ACE_SYSTEM_PROMPT,
+  ARCHIVE_SCHEMA,
   COMPLETION_SCHEMA,
   MORNING_REPORT_PROMPT,
   REMINDER_SCHEMA,
+  archiveExtractionPrompt,
   completionExtractionPrompt,
   reminderExtractionPrompt,
+  type ArchiveDraft,
   type CompletionDraft,
   type ReminderDraft,
 } from './ace/prompts'
+import { archiveMail } from '../data/sheets/repositories'
 import { closeTask, createTask } from '../data/todoist/repositories'
 import { todayKey } from '../data/todoist/dates'
 
@@ -148,6 +152,9 @@ export function AssistantAceCard({
 
   const [completion, setCompletion] = useState<{ id: string; content: string } | null>(null)
   const [isClosingTask, setIsClosingTask] = useState(false)
+
+  const [mailArchive, setMailArchive] = useState<{ threadId: string; subject: string } | null>(null)
+  const [isArchiving, setIsArchiving] = useState(false)
 
   const abortRef = useRef<AbortController | null>(null)
   const transcriptRef = useRef<HTMLDivElement | null>(null)
@@ -347,6 +354,34 @@ export function AssistantAceCard({
     }
   }
 
+  async function handleConfirmArchive() {
+    if (!mailArchive || isArchiving) return
+    setIsArchiving(true)
+    setChatError('')
+
+    try {
+      const result = await archiveMail(idToken, [mailArchive.threadId])
+      if (result.failed.length > 0) {
+        throw new Error('Gmail refused to archive that thread')
+      }
+      setTurns((current) => [
+        ...current,
+        { id: `a-${Date.now()}`, role: 'assistant', content: `Archived **${mailArchive.subject}**.` },
+      ])
+      setContext((current) =>
+        current
+          ? { ...current, mail: current.mail.filter((message) => message.threadId !== mailArchive.threadId) }
+          : current,
+      )
+      if (voiceOnRef.current) void speakReply(`Archived ${mailArchive.subject}.`)
+      setMailArchive(null)
+    } catch (caught) {
+      setChatError(caught instanceof Error ? caught.message : 'Could not archive the email')
+    } finally {
+      setIsArchiving(false)
+    }
+  }
+
   /** Markdown reads badly aloud; strip it before it reaches the voice. */
   function speechText(markdown: string) {
     return markdown
@@ -357,11 +392,50 @@ export function AssistantAceCard({
   }
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  /** Bumped to cancel any in-flight chunked speech session. */
+  const speechSessionRef = useRef(0)
 
   function stopSpeaking() {
+    speechSessionRef.current += 1
     audioRef.current?.pause()
     audioRef.current = null
     if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+  }
+
+  /**
+   * Sentence-sized chunks so the first audio arrives after one sentence of
+   * synthesis rather than after the whole reply.
+   */
+  function splitForSpeech(text: string): string[] {
+    const sentences = text.match(/[^.!?\n]+[.!?]*/g) ?? [text]
+    const chunks: string[] = []
+    let current = ''
+    for (const sentence of sentences) {
+      if (current && (current + sentence).length > 180) {
+        chunks.push(current.trim())
+        current = sentence
+      } else {
+        current += sentence
+      }
+    }
+    if (current.trim()) chunks.push(current.trim())
+    return chunks
+  }
+
+  function playBlob(blob: Blob): Promise<void> {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audioRef.current = audio
+      const finish = () => {
+        URL.revokeObjectURL(url)
+        if (audioRef.current === audio) audioRef.current = null
+        resolve()
+      }
+      audio.onended = finish
+      audio.onerror = finish
+      void audio.play().catch(finish)
+    })
   }
 
   /** Browser TTS — the fallback when the local Kokoro voice is unreachable. */
@@ -384,34 +458,40 @@ export function AssistantAceCard({
   /**
    * Speak with the Kokoro model running next to Ollama (human-like), falling
    * back to the browser's synthesis when the host or tunnel is down.
+   *
+   * The reply is synthesized sentence-group by sentence-group with one chunk
+   * prefetched ahead, so speaking starts after the first sentence is ready
+   * instead of after the whole reply has been rendered to audio.
    */
   async function speakReply(markdown: string) {
     const text = speechText(markdown)
     if (!text) return
 
     stopSpeaking()
+    const session = speechSessionRef.current
     playChord(CHORD_SPEAK)
     setVoiceState('speaking')
 
     try {
       if (!config) throw new Error('not configured')
-      const blob = await aceTts({ config, idToken, text })
-      const url = URL.createObjectURL(blob)
-      const audio = new Audio(url)
-      audioRef.current = audio
-      audio.onended = () => {
-        URL.revokeObjectURL(url)
-        if (audioRef.current === audio) audioRef.current = null
-        playChord(CHORD_DONE, 0.45)
-        if (voiceOnRef.current) startListening()
+
+      const chunks = splitForSpeech(text)
+      let pending: Promise<Blob> = aceTts({ config, idToken, text: chunks[0] })
+
+      for (let index = 0; index < chunks.length; index += 1) {
+        const blob = await pending
+        if (session !== speechSessionRef.current) return
+        if (index + 1 < chunks.length) {
+          pending = aceTts({ config, idToken, text: chunks[index + 1] })
+        }
+        await playBlob(blob)
+        if (session !== speechSessionRef.current) return
       }
-      audio.onerror = () => {
-        URL.revokeObjectURL(url)
-        fallbackSpeak(text)
-      }
-      await audio.play()
+
+      playChord(CHORD_DONE, 0.45)
+      if (voiceOnRef.current) startListening()
     } catch {
-      fallbackSpeak(text)
+      if (session === speechSessionRef.current) fallbackSpeak(text)
     }
   }
 
@@ -489,15 +569,30 @@ export function AssistantAceCard({
     const question = (spoken ?? draft).trim()
     if (!config || !question || isThinking) return
 
-    // A pending "mark complete?" chip can be answered by voice or text.
+    // A pending confirmation chip can be answered by voice or text.
+    const pendingYes = /^(yes|yeah|yep|sure|do it|confirm|check it|mark it|archive it)\b/i
+    const pendingNo = /^(no|nope|cancel|leave it|not that)\b/i
     if (completion) {
-      if (/^(yes|yeah|yep|sure|do it|confirm|check it|mark it)\b/i.test(question)) {
+      if (pendingYes.test(question)) {
         setDraft('')
         void handleConfirmComplete()
         return
       }
-      if (/^(no|nope|cancel|leave it|not that)\b/i.test(question)) {
+      if (pendingNo.test(question)) {
         setCompletion(null)
+        setDraft('')
+        if (voiceOnRef.current) startListening()
+        return
+      }
+    }
+    if (mailArchive) {
+      if (pendingYes.test(question)) {
+        setDraft('')
+        void handleConfirmArchive()
+        return
+      }
+      if (pendingNo.test(question)) {
+        setMailArchive(null)
         setDraft('')
         if (voiceOnRef.current) startListening()
         return
@@ -543,6 +638,46 @@ export function AssistantAceCard({
         } catch {
           // Extraction is best-effort; fall through to a normal chat turn.
         }
+      }
+    }
+
+    // "I addressed that email" → offer to archive the matching thread.
+    if (
+      context &&
+      context.mail.length > 0 &&
+      /\b(address(ed)?|repl(y|ied)|respond(ed)?|archiv\w*|dealt with|took care of|handled|done with)\b/i.test(question)
+    ) {
+      try {
+        const extracted = await aceJson<ArchiveDraft>({
+          config,
+          idToken,
+          format: ARCHIVE_SCHEMA,
+          messages: [
+            { role: 'system', content: ACE_SYSTEM_PROMPT },
+            {
+              role: 'user',
+              content: archiveExtractionPrompt(
+                question,
+                context.mail.map((message) => ({
+                  threadId: message.threadId,
+                  from: message.from,
+                  subject: message.subject,
+                })),
+              ),
+            },
+          ],
+        })
+        const match = extracted.isArchive
+          ? context.mail.find((message) => message.threadId === extracted.threadId)
+          : undefined
+        if (match) {
+          setMailArchive({ threadId: match.threadId, subject: match.subject })
+          setIsThinking(false)
+          if (voiceOnRef.current) void speakReply(`Should I archive ${match.subject}?`)
+          return
+        }
+      } catch {
+        // Extraction is best-effort; fall through to a normal chat turn.
       }
     }
 
@@ -826,6 +961,25 @@ export function AssistantAceCard({
                       <span>{isClosingTask ? 'Closing…' : 'Complete'}</span>
                     </button>
                     <button type="button" onClick={() => setCompletion(null)} disabled={isClosingTask}>
+                      <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                      <span>Not this</span>
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              {mailArchive ? (
+                <div className="ace-reminder" role="group" aria-label="Email to archive">
+                  <div className="ace-reminder-body">
+                    <strong>{mailArchive.subject}</strong>
+                    <span className="ace-reminder-due">archive?</span>
+                  </div>
+                  <div className="ace-reminder-actions">
+                    <button type="button" onClick={() => void handleConfirmArchive()} disabled={isArchiving}>
+                      <Check size={13} strokeWidth={1.8} aria-hidden="true" />
+                      <span>{isArchiving ? 'Archiving…' : 'Archive'}</span>
+                    </button>
+                    <button type="button" onClick={() => setMailArchive(null)} disabled={isArchiving}>
                       <X size={13} strokeWidth={1.8} aria-hidden="true" />
                       <span>Not this</span>
                     </button>
