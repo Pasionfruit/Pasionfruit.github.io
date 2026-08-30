@@ -39,6 +39,8 @@ export function RadarMap({ coords }: { coords: Coords }) {
   const [isPlaying, setIsPlaying] = useState(true)
   const [frameLabel, setFrameLabel] = useState('')
   const [hasRadar, setHasRadar] = useState(true)
+  const [frameIndex, setFrameIndex] = useState(0)
+  const [frameCount, setFrameCount] = useState(0)
 
   function showFrame(index: number) {
     const frames = framesRef.current
@@ -61,7 +63,15 @@ export function RadarMap({ coords }: { coords: Coords }) {
     })
     radarLayerRef.current = nextLayer
     frameIndexRef.current = index
+    setFrameIndex(index)
     setFrameLabel(new Date(frame.time * 1000).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }))
+  }
+
+  /** Jump straight to a frame; scrubbing pauses the animation. */
+  function handleScrub(index: number) {
+    stopAnimation()
+    setIsPlaying(false)
+    showFrame(index)
   }
 
   function stopAnimation() {
@@ -137,6 +147,7 @@ export function RadarMap({ coords }: { coords: Coords }) {
         }
         hostRef.current = payload.host
         framesRef.current = frames
+        setFrameCount(frames.length)
         // Start on the most recent observed frame.
         showFrame(Math.max(0, past.length - 1))
         startAnimation()
@@ -206,6 +217,18 @@ export function RadarMap({ coords }: { coords: Coords }) {
             {isPlaying ? <Pause size={11} aria-hidden="true" /> : <Play size={11} aria-hidden="true" />}
           </button>
           {frameLabel ? <span className="weather-radar-time">{frameLabel}</span> : null}
+          {frameCount > 1 ? (
+            <input
+              type="range"
+              className="weather-radar-scrub"
+              min={0}
+              max={frameCount - 1}
+              step={1}
+              value={frameIndex}
+              onChange={(event) => handleScrub(Number(event.target.value))}
+              aria-label="Scrub radar to a specific time"
+            />
+          ) : null}
         </div>
       ) : (
         <p className="weather-radar-empty">Radar unavailable right now.</p>

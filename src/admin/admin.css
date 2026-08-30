@@ -1836,3 +1836,9 @@
 .system-service.is-ok .system-status-dot {
   background: #22c55e;
 }
+
+.ace-briefing-btns {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}

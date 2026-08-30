@@ -23,7 +23,9 @@ export type AceContext = {
   tasksToday: TodoistTask[]
   tasksOverdue: TodoistTask[]
   completedYesterday: TodoistTask[]
+  completedToday: TodoistTask[]
   slippedYesterday: TodoistTask[]
+  tasksTomorrow: TodoistTask[]
   wellness: GarminWellnessRecord | null
   /** Sources that failed, named for the UI so gaps are visible not silent. */
   gaps: string[]
@@ -50,7 +52,7 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
   const windowEnd = new Date(windowStart)
   windowEnd.setDate(windowEnd.getDate() + 7)
 
-  const [mail, calendar, active, completedYesterday, wellness] = await Promise.all([
+  const [mail, calendar, active, completedYesterday, completedToday, wellness] = await Promise.all([
     idToken
       ? settle('Gmail', getMail(idToken, MAIL_LIMIT), gaps, [] as MailSummaryRecord[])
       : Promise.resolve([] as MailSummaryRecord[]),
@@ -68,6 +70,9 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
     todoistConfigured
       ? settle('Todoist history', getCompletedTasks(yesterday, yesterday), gaps, [] as TodoistTask[])
       : Promise.resolve([] as TodoistTask[]),
+    todoistConfigured
+      ? settle('Todoist today', getCompletedTasks(today, today), gaps, [] as TodoistTask[])
+      : Promise.resolve([] as TodoistTask[]),
     settle('Garmin', getGarminWellness(), gaps, [] as GarminWellnessRecord[]),
   ])
 
@@ -82,7 +87,9 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
       return Boolean(key) && key < today
     }),
     completedYesterday,
+    completedToday,
     slippedYesterday: active.filter((task) => dueDateKey(task) === yesterday),
+    tasksTomorrow: active.filter((task) => dueDateKey(task) === addDaysToKey(today, 1)),
     wellness: wellness[0] ?? null,
     gaps,
   }
@@ -179,6 +186,20 @@ export function renderAceContext(context: AceContext) {
   if (context.tasksOverdue.length > 0) {
     parts.push(`## Overdue\n${context.tasksOverdue.slice(0, 15).map(taskLine).join('\n')}`)
   }
+
+  parts.push(
+    `## Due tomorrow\n${
+      context.tasksTomorrow.length === 0 ? 'Nothing due tomorrow.' : context.tasksTomorrow.map(taskLine).join('\n')
+    }`,
+  )
+
+  parts.push(
+    `## Completed today\n${
+      context.completedToday.length === 0
+        ? 'Nothing completed yet today.'
+        : `${context.completedToday.length} done: ${context.completedToday.map((task) => task.content).join('; ')}`
+    }`,
+  )
 
   parts.push(
     `## Yesterday\nCompleted ${context.completedYesterday.length}: ${

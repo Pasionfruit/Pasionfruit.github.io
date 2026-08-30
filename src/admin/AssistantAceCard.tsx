@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, Mic, MicOff, Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
+import { Check, Mic, MicOff, MoonStar, Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
 import {
   aceChat,
   aceJson,
@@ -12,6 +12,7 @@ import {
   ACE_SYSTEM_PROMPT,
   ARCHIVE_SCHEMA,
   COMPLETION_SCHEMA,
+  EVENING_REPORT_PROMPT,
   MORNING_REPORT_PROMPT,
   REMINDER_SCHEMA,
   archiveExtractionPrompt,
@@ -27,12 +28,13 @@ import { todayKey } from '../data/todoist/dates'
 
 type ChatTurn = { id: string; role: 'user' | 'assistant'; content: string }
 
-const BRIEFING_KEY = 'ace-briefing'
+const BRIEFING_KEYS = { morning: 'ace-briefing', evening: 'ace-briefing-evening' } as const
+type BriefingKind = keyof typeof BRIEFING_KEYS
 
 /** Briefings are per-day, so a stale one from yesterday is never shown. */
-function readCachedBriefing(): string {
+function readCachedBriefing(kind: BriefingKind): string {
   try {
-    const raw = localStorage.getItem(BRIEFING_KEY)
+    const raw = localStorage.getItem(BRIEFING_KEYS[kind])
     if (!raw) return ''
     const parsed = JSON.parse(raw) as { day?: string; text?: string }
     return parsed.day === todayKey() ? parsed.text ?? '' : ''
@@ -41,9 +43,9 @@ function readCachedBriefing(): string {
   }
 }
 
-function writeCachedBriefing(text: string) {
+function writeCachedBriefing(kind: BriefingKind, text: string) {
   try {
-    localStorage.setItem(BRIEFING_KEY, JSON.stringify({ day: todayKey(), text }))
+    localStorage.setItem(BRIEFING_KEYS[kind], JSON.stringify({ day: todayKey(), text }))
   } catch {
     // Private windows and blocked site data both throw; the briefing is a
     // convenience, so losing the cache is not worth surfacing.
@@ -135,8 +137,9 @@ export function AssistantAceCard({
   const [context, setContext] = useState<AceContext | null>(null)
   const [contextError, setContextError] = useState('')
 
-  const [briefing, setBriefing] = useState(readCachedBriefing)
-  const [isBriefing, setIsBriefing] = useState(false)
+  // Evening review wins when both exist — later in the day, more current.
+  const [briefing, setBriefing] = useState(() => readCachedBriefing('evening') || readCachedBriefing('morning'))
+  const [isBriefing, setIsBriefing] = useState<BriefingKind | null>(null)
   const [briefingError, setBriefingError] = useState('')
 
   const [turns, setTurns] = useState<ChatTurn[]>([])
@@ -287,30 +290,31 @@ export function AssistantAceCard({
     return `Context for today:\n\n${renderAceContext(current)}`
   }
 
-  async function handleBriefing() {
+  async function handleBriefing(kind: BriefingKind) {
     if (!config || !context || isBriefing) return
 
-    setIsBriefing(true)
+    setIsBriefing(kind)
     setBriefingError('')
     setBriefing('')
 
     try {
+      const prompt = kind === 'morning' ? MORNING_REPORT_PROMPT : EVENING_REPORT_PROMPT
       const text = await aceChat({
         config,
         idToken,
         messages: [
           { role: 'system', content: ACE_SYSTEM_PROMPT },
-          { role: 'user', content: `${contextBlock(context)}\n\n${MORNING_REPORT_PROMPT}` },
+          { role: 'user', content: `${contextBlock(context)}\n\n${prompt}` },
         ],
         onProgress: setBriefing,
       })
 
       setBriefing(text)
-      writeCachedBriefing(text)
+      writeCachedBriefing(kind, text)
     } catch (caught) {
       setBriefingError(caught instanceof Error ? caught.message : 'Ace could not write the briefing')
     } finally {
-      setIsBriefing(false)
+      setIsBriefing(null)
     }
   }
 
@@ -816,19 +820,34 @@ export function AssistantAceCard({
           <div className="ace-pane-head">
             <h4>Briefing</h4>
             {config && context ? (
-              <button
-                type="button"
-                className="ace-ghost-btn"
-                onClick={handleBriefing}
-                disabled={isBriefing}
-              >
-                {isBriefing ? (
-                  <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" />
-                ) : (
-                  <Sparkles size={13} strokeWidth={1.8} aria-hidden="true" />
-                )}
-                <span>{isBriefing ? 'Writing…' : briefing ? 'Redo' : 'Good morning'}</span>
-              </button>
+              <div className="ace-briefing-btns">
+                <button
+                  type="button"
+                  className="ace-ghost-btn"
+                  onClick={() => void handleBriefing('morning')}
+                  disabled={isBriefing !== null}
+                >
+                  {isBriefing === 'morning' ? (
+                    <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" />
+                  ) : (
+                    <Sparkles size={13} strokeWidth={1.8} aria-hidden="true" />
+                  )}
+                  <span>{isBriefing === 'morning' ? 'Writing…' : 'Good morning'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="ace-ghost-btn"
+                  onClick={() => void handleBriefing('evening')}
+                  disabled={isBriefing !== null}
+                >
+                  {isBriefing === 'evening' ? (
+                    <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" />
+                  ) : (
+                    <MoonStar size={13} strokeWidth={1.8} aria-hidden="true" />
+                  )}
+                  <span>{isBriefing === 'evening' ? 'Writing…' : 'Good evening'}</span>
+                </button>
+              </div>
             ) : null}
           </div>
 
@@ -867,10 +886,10 @@ export function AssistantAceCard({
               Set <code>VITE_ACE_BASE_URL</code> to your Ace worker to get a written briefing. The
               counts above work without it.
             </p>
-          ) : !isBriefing ? (
+          ) : isBriefing === null ? (
             <p className="sheets-meta">
-              Press <strong>Good morning</strong> for a read on overnight mail, today&apos;s schedule,
-              what slipped, and last night&apos;s recovery.
+              <strong>Good morning</strong> reads overnight mail, today&apos;s schedule, and recovery.{' '}
+              <strong>Good evening</strong> verifies what got done and tees up tomorrow.
             </p>
           ) : null}
 

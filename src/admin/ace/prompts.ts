@@ -49,6 +49,21 @@ Use exactly these sections, in this order, and skip any section that has nothing
 
 Keep the whole thing under 200 words. Lead with the single most important thing.`
 
+/**
+ * The evening review: verify the day, surface what slipped, set up tomorrow.
+ * Same fixed-section contract as the morning briefing.
+ */
+export const EVENING_REPORT_PROMPT = `Write Abe's evening review from the context.
+
+Use exactly these sections, in this order, and skip any section that has nothing real to report:
+
+**Done today** — what he completed today; open with the count, then the items worth naming.
+**Still open** — tasks due today or overdue that never got checked off. Be direct about what slipped. If everything got done, replace this section with one short line of earned credit.
+**Tomorrow** — tasks due tomorrow and tomorrow's calendar, in the order they make sense to tackle.
+**Before bed** — one practical wind-down note: an unread email worth a reply, a five-minute task worth closing now, or nothing at all.
+
+Keep the whole thing under 180 words. No invented items.`
+
 /** JSON schema for reminder extraction; enforced by Ollama's structured output. */
 export const REMINDER_SCHEMA = {
   type: 'object',

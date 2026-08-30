@@ -267,6 +267,7 @@
 .weather-radar-controls {
   position: absolute;
   left: 0.5rem;
+  right: 0.5rem;
   bottom: 0.5rem;
   z-index: 500;
   display: flex;
@@ -323,4 +324,12 @@
   .weather-radar-map {
     height: 190px;
   }
+}
+
+.weather-radar-scrub {
+  flex: 1;
+  min-width: 0;
+  height: 0.9rem;
+  cursor: pointer;
+  accent-color: var(--accent);
 }
