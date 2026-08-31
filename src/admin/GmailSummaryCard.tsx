@@ -116,7 +116,10 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
     setMail((rows) => rows.filter((row) => row.threadId !== message.threadId))
 
     try {
-      await archiveMail(idToken, [message.threadId])
+      const result = await archiveMail(idToken, [message.threadId])
+      if (!result.archived.includes(message.threadId)) {
+        throw new Error('Gmail did not archive that thread.')
+      }
       setNotice('Archived. Still in All Mail if you need it back.')
     } catch (caught) {
       setMail(previous)
@@ -214,10 +217,17 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
         <ConnectPanel name="Gmail" status={status} />
       ) : isLoading ? (
         <p className="sheets-meta">Loading mail…</p>
-      ) : error ? (
+      ) : error && mail.length === 0 ? (
         <p className="sheets-meta">{error}</p>
       ) : (
         <>
+          {/* An action failure sits above the list so the inbox stays usable and
+              the row that would not archive is still there to retry. */}
+          {error ? (
+            <p className="sheets-meta mail-notice is-error" role="alert">
+              {error}
+            </p>
+          ) : null}
           {notice ? <p className="sheets-meta mail-notice">{notice}</p> : null}
 
           {mail.length === 0 ? (

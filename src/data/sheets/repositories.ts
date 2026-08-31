@@ -1276,19 +1276,55 @@ export async function getMail(idToken: string, limit = 10): Promise<MailSummaryR
 }
 
 /**
+ * Turn the script's raw archive failure into something the dashboard can act
+ * on. Exported for tests.
+ */
+export function describeArchiveError(raw: string) {
+  if (/unknown action/i.test(raw)) {
+    return 'The Apps Script deployment has no archiveMail action yet. Paste updated_code.gs in and redeploy the Web App.'
+  }
+
+  if (/permission|scope|authoriz/i.test(raw)) {
+    return 'Apps Script is not authorised to change Gmail. Add the gmail.modify scope to appsscript.json, run authorizeGmail once, then redeploy the Web App.'
+  }
+
+  if (!raw.trim()) {
+    return 'Gmail did not archive the thread. If this keeps happening, the deployed Apps Script is probably missing the gmail.modify scope — see README → Gmail.'
+  }
+
+  return raw
+}
+
+/**
  * Archive threads out of the inbox. Archiving removes the INBOX label only —
  * the mail stays in All Mail and is recoverable. Nothing here deletes.
+ *
+ * Older script builds report per-thread failures inside an `ok: true` envelope
+ * with no reason attached, so "nothing archived" is treated as a failure here
+ * rather than trusting the envelope — otherwise a missing Gmail scope looks
+ * exactly like success.
  */
 export async function archiveMail(idToken: string, threadIds: string[]) {
   const result = await postSheetsAction<
-    SheetsWriteResponse & { archived?: string[]; failed?: string[] }
+    SheetsWriteResponse & {
+      archived?: string[]
+      failed?: string[]
+      reasons?: Record<string, string>
+    }
   >({ action: 'archiveMail', idToken, thread_ids: threadIds })
 
   if (!result.ok) {
-    throw new Error(result.error || 'Unable to archive mail')
+    throw new Error(describeArchiveError(result.error || ''))
   }
 
-  return { archived: result.archived ?? [], failed: result.failed ?? [] }
+  const archived = result.archived ?? []
+  const failed = result.failed ?? []
+
+  if (archived.length === 0 && failed.length > 0) {
+    throw new Error(describeArchiveError(result.reasons?.[failed[0]] ?? ''))
+  }
+
+  return { archived, failed }
 }
 
 /**

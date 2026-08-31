@@ -5,7 +5,7 @@ var ALLOWED_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
  * "is the code I just pasted actually live?" is answerable in one request
  * instead of guessing from a failing feature.
  */
-var SCRIPT_BUILD = '2026-08-28-mail-actions-calendar'
+var SCRIPT_BUILD = '2026-08-31-archive-reports-failures'
 
 function doPost(e) {
   try {
@@ -1504,6 +1504,11 @@ function getMail_(payload) {
  *
  * Archiving only removes the INBOX label — the mail stays in All Mail and is
  * recoverable. Nothing here deletes, and nothing here sends.
+ *
+ * Needs `gmail.modify` in the manifest's oauthScopes. Without it,
+ * `moveToArchive()` throws a permission error, so every failure is reported
+ * with its reason and a call that archives nothing is `ok: false` — never a
+ * silent success the dashboard would mistake for a done job.
  */
 function archiveMail_(payload) {
   var ids = payload.thread_ids
@@ -1513,6 +1518,7 @@ function archiveMail_(payload) {
 
   var archived = []
   var failed = []
+  var reasons = {}
 
   for (var i = 0; i < ids.length; i += 1) {
     var id = String(ids[i] || '').trim()
@@ -1522,16 +1528,28 @@ function archiveMail_(payload) {
       var thread = GmailApp.getThreadById(id)
       if (!thread) {
         failed.push(id)
+        reasons[id] = 'Thread not found'
         continue
       }
       thread.moveToArchive()
       archived.push(id)
     } catch (err) {
       failed.push(id)
+      reasons[id] = String(err && err.message ? err.message : err)
     }
   }
 
-  return { ok: true, archived: archived, failed: failed }
+  if (!archived.length && failed.length) {
+    return {
+      ok: false,
+      error: reasons[failed[0]] || 'Gmail did not archive the thread',
+      archived: archived,
+      failed: failed,
+      reasons: reasons
+    }
+  }
+
+  return { ok: true, archived: archived, failed: failed, reasons: reasons }
 }
 
 /**

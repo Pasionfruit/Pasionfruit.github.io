@@ -1112,6 +1112,13 @@
   background: var(--surface-muted);
 }
 
+/* A failed archive or draft. The list stays rendered underneath so the row
+   can be retried once the cause is fixed. */
+.mail-notice.is-error {
+  color: var(--danger, #c0392b);
+  border: 1px solid var(--danger, #c0392b);
+}
+
 .mail-actions {
   display: flex;
   flex-wrap: wrap;

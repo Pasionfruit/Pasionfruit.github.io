@@ -501,13 +501,15 @@ a quiet one.
   access token is ever issued to the browser. To enable it:
 
   1. Apps Script editor → **Project Settings** → tick *Show `appsscript.json`*.
-  2. Add `"https://www.googleapis.com/auth/gmail.readonly"` to `oauthScopes`.
-  3. Run any function once and accept the new permission prompt.
+  2. Set `oauthScopes` to the full list in the **Required `oauthScopes`** block
+     above. `gmail.readonly` alone lists the inbox but cannot archive or draft —
+     with only that scope the Archive button fails with a scope error.
+  3. Run `authorizeGmail` once and accept the new permission prompt.
   4. **Deploy → Manage deployments** → edit → **New version** → Deploy.
 
   Reads are inbox-only and capped at 25 threads. The message body is read inside
   Apps Script solely to cut a 140-character preview; the full text never leaves
-  the script, and nothing is sent, archived, or marked read.
+  the script. Archive and draft-reply are the only writes; nothing is ever sent.
 
   This deliberately avoids the browser OAuth route: `gmail.readonly` is a
   *restricted* scope, and requesting it from a published web client triggers
