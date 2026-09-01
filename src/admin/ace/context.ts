@@ -122,6 +122,21 @@ function taskLine(task: TodoistTask) {
   return `- ${task.content}${due}${priority}`
 }
 
+/** Whether any source returned so much as one row. */
+export function hasAnyData(context: AceContext) {
+  return (
+    context.mail.length > 0 ||
+    context.events.length > 0 ||
+    context.tasksToday.length > 0 ||
+    context.tasksOverdue.length > 0 ||
+    context.tasksTomorrow.length > 0 ||
+    context.completedToday.length > 0 ||
+    context.completedYesterday.length > 0 ||
+    context.slippedYesterday.length > 0 ||
+    context.wellness !== null
+  )
+}
+
 /**
  * The context rendered as plain text for the prompt.
  *
@@ -141,6 +156,23 @@ export function renderAceContext(context: AceContext) {
       day: 'numeric',
     })}. The current time is ${now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}.`,
   )
+
+  const unavailable =
+    context.gaps.length > 0
+      ? `## Unavailable\nThese sources could not be read, so say nothing about them: ${context.gaps.join(', ')}.`
+      : ''
+
+  // A run of "Nothing…" sections still reads like a template to fill in. One
+  // blunt statement holds up better against a small model's urge to invent.
+  if (!hasAnyData(context)) {
+    parts.push(
+      '## No data for today\nEvery source is empty: no mail, no calendar events, no tasks due, overdue, or completed, and no watch data. Say so plainly if asked. Do not list, summarise, or invent any items.',
+    )
+    if (unavailable) {
+      parts.push(unavailable)
+    }
+    return parts.join('\n\n')
+  }
 
   const todaysEvents = context.events.filter((event) => isToday(event.start, now))
   const laterEvents = context.events.filter((event) => !isToday(event.start, now)).slice(0, 8)
@@ -234,10 +266,8 @@ export function renderAceContext(context: AceContext) {
     )
   }
 
-  if (context.gaps.length > 0) {
-    parts.push(
-      `## Unavailable\nThese sources could not be read, so say nothing about them: ${context.gaps.join(', ')}.`,
-    )
+  if (unavailable) {
+    parts.push(unavailable)
   }
 
   return parts.join('\n\n')

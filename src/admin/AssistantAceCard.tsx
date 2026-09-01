@@ -12,6 +12,7 @@ import {
   ACE_SYSTEM_PROMPT,
   ARCHIVE_SCHEMA,
   COMPLETION_SCHEMA,
+  CONTEXT_PENDING_PROMPT,
   EVENING_REPORT_PROMPT,
   MORNING_REPORT_PROMPT,
   REMINDER_SCHEMA,
@@ -72,7 +73,7 @@ function inlineBold(text: string, keyPrefix: string) {
   })
 }
 
-function AceMarkdown({ text, className }: { text: string; className?: string }) {
+export function AceMarkdown({ text, className }: { text: string; className?: string }) {
   return (
     <div className={className}>
       {text.split('\n').map((line, index) => {
@@ -86,11 +87,18 @@ function AceMarkdown({ text, className }: { text: string; className?: string }) 
          */
         const heading = /^\*\*(.+?)\*\*\s*(.*)$/.exec(trimmed)
         if (heading) {
-          const body = heading[2].replace(/^[\s—–-]+/, '')
+          const body = heading[2].replace(/^[\s:—–-]+/, '')
+          // A real space, not a CSS one: pseudo-element content is not copied
+          // to the clipboard, so "**Meeting** — Call" used to paste as "MeetingCall".
           return (
             <p key={index} className="ace-md-heading">
               <span className="ace-md-label">{heading[1]}</span>
-              {body ? <span className="ace-md-rest">{inlineBold(body, `b${index}`)}</span> : null}
+              {body ? (
+                <>
+                  {' '}
+                  <span className="ace-md-rest">{inlineBold(body, `b${index}`)}</span>
+                </>
+              ) : null}
             </p>
           )
         }
@@ -291,8 +299,13 @@ export function AssistantAceCard({
     [],
   )
 
-  function contextBlock(current: AceContext) {
-    return `Context for today:\n\n${renderAceContext(current)}`
+  /**
+   * Always a block, never silence. While the sources are still loading the
+   * model is told so in plain terms — the system prompt promises a context
+   * block, and given that promise with no block, an 8B model invents a day.
+   */
+  function contextBlock(current: AceContext | null) {
+    return current ? `Context for today:\n\n${renderAceContext(current)}` : CONTEXT_PENDING_PROMPT
   }
 
   async function handleBriefing(kind: BriefingKind) {
@@ -753,7 +766,7 @@ export function AssistantAceCard({
     try {
       const messages: AceMessage[] = [
         { role: 'system', content: ACE_SYSTEM_PROMPT },
-        ...(context ? [{ role: 'system' as const, content: contextBlock(context) }] : []),
+        { role: 'system', content: contextBlock(context) },
         ...history.map((entry) => ({ role: entry.role, content: entry.content })),
       ]
 
@@ -1068,6 +1081,11 @@ export function AssistantAceCard({
                 </div>
               ) : null}
 
+              {!context && !contextError ? (
+                <p className="sheets-meta" role="status">
+                  Still gathering today&apos;s mail, calendar and tasks — Ace cannot see them yet.
+                </p>
+              ) : null}
               {reminderNotice ? <p className="sheets-meta">{reminderNotice}</p> : null}
               {chatError ? <p className="sheets-meta">{chatError}</p> : null}
               {voiceNote ? <p className="sheets-meta">{voiceNote}</p> : null}

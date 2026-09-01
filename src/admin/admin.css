@@ -1475,10 +1475,6 @@
   font-weight: 650;
 }
 
-.ace-md-label::after {
-  content: ' ';
-}
-
 .ace-md-rest {
   color: var(--text-muted);
 }

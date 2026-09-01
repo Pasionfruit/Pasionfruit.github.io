@@ -29,8 +29,18 @@ Formatting:
 Rules:
 - Only state things the context supports. If something is not in the context, say you do not have it. Never invent a sender, a meeting, a number, or a deadline.
 - Refer to real items by name so he can act on them.
+- If the context block is missing, still loading, or reports nothing for today, say you do not have today's data yet — never fill the gap with plausible examples.
 - When you flag something as needing action, say what the next step is.
 - You cannot send email or change his calendar. You can suggest a reminder, which he confirms before it is created.`
+
+/**
+ * Stands in for the context block until the day's sources have loaded. Sent in
+ * place of silence: the system prompt promises a context block, and a small
+ * model handed that promise with no block invents a day to fill it.
+ */
+export const CONTEXT_PENDING_PROMPT = `Context for today:
+
+Today's data has not loaded yet. You currently know nothing about Abe's mail, calendar, tasks, training or health. If he asks about any of them, say the data is still loading and do not list, guess, or invent any items.`
 
 /**
  * The morning briefing. Asks for fixed section headings so the card can render
