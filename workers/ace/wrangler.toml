@@ -19,3 +19,8 @@ ALLOWED_ORIGINS = "https://abepasion.com,https://www.abepasion.com,http://localh
 binding = "SYSTEM_DB"
 database_name = "ace-system"
 database_id = "fda04161-388b-4919-903e-808f8f76fd8b"
+
+# Hourly retention sweep of old health samples. This used to run inline on
+# every heartbeat, which meant one delete per machine per minute.
+[triggers]
+crons = ["23 * * * *"]

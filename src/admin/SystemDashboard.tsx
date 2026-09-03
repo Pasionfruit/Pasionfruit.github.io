@@ -11,7 +11,13 @@ import { getAceConfig } from './ace/client'
  * box) heartbeat a health sample to the Ace worker every minute, which stores
  * two weeks of them in Cloudflare D1. This tab reads the latest sample and 24h
  * of history per machine, so a machine that is off still shows its last state.
+ *
+ * The two are fetched separately and on different clocks. Reading the latest
+ * sample touches one row per machine; reading a day of history touches a
+ * thousand times that, and a day of history barely changes in a minute.
  */
+
+type HistoryPoint = { at: number; cpu: number | null; ram_used_gb: number | null }
 
 type MachineSample = {
   machine: string
@@ -25,12 +31,14 @@ type MachineSample = {
   uptime_s: number | null
   mc_state: string | null
   services: Record<string, boolean>
-  history: { at: number; cpu: number | null; ram_used_gb: number | null }[]
+  history: HistoryPoint[]
 }
 
 /** No heartbeat for three intervals means the machine is effectively down. */
 const OFFLINE_AFTER_SECONDS = 3 * 60
 const REFRESH_MS = 60_000
+/** History is far more expensive to read and barely moves; refetch it rarely. */
+const HISTORY_REFRESH_MS = 5 * 60_000
 
 function formatUptime(seconds: number | null) {
   if (!seconds || seconds <= 0) return '—'
@@ -86,8 +94,8 @@ function Meter({ label, used, total, unit, icon: Icon }: {
   )
 }
 
-function CpuSparkline({ history }: { history: MachineSample['history'] }) {
-  const points = history.filter((entry) => entry.cpu != null)
+function CpuSparkline({ history }: { history: HistoryPoint[] }) {
+  const points = (history ?? []).filter((entry) => entry.cpu != null)
   if (points.length < 2) return null
 
   const width = 240
@@ -171,27 +179,35 @@ function MachineCard({ machine, now }: { machine: MachineSample; now: number }) 
 export function SystemDashboard({ idToken }: { idToken: string }) {
   const config = useMemo(() => getAceConfig(), [])
   const [machines, setMachines] = useState<MachineSample[]>([])
+  const [history, setHistory] = useState<Record<string, HistoryPoint[]>>({})
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000))
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const isReady = Boolean(config && idToken)
 
   useEffect(() => {
-    let cancelled = false
+    if (!config || !idToken) return
 
-    async function load() {
-      if (!config || !idToken) {
-        setIsLoading(false)
-        return
+    // Read out here rather than inside the closures below: narrowing `config`
+    // does not survive into a hoisted function body.
+    const { baseUrl } = config
+    let cancelled = false
+    let historyReadAt = 0
+
+    async function read(path: string) {
+      const response = await fetch(`${baseUrl}${path}`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      })
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as { error?: string } | null
+        throw new Error(body?.error || `System endpoint returned ${response.status}`)
       }
+      return response.json()
+    }
+
+    async function loadMachines() {
       try {
-        const response = await fetch(`${config.baseUrl}/system/machines`, {
-          headers: { Authorization: `Bearer ${idToken}` },
-        })
-        if (!response.ok) {
-          const body = (await response.json().catch(() => null)) as { error?: string } | null
-          throw new Error(body?.error || `System endpoint returned ${response.status}`)
-        }
-        const data = (await response.json()) as { now: number; machines: MachineSample[] }
+        const data = (await read('/system/machines')) as { now: number; machines: MachineSample[] }
         if (!cancelled) {
           setMachines(data.machines.sort((a, b) => a.machine.localeCompare(b.machine)))
           setNow(data.now)
@@ -204,13 +220,43 @@ export function SystemDashboard({ idToken }: { idToken: string }) {
       }
     }
 
-    void load()
-    const timer = window.setInterval(() => void load(), REFRESH_MS)
+    async function loadHistory() {
+      try {
+        const data = (await read('/system/history')) as { history: Record<string, HistoryPoint[]> }
+        if (!cancelled) setHistory(data.history ?? {})
+      } catch {
+        // Sparklines are decoration. Losing them must not blank the cards or
+        // overwrite a real error from the machines read.
+      }
+    }
+
+    // A hidden tab reads the database all day for nobody to see — and iOS keeps
+    // a home-screen PWA suspended rather than unloaded, so the interval would
+    // otherwise outlive any reason to run. Coming back into view refreshes
+    // immediately, which is also what makes the pause invisible.
+    function tick() {
+      if (document.hidden) return
+      void loadMachines()
+      if (Date.now() - historyReadAt >= HISTORY_REFRESH_MS) {
+        historyReadAt = Date.now()
+        void loadHistory()
+      }
+    }
+
+    tick()
+    const timer = window.setInterval(tick, REFRESH_MS)
+    document.addEventListener('visibilitychange', tick)
     return () => {
       cancelled = true
       window.clearInterval(timer)
+      document.removeEventListener('visibilitychange', tick)
     }
   }, [config, idToken])
+
+  const cards = useMemo(
+    () => machines.map((machine) => ({ ...machine, history: history[machine.machine] ?? [] })),
+    [machines, history],
+  )
 
   return (
     <AdminPage meta={adminDashboardsById.system}>
@@ -222,13 +268,13 @@ export function SystemDashboard({ idToken }: { idToken: string }) {
 
       {error ? <p className="sheets-error">{error}</p> : null}
 
-      {isLoading ? (
+      {isReady && isLoading ? (
         <p className="sheets-meta">
           <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" /> Reading machines…
         </p>
       ) : null}
 
-      {!isLoading && !error && machines.length === 0 ? (
+      {isReady && !isLoading && !error && machines.length === 0 ? (
         <p className="sheets-meta">
           No machines have reported yet. Each machine runs the server-manager agent, which heartbeats
           its health every minute — check that <code>REPORT_URL</code> and <code>REPORT_KEY</code> are
@@ -236,7 +282,7 @@ export function SystemDashboard({ idToken }: { idToken: string }) {
         </p>
       ) : null}
 
-      {machines.map((machine) => (
+      {cards.map((machine) => (
         <MachineCard key={machine.machine} machine={machine} now={now} />
       ))}
     </AdminPage>

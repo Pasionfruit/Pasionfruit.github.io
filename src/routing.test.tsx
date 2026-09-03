@@ -346,7 +346,7 @@ describe('admin routing', () => {
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
       link.textContent?.trim(),
     )
-    expect(labels).toEqual(['Home', 'Personal', 'Finance', 'Health', 'Work'])
+    expect(labels).toEqual(['Home', 'Personal', 'Finance', 'Health', 'Work', 'System'])
   })
 
   it('points each nav item at its dashboard', () => {
@@ -355,7 +355,14 @@ describe('admin routing', () => {
     const hrefs = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
       link.getAttribute('href'),
     )
-    expect(hrefs).toEqual(['/', '/admin/personal', '/admin/finance', '/admin/health', '/admin/work'])
+    expect(hrefs).toEqual([
+      '/',
+      '/admin/personal',
+      '/admin/finance',
+      '/admin/health',
+      '/admin/work',
+      '/admin/system',
+    ])
   })
 
   it.each([
@@ -363,6 +370,7 @@ describe('admin routing', () => {
     ['/admin/finance', 'Finance'],
     ['/admin/health', 'Health'],
     ['/admin/work', 'Work'],
+    ['/admin/system', 'System'],
   ])('renders %s for the admin account', (path, title) => {
     renderAt(path, ADMIN_EMAIL)
     expect(pageTitle()).toBe(title)

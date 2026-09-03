@@ -13,6 +13,7 @@
  *
  * Deploy:
  *   cd workers/ace
+ *   npx wrangler d1 execute ace-system --remote --file schema.sql
  *   npx wrangler secret put OLLAMA_URL      # https://ace-tunnel.example.com
  *   npx wrangler secret put ADMIN_EMAIL     # pasionabe@gmail.com
  *   npx wrangler secret put TUNNEL_CLIENT_ID       # optional, CF Access
@@ -95,6 +96,19 @@ function num(value) {
   return Number.isFinite(n) ? n : null
 }
 
+/** Two weeks of samples: enough history for the tab, bounded growth. */
+const RETENTION_SECONDS = 14 * 86400
+const HISTORY_SECONDS = 24 * 3600
+/** History is averaged into buckets this wide before it leaves the worker. */
+const HISTORY_BUCKET_SECONDS = 600
+
+const SAMPLE_COLUMNS = [
+  'machine', 'at', 'cpu', 'ram_used_gb', 'ram_total_gb',
+  'disk_used_gb', 'disk_total_gb', 'gpu', 'uptime_s', 'services', 'mc_state',
+]
+
+const SAMPLE_PLACEHOLDERS = SAMPLE_COLUMNS.map(() => '?').join(', ')
+
 /** Heartbeat ingest from machine agents; authenticated by the shared key. */
 async function systemReport(request, env) {
   if (request.method !== 'POST') return deny(405, 'POST only', request, env)
@@ -112,60 +126,86 @@ async function systemReport(request, env) {
   const machine = String(body.machine ?? '').slice(0, 64)
   if (!machine) return deny(400, 'machine is required', request, env)
 
-  const at = Math.floor(Date.now() / 1000)
-  await env.SYSTEM_DB.prepare(
-    `INSERT OR REPLACE INTO samples
-       (machine, at, cpu, ram_used_gb, ram_total_gb, disk_used_gb, disk_total_gb, gpu, uptime_s, services, mc_state)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      machine,
-      at,
-      num(body.cpu),
-      num(body.ram_used_gb),
-      num(body.ram_total_gb),
-      num(body.disk_used_gb),
-      num(body.disk_total_gb),
-      body.gpu ? String(body.gpu).slice(0, 200) : null,
-      num(body.uptime_s),
-      JSON.stringify(body.services ?? {}).slice(0, 2000),
-      body.mc_state ? String(body.mc_state).slice(0, 40) : null,
-    )
-    .run()
+  const values = [
+    machine,
+    Math.floor(Date.now() / 1000),
+    num(body.cpu),
+    num(body.ram_used_gb),
+    num(body.ram_total_gb),
+    num(body.disk_used_gb),
+    num(body.disk_total_gb),
+    body.gpu ? String(body.gpu).slice(0, 200) : null,
+    num(body.uptime_s),
+    JSON.stringify(body.services ?? {}).slice(0, 2000),
+    body.mc_state ? String(body.mc_state).slice(0, 40) : null,
+  ]
 
-  // Keep two weeks of samples so the tab has history without unbounded growth.
-  await env.SYSTEM_DB.prepare('DELETE FROM samples WHERE at < ?').bind(at - 14 * 86400).run()
+  // The same row lands in both tables: `samples` is the history, and
+  // `machine_latest` holds the one row per machine the dashboard reads.
+  // Denormalising the newest sample is what makes that read cost one row per
+  // machine instead of a scan of the entire history.
+  //
+  // Retention is not swept here — it runs on the cron trigger below. Doing it
+  // on every heartbeat meant a delete per machine per minute, and each one
+  // walked the whole table.
+  const write = (table) =>
+    env.SYSTEM_DB.prepare(
+      `INSERT OR REPLACE INTO ${table} (${SAMPLE_COLUMNS.join(', ')}) VALUES (${SAMPLE_PLACEHOLDERS})`,
+    ).bind(...values)
+
+  await env.SYSTEM_DB.batch([write('samples'), write('machine_latest')])
 
   return json({ ok: true }, request, env)
 }
 
-/** Latest sample per machine (even long-offline ones) plus 24h history. Admin only. */
+/** Latest sample per machine, including long-offline ones. Admin only. */
 async function systemMachines(request, env) {
   const auth = await verifyAdmin(request, env)
   if (!auth.ok) return deny(403, auth.reason, request, env)
 
-  const latest = await env.SYSTEM_DB.prepare(
-    `SELECT s.* FROM samples s
-       JOIN (SELECT machine, MAX(at) AS mat FROM samples GROUP BY machine) m
-         ON s.machine = m.machine AND s.at = m.mat`,
-  ).all()
+  const { results } = await env.SYSTEM_DB.prepare('SELECT * FROM machine_latest').all()
+  const machines = (results ?? []).map((row) => ({ ...row, services: safeParse(row.services) }))
 
-  const since = Math.floor(Date.now() / 1000) - 24 * 3600
-  const history = await env.SYSTEM_DB.prepare(
-    'SELECT machine, at, cpu, ram_used_gb FROM samples WHERE at >= ? ORDER BY at ASC',
+  return json({ now: Math.floor(Date.now() / 1000), machines }, request, env)
+}
+
+/**
+ * 24h of CPU and RAM per machine, for the sparklines. Admin only.
+ *
+ * Split off `/system/machines` because it costs three orders of magnitude more
+ * rows to read, and it moves slowly enough that the dashboard refetches it
+ * every few minutes rather than every minute. Averaged into ten-minute buckets:
+ * a day of once-a-minute samples is far more points than a 240px sparkline can
+ * draw, so sending them all only made the response bigger.
+ *
+ * INDEXED BY is not decoration. Left to choose, SQLite scans the whole table
+ * through idx_samples_machine_at — it must sort for the GROUP BY either way, so
+ * it sees no reason to prefer the seek — and the cost then grows with retention
+ * rather than staying pinned to the 24h window. Forcing the index keeps this
+ * read index-only and bounded.
+ */
+async function systemHistory(request, env) {
+  const auth = await verifyAdmin(request, env)
+  if (!auth.ok) return deny(403, auth.reason, request, env)
+
+  const since = Math.floor(Date.now() / 1000) - HISTORY_SECONDS
+  const { results } = await env.SYSTEM_DB.prepare(
+    `SELECT machine, MIN(at) AS at, AVG(cpu) AS cpu, AVG(ram_used_gb) AS ram_used_gb
+       FROM samples INDEXED BY idx_samples_at
+      WHERE at >= ?
+      GROUP BY machine, at / ${HISTORY_BUCKET_SECONDS}
+      ORDER BY at ASC`,
   )
     .bind(since)
     .all()
 
-  const machines = {}
-  for (const row of latest.results ?? []) {
-    machines[row.machine] = { ...row, services: safeParse(row.services), history: [] }
-  }
-  for (const row of history.results ?? []) {
-    machines[row.machine]?.history.push({ at: row.at, cpu: row.cpu, ram_used_gb: row.ram_used_gb })
+  const history = {}
+  for (const row of results ?? []) {
+    history[row.machine] = history[row.machine] ?? []
+    history[row.machine].push({ at: row.at, cpu: row.cpu, ram_used_gb: row.ram_used_gb })
   }
 
-  return json({ now: Math.floor(Date.now() / 1000), machines: Object.values(machines) }, request, env)
+  return json({ history }, request, env)
 }
 
 function safeParse(text) {
@@ -190,6 +230,10 @@ export default {
 
     if (url.pathname === '/system/machines') {
       return systemMachines(request, env)
+    }
+
+    if (url.pathname === '/system/history') {
+      return systemHistory(request, env)
     }
 
     if (!ALLOWED_PATHS.has(url.pathname)) {
@@ -236,5 +280,19 @@ export default {
         ...corsHeaders(request, env),
       },
     })
+  },
+
+  /**
+   * Hourly retention sweep — see `crons` in wrangler.toml.
+   *
+   * `at` is indexed, so this seeks straight to the expired range instead of
+   * walking the table, and on most runs finds nothing to delete.
+   */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(
+      env.SYSTEM_DB.prepare('DELETE FROM samples WHERE at < ?')
+        .bind(Math.floor(Date.now() / 1000) - RETENTION_SECONDS)
+        .run(),
+    )
   },
 }
