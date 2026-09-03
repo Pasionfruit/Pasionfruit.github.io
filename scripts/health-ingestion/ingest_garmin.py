@@ -34,12 +34,32 @@ from pathlib import Path
 from dotenv import load_dotenv  # type: ignore[import]
 
 sys.path.insert(0, str(Path(__file__).parent))
-from shared.sheets_client import get_spreadsheet, upsert_rows
+from shared.sheets_client import ensure_worksheet, get_spreadsheet, upsert_rows
+
+# Windows consoles default to cp1252, which cannot encode the arrows and
+# ellipses used in this script's progress output — printing one raises
+# UnicodeEncodeError and kills the run mid-sync. Force UTF-8 where the stream
+# supports it (Python 3.7+); older or redirected streams just carry on.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 
 
 _MI_PER_METER = 0.000621371
 
 # Garmin CSV column names vary slightly by locale/version — list common variants
+SHEET_NAME = "garmin_health"
+
+# Order matters: this is the header row written when the tab has to be created,
+# and `upsert_rows` maps these keys onto columns by name.
+HEADERS = [
+    "date", "activity_type", "title", "distance_mi",
+    "duration_min", "avg_hr", "max_hr", "calories", "tss",
+]
+
 _COL_MAP = {
     "date":          ["Date"],
     "activity_type": ["Activity Type"],
@@ -209,7 +229,7 @@ def main() -> None:
         return
 
     ss = get_spreadsheet()
-    ws = ss.worksheet("garmin_health")
+    ws = ensure_worksheet(ss, SHEET_NAME, HEADERS)
     updated, inserted = upsert_rows(ws, rows, key_col="date")
     print(f"  Done: {updated} updated, {inserted} inserted.")
 
