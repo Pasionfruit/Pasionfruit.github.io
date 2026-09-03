@@ -28,6 +28,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import { useRouteMeta } from './routeMeta'
+import { RouteErrorBoundary } from './RouteErrorBoundary'
 import {
   Chart,
   CategoryScale,
@@ -56,6 +57,7 @@ import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
 import { SystemDashboard } from './admin/SystemDashboard'
 import { AssistantAceCard } from './admin/AssistantAceCard'
+import { FinancePinGate } from './admin/FinancePinGate'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   adminDashboards,
@@ -424,7 +426,11 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
 function AdminFinancePage({ googleIdToken }: { googleIdToken: string }) {
   return (
     <AdminPage meta={adminDashboardsById.finance}>
-      <FinancesHubCard idToken={googleIdToken} />
+      {/* Gated even for the admin. The gate holds its unlocked state locally,
+          so navigating away unmounts it and the page re-locks. */}
+      <FinancePinGate>
+        <FinancesHubCard idToken={googleIdToken} />
+      </FinancePinGate>
     </AdminPage>
   )
 }
@@ -613,7 +619,12 @@ function SiteLayout({
       )}
 
       <main className="page-shell">
-        <Outlet />
+        {/* Keyed by path: a crash on one page is contained to that page, and
+            navigating anywhere else remounts a clean boundary automatically —
+            no more needing a hard refresh to recover. */}
+        <RouteErrorBoundary key={location.pathname}>
+          <Outlet />
+        </RouteErrorBoundary>
       </main>
     </div>
   )

@@ -34,7 +34,18 @@ from typing import Any
 from dotenv import load_dotenv  # type: ignore[import]
 
 sys.path.insert(0, str(Path(__file__).parent))
-from shared.sheets_client import get_spreadsheet, upsert_rows  # noqa: E402
+from shared.sheets_client import ensure_worksheet, get_spreadsheet, upsert_rows  # noqa: E402
+
+# Windows consoles default to cp1252, which cannot encode the arrows and
+# ellipses used in this script's progress output — printing one raises
+# UnicodeEncodeError and kills the run mid-sync. Force UTF-8 where the stream
+# supports it (Python 3.7+); older or redirected streams just carry on.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 
 SHEET_NAME = "garmin_wellness"
 
@@ -217,13 +228,7 @@ def main() -> None:
 
     print(f"\nWriting {len(filled)} rows to '{SHEET_NAME}' …")
     ss = get_spreadsheet()
-    try:
-        ws = ss.worksheet(SHEET_NAME)
-    except Exception:
-        print(f"  Sheet '{SHEET_NAME}' not found. Create it with this header row:")
-        print("  " + "	".join(HEADERS))
-        sys.exit(1)
-
+    ws = ensure_worksheet(ss, SHEET_NAME, HEADERS)
     updated, inserted = upsert_rows(ws, filled, key_col="date")
     print(f"  Done: {updated} updated, {inserted} inserted.")
 

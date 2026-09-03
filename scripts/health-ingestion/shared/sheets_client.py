@@ -36,6 +36,38 @@ def get_spreadsheet() -> gspread.Spreadsheet:
     return client.open(spreadsheet_name)  # requires Google Drive API to be enabled
 
 
+def ensure_worksheet(
+    spreadsheet: gspread.Spreadsheet,
+    title: str,
+    headers: list[str],
+) -> gspread.Worksheet:
+    """
+    Return the worksheet, creating it with a header row if it does not exist.
+
+    `upsert_rows` maps dict keys onto columns by reading row 1, so a tab without
+    headers silently writes blank rows rather than failing. Creating the tab and
+    its header row together is the only safe way to do this, and it means a
+    deleted tab costs a re-run rather than hand-rebuilding a header by hand.
+    """
+    try:
+        worksheet = spreadsheet.worksheet(title)
+    except gspread.WorksheetNotFound:
+        print(f"  Sheet '{title}' not found — creating it.")
+        worksheet = spreadsheet.add_worksheet(title=title, rows=1000, cols=max(len(headers), 26))
+        worksheet.update(range_name="A1", values=[headers])
+        worksheet.freeze(rows=1)
+        return worksheet
+
+    # An existing but empty tab is the other way this goes wrong: the tab is
+    # there, so no error, but every write lands in nothing.
+    if not worksheet.row_values(1):
+        print(f"  Sheet '{title}' has no header row — writing it.")
+        worksheet.update(range_name="A1", values=[headers])
+        worksheet.freeze(rows=1)
+
+    return worksheet
+
+
 def upsert_rows(
     worksheet: gspread.Worksheet,
     rows: list[dict],

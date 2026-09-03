@@ -76,7 +76,12 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     budget_targets: 'budget_targets!A1:C10000',
     personal_training: 'personal_training!A1:D10000',
     garmin_health:     'garmin_health!A1:I10000',
-    garmin_wellness:   'garmin_wellness!A1:T10000',
+    /*
+     * Must span every column in the sheet, not just the ones the ingest script
+     * still writes: the tab kept two retired columns, which pushed
+     * endurance_score out to U where an A:T range silently dropped it.
+     */
+    garmin_wellness:   'garmin_wellness!A1:U10000',
     ringconn_health:   'ringconn_health!A1:L10000',
     apple_health:      'apple_health!A1:I10000',
     recipes:           'recipes!A1:H10000',

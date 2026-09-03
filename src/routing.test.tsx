@@ -64,7 +64,7 @@ vi.mock('@react-oauth/google', () => ({
 }))
 
 import App from './App'
-import { personalSiteEntries } from './siteContent'
+import { adminDashboards, personalSiteEntries } from './siteContent'
 
 const ADMIN_EMAIL = 'pasionabe@gmail.com'
 const GUEST_EMAIL = 'someoneelse@gmail.com'
@@ -127,6 +127,9 @@ beforeEach(() => {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  // The finance PIN is stubbed per-test; without this it leaks into every
+  // later test and silently locks the finance page.
+  vi.unstubAllEnvs()
   vi.clearAllMocks()
 })
 
@@ -346,7 +349,8 @@ describe('admin routing', () => {
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
       link.textContent?.trim(),
     )
-    expect(labels).toEqual(['Home', 'Personal', 'Finance', 'Health', 'Work', 'System'])
+    // Derived, not hardcoded: adding a dashboard should not fail this test.
+    expect(labels).toEqual(adminDashboards.map((dashboard) => dashboard.title))
   })
 
   it('points each nav item at its dashboard', () => {
@@ -355,14 +359,7 @@ describe('admin routing', () => {
     const hrefs = [...document.querySelectorAll('.admin-nav-link')].map((link) =>
       link.getAttribute('href'),
     )
-    expect(hrefs).toEqual([
-      '/',
-      '/admin/personal',
-      '/admin/finance',
-      '/admin/health',
-      '/admin/work',
-      '/admin/system',
-    ])
+    expect(hrefs).toEqual(adminDashboards.map((dashboard) => dashboard.path))
   })
 
   it.each([
@@ -374,6 +371,25 @@ describe('admin routing', () => {
   ])('renders %s for the admin account', (path, title) => {
     renderAt(path, ADMIN_EMAIL)
     expect(pageTitle()).toBe(title)
+  })
+
+  it('locks finances behind the PIN again after navigating away', async () => {
+    const user = userEvent.setup()
+    vi.stubEnv('VITE_FINANCE_PIN', '4821')
+
+    renderAt('/admin/finance', ADMIN_EMAIL)
+
+    // Gated even though this is the admin account.
+    expect(screen.getByRole('heading', { name: 'Finances are locked' })).toBeTruthy()
+
+    await user.type(screen.getByLabelText('Finance PIN'), '4821')
+    expect(screen.queryByRole('heading', { name: 'Finances are locked' })).toBeNull()
+
+    // Leaving unmounts the route, which is what drops the unlocked state.
+    await user.click(screen.getByRole('link', { name: 'Health' }))
+    await user.click(screen.getByRole('link', { name: 'Finance' }))
+
+    expect(screen.getByRole('heading', { name: 'Finances are locked' })).toBeTruthy()
   })
 
   it.each([

@@ -27,12 +27,26 @@ cp config.env.example config.env
 # Edit config.env with your paths and credentials
 ```
 
-### 4. Create the three sheet tabs
-In your Google Spreadsheet, add three new tabs with these **exact names and header rows**:
+### 4. Sheet tabs
 
-**`garmin_health`** (row 1):
+**The two Garmin tabs create themselves.** `ingest_garmin.py` and
+`ingest_garmin_wellness.py` call `ensure_worksheet`, which adds the tab with its
+header row if it is missing — so deleting a Garmin tab costs a re-run, not a
+hand-rebuilt header. They also backfill the header row on a tab that exists but
+is empty, which otherwise writes blank rows silently.
+
+The Ringconn and Apple tabs still have to be made by hand.
+
+Headers, for reference or manual creation:
+
+**`garmin_health`** (row 1) — one row per activity:
 ```
 date  activity_type  title  distance_mi  duration_min  avg_hr  max_hr  calories  tss
+```
+
+**`garmin_wellness`** (row 1) — one row per day, the passive metrics:
+```
+date  sleep_score  sleep_duration_h  deep_sleep_h  rem_sleep_h  light_sleep_h  awake_h  resting_hr  hrv  body_battery_high  stress_avg  respiration_avg  steps  intensity_minutes  calories  vo2_max  training_readiness  training_status  endurance_score
 ```
 
 **`ringconn_health`** (row 1):

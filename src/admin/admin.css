@@ -1196,6 +1196,9 @@
    Sleep & recovery, daily wellness, and training & performance all render the
    same compact metric grid. */
 .garmin-metric-grid {
+  /* Positioning context for the tooltips: anchoring them to the grid rather
+     than to each tile is what keeps them inside the card. */
+  position: relative;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
   gap: 0.6rem;
@@ -1204,12 +1207,112 @@
 
 .garmin-metric {
   display: grid;
+  /* Keeps the value pinned to the top when a neighbour's tooltip expands the
+     row on a phone, instead of drifting to the middle of a taller tile. */
+  align-content: start;
   gap: 0.1rem;
   padding: 0.55rem 0.6rem;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: var(--surface);
   min-width: 0;
+}
+
+.garmin-metric[tabindex]:hover,
+.garmin-metric[tabindex]:focus-visible {
+  border-color: var(--border-strong);
+  outline: none;
+}
+
+/*
+ * What the number means, on hover or focus.
+ *
+ * Kept at opacity 0 rather than display:none so `aria-describedby` still
+ * resolves it, and absolutely positioned so a paragraph of text does not
+ * reserve space in a tile sized for two digits.
+ */
+/*
+ * Spans the grid and sits just above it, rather than floating centred over the
+ * tile it belongs to.
+ *
+ * Centring on the tile cannot be bounded in CSS: the grid auto-fills its
+ * columns, so a stylesheet cannot know which tile is in the first or last
+ * column to anchor it edge-aware. A tooltip centred on a first-column tile ran
+ * past the left edge of the viewport between roughly 545px and 1200px and was
+ * simply cut off. Anchored to the grid it always lands inside the card.
+ */
+.garmin-metric-tip {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  max-width: none;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.45rem;
+  background: var(--surface-muted);
+  color: var(--text-strong);
+  font-size: 0.76rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left;
+  white-space: normal;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.garmin-metric:hover > .garmin-metric-tip,
+.garmin-metric:focus-visible > .garmin-metric-tip,
+.garmin-metric:focus-within > .garmin-metric-tip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garmin-metric-tip {
+    transition: none;
+  }
+}
+
+/* Every tooltip now opens in the same place above the grid, so there is no
+   per-row flipping to do. */
+
+/*
+ * On a phone a floating tooltip centred on an edge tile runs off the screen,
+ * and there is no hover to open it with anyway. Below this width it stops
+ * floating and expands the tile instead — which cannot overflow, and reads
+ * better on a tap. Collapsed it is clipped rather than display:none, so the
+ * text stays in the accessibility tree for `aria-describedby`.
+ */
+@media (max-width: 34rem) {
+  .garmin-metric-tip {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .garmin-metric:focus-within > .garmin-metric-tip,
+  .garmin-metric:hover > .garmin-metric-tip {
+    position: static;
+    width: auto;
+    height: auto;
+    max-width: none;
+    margin: 0.35rem 0 0;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--border-strong);
+    overflow: visible;
+    clip-path: none;
+  }
 }
 
 .garmin-metric-label {
@@ -1312,6 +1415,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
   margin-top: 0.7rem;
 }
@@ -1945,4 +2049,64 @@
 .mood-trend-note--down svg {
   color: #dc2626;
   flex-shrink: 0;
+}
+
+/* ── Finance PIN screen ───────────────────────────────────────────────────
+   A privacy screen, not a security boundary — see FinancePinGate.tsx. */
+
+.finance-lock {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.finance-lock h3 {
+  margin: 0;
+}
+
+.finance-lock-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
+.finance-lock-input {
+  width: 7rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 1.5rem;
+  /* Four digits read as a code, not a word. */
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  text-align: center;
+}
+
+.finance-lock-input:disabled {
+  opacity: 0.5;
+}
+
+.finance-lock-error {
+  margin: 0;
+  min-height: 1.2rem;
+  color: #b4443c;
+  font-size: 0.8rem;
+}
+
+/* Holds its line so the card does not jump as the message appears. */
+.finance-lock-error.is-empty {
+  visibility: hidden;
+}
+
+:root[data-theme='dark'] .finance-lock-error {
+  color: #f2938c;
 }

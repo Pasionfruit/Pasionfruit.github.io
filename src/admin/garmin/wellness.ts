@@ -14,6 +14,12 @@ export type Metric = {
   unit?: string
   /** Higher is better — drives the trend arrow's colour. */
   higherIsBetter?: boolean
+  /**
+   * What the number actually means, shown on hover and focus. These are
+   * charted daily and the labels are terse, so without this "Intensity
+   * minutes" or a bare HRV figure is a number with no interpretation.
+   */
+  description?: string
 }
 
 export function toNumber(value: string): number | null {
