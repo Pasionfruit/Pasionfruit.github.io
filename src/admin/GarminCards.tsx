@@ -14,21 +14,88 @@ import {
 } from './garmin/wellness'
 
 const SLEEP_METRICS: Metric[] = [
-  { key: 'sleep_score', label: 'Sleep score', higherIsBetter: true },
-  { key: 'sleep_duration_h', label: 'Time asleep', unit: 'h', higherIsBetter: true },
-  { key: 'deep_sleep_h', label: 'Deep', unit: 'h', higherIsBetter: true },
-  { key: 'rem_sleep_h', label: 'REM', unit: 'h', higherIsBetter: true },
-  { key: 'hrv', label: 'HRV', unit: 'ms', higherIsBetter: true },
-  { key: 'resting_hr', label: 'Resting HR', unit: 'bpm', higherIsBetter: false },
-  { key: 'body_battery_high', label: 'Body battery peak', higherIsBetter: true },
-  { key: 'respiration_avg', label: 'Respiration', unit: 'br/min', higherIsBetter: false },
+  {
+    key: 'sleep_score',
+    label: 'Sleep score',
+    higherIsBetter: true,
+    description:
+      "Garmin's 0–100 rating of last night, combining how long you slept, the balance of deep and REM, and how restless you were.",
+  },
+  {
+    key: 'sleep_duration_h',
+    label: 'Time asleep',
+    unit: 'h',
+    higherIsBetter: true,
+    description: 'Hours actually asleep — time awake in bed is excluded.',
+  },
+  {
+    key: 'deep_sleep_h',
+    label: 'Deep',
+    unit: 'h',
+    higherIsBetter: true,
+    description:
+      'Deep sleep, the stage that does most of the physical repair. Usually 1–2h, and the first thing alcohol or a late meal cuts into.',
+  },
+  {
+    key: 'rem_sleep_h',
+    label: 'REM',
+    unit: 'h',
+    higherIsBetter: true,
+    description:
+      'Dreaming sleep, tied to memory and mood. Usually 1.5–2h, and it comes mostly in the second half of the night.',
+  },
+  {
+    key: 'hrv',
+    label: 'HRV',
+    unit: 'ms',
+    higherIsBetter: true,
+    description:
+      'Overnight average variation between heartbeats. Higher generally means better recovered — but the useful signal is your own trend, not the absolute number.',
+  },
+  {
+    key: 'resting_hr',
+    label: 'Resting HR',
+    unit: 'bpm',
+    higherIsBetter: false,
+    description:
+      'Lowest sustained heart rate overnight. A jump of several bpm often shows up a day before you feel run down.',
+  },
+  {
+    key: 'respiration_avg',
+    label: 'Respiration',
+    unit: 'br/min',
+    higherIsBetter: false,
+    description: 'Average breaths per minute while asleep. Typically 12–16 for adults.',
+  },
 ]
 
 const WELLNESS_METRICS: Metric[] = [
-  { key: 'steps', label: 'Steps', higherIsBetter: true },
-  { key: 'intensity_minutes', label: 'Intensity minutes', higherIsBetter: true },
-  { key: 'calories', label: 'Calories', higherIsBetter: true },
-  { key: 'stress_avg', label: 'Avg stress', higherIsBetter: false },
+  {
+    key: 'steps',
+    label: 'Steps',
+    higherIsBetter: true,
+    description: 'Total steps recorded across the day.',
+  },
+  {
+    key: 'intensity_minutes',
+    label: 'Intensity minutes',
+    higherIsBetter: true,
+    description:
+      'Minutes of moderate activity, with vigorous minutes counted double. WHO guidance is 150 a week.',
+  },
+  {
+    key: 'calories',
+    label: 'Calories',
+    higherIsBetter: true,
+    description: 'Total burned for the day — resting metabolism plus everything you did on top of it.',
+  },
+  {
+    key: 'stress_avg',
+    label: 'Avg stress',
+    higherIsBetter: false,
+    description:
+      "Garmin's all-day 0–100 estimate from heart-rate variability. Under 25 is rest, 26–50 low, 51–75 medium.",
+  },
 ]
 
 /**
@@ -138,7 +205,18 @@ function MetricGrid({
   return (
     <div className="garmin-metric-grid">
       {summaries.map(({ metric, summary }) => (
-        <div key={String(metric.key)} className="garmin-metric">
+        <div
+          key={String(metric.key)}
+          className="garmin-metric"
+          /*
+           * Focusable so the description is reachable by keyboard and by tap —
+           * a hover-only tooltip is invisible on the phone this is mostly read
+           * on. The text stays in the DOM at opacity 0 rather than being
+           * display:none, so `aria-describedby` still resolves it.
+           */
+          tabIndex={metric.description ? 0 : undefined}
+          aria-describedby={metric.description ? `tip-${String(metric.key)}` : undefined}
+        >
           <span className="garmin-metric-label">{metric.label}</span>
           <span className="garmin-metric-value">
             {summary ? formatValue(summary.latest.value) : '—'}
@@ -156,6 +234,16 @@ function MetricGrid({
           )}
           {summary?.carried ? (
             <span className="garmin-metric-from">from {formatDayLabel(summary.latest.date)}</span>
+          ) : null}
+
+          {/* Last in the DOM so that when it stops floating on a phone and
+              expands the tile inline, it reads after the value rather than
+              before the label. Absolute positioning makes order irrelevant on
+              wider screens. */}
+          {metric.description ? (
+            <span className="garmin-metric-tip" id={`tip-${String(metric.key)}`} role="tooltip">
+              {metric.description}
+            </span>
           ) : null}
         </div>
       ))}

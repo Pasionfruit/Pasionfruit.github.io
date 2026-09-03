@@ -56,6 +56,7 @@ jobs:
           VITE_API_URL: ${{ vars.VITE_API_URL || secrets.VITE_API_URL }}
           VITE_ACE_BASE_URL: ${{ vars.VITE_ACE_BASE_URL }}
           VITE_ACE_MODEL: ${{ vars.VITE_ACE_MODEL }}
+          VITE_FINANCE_PIN: ${{ secrets.VITE_FINANCE_PIN }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

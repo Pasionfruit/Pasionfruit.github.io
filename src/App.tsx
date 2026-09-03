@@ -56,6 +56,7 @@ import { JournalDashboard } from './admin/JournalDashboard'
 import { WorkDashboard } from './admin/WorkDashboard'
 import { SystemDashboard } from './admin/SystemDashboard'
 import { AssistantAceCard } from './admin/AssistantAceCard'
+import { FinancePinGate } from './admin/FinancePinGate'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   adminDashboards,
@@ -424,7 +425,11 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
 function AdminFinancePage({ googleIdToken }: { googleIdToken: string }) {
   return (
     <AdminPage meta={adminDashboardsById.finance}>
-      <FinancesHubCard idToken={googleIdToken} />
+      {/* Gated even for the admin. The gate holds its unlocked state locally,
+          so navigating away unmounts it and the page re-locks. */}
+      <FinancePinGate>
+        <FinancesHubCard idToken={googleIdToken} />
+      </FinancePinGate>
     </AdminPage>
   )
 }
