@@ -462,6 +462,50 @@
   padding: 1rem 0 3rem;
 }
 
+/* Shown by RouteErrorBoundary in place of a page that threw while rendering.
+   The nav lives outside this in SiteLayout, so it stays usable underneath. */
+.route-crash {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  max-width: 32rem;
+  margin: 3rem auto;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--surface);
+  text-align: center;
+}
+
+.route-crash-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.route-crash-detail {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-family: monospace;
+  word-break: break-word;
+}
+
+.route-crash-home {
+  margin-top: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.5rem;
+  color: var(--text-strong);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.route-crash-home:hover {
+  background: var(--surface-muted);
+}
+
 .page {
   display: grid;
   gap: 1rem;

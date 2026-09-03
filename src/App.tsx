@@ -28,6 +28,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import { useRouteMeta } from './routeMeta'
+import { RouteErrorBoundary } from './RouteErrorBoundary'
 import {
   Chart,
   CategoryScale,
@@ -618,7 +619,12 @@ function SiteLayout({
       )}
 
       <main className="page-shell">
-        <Outlet />
+        {/* Keyed by path: a crash on one page is contained to that page, and
+            navigating anywhere else remounts a clean boundary automatically —
+            no more needing a hard refresh to recover. */}
+        <RouteErrorBoundary key={location.pathname}>
+          <Outlet />
+        </RouteErrorBoundary>
       </main>
     </div>
   )
