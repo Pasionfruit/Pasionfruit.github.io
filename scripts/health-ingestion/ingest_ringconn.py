@@ -12,7 +12,7 @@ won't break if Ringconn adds new fields in a future export.
 
 Sheet target: ringconn_health
 Headers: date, sleep_score, sleep_duration_h, deep_sleep_h, rem_sleep_h,
-         light_sleep_h, resting_hr, hrv, spo2, skin_temp_c, steps, calories
+         light_sleep_h, resting_hr, hrv, skin_temp_c, steps, calories
 """
 
 import argparse
@@ -37,7 +37,6 @@ _COL_MAP: dict[str, list[str]] = {
     "light_sleep_h":    ["Light Sleep", "Light Sleep (h)", "light_sleep"],
     "resting_hr":       ["Resting Heart Rate", "Resting HR", "resting_hr", "Min Heart Rate"],
     "hrv":              ["HRV", "Heart Rate Variability", "hrv", "RMSSD"],
-    "spo2":             ["SpO2", "Blood Oxygen", "spo2", "Oxygen Saturation"],
     "skin_temp_c":      ["Skin Temperature", "skin_temp", "Temperature (°C)", "Skin Temp"],
     "steps":            ["Steps", "Step Count", "steps"],
     "calories":         ["Calories", "Active Calories", "calories"],
@@ -105,7 +104,6 @@ def parse_ringconn_csv(filepath: str) -> list[dict]:
                 "light_sleep_h":    _clean(raw.get(col["light_sleep_h"] or "", "")),
                 "resting_hr":       _clean(raw.get(col["resting_hr"] or "", "")),
                 "hrv":              _clean(raw.get(col["hrv"] or "", "")),
-                "spo2":             _clean(raw.get(col["spo2"] or "", "")),
                 "skin_temp_c":      _clean(raw.get(col["skin_temp_c"] or "", "")),
                 "steps":            _clean(raw.get(col["steps"] or "", "")),
                 "calories":         _clean(raw.get(col["calories"] or "", "")),

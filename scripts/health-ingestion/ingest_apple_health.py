@@ -11,7 +11,7 @@ memory usage low (~50 MB peak). Expect 5–15 minutes for a multi-year export.
 
 Sheet target: apple_health
 Headers: date, steps, resting_hr, hrv_sdnn, active_calories, basal_calories,
-         sleep_h, spo2_avg, weight_kg
+         sleep_h, weight_kg
 """
 
 import argparse
@@ -33,7 +33,6 @@ _TYPES: dict[str, tuple[str, str]] = {
     "HKQuantityTypeIdentifierHeartRateVariabilitySDNN":("hrv_sdnn",        "avg"),
     "HKQuantityTypeIdentifierActiveEnergyBurned":      ("active_calories", "sum"),
     "HKQuantityTypeIdentifierBasalEnergyBurned":       ("basal_calories",  "sum"),
-    "HKQuantityTypeIdentifierOxygenSaturation":        ("spo2_avg",        "avg"),
     "HKQuantityTypeIdentifierBodyMass":                ("weight_kg",       "last"),
     # Sleep is handled separately via HKCategoryTypeIdentifierSleepAnalysis
     "HKCategoryTypeIdentifierSleepAnalysis":           ("sleep_h",         "sleep"),
@@ -127,7 +126,6 @@ def parse_export_xml(filepath: str) -> list[dict]:
             "active_calories": _agg("active_calories", "sum"),
             "basal_calories":  _agg("basal_calories",  "sum"),
             "sleep_h":         _agg("sleep_h",         "sleep"),
-            "spo2_avg":        _agg("spo2_avg",        "avg"),
             "weight_kg":       _agg("weight_kg",       "last"),
         })
 

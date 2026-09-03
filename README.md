@@ -57,7 +57,7 @@ as the Tasks of the Day tab selector, rather than Finance's green.
 `ingest_garmin.py` writes one row per *activity* to `garmin_health`.
 [ingest_garmin_wellness.py](scripts/health-ingestion/ingest_garmin_wellness.py)
 writes one row per *day* to `garmin_wellness` — the passive metrics the watch
-records: sleep stages and score, HRV, resting HR, body battery, stress, SpO2,
+records: sleep stages and score, HRV, resting HR, body battery, stress,
 respiration, steps, intensity minutes, VO2 max, training readiness, training
 status, endurance score.
 
@@ -65,8 +65,8 @@ Create the sheet with this header row first:
 
 ```
 date  sleep_score  sleep_duration_h  deep_sleep_h  rem_sleep_h  light_sleep_h
-awake_h  resting_hr  hrv  body_battery_high  body_battery_low  stress_avg
-spo2_avg  respiration_avg  steps  intensity_minutes  calories  vo2_max
+awake_h  resting_hr  hrv  body_battery_high  stress_avg
+respiration_avg  steps  intensity_minutes  calories  vo2_max
 training_readiness  training_status  endurance_score
 ```
 

@@ -112,7 +112,6 @@ export type RingconnHealthRecord = {
   light_sleep_h: string
   resting_hr: string
   hrv: string
-  spo2: string
   skin_temp_c: string
   steps: string
   calories: string
@@ -126,7 +125,6 @@ export type AppleHealthRecord = {
   active_calories: string
   basal_calories: string
   sleep_h: string
-  spo2_avg: string
   weight_kg: string
 }
 
@@ -248,10 +246,8 @@ export type GarminWellnessRecord = {
   resting_hr: string
   hrv: string
   body_battery_high: string
-  body_battery_low: string
   // Daily wellness
   stress_avg: string
-  spo2_avg: string
   respiration_avg: string
   steps: string
   intensity_minutes: string

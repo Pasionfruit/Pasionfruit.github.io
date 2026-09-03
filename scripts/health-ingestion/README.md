@@ -37,12 +37,12 @@ date  activity_type  title  distance_mi  duration_min  avg_hr  max_hr  calories 
 
 **`ringconn_health`** (row 1):
 ```
-date  sleep_score  sleep_duration_h  deep_sleep_h  rem_sleep_h  light_sleep_h  resting_hr  hrv  spo2  skin_temp_c  steps  calories
+date  sleep_score  sleep_duration_h  deep_sleep_h  rem_sleep_h  light_sleep_h  resting_hr  hrv  skin_temp_c  steps  calories
 ```
 
 **`apple_health`** (row 1):
 ```
-date  steps  resting_hr  hrv_sdnn  active_calories  basal_calories  sleep_h  spo2_avg  weight_kg
+date  steps  resting_hr  hrv_sdnn  active_calories  basal_calories  sleep_h  weight_kg
 ```
 
 ---

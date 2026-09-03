@@ -233,6 +233,19 @@ export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
     .filter((row) => row.date)
 }
 
+/**
+ * Whether a wellness row carries any actual measurement.
+ *
+ * The ingest script writes one row per day through today on every run, so a day
+ * Garmin has no data for still lands in the sheet as a date with every metric
+ * blank. Left in, the newest placeholder defines "latest" everywhere — the
+ * card's date pill, the sleep card's default day, Ace's stale-watch check — and
+ * the dashboard ends up labelling three-day-old numbers with today's date.
+ */
+export function hasWellnessMetrics(row: GarminWellnessRecord) {
+  return Object.entries(row).some(([key, value]) => key !== 'date' && String(value).trim() !== '')
+}
+
 export async function getGarminWellness(): Promise<GarminWellnessRecord[]> {
   const rows = await fetchSheetTable<Record<string, unknown>>('garmin_wellness')
 
@@ -250,9 +263,7 @@ export async function getGarminWellness(): Promise<GarminWellnessRecord[]> {
       resting_hr:         text(row.resting_hr),
       hrv:                text(row.hrv),
       body_battery_high:  text(row.body_battery_high),
-      body_battery_low:   text(row.body_battery_low),
       stress_avg:         text(row.stress_avg),
-      spo2_avg:           text(row.spo2_avg),
       respiration_avg:    text(row.respiration_avg),
       steps:              text(row.steps),
       intensity_minutes:  text(row.intensity_minutes),
@@ -262,7 +273,7 @@ export async function getGarminWellness(): Promise<GarminWellnessRecord[]> {
       training_status:    text(row.training_status),
       endurance_score:    text(row.endurance_score),
     }))
-    .filter((row) => row.date)
+    .filter((row) => row.date && hasWellnessMetrics(row))
     .sort((a, b) => b.date.localeCompare(a.date))
 }
 
@@ -279,7 +290,6 @@ export async function getRingconnHealth(): Promise<RingconnHealthRecord[]> {
       light_sleep_h:    String(row.light_sleep_h ?? '').trim(),
       resting_hr:       String(row.resting_hr ?? '').trim(),
       hrv:              String(row.hrv ?? '').trim(),
-      spo2:             String(row.spo2 ?? '').trim(),
       skin_temp_c:      String(row.skin_temp_c ?? '').trim(),
       steps:            String(row.steps ?? '').trim(),
       calories:         String(row.calories ?? '').trim(),
@@ -299,7 +309,6 @@ export async function getAppleHealth(): Promise<AppleHealthRecord[]> {
       active_calories: String(row.active_calories ?? '').trim(),
       basal_calories:  String(row.basal_calories ?? '').trim(),
       sleep_h:         String(row.sleep_h ?? '').trim(),
-      spo2_avg:        String(row.spo2_avg ?? '').trim(),
       weight_kg:       String(row.weight_kg ?? '').trim(),
     }))
     .filter((row) => row.date)

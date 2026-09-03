@@ -7,9 +7,8 @@ as opposed to `ingest_garmin.py`, which handles one row per *activity*.
 Sheet: garmin_wellness
 Headers: date, sleep_score, sleep_duration_h, deep_sleep_h, rem_sleep_h,
          light_sleep_h, awake_h, resting_hr, hrv, body_battery_high,
-         body_battery_low, stress_avg, spo2_avg, respiration_avg, steps,
-         intensity_minutes, calories, vo2_max, training_readiness,
-         training_status, endurance_score
+         stress_avg, respiration_avg, steps, intensity_minutes, calories,
+         vo2_max, training_readiness, training_status, endurance_score
 
 Usage:
     python ingest_garmin_wellness.py --days 30
@@ -43,8 +42,8 @@ HEADERS = [
     "date",
     "sleep_score", "sleep_duration_h", "deep_sleep_h", "rem_sleep_h",
     "light_sleep_h", "awake_h", "resting_hr", "hrv",
-    "body_battery_high", "body_battery_low",
-    "stress_avg", "spo2_avg", "respiration_avg", "steps",
+    "body_battery_high",
+    "stress_avg", "respiration_avg", "steps",
     "intensity_minutes", "calories",
     "vo2_max", "training_readiness", "training_status", "endurance_score",
 ]
@@ -114,7 +113,6 @@ def fetch_day(api: Any, cdate: str) -> dict[str, str]:
         levels = [lvl for lvl in levels if isinstance(lvl, (int, float))]
         if levels:
             row["body_battery_high"] = _num(max(levels))
-            row["body_battery_low"] = _num(min(levels))
 
     # ── Daily wellness ───────────────────────────────────────────────────
     stats = _safe("daily stats", lambda: api.get_stats(cdate)) or {}
@@ -124,9 +122,6 @@ def fetch_day(api: Any, cdate: str) -> dict[str, str]:
     row["intensity_minutes"] = _num(
         (stats.get("moderateIntensityMinutes") or 0) + (stats.get("vigorousIntensityMinutes") or 0) * 2
     )
-
-    spo2 = _safe("spo2", lambda: api.get_spo2_data(cdate)) or {}
-    row["spo2_avg"] = _num(spo2.get("averageSpO2"))
 
     respiration = _safe("respiration", lambda: api.get_respiration_data(cdate)) or {}
     row["respiration_avg"] = _num(respiration.get("avgSleepRespirationValue"))
@@ -200,13 +195,27 @@ def main() -> None:
         if index < len(dates):
             time.sleep(1.0)
 
+    # Garmin returns nothing for a day that has not synced yet — today's row is
+    # usually empty when this runs in the morning. Writing it anyway puts a
+    # dated but metric-less row in the sheet, and the dashboard then treats that
+    # date as the newest data it has, labelling older numbers with today's date.
+    filled = [row for row in rows if any(v for k, v in row.items() if k != "date")]
+    kept = {row["date"] for row in filled}
+    skipped = [row["date"] for row in rows if row["date"] not in kept]
+    if skipped:
+        print(f"\nSkipping {len(skipped)} day(s) with no data: {', '.join(skipped)}")
+
     if args.dry_run:
-        print(f"\nDry run — {len(rows)} rows fetched, nothing written.")
-        for row in rows[-3:]:
+        print(f"\nDry run — {len(filled)} rows with data, nothing written.")
+        for row in filled[-3:]:
             print("  ", {k: v for k, v in row.items() if v})
         return
 
-    print(f"\nWriting {len(rows)} rows to '{SHEET_NAME}' …")
+    if not filled:
+        print("\nNothing to write — Garmin returned no data for any requested day.")
+        return
+
+    print(f"\nWriting {len(filled)} rows to '{SHEET_NAME}' …")
     ss = get_spreadsheet()
     try:
         ws = ss.worksheet(SHEET_NAME)
@@ -215,7 +224,7 @@ def main() -> None:
         print("  " + "	".join(HEADERS))
         sys.exit(1)
 
-    updated, inserted = upsert_rows(ws, rows, key_col="date")
+    updated, inserted = upsert_rows(ws, filled, key_col="date")
     print(f"  Done: {updated} updated, {inserted} inserted.")
 
 

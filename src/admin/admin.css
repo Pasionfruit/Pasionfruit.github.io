@@ -1344,6 +1344,43 @@
   margin: 0;
 }
 
+/* Step one day at a time. Steps through days that actually have data rather
+   than calendar days, so a gap in the watch's history is skipped, not landed on. */
+.garmin-date-step {
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.garmin-date-step:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* The day being shown had no reading for this metric, so an older one is
+   standing in — say which day it came from rather than implying it is today's. */
+.garmin-metric-from {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-style: italic;
+}
+
+.garmin-sync-note {
+  margin: 0.6rem 0 0;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.4rem;
+  background: var(--surface-muted);
+}
+
 /* ── Assistant Ace ────────────────────────────────────────────────────────
    Two panes: a briefing assembled from the day's real data, and a chat box to
    the model running on Abe's own machine. The briefing half is deterministic,
