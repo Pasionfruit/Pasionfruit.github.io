@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Cpu, HardDrive, MemoryStick, RefreshCw, Server } from 'lucide-react'
 import { AdminPage } from './AdminPage'
 import { adminDashboardsById } from '../siteContent'
@@ -183,7 +183,6 @@ export function SystemDashboard({ idToken }: { idToken: string }) {
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000))
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const isReady = Boolean(config && idToken)
 
   useEffect(() => {
     if (!config || !idToken) return
@@ -258,29 +257,45 @@ export function SystemDashboard({ idToken }: { idToken: string }) {
     [machines, history],
   )
 
-  return (
-    <AdminPage meta={adminDashboardsById.system}>
-      {!config ? (
+  // Every reason for having no cards resolves to a message here, in one chain.
+  // Gating each message on its own separate condition is how this page reached
+  // a state — configured, but signed in with no token yet — that matched none
+  // of them and rendered nothing at all under the heading.
+  let placeholder: ReactNode = null
+  if (cards.length === 0) {
+    if (!config) {
+      placeholder = (
         <p className="sheets-meta">
           Set <code>VITE_ACE_BASE_URL</code> — machine health is read through the Ace worker.
         </p>
-      ) : null}
-
-      {error ? <p className="sheets-error">{error}</p> : null}
-
-      {isReady && isLoading ? (
+      )
+    } else if (!idToken) {
+      placeholder = (
+        <p className="sheets-meta">Sign in with the admin account to read machine health.</p>
+      )
+    } else if (isLoading) {
+      placeholder = (
         <p className="sheets-meta">
           <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" /> Reading machines…
         </p>
-      ) : null}
-
-      {isReady && !isLoading && !error && machines.length === 0 ? (
+      )
+    } else if (!error) {
+      placeholder = (
         <p className="sheets-meta">
           No machines have reported yet. Each machine runs the server-manager agent, which heartbeats
           its health every minute — check that <code>REPORT_URL</code> and <code>REPORT_KEY</code> are
           set in its .env and the service is running.
         </p>
-      ) : null}
+      )
+    }
+    // An error with nothing to show needs no placeholder — the banner says it.
+  }
+
+  return (
+    <AdminPage meta={adminDashboardsById.system}>
+      {error ? <p className="sheets-error">{error}</p> : null}
+
+      {placeholder}
 
       {cards.map((machine) => (
         <MachineCard key={machine.machine} machine={machine} now={now} />
