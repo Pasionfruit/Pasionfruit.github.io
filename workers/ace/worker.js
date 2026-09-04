@@ -21,75 +21,12 @@
  *   npx wrangler deploy
  */
 
+import { createHttp, verifyAdmin } from '../shared/admin.js'
+
 /** Only these reach Ollama; everything else is refused. */
 const ALLOWED_PATHS = new Set(['/api/chat', '/api/tags', '/api/tts'])
 
-const TOKEN_INFO = 'https://oauth2.googleapis.com/tokeninfo?id_token='
-
-function corsHeaders(request, env) {
-  const origin = request.headers.get('Origin') ?? ''
-  const allowed = (env.ALLOWED_ORIGINS ?? 'https://abepasion.com')
-    .split(',')
-    .map((value) => value.trim())
-    .filter(Boolean)
-
-  return {
-    'Access-Control-Allow-Origin': allowed.includes(origin) ? origin : allowed[0],
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Max-Age': '86400',
-    Vary: 'Origin',
-  }
-}
-
-function deny(status, message, request, env) {
-  return new Response(JSON.stringify({ error: message }), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders(request, env) },
-  })
-}
-
-/**
- * Verify the ID token with Google rather than decoding it locally: signature,
- * expiry, audience and issuer all get checked, and a decoded-but-unverified JWT
- * is trivially forged.
- */
-async function verifyAdmin(request, env) {
-  const header = request.headers.get('Authorization') ?? ''
-  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : ''
-
-  if (!token) {
-    return { ok: false, reason: 'Missing bearer token' }
-  }
-
-  const response = await fetch(TOKEN_INFO + encodeURIComponent(token))
-  if (!response.ok) {
-    return { ok: false, reason: 'Invalid token' }
-  }
-
-  const info = await response.json()
-
-  if (env.GOOGLE_CLIENT_ID && info.aud !== env.GOOGLE_CLIENT_ID) {
-    return { ok: false, reason: 'Token was issued for a different client' }
-  }
-
-  if (info.email_verified !== 'true' && info.email_verified !== true) {
-    return { ok: false, reason: 'Email not verified' }
-  }
-
-  if ((info.email ?? '').toLowerCase() !== (env.ADMIN_EMAIL ?? '').toLowerCase()) {
-    return { ok: false, reason: 'Not an authorised account' }
-  }
-
-  return { ok: true }
-}
-
-function json(payload, request, env, status = 200) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders(request, env) },
-  })
-}
+const { corsHeaders, json, deny, preflight } = createHttp({ methods: 'GET, POST, OPTIONS' })
 
 function num(value) {
   const n = Number(value)
@@ -219,7 +156,7 @@ function safeParse(text) {
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders(request, env) })
+      return preflight(request, env)
     }
 
     const url = new URL(request.url)
