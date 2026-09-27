@@ -7,10 +7,15 @@
  * every write requires regardless.
  *
  * Routes: GET/POST/PUT/DELETE /db/<table>. Only tables declared below exist.
- * Secrets: ADMIN_EMAIL, GOOGLE_CLIENT_ID (same values as workers/ace).
+ * Also POST /auth/session and GET /auth/verify — this Worker is where the
+ * browser trades a Google ID token for a long-lived session, and where Apps
+ * Script checks one. Both live here rather than in the Ace gateway because the
+ * site already calls this Worker for data on every page.
+ * Secrets: ADMIN_EMAIL, GOOGLE_CLIENT_ID, SESSION_SECRET (same values as
+ * workers/ace).
  */
 
-import { createHttp, verifyAdmin } from '../shared/admin.js'
+import { createHttp, mintSessionRoute, verifyAdmin, verifyRoute } from '../shared/admin.js'
 
 const { json, deny, preflight } = createHttp({ methods: 'GET, POST, PUT, DELETE, OPTIONS' })
 
@@ -75,6 +80,15 @@ export default {
     }
 
     const url = new URL(request.url)
+
+    // Sign-in plumbing, before the table router: these are not tables.
+    if (url.pathname === '/auth/session') {
+      return mintSessionRoute(request, env, { json, deny })
+    }
+    if (url.pathname === '/auth/verify') {
+      return verifyRoute(request, env, { json, deny })
+    }
+
     const match = /^\/db\/([a-z_]+)$/.exec(url.pathname)
     if (!match || !TABLES[match[1]]) {
       return deny(404, 'No such route', request, env)

@@ -208,10 +208,53 @@ function parsePayload_(e) {
   return JSON.parse(body)
 }
 
-function requireAuthorizedUser_(payload) {
-  var idToken = String(payload.idToken || '')
+/**
+ * Resolve whoever a bearer belongs to, whichever kind it is.
+ *
+ * The browser used to send a Google ID token. It now normally sends one of the
+ * site's own 30-day sessions instead, because a one-hour Google token logged the
+ * installed PWA out every time it was reopened.
+ *
+ * A session is HMAC-signed with a secret that lives only on Cloudflare, so this
+ * cannot check one locally — and should not hold a copy of that secret to try.
+ * It asks the db Worker instead, the same way it already asks Google about a
+ * Google token. Both kinds go out over UrlFetchApp and come back as an email.
+ */
+var SESSION_ISSUER = 'abepasion.com'
+var SESSION_VERIFY_URL = 'https://db.abepasion.workers.dev/auth/verify'
+
+function tokenIssuer_(idToken) {
+  try {
+    var parts = String(idToken).split('.')
+    if (parts.length < 2) {
+      return ''
+    }
+    var json = Utilities.newBlob(Utilities.base64DecodeWebSafe(parts[1])).getDataAsString()
+    return String(JSON.parse(json).iss || '')
+  } catch (err) {
+    return ''
+  }
+}
+
+function resolveTokenEmail_(idToken) {
   if (!idToken) {
     return { ok: false, error: 'Invalid token' }
+  }
+
+  if (tokenIssuer_(idToken) === SESSION_ISSUER) {
+    var verify = UrlFetchApp.fetch(SESSION_VERIFY_URL, {
+      muteHttpExceptions: true,
+      headers: { Authorization: 'Bearer ' + idToken },
+    })
+    if (verify.getResponseCode() !== 200) {
+      return { ok: false, error: 'Invalid token' }
+    }
+    var session = JSON.parse(verify.getContentText())
+    var sessionEmail = String(session.email || '').toLowerCase().trim()
+    if (!sessionEmail) {
+      return { ok: false, error: 'Invalid token' }
+    }
+    return { ok: true, email: sessionEmail }
   }
 
   var tokenInfoUrl = 'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken)
@@ -224,34 +267,28 @@ function requireAuthorizedUser_(payload) {
   var email = String(tokenInfo.email || '').toLowerCase().trim()
   if (!email) {
     return { ok: false, error: 'Invalid token' }
-  }
-
-  if (!isAllowedEmail_(email)) {
-    return { ok: false, error: 'Unauthorized account' }
   }
 
   return { ok: true, email: email }
 }
 
+function requireAuthorizedUser_(payload) {
+  var resolved = resolveTokenEmail_(String(payload.idToken || ''))
+  if (!resolved.ok) {
+    return resolved
+  }
+
+  if (!isAllowedEmail_(resolved.email)) {
+    return { ok: false, error: 'Unauthorized account' }
+  }
+
+  return { ok: true, email: resolved.email }
+}
+
 function requireAnyGoogleUser_(payload) {
-  var idToken = String(payload.idToken || '')
-  if (!idToken) {
-    return { ok: false, error: 'Invalid token' }
-  }
-
-  var tokenInfoUrl = 'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken)
-  var response = UrlFetchApp.fetch(tokenInfoUrl, { muteHttpExceptions: true })
-  if (response.getResponseCode() !== 200) {
-    return { ok: false, error: 'Invalid token' }
-  }
-
-  var tokenInfo = JSON.parse(response.getContentText())
-  var email = String(tokenInfo.email || '').toLowerCase().trim()
-  if (!email) {
-    return { ok: false, error: 'Invalid token' }
-  }
-
-  return { ok: true, email: email }
+  // A session is only ever issued to the admin, who is also a Google user, so
+  // it satisfies this looser check too.
+  return resolveTokenEmail_(String(payload.idToken || ''))
 }
 
 function isAllowedEmail_(email) {

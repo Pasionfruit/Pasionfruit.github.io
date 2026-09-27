@@ -18,6 +18,14 @@ import {
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
+  clearStoredToken,
+  exchangeForSession,
+  getTokenEmail as getGoogleTokenEmail,
+  needsSession,
+  readStoredToken,
+  writeStoredToken,
+} from './data/auth/session'
+import {
   Link,
   NavLink,
   Navigate,
@@ -127,32 +135,6 @@ function isTodoistConfigured() {
   return Boolean(import.meta.env.VITE_TODOIST_API_TOKEN?.trim())
 }
 
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  try {
-    const parts = token.split('.')
-    if (parts.length < 2) {
-      return null
-    }
-
-    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
-    const json = window.atob(base64)
-    return JSON.parse(json) as Record<string, unknown>
-  } catch {
-    return null
-  }
-}
-
-function isExpiredGoogleIdToken(token: string) {
-  const payload = decodeJwtPayload(token)
-  const exp = typeof payload?.exp === 'number' ? payload.exp : undefined
-  if (!exp) {
-    return false
-  }
-
-  const nowSeconds = Math.floor(Date.now() / 1000)
-  return exp <= nowSeconds
-}
-
 function getInitialProfile(): UserProfile {
   if (typeof window === 'undefined') {
     return 'guest'
@@ -160,30 +142,6 @@ function getInitialProfile(): UserProfile {
 
   const storedProfile = window.localStorage.getItem('demo-profile')
   return storedProfile === 'admin' ? 'admin' : 'guest'
-}
-
-function getInitialGoogleToken() {
-  if (typeof window === 'undefined') {
-    return ''
-  }
-
-  const token = window.localStorage.getItem('google-id-token') ?? ''
-  if (!token) {
-    return ''
-  }
-
-  if (isExpiredGoogleIdToken(token)) {
-    window.localStorage.removeItem('google-id-token')
-    return ''
-  }
-
-  return token
-}
-
-function getGoogleTokenEmail(token: string) {
-  const payload = decodeJwtPayload(token)
-  const email = payload?.email
-  return typeof email === 'string' ? email.toLowerCase().trim() : ''
 }
 
 function canViewFinances(googleEmail: string) {
@@ -206,7 +164,11 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem('view-as-guest', viewAsGuest ? 'true' : 'false')
   }, [viewAsGuest])
-  const [googleIdToken, setGoogleIdToken] = useState(() => getInitialGoogleToken())
+  // Holds whichever bearer proves who you are: a Google ID token for the moment
+  // between signing in and the exchange below, then one of our own 30-day
+  // sessions. Both carry `email` and `exp`, so everything reading this cannot
+  // tell them apart and does not need to.
+  const [googleIdToken, setGoogleIdToken] = useState(() => readStoredToken())
   const previousGoogleTokenRef = useRef<string | null>(null)
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const canViewPrivateFinances = canViewFinances(googleEmail)
@@ -223,11 +185,32 @@ function App() {
 
   useEffect(() => {
     if (!googleIdToken) {
-      window.localStorage.removeItem('google-id-token')
+      clearStoredToken()
       return
     }
 
-    window.localStorage.setItem('google-id-token', googleIdToken)
+    writeStoredToken(googleIdToken)
+  }, [googleIdToken])
+
+  // Upgrade a just-signed-in Google token to a session, and slide an existing
+  // session forward in its last week. Failure is deliberately silent: a flaky
+  // network leaves the current token in place rather than signing you out,
+  // which is the whole problem this exists to fix.
+  useEffect(() => {
+    if (!needsSession(googleIdToken)) {
+      return
+    }
+
+    let cancelled = false
+    void exchangeForSession(googleIdToken).then((session) => {
+      if (!cancelled && session) {
+        setGoogleIdToken(session)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
   }, [googleIdToken])
 
   useEffect(() => {
