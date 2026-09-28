@@ -18,6 +18,36 @@ export type WeatherState = {
   error: string
 }
 
+const LOCATION_STORAGE_KEY = 'weather-last-coords'
+
+/** Older than this, a cached fix is more likely wrong (moved) than useful. */
+const STORED_COORDS_MAX_AGE_MS = 24 * 60 * 60 * 1000
+
+function readStoredCoords(): Coords | null {
+  try {
+    const raw = window.localStorage.getItem(LOCATION_STORAGE_KEY)
+    if (!raw) return null
+
+    const parsed = JSON.parse(raw) as Partial<Coords> & { storedAt?: number }
+    if (typeof parsed.latitude !== 'number' || typeof parsed.longitude !== 'number') return null
+    if (typeof parsed.storedAt !== 'number' || Date.now() - parsed.storedAt > STORED_COORDS_MAX_AGE_MS) {
+      return null
+    }
+
+    return { latitude: parsed.latitude, longitude: parsed.longitude }
+  } catch {
+    return null
+  }
+}
+
+function writeStoredCoords(coords: Coords) {
+  try {
+    window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({ ...coords, storedAt: Date.now() }))
+  } catch {
+    // Nothing to do — location is re-requested from scratch next visit instead.
+  }
+}
+
 function geolocationMessage(error: GeolocationPositionError): string {
   switch (error.code) {
     case error.PERMISSION_DENIED:
@@ -33,7 +63,11 @@ function geolocationMessage(error: GeolocationPositionError): string {
 
 /**
  * Resolves the device location, then loads current + hourly weather and air
- * quality for it. Reload re-requests the position so a moved device updates.
+ * quality for it. A last-known fix from localStorage (if under a day old)
+ * paints immediately, the same way a stored session token skips the sign-in
+ * screen; a fresh position is still requested quietly in the background and
+ * silently ignored on failure so it never blanks out weather that already
+ * loaded.
  */
 export function useWeather() {
   const [state, setState] = useState<WeatherState>({
@@ -75,36 +109,55 @@ export function useWeather() {
     }
   }, [])
 
-  const locate = useCallback(() => {
-    if (!('geolocation' in navigator)) {
-      setState((prev) => ({
-        ...prev,
-        status: 'error',
-        error: 'This device does not support location services.',
-      }))
-      return
-    }
+  const locate = useCallback(
+    (options?: { silent?: boolean }) => {
+      const silent = options?.silent ?? false
 
-    setState((prev) => ({ ...prev, status: 'locating', error: '' }))
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        void loadForCoords({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        })
-      },
-      (error) => {
-        if (!isMountedRef.current) return
-        setState((prev) => ({ ...prev, status: 'error', error: geolocationMessage(error) }))
-      },
-      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 5 * 60_000 },
-    )
-  }, [loadForCoords])
+      if (!('geolocation' in navigator)) {
+        if (!silent) {
+          setState((prev) => ({
+            ...prev,
+            status: 'error',
+            error: 'This device does not support location services.',
+          }))
+        }
+        return
+      }
+
+      if (!silent) {
+        setState((prev) => ({ ...prev, status: 'locating', error: '' }))
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords: Coords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }
+          writeStoredCoords(coords)
+          void loadForCoords(coords)
+        },
+        (error) => {
+          if (!isMountedRef.current || silent) return
+          setState((prev) => ({ ...prev, status: 'error', error: geolocationMessage(error) }))
+        },
+        { enableHighAccuracy: false, timeout: 10_000, maximumAge: 5 * 60_000 },
+      )
+    },
+    [loadForCoords],
+  )
 
   useEffect(() => {
-    // Request geolocation on mount; state settles asynchronously in callbacks.
-    locate()
-  }, [locate])
+    // A stored fix paints instantly; either way a fresh position is still
+    // requested, quietly if we already have something on screen.
+    const stored = readStoredCoords()
+    if (stored) {
+      void loadForCoords(stored)
+      locate({ silent: true })
+    } else {
+      locate()
+    }
+  }, [locate, loadForCoords])
 
   const refresh = useCallback(() => {
     if (state.coords) {

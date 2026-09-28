@@ -5,6 +5,32 @@ import type { ConnectionStatus } from './integrations/types'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
+const MONTH_STORAGE_KEY = 'admin-calendar-month'
+
+function readStoredMonth(): Date | null {
+  try {
+    const raw = window.localStorage.getItem(MONTH_STORAGE_KEY)
+    if (!raw) return null
+
+    const [year, month] = raw.split('-').map(Number)
+    if (!year || !month) return null
+
+    return new Date(year, month - 1, 1)
+  } catch {
+    return null
+  }
+}
+
+function writeStoredMonth(month: Date) {
+  try {
+    const year = month.getFullYear()
+    const monthNumber = String(month.getMonth() + 1).padStart(2, '0')
+    window.localStorage.setItem(MONTH_STORAGE_KEY, `${year}-${monthNumber}`)
+  } catch {
+    // Nothing to do — the view opens on today's month next visit instead.
+  }
+}
+
 function dayKey(date: Date) {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -78,11 +104,18 @@ function getStatus(idToken: string): ConnectionStatus {
  * cells with a dot when something is on, and a dialog listing that day's events
  * on tap. Seven narrow columns fit a phone without horizontal scrolling, which
  * the previous week-strip layout could not do.
+ *
+ * The viewed month is remembered in localStorage, the same idea as the sliding
+ * session token: reopening the app lands back where you left off instead of
+ * snapping to today's month every time.
  */
 export function CalendarWeekCard({ title, idToken }: { title: string; idToken: string }) {
   const status = getStatus(idToken)
 
   const [month, setMonth] = useState(() => {
+    const stored = readStoredMonth()
+    if (stored) return stored
+
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1)
   })
@@ -93,6 +126,10 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
 
   const monthLabel = month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+
+  useEffect(() => {
+    writeStoredMonth(month)
+  }, [month])
 
   useEffect(() => {
     if (status.state !== 'connected') {
