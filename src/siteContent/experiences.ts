@@ -50,9 +50,16 @@ export const educationEntries: EducationEntry[] = [
 
 export const professionalExperienceEntries: ProfessionalExperienceEntry[] = [
   {
+    position: 'Data Analyst',
+    company: 'State Farm',
+    date: 'September 2026 - Present',
+    category: 'technical',
+    note: '',
+  },
+  {
     position: 'BI Developer / Data Analyst II',
     company: 'HNTB / FDOT',
-    date: 'April 2025 - Present',
+    date: 'April 2025 - September 2026',
     category: 'technical',
     note: '  - Developed SQL, Python, and VBA–based analytics and automation pipelines to reconcile traffic and pricing data between source systems and reporting layers, reducing manual validation effort by ~60% and improving data reliability for statewide decision-making \n  - Analyzed statewide traffic and Dynamic Message Sign (DMS) datasets to validate operational accuracy across 28 transportation subsystems, supporting FDOT’s traffic management and pricing strategies for express lanes \n  - Designed reusable validation frameworks and dashboards to surface SLA risks, trend anomalies, and release readiness metrics, accelerating test and release cycles across three statewide deployments (2 SunGuide hotfixes, 1 SELS release), \n  - Partnered directly with FDOT stakeholders, developers, and BI teams to translate business and operational requirements into measurable data checks, curated datasets, and reporting outputs used by internal and external consumers, \n  - Supported ingestion and transformation of 20+ enterprise datasets, ensuring accuracy and consistency across reporting workflows used for operational monitoring and client-facing dashboards\n  - Leveraged LLM-assisted documentation analysis (self-hosted Ollama, Gemini Notebook LM) to extract requirements and generate structured validation artifacts, improving analysis throughput and accelerating development timelines by 40%+\n',
   },

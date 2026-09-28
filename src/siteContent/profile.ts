@@ -7,11 +7,11 @@
  */
 export const profile = {
   name: 'Abe Pasion',
-  role: 'BI Developer & Data Analyst',
-  location: 'Florida',
+  role: 'Data Analyst',
+  location: 'Georgia',
   tagline:
     'Working with data by day, building projects on the side, and figuring out what to make next.',
-  currently: 'BI Developer / Data Analyst II at HNTB / FDOT',
+  currently: 'Data Analyst at State Farm',
   email: 'pasionabe@gmail.com',
   linkedin: 'abe-pasion',
   github: 'Pasionfruit',

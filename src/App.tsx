@@ -764,8 +764,6 @@ function HomePage() {
     const isOpen = openSections.includes(id)
     if (isOpen) {
       sounds.sectionCollapse()
-    } else {
-      sounds.sectionExpand()
     }
 
     setOpenSections((previous) =>

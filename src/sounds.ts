@@ -19,7 +19,6 @@ function play(src: string) {
 }
 
 export const sounds = {
-  sectionExpand: () => play('/audio/section-expand.mp3'),
   sectionCollapse: () => play('/audio/section-collapse.mp3'),
   todoistComplete: () => play('/audio/todoist-complete.mp3'),
   studyWorkoutComplete: () => play('/audio/study-workout-complete.mp3'),

@@ -26,6 +26,14 @@ export const personalSitesSectionPage: PageContent = {
  */
 export const personalSiteEntries: PersonalSiteEntry[] = [
   {
+    name: 'Quack Island',
+    url: 'https://quackisland.onrender.com/',
+    tagline: 'Multiplayer 3D browser game',
+    description: 'A browser multiplayer world where players explore a procedural island, swim through the ocean, and join friends through code-based lobbies. Features synchronized weather, day-night cycles, and tides, with a volcano board-game race and a growing collection of party minigames.',
+    stack: ['TypeScript', 'React', 'Vite', 'Three.js', 'React Three Fiber', 'Node.js', 'WebSocket'],
+    status: 'in-progress',
+  },
+  {
     name: 'POV Cooking',
     url: 'https://pov-cooking.vercel.app/',
     logo: '/POV_Cooking.png',
