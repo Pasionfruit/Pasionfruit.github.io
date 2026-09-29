@@ -138,7 +138,7 @@ describe('guest home page', () => {
     renderAt('/')
 
     expect(screen.getByRole('heading', { level: 1, name: 'Abe Pasion' })).toBeTruthy()
-    expect(screen.getByText('BI Developer & Data Analyst')).toBeTruthy()
+    expect(screen.getByRole('img', { name: 'Abe Pasion, Data Analyst' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Résumé (PDF)' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'LinkedIn' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'GitHub' })).toBeTruthy()

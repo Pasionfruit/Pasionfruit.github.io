@@ -1,4 +1,4 @@
-import React, { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import React, { type CSSProperties, type ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
   Activity,
   BookOpen,
@@ -518,7 +518,7 @@ function SiteLayout({
   }, [])
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${isAdmin ? 'app-shell-admin' : ''}`}>
       <header className={`topbar ${isAdmin ? 'topbar-admin' : ''}`}>
         <Link to="/" className="brand" aria-label="Go to home page">
           <span className="brand-mark">{brandMark}</span>
@@ -1275,8 +1275,6 @@ function FinanceBarChart({
   selectedMonthIndex: number | null
   onMonthClick: (index: number) => void
 }) {
-  if (data.length === 0) return null
-
   const BAR_W = 12
   const BAR_GAP = 3
   const GROUP_PAD = 9
@@ -1288,6 +1286,29 @@ function FinanceBarChart({
   const LEFT_PAD = 52
   const RIGHT_PAD = 8
   const svgW = LEFT_PAD + data.length * GROUP_W + RIGHT_PAD
+
+  // On a phone the year is wider than the card and opens on January; bring the
+  // selected month (this month by default) into view instead, and pin the
+  // dollar axis so it does not scroll away with the bars.
+  const shellRef = useRef<HTMLDivElement | null>(null)
+  const [isScrollable, setIsScrollable] = useState(false)
+
+  useEffect(() => {
+    const shell = shellRef.current
+    if (!shell || typeof ResizeObserver === 'undefined') return
+    // Fires once on observe, so this also takes the first measurement.
+    const observer = new ResizeObserver(() => setIsScrollable(shell.scrollWidth > shell.clientWidth + 1))
+    observer.observe(shell)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const shell = shellRef.current
+    if (!shell || selectedMonthIndex === null || shell.scrollWidth <= shell.clientWidth) return
+    shell.scrollLeft = LEFT_PAD + (selectedMonthIndex + 0.5) * GROUP_W - shell.clientWidth / 2
+  }, [selectedMonthIndex, data.length, GROUP_W, LEFT_PAD])
+
+  if (data.length === 0) return null
 
   const maxVal = Math.max(...data.map((d) => Math.max(d.bills, d.expenses, d.income)), 1)
 
@@ -1301,74 +1322,87 @@ function FinanceBarChart({
   }
 
   return (
-    <div className="finance-bar-chart-shell">
-      <svg
-        viewBox={`0 0 ${svgW} ${SVG_H}`}
-        height={SVG_H}
-        style={{ display: 'block', width: `max(100%, ${svgW}px)` }}
-        aria-label="Monthly finances bar chart"
-      >
-        {[0.25, 0.5, 0.75, 1].map((pct) => {
-          const y = TOP_PAD + CHART_H - pct * CHART_H
-          return (
-            <g key={pct}>
-              <line x1={LEFT_PAD} y1={y} x2={svgW - RIGHT_PAD} y2={y} stroke="var(--border)" strokeDasharray="4 3" strokeWidth={1} />
-              <text x={LEFT_PAD - 5} y={y + 4} textAnchor="end" fontSize={9} fill="var(--text-muted)">{fmtY(pct * maxVal)}</text>
-            </g>
-          )
-        })}
-        <line x1={LEFT_PAD} y1={TOP_PAD + CHART_H} x2={svgW - RIGHT_PAD} y2={TOP_PAD + CHART_H} stroke="var(--border)" strokeWidth={1} />
-        {data.map((month, i) => {
-          const gx = LEFT_PAD + i * GROUP_W + GROUP_PAD
-          const isSelected = selectedMonthIndex === i
-          const isDimmed = selectedMonthIndex !== null && !isSelected
-          const bars: Array<{ val: number; fill: string }> = [
-            { val: month.bills, fill: '#eab308' },
-            { val: month.expenses, fill: '#ef4444' },
-            { val: month.income, fill: '#22c55e' },
-          ]
-          return (
-            <g key={month.key} onClick={() => onMonthClick(i)} style={{ cursor: 'pointer' }}>
-              {isSelected && (
-                <rect
-                  x={gx - GROUP_PAD + 1}
-                  y={TOP_PAD}
-                  width={GROUP_W - 2}
-                  height={CHART_H + LABEL_H - 4}
-                  fill="var(--accent, #6366f1)"
-                  opacity={0.08}
-                  rx={3}
-                />
-              )}
-              {bars.map((bar, j) => {
-                const h = bh(bar.val)
-                return (
+    <div>
+      <div className="finance-bar-chart-shell" ref={shellRef}>
+        {/* Only while scrolling: then the SVG is exactly svgW wide, so these sit
+            precisely over its own axis labels. Wider, the SVG centres itself. */}
+        {isScrollable ? (
+          <div className="finance-bar-chart-yaxis" style={{ width: LEFT_PAD, height: TOP_PAD + CHART_H }} aria-hidden="true">
+            {[0.25, 0.5, 0.75, 1].map((pct) => (
+              <span key={pct} style={{ top: TOP_PAD + CHART_H - pct * CHART_H - 5 }}>
+                {fmtY(pct * maxVal)}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <svg
+          viewBox={`0 0 ${svgW} ${SVG_H}`}
+          height={SVG_H}
+          style={{ display: 'block', width: `max(100%, ${svgW}px)` }}
+          aria-label="Monthly finances bar chart"
+        >
+          {[0.25, 0.5, 0.75, 1].map((pct) => {
+            const y = TOP_PAD + CHART_H - pct * CHART_H
+            return (
+              <g key={pct}>
+                <line x1={LEFT_PAD} y1={y} x2={svgW - RIGHT_PAD} y2={y} stroke="var(--border)" strokeDasharray="4 3" strokeWidth={1} />
+                <text x={LEFT_PAD - 5} y={y + 4} textAnchor="end" fontSize={9} fill="var(--text-muted)">{fmtY(pct * maxVal)}</text>
+              </g>
+            )
+          })}
+          <line x1={LEFT_PAD} y1={TOP_PAD + CHART_H} x2={svgW - RIGHT_PAD} y2={TOP_PAD + CHART_H} stroke="var(--border)" strokeWidth={1} />
+          {data.map((month, i) => {
+            const gx = LEFT_PAD + i * GROUP_W + GROUP_PAD
+            const isSelected = selectedMonthIndex === i
+            const isDimmed = selectedMonthIndex !== null && !isSelected
+            const bars: Array<{ val: number; fill: string }> = [
+              { val: month.bills, fill: '#eab308' },
+              { val: month.expenses, fill: '#ef4444' },
+              { val: month.income, fill: '#22c55e' },
+            ]
+            return (
+              <g key={month.key} onClick={() => onMonthClick(i)} style={{ cursor: 'pointer' }}>
+                {isSelected && (
                   <rect
-                    key={j}
-                    x={gx + j * (BAR_W + BAR_GAP)}
-                    y={TOP_PAD + CHART_H - h}
-                    width={BAR_W}
-                    height={h}
-                    fill={bar.fill}
-                    rx={2}
-                    opacity={isDimmed ? 0.28 : 0.9}
+                    x={gx - GROUP_PAD + 1}
+                    y={TOP_PAD}
+                    width={GROUP_W - 2}
+                    height={CHART_H + LABEL_H - 4}
+                    fill="var(--accent, #6366f1)"
+                    opacity={0.08}
+                    rx={3}
                   />
-                )
-              })}
-              <text
-                x={gx + (BAR_W * 3 + BAR_GAP * 2) / 2}
-                y={TOP_PAD + CHART_H + 15}
-                textAnchor="middle"
-                fontSize={9}
-                fontWeight={isSelected ? 700 : undefined}
-                fill={isSelected ? 'var(--text-strong)' : 'var(--text-muted)'}
-              >
-                {month.label}
-              </text>
-            </g>
-          )
-        })}
-      </svg>
+                )}
+                {bars.map((bar, j) => {
+                  const h = bh(bar.val)
+                  return (
+                    <rect
+                      key={j}
+                      x={gx + j * (BAR_W + BAR_GAP)}
+                      y={TOP_PAD + CHART_H - h}
+                      width={BAR_W}
+                      height={h}
+                      fill={bar.fill}
+                      rx={2}
+                      opacity={isDimmed ? 0.28 : 0.9}
+                    />
+                  )
+                })}
+                <text
+                  x={gx + (BAR_W * 3 + BAR_GAP * 2) / 2}
+                  y={TOP_PAD + CHART_H + 15}
+                  textAnchor="middle"
+                  fontSize={9}
+                  fontWeight={isSelected ? 700 : undefined}
+                  fill={isSelected ? 'var(--text-strong)' : 'var(--text-muted)'}
+                >
+                  {month.label}
+                </text>
+              </g>
+            )
+          })}
+        </svg>
+      </div>
       <div className="finance-bar-chart-legend">
         {([['#eab308', 'Bills'], ['#ef4444', 'Expenses'], ['#22c55e', 'Income']] as const).map(([color, label]) => (
           <span key={label} className="finance-bar-chart-legend-item">
@@ -1384,7 +1418,8 @@ function FinanceBarChart({
 function PiggyBankIcon({ fillPct }: { fillPct: number }) {
   const clipped = Math.min(Math.max(fillPct, 0), 100)
   const fillY = 80 - (clipped / 100) * 60
-  const id = 'piggy-clip'
+  // Unique per icon: with a shared id every piggy clips to the first trip's fill.
+  const id = `piggy-clip${useId()}`
   return (
     <svg className="trip-piggy" viewBox="0 0 100 100" width="80" height="80" aria-hidden="true">
       <defs>
@@ -4491,7 +4526,7 @@ function WeeklyWorkoutResetCard({
 
       {!isLoading && isExpanded ? (
         <>
-          <div className="sheets-table-shell">
+          <div className="sheets-table-shell weekly-reset-table-shell">
             <table className="sheets-table weekly-reset-table">
               <thead>
                 <tr>
@@ -4721,7 +4756,7 @@ function WeeklyStudyResetCard({
 
       {!isLoading && isExpanded ? (
         <>
-          <div className="sheets-table-shell">
+          <div className="sheets-table-shell weekly-reset-table-shell">
             <table className="sheets-table weekly-reset-table">
               <thead>
                 <tr>

@@ -167,5 +167,7 @@ export function useWeather() {
     }
   }, [state.coords, loadForCoords, locate])
 
-  return { ...state, refresh, retry: locate }
+  const retry = useCallback(() => locate(), [locate])
+
+  return { ...state, refresh, retry }
 }
