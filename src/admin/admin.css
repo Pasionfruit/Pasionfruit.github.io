@@ -545,28 +545,6 @@
   cursor: default;
 }
 
-.journal-tag-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.7rem;
-}
-
-.journal-tag-filter button {
-  padding: 0.2rem 0.55rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text-muted);
-  font-size: 0.74rem;
-  cursor: pointer;
-}
-
-.journal-tag-filter button.active {
-  border-color: var(--page-accent, var(--accent));
-  color: var(--text-strong);
-}
-
 .journal-list {
   margin: 0.8rem 0 0;
   padding: 0;
@@ -1398,12 +1376,12 @@
 }
 
 /* ── Assistant Ace ────────────────────────────────────────────────────────
-   A floating button in the bottom-right corner of every admin page, opening a
+   A floating button in the bottom-left corner of every admin page, opening a
    chat panel above it. On phones the panel takes the whole screen and the
    button sits above the bottom tab bar. */
 
 .ace-launcher {
-  --ace-edge: max(1.25rem, calc(env(safe-area-inset-right) + 0.75rem));
+  --ace-edge: max(1.25rem, calc(env(safe-area-inset-left) + 0.75rem));
   --ace-fab-size: 3.5rem;
   --ace-fab-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
@@ -1415,7 +1393,7 @@
 
 .ace-fab {
   position: fixed;
-  right: var(--ace-edge);
+  left: var(--ace-edge);
   bottom: var(--ace-fab-bottom);
   z-index: 30;
   display: grid;
@@ -1451,7 +1429,7 @@
 
 .ace-panel {
   position: fixed;
-  right: var(--ace-edge);
+  left: var(--ace-edge);
   bottom: calc(var(--ace-fab-bottom) + var(--ace-fab-size) + 0.75rem);
   z-index: 30;
   display: flex;
@@ -1463,7 +1441,7 @@
   background: var(--surface);
   box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.22);
   overflow: hidden;
-  transform-origin: bottom right;
+  transform-origin: bottom left;
   animation: ace-panel-in 160ms ease-out;
 }
 
@@ -1922,6 +1900,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  padding: 0.85rem 0;
 }
 
 .journal-pager-btn {
@@ -1957,6 +1936,87 @@
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--text-muted);
+}
+
+/* ── Journal: password screen over past entries ── */
+
+.journal-lock {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  padding: 1.5rem 1rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.6rem;
+  text-align: center;
+}
+
+.journal-lock h4 {
+  margin: 0;
+}
+
+.journal-lock .sheets-meta {
+  margin: 0;
+}
+
+.journal-lock-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
+.journal-lock-form {
+  display: flex;
+  gap: 0.45rem;
+  width: min(100%, 20rem);
+  margin-top: 0.35rem;
+}
+
+.journal-lock-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.journal-lock-form button {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.journal-lock-form :disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.journal-lock-error {
+  margin: 0;
+  min-height: 1.2rem;
+  color: #b4443c;
+  font-size: 0.8rem;
+}
+
+/* Holds its line so the panel does not jump as the message appears. */
+.journal-lock-error.is-empty {
+  visibility: hidden;
+}
+
+:root[data-theme='dark'] .journal-lock-error {
+  color: #f2938c;
 }
 
 /* Trend note under the mood strip. */
@@ -2003,7 +2063,4 @@
     height: 2.5rem;
   }
 
-  .journal-tag-filter button {
-    min-height: 2.25rem;
-  }
 }

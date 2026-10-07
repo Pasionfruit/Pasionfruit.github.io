@@ -53,7 +53,7 @@ selector.
 
 ### Ace
 
-Assistant Ace is a floating button in the bottom-right corner of every admin
+Assistant Ace is a floating button in the bottom-left corner of every admin
 page ([AceLauncher.tsx](src/admin/ace/AceLauncher.tsx)), not a card on Home. It
 opens a chat panel — full screen on phones, above the tab bar — that answers
 general questions as well as ones about Abe's own data: mail, calendar and
@@ -355,6 +355,13 @@ Only `VITE_TODOIST_API_TOKEN` needs a dev-server restart to take effect — it
 configures a proxy in `vite.config.ts` rather than being read in the browser.
 
 ## Journal
+
+Past entries sit behind a password; **New entry** does not, so writing never
+needs it. Set `VITE_JOURNAL_PASSWORD_SHA256` (a GitHub secret, plus `.env` for
+local dev) to the SHA-256 of the password — `.env.example` has the one-liner.
+It is a privacy screen for an unlocked device, not a security boundary: reads
+already need the admin sign-in, the entries are still fetched for the mood
+card, and the hash ships in the public bundle. Leaving the page re-locks it.
 
 Beyond the entry list, the Journal dashboard has:
 

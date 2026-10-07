@@ -3,7 +3,7 @@ import { Sparkles, X } from 'lucide-react'
 import { AceChat } from './AceChat'
 
 /**
- * Ace as a floating button in the bottom-right corner of every admin page.
+ * Ace as a floating button in the bottom-left corner of every admin page.
  *
  * The chat mounts on first open, not on page load — gathering context reads
  * mail, calendar, Todoist, Garmin and the journal, which is too much to do on

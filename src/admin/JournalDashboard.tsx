@@ -15,6 +15,7 @@ import { MOOD_SCALE } from './journal/moods'
 import { VerseOfTheDayCard } from './VerseOfTheDayCard'
 import { GarminSleepCard } from './GarminCards'
 import { GRATITUDE_LINE_COUNT, getPromptOfTheDay } from './journal/prompts'
+import { JournalLock } from './journal/JournalLock'
 
 /** Best first in the picker; MOOD_SCALE is ordered worst-first for scoring. */
 const MOODS = [...MOOD_SCALE].reverse()
@@ -99,7 +100,6 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isComposing, setIsComposing] = useState(false)
   const [draft, setDraft] = useState<Draft>(emptyDraft)
-  const [tagFilter, setTagFilter] = useState('')
   const [entryIndex, setEntryIndex] = useState(0)
 
   async function load() {
@@ -141,30 +141,11 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
     }
   }, [])
 
-  const allTags = useMemo(() => {
-    const seen = new Set<string>()
-    for (const entry of entries) {
-      for (const tag of entry.tags) {
-        seen.add(tag)
-      }
-    }
-    return [...seen].sort((a, b) => a.localeCompare(b))
-  }, [entries])
-
   // Newest first; the pager walks back one day at a time from here.
-  const visibleEntries = useMemo(() => {
-    const filtered = tagFilter ? entries.filter((entry) => entry.tags.includes(tagFilter)) : entries
-    return [...filtered].sort((a, b) => b.entry_date.localeCompare(a.entry_date))
-  }, [entries, tagFilter])
-
-  // A new filter starts from the newest entry; a shrunken list stays in range.
-  useEffect(() => {
-    setEntryIndex(0)
-  }, [tagFilter])
-
-  useEffect(() => {
-    setEntryIndex((index) => Math.min(index, Math.max(0, visibleEntries.length - 1)))
-  }, [visibleEntries])
+  const visibleEntries = useMemo(
+    () => [...entries].sort((a, b) => b.entry_date.localeCompare(a.entry_date)),
+    [entries],
+  )
 
   // Consecutive days with an entry, counting back from today.
   const streak = useMemo(() => {
@@ -181,8 +162,10 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
   }, [entries])
 
   // The card shows one entry at a time; the pager moves through visibleEntries.
-  const currentEntry: JournalEntryRecord | undefined =
-    visibleEntries[Math.min(entryIndex, Math.max(0, visibleEntries.length - 1))]
+  // Clamped here rather than in an effect, so a delete that shrinks the list
+  // never leaves the pager pointing past its end.
+  const pageIndex = Math.min(entryIndex, Math.max(0, visibleEntries.length - 1))
+  const currentEntry: JournalEntryRecord | undefined = visibleEntries[pageIndex]
 
   async function handleSave() {
     if (!canWrite || !idToken || isWriting || !draft.entryDate) {
@@ -286,28 +269,6 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
           </div>
         </div>
 
-        {allTags.length > 0 ? (
-          <div className="journal-tag-filter">
-            <button
-              type="button"
-              className={tagFilter === '' ? 'active' : ''}
-              onClick={() => setTagFilter('')}
-            >
-              All
-            </button>
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className={tagFilter === tag ? 'active' : ''}
-                onClick={() => setTagFilter(tag === tagFilter ? '' : tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        ) : null}
-
         {isEditorOpen ? (
           <div className="journal-editor">
             <div className="journal-editor-row">
@@ -405,106 +366,109 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
         {writeError ? <p className="sheets-meta">{writeError}</p> : null}
 
-        {isLoading ? (
-          <p className="sheets-meta">Loading journal…</p>
-        ) : loadError ? (
-          <p className="sheets-meta">{loadError}</p>
-        ) : !currentEntry ? (
-          <p className="sheets-meta">
-            {tagFilter ? `No entries tagged "${tagFilter}".` : 'No entries yet.'}
-          </p>
-        ) : (
-          <>
-            <div className="journal-pager">
-              <button
-                type="button"
-                className="journal-pager-btn"
-                onClick={() => setEntryIndex((index) => Math.min(index + 1, visibleEntries.length - 1))}
-                disabled={entryIndex >= visibleEntries.length - 1}
-                aria-label="Older entry"
-              >
-                <ChevronLeft size={16} aria-hidden="true" />
-              </button>
-              <div className="journal-pager-label">
-                <span>{formatEntryDate(currentEntry.entry_date)}</span>
-                <small>
-                  {entryIndex + 1} of {visibleEntries.length}
-                </small>
-              </div>
-              <button
-                type="button"
-                className="journal-pager-btn"
-                onClick={() => setEntryIndex((index) => Math.max(index - 1, 0))}
-                disabled={entryIndex === 0}
-                aria-label="Newer entry"
-              >
-                <ChevronRight size={16} aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="journal-entry journal-entry--single">
-              <div className="journal-entry-head">
-                <h4>{currentEntry.title || 'Untitled'}</h4>
-                <div className="journal-entry-meta">
-                  {currentEntry.mood ? <span className="admin-pill">{currentEntry.mood}</span> : null}
-                  {canWrite ? (
-                    <>
-                      <button
-                        type="button"
-                        className="secondary-action"
-                        onClick={() => {
-                          setIsComposing(false)
-                          setEditingId(currentEntry.journal_id)
-                          setDraft(toDraft(currentEntry))
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="secondary-action"
-                        onClick={() => handleDelete(currentEntry)}
-                        disabled={isWriting}
-                      >
-                        Delete
-                      </button>
-                    </>
-                  ) : null}
+        {/* Reading entries back is behind the password; writing a new one is
+            not. The lock stays mounted while the editor opens and closes, so
+            it only re-locks when you leave the page. */}
+        <JournalLock>
+          {isLoading ? (
+            <p className="sheets-meta">Loading journal…</p>
+          ) : loadError ? (
+            <p className="sheets-meta">{loadError}</p>
+          ) : !currentEntry ? (
+            <p className="sheets-meta">No entries yet.</p>
+          ) : (
+            <>
+              <div className="journal-pager">
+                <button
+                  type="button"
+                  className="journal-pager-btn"
+                  onClick={() => setEntryIndex(Math.min(pageIndex + 1, visibleEntries.length - 1))}
+                  disabled={pageIndex >= visibleEntries.length - 1}
+                  aria-label="Older entry"
+                >
+                  <ChevronLeft size={16} aria-hidden="true" />
+                </button>
+                <div className="journal-pager-label">
+                  <span>{formatEntryDate(currentEntry.entry_date)}</span>
+                  <small>
+                    {pageIndex + 1} of {visibleEntries.length}
+                  </small>
                 </div>
+                <button
+                  type="button"
+                  className="journal-pager-btn"
+                  onClick={() => setEntryIndex(Math.max(pageIndex - 1, 0))}
+                  disabled={pageIndex === 0}
+                  aria-label="Newer entry"
+                >
+                  <ChevronRight size={16} aria-hidden="true" />
+                </button>
               </div>
 
-              {currentEntry.body ? <p className="journal-entry-body">{currentEntry.body}</p> : null}
+              <div className="journal-entry journal-entry--single">
+                <div className="journal-entry-head">
+                  <h4>{currentEntry.title || 'Untitled'}</h4>
+                  <div className="journal-entry-meta">
+                    {currentEntry.mood ? <span className="admin-pill">{currentEntry.mood}</span> : null}
+                    {canWrite ? (
+                      <>
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => {
+                            setIsComposing(false)
+                            setEditingId(currentEntry.journal_id)
+                            setDraft(toDraft(currentEntry))
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="secondary-action"
+                          onClick={() => handleDelete(currentEntry)}
+                          disabled={isWriting}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
 
-              {currentEntry.gratitude.length > 0 ? (
-                <div className="journal-gratitude">
-                  <h5>Grateful for</h5>
-                  <ul>
-                    {currentEntry.gratitude.map((line) => (
-                      <li key={line}>{line}</li>
+                {currentEntry.body ? <p className="journal-entry-body">{currentEntry.body}</p> : null}
+
+                {currentEntry.gratitude.length > 0 ? (
+                  <div className="journal-gratitude">
+                    <h5>Grateful for</h5>
+                    <ul>
+                      {currentEntry.gratitude.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {currentEntry.reflection ? (
+                  <div className="journal-reflection">
+                    <h5>{currentEntry.prompt || 'Reflection'}</h5>
+                    <p>{currentEntry.reflection}</p>
+                  </div>
+                ) : null}
+
+                {currentEntry.tags.length > 0 ? (
+                  <div className="journal-entry-tags">
+                    {currentEntry.tags.map((tag) => (
+                      <span key={tag} className="journal-tag">
+                        {tag}
+                      </span>
                     ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              {currentEntry.reflection ? (
-                <div className="journal-reflection">
-                  <h5>{currentEntry.prompt || 'Reflection'}</h5>
-                  <p>{currentEntry.reflection}</p>
-                </div>
-              ) : null}
-
-              {currentEntry.tags.length > 0 ? (
-                <div className="journal-entry-tags">
-                  {currentEntry.tags.map((tag) => (
-                    <span key={tag} className="journal-tag">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          </>
-        )}
+                  </div>
+                ) : null}
+              </div>
+            </>
+          )}
+        </JournalLock>
       </article>
     </AdminPage>
   )
