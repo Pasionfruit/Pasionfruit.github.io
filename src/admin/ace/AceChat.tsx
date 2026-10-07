@@ -1,160 +1,100 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, Mic, MicOff, MoonStar, Send, Sparkles, Plus, RefreshCw, X } from 'lucide-react'
-import {
-  aceChat,
-  aceJson,
-  aceTts,
-  getAceConfig,
-  type AceMessage,
-} from './ace/client'
-import { buildAceContext, renderAceContext, type AceContext } from './ace/context'
+import { Check, Mic, MicOff, Plus, RotateCcw, Send, Sparkles, X } from 'lucide-react'
+import { aceChat, aceJson, aceTts, getAceConfig, type AceMessage } from './client'
+import { AceMarkdown } from './AceMarkdown'
+import { buildAceContext, renderAceContext, type AceContext } from './context'
 import {
   ACE_SYSTEM_PROMPT,
   ARCHIVE_SCHEMA,
   COMPLETION_SCHEMA,
   CONTEXT_PENDING_PROMPT,
-  EVENING_REPORT_PROMPT,
-  MORNING_REPORT_PROMPT,
+  QUICK_PROMPTS,
   REMINDER_SCHEMA,
   archiveExtractionPrompt,
   completionExtractionPrompt,
   reminderExtractionPrompt,
   type ArchiveDraft,
   type CompletionDraft,
+  type QuickPrompt,
   type ReminderDraft,
-} from './ace/prompts'
-import { archiveMail } from '../data/sheets/repositories'
-import { closeTask, createTask } from '../data/todoist/repositories'
-import { todayKey } from '../data/todoist/dates'
+} from './prompts'
+import { archiveMail } from '../../data/sheets/repositories'
+import { closeTask, createTask } from '../../data/todoist/repositories'
+import { todayKey } from '../../data/todoist/dates'
 
-type ChatTurn = { id: string; role: 'user' | 'assistant'; content: string }
+/**
+ * `prompt` is what the model was actually asked, when that differs from what
+ * the bubble shows — a quick prompt displays "Good morning" but sends the whole
+ * briefing instruction, and the history has to replay the real thing.
+ */
+type ChatTurn = { id: string; role: 'user' | 'assistant'; content: string; prompt?: string }
 
 /** One empty WAV, used only to unlock mobile audio from inside a tap. */
 const SILENT_WAV =
   'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA='
 
-const BRIEFING_KEYS = { morning: 'ace-briefing', evening: 'ace-briefing-evening' } as const
-type BriefingKind = keyof typeof BRIEFING_KEYS
+const CONVERSATION_KEY = 'ace-conversation'
 
-/** Briefings are per-day, so a stale one from yesterday is never shown. */
-function readCachedBriefing(kind: BriefingKind): string {
+/** Replayed to the model each turn; older turns fall off so the prompt stays inside the context window. */
+const HISTORY_TURNS = 20
+
+/** Kept on disk; a long day of chat is trimmed from the front. */
+const STORED_TURNS = 60
+
+/** Reopening the panel after this long refreshes what Ace knows. */
+const CONTEXT_STALE_MS = 15 * 60 * 1000
+
+/** Today's conversation only: tomorrow starts clean, like the briefings it replaced. */
+function readConversation(): ChatTurn[] {
   try {
-    const raw = localStorage.getItem(BRIEFING_KEYS[kind])
-    if (!raw) return ''
-    const parsed = JSON.parse(raw) as { day?: string; text?: string }
-    return parsed.day === todayKey() ? parsed.text ?? '' : ''
+    const raw = localStorage.getItem(CONVERSATION_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as { day?: string; turns?: ChatTurn[] }
+    return parsed.day === todayKey() && Array.isArray(parsed.turns) ? parsed.turns : []
   } catch {
-    return ''
+    return []
   }
 }
 
-function writeCachedBriefing(kind: BriefingKind, text: string) {
+function writeConversation(turns: ChatTurn[]) {
   try {
-    localStorage.setItem(BRIEFING_KEYS[kind], JSON.stringify({ day: todayKey(), text }))
+    if (turns.length === 0) {
+      localStorage.removeItem(CONVERSATION_KEY)
+    } else {
+      localStorage.setItem(CONVERSATION_KEY, JSON.stringify({ day: todayKey(), turns: turns.slice(-STORED_TURNS) }))
+    }
   } catch {
-    // Private windows and blocked site data both throw; the briefing is a
-    // convenience, so losing the cache is not worth surfacing.
+    // Private windows and blocked site data both throw; the conversation still
+    // works for this visit, it just will not survive a reload.
   }
 }
 
 /**
- * Renders the model's markdown-ish output without pulling in a parser. Bold
- * runs, section headings and list items are all these prompts ask for, and a
- * markdown dependency for that would be a poor trade.
- */
-function inlineBold(text: string, keyPrefix: string) {
-  return text.split(/(\*\*[^*]+\*\*)/).map((part, index) => {
-    const bold = /^\*\*([^*]+)\*\*$/.exec(part)
-    return bold ? (
-      <strong key={`${keyPrefix}-${index}`}>{bold[1]}</strong>
-    ) : (
-      <span key={`${keyPrefix}-${index}`}>{part}</span>
-    )
-  })
-}
-
-export function AceMarkdown({ text, className }: { text: string; className?: string }) {
-  return (
-    <div className={className}>
-      {text.split('\n').map((line, index) => {
-        const trimmed = line.trim()
-        if (!trimmed) return null
-
-        /*
-         * A line opening with a bold run is a section heading, and the rest of
-         * that line is its body — which must not inherit the heading's weight,
-         * or every briefing section reads as a title with nothing under it.
-         */
-        const heading = /^\*\*(.+?)\*\*\s*(.*)$/.exec(trimmed)
-        if (heading) {
-          const body = heading[2].replace(/^[\s:—–-]+/, '')
-          // A real space, not a CSS one: pseudo-element content is not copied
-          // to the clipboard, so "**Meeting** — Call" used to paste as "MeetingCall".
-          return (
-            <p key={index} className="ace-md-heading">
-              <span className="ace-md-label">{heading[1]}</span>
-              {body ? (
-                <>
-                  {' '}
-                  <span className="ace-md-rest">{inlineBold(body, `b${index}`)}</span>
-                </>
-              ) : null}
-            </p>
-          )
-        }
-
-        if (/^[-*]\s+/.test(trimmed)) {
-          return (
-            <p key={index} className="ace-md-item">
-              {inlineBold(trimmed.replace(/^[-*]\s+/, ''), `i${index}`)}
-            </p>
-          )
-        }
-
-        const numbered = /^(\d+)[.)]\s+(.*)$/.exec(trimmed)
-        if (numbered) {
-          return (
-            <p key={index} className="ace-md-item ace-md-item-numbered">
-              <span className="ace-md-num">{numbered[1]}.</span>
-              <span>{inlineBold(numbered[2], `n${index}`)}</span>
-            </p>
-          )
-        }
-
-        return <p key={index}>{inlineBold(trimmed, `p${index}`)}</p>
-      })}
-    </div>
-  )
-}
-
-/**
- * Assistant Ace: a briefing built from the day's real data, and a chat box to
- * the model running on Abe's own machine.
+ * Ace's conversation: a chat with the model running on Abe's own machine, fed
+ * his mail, calendar, tasks, sleep, training and mood as context.
  *
- * The left pane works whether or not the model is reachable — the counts and
- * the yesterday recap are computed here, not generated — so the card degrades
- * to what the old Yesterday card showed rather than to nothing.
+ * Mounted once the launcher is first opened and kept mounted while hidden, so
+ * closing the panel or moving between dashboards does not lose the thread.
  */
-export function AssistantAceCard({
-  title,
+export function AceChat({
   idToken,
   todoistConfigured,
+  open,
+  onClose,
 }: {
-  title: string
   idToken: string
   todoistConfigured: boolean
+  open: boolean
+  onClose: () => void
 }) {
   const config = useMemo(() => getAceConfig(), [])
 
   const [context, setContext] = useState<AceContext | null>(null)
   const [contextError, setContextError] = useState('')
+  const contextLoadedAtRef = useRef(0)
+  const contextRequestRef = useRef(0)
 
-  // Evening review wins when both exist — later in the day, more current.
-  const [briefing, setBriefing] = useState(() => readCachedBriefing('evening') || readCachedBriefing('morning'))
-  const [isBriefing, setIsBriefing] = useState<BriefingKind | null>(null)
-  const [briefingError, setBriefingError] = useState('')
-
-  const [turns, setTurns] = useState<ChatTurn[]>([])
+  const [turns, setTurns] = useState<ChatTurn[]>(() => readConversation())
   const [draft, setDraft] = useState('')
   const [streaming, setStreaming] = useState('')
   const [isThinking, setIsThinking] = useState(false)
@@ -173,6 +113,7 @@ export function AssistantAceCard({
 
   const abortRef = useRef<AbortController | null>(null)
   const transcriptRef = useRef<HTMLDivElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   /* ── Voice mode: press the mic, speak, hear the reply, speak again. ── */
   const [voiceState, setVoiceState] = useState<'off' | 'listening' | 'speaking'>('off')
@@ -256,27 +197,59 @@ export function AssistantAceCard({
   /** Soft settling chord: your turn. */
   const CHORD_DONE = [523.25, 659.25, 783.99] // C5 · E5 · G5
 
-  useEffect(() => {
-    let cancelled = false
-
+  /**
+   * Gathers everything Ace is told. Only the newest request may land: a slow
+   * first load must not overwrite the fresh one a "New conversation" started.
+   */
+  function loadContext() {
+    const request = ++contextRequestRef.current
     void (async () => {
       try {
         const next = await buildAceContext(idToken, todoistConfigured)
-        if (!cancelled) {
+        if (request === contextRequestRef.current) {
           setContext(next)
           setContextError('')
+          contextLoadedAtRef.current = Date.now()
         }
       } catch (caught) {
-        if (!cancelled) {
+        if (request === contextRequestRef.current) {
           setContextError(caught instanceof Error ? caught.message : 'Unable to gather context')
         }
       }
     })()
+  }
 
+  // First load on mount — which is the first time the panel opens, not page load.
+  useEffect(() => {
+    loadContext()
     return () => {
-      cancelled = true
+      contextRequestRef.current += 1
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idToken, todoistConfigured])
+
+  useEffect(() => {
+    if (!open) {
+      // A hidden panel must not keep listening or talking.
+      if (voiceOnRef.current) endVoiceMode()
+      return
+    }
+
+    if (contextLoadedAtRef.current && Date.now() - contextLoadedAtRef.current > CONTEXT_STALE_MS) {
+      loadContext()
+    }
+
+    // Focus the box for keyboard users; on touch this would throw the keyboard
+    // up over the panel before anyone asked for it.
+    if (typeof window.matchMedia === 'function' && window.matchMedia('(pointer: fine)').matches) {
+      inputRef.current?.focus()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  useEffect(() => {
+    writeConversation(turns)
+  }, [turns])
 
   // Keep the newest turn in view as tokens arrive.
   useEffect(() => {
@@ -284,7 +257,7 @@ export function AssistantAceCard({
     if (node) {
       node.scrollTop = node.scrollHeight
     }
-  }, [turns, streaming])
+  }, [turns, streaming, open])
 
   useEffect(
     () => () => {
@@ -306,34 +279,6 @@ export function AssistantAceCard({
    */
   function contextBlock(current: AceContext | null) {
     return current ? `Context for today:\n\n${renderAceContext(current)}` : CONTEXT_PENDING_PROMPT
-  }
-
-  async function handleBriefing(kind: BriefingKind) {
-    if (!config || !context || isBriefing) return
-
-    setIsBriefing(kind)
-    setBriefingError('')
-    setBriefing('')
-
-    try {
-      const prompt = kind === 'morning' ? MORNING_REPORT_PROMPT : EVENING_REPORT_PROMPT
-      const text = await aceChat({
-        config,
-        idToken,
-        messages: [
-          { role: 'system', content: ACE_SYSTEM_PROMPT },
-          { role: 'user', content: `${contextBlock(context)}\n\n${prompt}` },
-        ],
-        onProgress: setBriefing,
-      })
-
-      setBriefing(text)
-      writeCachedBriefing(kind, text)
-    } catch (caught) {
-      setBriefingError(caught instanceof Error ? caught.message : 'Ace could not write the briefing')
-    } finally {
-      setIsBriefing(null)
-    }
   }
 
   /** Every open task Ace can be told about, deduplicated. */
@@ -409,6 +354,7 @@ export function AssistantAceCard({
     return markdown
       .replace(/\*\*/g, '')
       .replace(/^[-*]\s+/gm, '')
+      .replace(/^#+\s+/gm, '')
       .replace(/`+/g, '')
       .trim()
   }
@@ -602,7 +548,9 @@ export function AssistantAceCard({
       if (!voiceOnRef.current) return
       if (finalText) {
         setDraft('')
-        void handleAsk(finalText)
+        // Through the ref: this closure may be several renders old, and an old
+        // handleAsk would replay an old history.
+        void handleAskRef.current(finalText)
       } else {
         // Silence timeout — keep the mic open while voice mode is on.
         startListening()
@@ -637,58 +585,60 @@ export function AssistantAceCard({
     }
   }
 
-  async function handleAsk(spoken?: string) {
-    const question = (spoken ?? draft).trim()
+  async function handleAsk(spoken?: string, quick?: QuickPrompt) {
+    const question = quick ? quick.label : (spoken ?? draft).trim()
     if (!config || !question || isThinking) return
 
-    // "End" closes the voice conversation outright.
-    if (voiceOnRef.current && /^(end|end (the )?conversation|stop listening|goodbye|bye)[\s.!]*$/i.test(question)) {
-      setDraft('')
-      endVoiceMode()
-      return
+    if (!quick) {
+      // "End" closes the voice conversation outright.
+      if (voiceOnRef.current && /^(end|end (the )?conversation|stop listening|goodbye|bye)[\s.!]*$/i.test(question)) {
+        setDraft('')
+        endVoiceMode()
+        return
+      }
+
+      // A pending confirmation chip can be answered by voice or text.
+      const pendingYes = /^(yes|yeah|yep|sure|do it|confirm|check it|mark it|archive it)\b/i
+      const pendingNo = /^(no|nope|cancel|leave it|not that)\b/i
+      if (completion) {
+        if (pendingYes.test(question)) {
+          setDraft('')
+          void handleConfirmComplete()
+          return
+        }
+        if (pendingNo.test(question)) {
+          setCompletion(null)
+          setDraft('')
+          if (voiceOnRef.current) startListening()
+          return
+        }
+      }
+      if (mailArchive) {
+        if (pendingYes.test(question)) {
+          setDraft('')
+          void handleConfirmArchive()
+          return
+        }
+        if (pendingNo.test(question)) {
+          setMailArchive(null)
+          setDraft('')
+          if (voiceOnRef.current) startListening()
+          return
+        }
+      }
     }
 
-    // A pending confirmation chip can be answered by voice or text.
-    const pendingYes = /^(yes|yeah|yep|sure|do it|confirm|check it|mark it|archive it)\b/i
-    const pendingNo = /^(no|nope|cancel|leave it|not that)\b/i
-    if (completion) {
-      if (pendingYes.test(question)) {
-        setDraft('')
-        void handleConfirmComplete()
-        return
-      }
-      if (pendingNo.test(question)) {
-        setCompletion(null)
-        setDraft('')
-        if (voiceOnRef.current) startListening()
-        return
-      }
-    }
-    if (mailArchive) {
-      if (pendingYes.test(question)) {
-        setDraft('')
-        void handleConfirmArchive()
-        return
-      }
-      if (pendingNo.test(question)) {
-        setMailArchive(null)
-        setDraft('')
-        if (voiceOnRef.current) startListening()
-        return
-      }
-    }
-
-    const turn: ChatTurn = { id: `u-${Date.now()}`, role: 'user', content: question }
+    const turn: ChatTurn = { id: `u-${Date.now()}`, role: 'user', content: question, prompt: quick?.prompt }
     const history = [...turns, turn]
 
     setTurns(history)
-    setDraft('')
+    if (!quick) setDraft('')
     setChatError('')
     setStreaming('')
     setIsThinking(true)
 
     // "I did X" → offer to check off the matching task instead of chatting.
-    if (todoistConfigured && /\b(did|done|finished|finish|complete|completed|closed|checked)\b/i.test(question)) {
+    if (!quick && todoistConfigured && /\b(did|done|finished|finish|complete|completed|closed|checked)\b/i.test(question)) {
       const open = openTasks()
       if (open.length > 0) {
         try {
@@ -722,6 +672,7 @@ export function AssistantAceCard({
 
     // "I addressed that email" → offer to archive the matching thread.
     if (
+      !quick &&
       context &&
       context.mail.length > 0 &&
       /\b(address(ed)?|repl(y|ied)|respond(ed)?|archiv\w*|dealt with|took care of|handled|done with)\b/i.test(question)
@@ -767,7 +718,7 @@ export function AssistantAceCard({
       const messages: AceMessage[] = [
         { role: 'system', content: ACE_SYSTEM_PROMPT },
         { role: 'system', content: contextBlock(context) },
-        ...history.map((entry) => ({ role: entry.role, content: entry.content })),
+        ...history.slice(-HISTORY_TURNS).map((entry) => ({ role: entry.role, content: entry.prompt ?? entry.content })),
       ]
 
       const answer = await aceChat({
@@ -795,6 +746,11 @@ export function AssistantAceCard({
       abortRef.current = null
     }
   }
+
+  const handleAskRef = useRef(handleAsk)
+  useEffect(() => {
+    handleAskRef.current = handleAsk
+  })
 
   /** Turn the box's contents into a proposed task, for confirmation. */
   async function handleRemember() {
@@ -849,6 +805,23 @@ export function AssistantAceCard({
     }
   }
 
+  /** A clean slate: no turns, no pending chips, and freshly gathered context. */
+  function handleNewConversation() {
+    abortRef.current?.abort()
+    if (voiceOnRef.current) endVoiceMode()
+    setTurns([])
+    setDraft('')
+    setStreaming('')
+    setIsThinking(false)
+    setChatError('')
+    setReminder(null)
+    setReminderNotice('')
+    setCompletion(null)
+    setMailArchive(null)
+    setContext(null)
+    loadContext()
+  }
+
   const unread = context?.mail.filter((message) => message.unread).length ?? 0
   const eventsToday = useMemo(() => {
     if (!context) return 0
@@ -864,298 +837,257 @@ export function AssistantAceCard({
     }).length
   }, [context])
 
-  return (
-    <article className="info-card admin-card ace-card">
-      <div className="admin-card-head">
-        <h3>{title}</h3>
-        <div className="admin-card-actions">
-          {config ? (
-            <span className="admin-pill">{config.model}</span>
-          ) : (
-            <span className="admin-pill">Offline</span>
-          )}
-        </div>
-      </div>
+  const status = !config ? 'Offline' : context ? config.model : 'Gathering your day…'
 
-      <div className="ace-panes">
-        {/* ── Briefing ─────────────────────────────────────────────────── */}
-        <section className="ace-pane" aria-label="Briefing">
-          <div className="ace-pane-head">
-            <h4>Briefing</h4>
-            {config && context ? (
-              <div className="ace-briefing-btns">
-                <button
-                  type="button"
-                  className="ace-ghost-btn"
-                  onClick={() => void handleBriefing('morning')}
-                  disabled={isBriefing !== null}
-                >
-                  {isBriefing === 'morning' ? (
-                    <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" />
-                  ) : (
-                    <Sparkles size={13} strokeWidth={1.8} aria-hidden="true" />
-                  )}
-                  <span>{isBriefing === 'morning' ? 'Writing…' : 'Good morning'}</span>
-                </button>
-                <button
-                  type="button"
-                  className="ace-ghost-btn"
-                  onClick={() => void handleBriefing('evening')}
-                  disabled={isBriefing !== null}
-                >
-                  {isBriefing === 'evening' ? (
-                    <RefreshCw size={13} strokeWidth={1.8} className="ace-spin" aria-hidden="true" />
-                  ) : (
-                    <MoonStar size={13} strokeWidth={1.8} aria-hidden="true" />
-                  )}
-                  <span>{isBriefing === 'evening' ? 'Writing…' : 'Good evening'}</span>
-                </button>
+  return (
+    <>
+      <header className="ace-panel-head">
+        <div className="ace-panel-title">
+          <span className="ace-panel-mark" aria-hidden="true">
+            <Sparkles size={16} strokeWidth={1.8} />
+          </span>
+          <div>
+            <h2 id="ace-panel-title">Ace</h2>
+            <p>{status}</p>
+          </div>
+        </div>
+        <div className="ace-panel-actions">
+          <button
+            type="button"
+            className="ace-icon-btn"
+            onClick={handleNewConversation}
+            aria-label="New conversation"
+            title="New conversation"
+          >
+            <RotateCcw size={16} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+          <button type="button" className="ace-icon-btn" onClick={onClose} aria-label="Close" title="Close">
+            <X size={17} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+        </div>
+      </header>
+
+      {!config ? (
+        <div className="ace-panel-body">
+          <p className="sheets-meta">
+            Ace runs on your own machine. Point <code>VITE_ACE_BASE_URL</code> at the worker in front of Ollama and
+            set <code>VITE_ACE_MODEL</code> to pick the model.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="ace-transcript" ref={transcriptRef} aria-live="polite">
+            {turns.length === 0 && !streaming ? (
+              <div className="ace-welcome">
+                <p className="ace-welcome-title">What&apos;s on your mind?</p>
+                <p className="sheets-meta">
+                  Ask anything — your day, inbox, sleep, training, or how you&apos;re feeling. Dump a thought and press
+                  Remember to turn it into a task.
+                </p>
+
+                {context ? (
+                  <div className="ace-facts">
+                    <span className="ace-fact">
+                      <strong>{context.completedYesterday.length}</strong> done yesterday
+                    </span>
+                    <span className={`ace-fact${context.slippedYesterday.length ? ' ace-fact-warn' : ''}`}>
+                      <strong>{context.slippedYesterday.length}</strong> slipped
+                    </span>
+                    <span className="ace-fact">
+                      <strong>{unread}</strong> unread
+                    </span>
+                    <span className="ace-fact">
+                      <strong>{eventsToday}</strong> on today
+                    </span>
+                    {context.wellness?.sleep_score ? (
+                      <span className="ace-fact">
+                        sleep <strong>{context.wellness.sleep_score}</strong>
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {contextError ? <p className="sheets-meta">{contextError}</p> : null}
+                {context && context.gaps.length > 0 ? (
+                  <p className="sheets-meta">Not reachable: {context.gaps.join(', ')}.</p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {turns.map((turn) =>
+              turn.role === 'assistant' ? (
+                <AceMarkdown key={turn.id} text={turn.content} className="ace-turn ace-turn-assistant" />
+              ) : (
+                <div key={turn.id} className="ace-turn ace-turn-user">
+                  {turn.content}
+                </div>
+              ),
+            )}
+
+            {streaming ? <AceMarkdown text={streaming} className="ace-turn ace-turn-assistant" /> : null}
+
+            {isThinking && !streaming ? (
+              <div className="ace-typing" role="status" aria-label="Ace is thinking">
+                <span />
+                <span />
+                <span />
               </div>
             ) : null}
           </div>
 
-          {contextError ? <p className="sheets-meta">{contextError}</p> : null}
-
-          {context ? (
-            <div className="ace-facts">
-              <span className="ace-fact">
-                <strong>{context.completedYesterday.length}</strong> done yesterday
-              </span>
-              <span className={`ace-fact${context.slippedYesterday.length ? ' ace-fact-warn' : ''}`}>
-                <strong>{context.slippedYesterday.length}</strong> slipped
-              </span>
-              <span className="ace-fact">
-                <strong>{unread}</strong> unread
-              </span>
-              <span className="ace-fact">
-                <strong>{eventsToday}</strong> today
-              </span>
-              {context.wellness?.sleep_score ? (
-                <span className="ace-fact">
-                  sleep <strong>{context.wellness.sleep_score}</strong>
-                </span>
-              ) : null}
-            </div>
-          ) : (
-            <p className="sheets-meta">Gathering today…</p>
-          )}
-
-          {briefingError ? <p className="sheets-meta">{briefingError}</p> : null}
-
-          {briefing ? (
-            <AceMarkdown text={briefing} className="ace-briefing-body" />
-          ) : !config ? (
-            <p className="sheets-meta">
-              Set <code>VITE_ACE_BASE_URL</code> to your Ace worker to get a written briefing. The
-              counts above work without it.
-            </p>
-          ) : isBriefing === null ? (
-            <p className="sheets-meta">
-              <strong>Good morning</strong> reads overnight mail, today&apos;s schedule, and recovery.{' '}
-              <strong>Good evening</strong> verifies what got done and tees up tomorrow.
-            </p>
-          ) : null}
-
-          {context && context.slippedYesterday.length > 0 ? (
-            <div className="ace-slipped">
-              <h5>Slipped to today</h5>
-              <ul className="recap-list recap-list-slipped">
-                {context.slippedYesterday.map((task) => (
-                  <li key={task.id}>{task.content}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {context && context.gaps.length > 0 ? (
-            <p className="sheets-meta">Not reachable: {context.gaps.join(', ')}.</p>
-          ) : null}
-        </section>
-
-        {/* ── Chat ─────────────────────────────────────────────────────── */}
-        <section className="ace-pane" aria-label="Chat with Ace">
-          <div className="ace-pane-head">
-            <h4>Ask Ace</h4>
-          </div>
-
-          {!config ? (
-            <p className="sheets-meta">
-              Ace runs on your own machine. Point <code>VITE_ACE_BASE_URL</code> at the worker in
-              front of Ollama and set <code>VITE_ACE_MODEL</code> to pick the model.
-            </p>
-          ) : (
-            <>
-              <div className="ace-transcript" ref={transcriptRef}>
-                {turns.length === 0 && !streaming ? (
-                  <p className="sheets-meta">
-                    Ask about your mail, your week, or your training. Or dump a thought and press
-                    Remember to turn it into a task.
-                  </p>
-                ) : null}
-
-                {turns.map((turn) =>
-                  turn.role === 'assistant' ? (
-                    <AceMarkdown key={turn.id} text={turn.content} className="ace-turn ace-turn-assistant" />
-                  ) : (
-                    <div key={turn.id} className="ace-turn ace-turn-user">
-                      {turn.content}
-                    </div>
-                  ),
-                )}
-
-                {streaming ? (
-                  <AceMarkdown text={streaming} className="ace-turn ace-turn-assistant" />
-                ) : null}
-
-                {isThinking && !streaming ? (
-                  <div className="ace-typing" role="status" aria-label="Ace is thinking">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                ) : null}
-              </div>
-
-              {reminder ? (
-                <div className="ace-reminder" role="group" aria-label="Proposed reminder">
-                  <div className="ace-reminder-body">
-                    <strong>{reminder.content}</strong>
-                    {reminder.dueDate ? <span className="ace-reminder-due">{reminder.dueDate}</span> : null}
-                    {reminder.priority >= 3 ? <span className="ace-reminder-due">priority {reminder.priority}</span> : null}
-                  </div>
-                  <div className="ace-reminder-actions">
-                    <button type="button" onClick={handleSaveReminder} disabled={isSavingReminder}>
-                      <Plus size={13} strokeWidth={1.8} aria-hidden="true" />
-                      <span>{isSavingReminder ? 'Adding…' : 'Add to Todoist'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setReminder(null)
-                        setDraft(reminderNote)
-                      }}
-                      disabled={isSavingReminder}
-                    >
-                      <X size={13} strokeWidth={1.8} aria-hidden="true" />
-                      <span>Discard</span>
-                    </button>
-                  </div>
+          <div className="ace-panel-foot">
+            {reminder ? (
+              <div className="ace-reminder" role="group" aria-label="Proposed reminder">
+                <div className="ace-reminder-body">
+                  <strong>{reminder.content}</strong>
+                  {reminder.dueDate ? <span className="ace-reminder-due">{reminder.dueDate}</span> : null}
+                  {reminder.priority >= 3 ? <span className="ace-reminder-due">priority {reminder.priority}</span> : null}
                 </div>
-              ) : null}
-
-              {completion ? (
-                <div className="ace-reminder" role="group" aria-label="Task to complete">
-                  <div className="ace-reminder-body">
-                    <strong>{completion.content}</strong>
-                    <span className="ace-reminder-due">mark complete?</span>
-                  </div>
-                  <div className="ace-reminder-actions">
-                    <button type="button" onClick={() => void handleConfirmComplete()} disabled={isClosingTask}>
-                      <Check size={13} strokeWidth={1.8} aria-hidden="true" />
-                      <span>{isClosingTask ? 'Closing…' : 'Complete'}</span>
-                    </button>
-                    <button type="button" onClick={() => setCompletion(null)} disabled={isClosingTask}>
-                      <X size={13} strokeWidth={1.8} aria-hidden="true" />
-                      <span>Not this</span>
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-
-              {mailArchive ? (
-                <div className="ace-reminder" role="group" aria-label="Email to archive">
-                  <div className="ace-reminder-body">
-                    <strong>{mailArchive.subject}</strong>
-                    <span className="ace-reminder-due">archive?</span>
-                  </div>
-                  <div className="ace-reminder-actions">
-                    <button type="button" onClick={() => void handleConfirmArchive()} disabled={isArchiving}>
-                      <Check size={13} strokeWidth={1.8} aria-hidden="true" />
-                      <span>{isArchiving ? 'Archiving…' : 'Archive'}</span>
-                    </button>
-                    <button type="button" onClick={() => setMailArchive(null)} disabled={isArchiving}>
-                      <X size={13} strokeWidth={1.8} aria-hidden="true" />
-                      <span>Not this</span>
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-
-              {!context && !contextError ? (
-                <p className="sheets-meta" role="status">
-                  Still gathering today&apos;s mail, calendar and tasks — Ace cannot see them yet.
-                </p>
-              ) : null}
-              {reminderNotice ? <p className="sheets-meta">{reminderNotice}</p> : null}
-              {chatError ? <p className="sheets-meta">{chatError}</p> : null}
-              {voiceNote ? <p className="sheets-meta">{voiceNote}</p> : null}
-
-              <form
-                className="ace-composer"
-                onSubmit={(event) => {
-                  event.preventDefault()
-                  void handleAsk()
-                }}
-              >
-                <label className="sr-only" htmlFor="ace-input">
-                  Message Ace
-                </label>
-                <textarea
-                  id="ace-input"
-                  value={draft}
-                  rows={2}
-                  placeholder="Ask a question, or dump a thought…"
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    // Enter sends; Shift+Enter is a newline.
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault()
-                      void handleAsk()
-                    }
-                  }}
-                />
-                <div className="ace-composer-actions">
-                  {speechSupported ? (
-                    <button
-                      type="button"
-                      className={`ace-ghost-btn ace-voice-btn${voiceState !== 'off' ? ' active' : ''}`}
-                      onClick={toggleVoice}
-                      title={voiceState === 'off' ? 'Talk to Ace' : 'End the voice conversation'}
-                    >
-                      {voiceState === 'off' ? (
-                        <Mic size={13} strokeWidth={1.8} aria-hidden="true" />
-                      ) : (
-                        <MicOff size={13} strokeWidth={1.8} aria-hidden="true" />
-                      )}
-                      <span>
-                        {voiceState === 'listening' ? 'Listening…' : voiceState === 'speaking' ? 'Speaking…' : 'Voice'}
-                      </span>
-                    </button>
-                  ) : null}
+                <div className="ace-reminder-actions">
+                  <button type="button" onClick={handleSaveReminder} disabled={isSavingReminder}>
+                    <Plus size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>{isSavingReminder ? 'Adding…' : 'Add to Todoist'}</span>
+                  </button>
                   <button
                     type="button"
-                    className="ace-ghost-btn"
-                    onClick={handleRemember}
-                    disabled={!draft.trim() || isThinking || !todoistConfigured}
-                    title={
-                      todoistConfigured
-                        ? 'Turn this into a Todoist task'
-                        : 'Set VITE_TODOIST_API_TOKEN to create reminders'
-                    }
+                    onClick={() => {
+                      setReminder(null)
+                      setDraft(reminderNote)
+                    }}
+                    disabled={isSavingReminder}
                   >
-                    <Plus size={13} strokeWidth={1.8} aria-hidden="true" />
-                    <span>Remember</span>
-                  </button>
-                  <button type="submit" className="ace-send-btn" disabled={!draft.trim() || isThinking}>
-                    <Send size={14} strokeWidth={1.8} aria-hidden="true" />
-                    <span>Ask</span>
+                    <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Discard</span>
                   </button>
                 </div>
-              </form>
-            </>
-          )}
-        </section>
-      </div>
-    </article>
+              </div>
+            ) : null}
+
+            {completion ? (
+              <div className="ace-reminder" role="group" aria-label="Task to complete">
+                <div className="ace-reminder-body">
+                  <strong>{completion.content}</strong>
+                  <span className="ace-reminder-due">mark complete?</span>
+                </div>
+                <div className="ace-reminder-actions">
+                  <button type="button" onClick={() => void handleConfirmComplete()} disabled={isClosingTask}>
+                    <Check size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>{isClosingTask ? 'Closing…' : 'Complete'}</span>
+                  </button>
+                  <button type="button" onClick={() => setCompletion(null)} disabled={isClosingTask}>
+                    <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Not this</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {mailArchive ? (
+              <div className="ace-reminder" role="group" aria-label="Email to archive">
+                <div className="ace-reminder-body">
+                  <strong>{mailArchive.subject}</strong>
+                  <span className="ace-reminder-due">archive?</span>
+                </div>
+                <div className="ace-reminder-actions">
+                  <button type="button" onClick={() => void handleConfirmArchive()} disabled={isArchiving}>
+                    <Check size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>{isArchiving ? 'Archiving…' : 'Archive'}</span>
+                  </button>
+                  <button type="button" onClick={() => setMailArchive(null)} disabled={isArchiving}>
+                    <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Not this</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {!context && !contextError ? (
+              <p className="sheets-meta" role="status">
+                Still gathering your mail, calendar, tasks and training — Ace cannot see them yet.
+              </p>
+            ) : null}
+            {reminderNotice ? <p className="sheets-meta">{reminderNotice}</p> : null}
+            {chatError ? <p className="sheets-meta">{chatError}</p> : null}
+            {voiceNote ? <p className="sheets-meta">{voiceNote}</p> : null}
+
+            <div className="ace-quick" role="group" aria-label="Quick prompts">
+              {QUICK_PROMPTS.map((quick) => (
+                <button
+                  key={quick.id}
+                  type="button"
+                  className="ace-quick-btn"
+                  onClick={() => void handleAsk(undefined, quick)}
+                  disabled={isThinking}
+                >
+                  {quick.label}
+                </button>
+              ))}
+            </div>
+
+            <form
+              className="ace-composer"
+              onSubmit={(event) => {
+                event.preventDefault()
+                void handleAsk()
+              }}
+            >
+              <label className="sr-only" htmlFor="ace-input">
+                Message Ace
+              </label>
+              <textarea
+                id="ace-input"
+                ref={inputRef}
+                value={draft}
+                rows={2}
+                placeholder="Ask anything, or dump a thought…"
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  // Enter sends; Shift+Enter is a newline.
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault()
+                    void handleAsk()
+                  }
+                }}
+              />
+              <div className="ace-composer-actions">
+                {speechSupported ? (
+                  <button
+                    type="button"
+                    className={`ace-ghost-btn ace-voice-btn${voiceState !== 'off' ? ' active' : ''}`}
+                    onClick={toggleVoice}
+                    title={voiceState === 'off' ? 'Talk to Ace' : 'End the voice conversation'}
+                  >
+                    {voiceState === 'off' ? (
+                      <Mic size={13} strokeWidth={1.8} aria-hidden="true" />
+                    ) : (
+                      <MicOff size={13} strokeWidth={1.8} aria-hidden="true" />
+                    )}
+                    <span>
+                      {voiceState === 'listening' ? 'Listening…' : voiceState === 'speaking' ? 'Speaking…' : 'Voice'}
+                    </span>
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  className="ace-ghost-btn"
+                  onClick={handleRemember}
+                  disabled={!draft.trim() || isThinking || !todoistConfigured}
+                  title={
+                    todoistConfigured ? 'Turn this into a Todoist task' : 'Set VITE_TODOIST_API_TOKEN to create reminders'
+                  }
+                >
+                  <Plus size={13} strokeWidth={1.8} aria-hidden="true" />
+                  <span>Remember</span>
+                </button>
+                <button type="submit" className="ace-send-btn" disabled={!draft.trim() || isThinking}>
+                  <Send size={14} strokeWidth={1.8} aria-hidden="true" />
+                  <span>Ask</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </>
+      )}
+    </>
   )
 }

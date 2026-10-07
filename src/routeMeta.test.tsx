@@ -18,7 +18,7 @@ describe('useRouteMeta', () => {
     document.head.innerHTML = ''
   })
 
-  it.each(['/login', '/admin', '/admin/finance', '/tasks', '/weekly-reset', '/unknown-route'])(
+  it.each(['/login', '/admin', '/admin/health', '/tasks', '/weekly-reset', '/unknown-route'])(
     'does not load ads on non-content route %s',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -61,7 +61,7 @@ describe('useRouteMeta', () => {
   )
 
   it('gives each route a unique title and description', () => {
-    const paths = ['/', '/login', '/admin/tasks', '/admin/journal', '/admin/work']
+    const paths = ['/', '/login', '/admin/tasks', '/admin/journal', '/admin/training']
     const titles = new Set<string>()
 
     for (const path of paths) {

@@ -100,10 +100,10 @@ function getStatus(idToken: string): ConnectionStatus {
 }
 
 /**
- * A month grid built on the same markup as the Finance calendar: compact day
- * cells with a dot when something is on, and a dialog listing that day's events
- * on tap. Seven narrow columns fit a phone without horizontal scrolling, which
- * the previous week-strip layout could not do.
+ * A month grid: compact day cells with a dot when something is on, and a
+ * dialog listing that day's events on tap. Seven narrow columns fit a phone
+ * without horizontal scrolling, which the previous week-strip layout could not
+ * do.
  *
  * The viewed month is remembered in localStorage, the same idea as the sliding
  * session token: reopening the app lands back where you left off instead of
@@ -221,8 +221,8 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
       ))}
 
       {status.state === 'connected' ? (
-        <div className="finance-calendar-shell admin-calendar-shell">
-          <div className="finance-calendar-header">
+        <div className="month-calendar-shell admin-calendar-shell">
+          <div className="month-calendar-header">
             <button
               type="button"
               className="secondary-action"
@@ -232,7 +232,7 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
             >
               Prev
             </button>
-            <p className="finance-calendar-month">{monthLabel}</p>
+            <p className="month-calendar-month">{monthLabel}</p>
             <button
               type="button"
               className="secondary-action"
@@ -244,16 +244,16 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
             </button>
           </div>
 
-          <div className="finance-calendar-weekdays" aria-hidden="true">
+          <div className="month-calendar-weekdays" aria-hidden="true">
             {WEEKDAYS.map((day) => (
               <span key={day}>{day}</span>
             ))}
           </div>
 
-          <div className="finance-calendar-grid" aria-label="Calendar view">
+          <div className="month-calendar-grid" aria-label="Calendar view">
             {cells.map((day, index) => {
               if (!day) {
-                return <span key={`blank-${index}`} className="finance-calendar-empty" />
+                return <span key={`blank-${index}`} className="month-calendar-empty" />
               }
 
               const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -264,7 +264,7 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
                 <button
                   key={key}
                   type="button"
-                  className={`finance-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''}`}
+                  className={`month-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''}`}
                   onClick={() => {
                     if (hasEvents) {
                       setSelectedDayKey(key)
@@ -298,12 +298,12 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
 
       {selectedDayKey && selectedEvents.length > 0 ? (
         <div
-          className="finance-access-dialog-backdrop"
+          className="calendar-dialog-backdrop"
           role="presentation"
           onClick={() => setSelectedDayKey(null)}
         >
           <div
-            className="finance-access-dialog"
+            className="calendar-dialog"
             role="dialog"
             aria-modal="true"
             aria-labelledby="admin-calendar-popup-title"
@@ -328,7 +328,7 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
 
             <button
               type="button"
-              className="finance-dialog-close"
+              className="calendar-dialog-close"
               onClick={() => setSelectedDayKey(null)}
             >
               Close

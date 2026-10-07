@@ -76,14 +76,6 @@ export type GroceryListRecord = {
   include: boolean
 }
 
-export type FinanceTransactionRecord = {
-  date?: string
-  description: string
-  amount: number
-  category: string
-  card: string
-}
-
 export type PersonalTrainingRecord = {
   type: 'milestone' | 'equipment' | string
   category: string
@@ -156,14 +148,6 @@ export type RecipeStepRecord = {
   instruction: string
 }
 
-export type TripRecord = {
-  trip_id: string
-  name: string
-  target_date: string
-  target_amount: number
-  saved_amount: number
-}
-
 export type StoreDealRecord = {
   deal_id: string
   store: string
@@ -213,18 +197,6 @@ export type JournalEntryRecord = {
   /** Comma-separated in the sheet, split into a list on read. */
   tags: string[]
   created_at?: string
-}
-
-export type WorkItemRecord = {
-  work_id: string
-  project: string
-  item: string
-  status: string
-  due_date?: string
-  /** 1 (lowest) through 4 (highest), matching the Todoist convention used elsewhere. */
-  priority: number
-  notes?: string
-  link?: string
 }
 
 /**

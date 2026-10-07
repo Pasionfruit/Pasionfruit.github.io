@@ -53,8 +53,8 @@ const TABLES = {
     columns: ['journal_id', 'entry_date', 'mood', 'title', 'body', 'gratitude', 'prompt', 'reflection', 'tags', 'created_at'],
     read: 'admin',
   },
-  // Finances deliberately stay in Google Sheets — Abe's call: that data does
-  // not live on Cloudflare. Do not add transaction or budget tables here.
+  // No finance tables: the Finance dashboard was removed, and that data never
+  // belonged on Cloudflare.
 }
 
 function keyColumns(table) {
