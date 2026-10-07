@@ -35,6 +35,15 @@ export const adminDashboards: AdminDashboardMeta[] = [
     accent: '#14b8a6',
     eyebrow: 'Body',
   },
+  {
+    id: 'news',
+    title: 'News',
+    path: '/admin/news',
+    icon: 'news',
+    summary: 'Local, city, national, and international headlines',
+    accent: '#f59e0b',
+    eyebrow: 'Headlines',
+  },
 ]
 
 export const adminDashboardsById: Record<AdminDashboardId, AdminDashboardMeta> =

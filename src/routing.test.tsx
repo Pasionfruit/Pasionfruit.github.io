@@ -17,7 +17,6 @@ const repoMocks = vi.hoisted(() => {
     createEvent: vi.fn(),
     updateEvent: vi.fn(),
     deleteEvent: vi.fn(),
-    setActiveEvent: vi.fn(),
     setTrainingWorkoutCompleted: vi.fn(),
     upsertTrainingRecord: vi.fn(),
     createJournalEntry: vi.fn(),
@@ -405,7 +404,8 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    expect(labels).toEqual(['Home', 'Personal', 'Health'])
+    // News sits to the right of Health.
+    expect(labels).toEqual(['Home', 'Personal', 'Health', 'News'])
   })
 
   it.each([

@@ -6,6 +6,7 @@ import {
   House,
   List,
   NotebookPen,
+  Newspaper,
   Pencil,
   RotateCcw,
   SquareCheck,
@@ -58,6 +59,7 @@ import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
+import { NewsDashboard } from './admin/news/NewsDashboard'
 import { WorkoutText } from './training/WorkoutText'
 import { assignPlanDates, parseWorkoutTable } from './training/workoutPlan'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
@@ -83,7 +85,6 @@ import {
   getRingconnHealth,
   getAppleHealth,
   getTrainingRecords,
-  setActiveEvent,
   setTrainingWorkoutCompleted,
   updateEvent,
   upsertTrainingRecord,
@@ -264,6 +265,7 @@ function App() {
               element={<AdminHealthPage profile={profile} googleIdToken={googleIdToken} />}
             />
             <Route path="training" element={<Navigate replace to="/admin/health" />} />
+            <Route path="news" element={<NewsDashboard idToken={googleIdToken} />} />
           </Route>
 
           <Route
@@ -372,6 +374,7 @@ const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   home: House,
   personal: NotebookPen,
   health: Activity,
+  news: Newspaper,
 }
 
 function AdminNav() {
@@ -1750,44 +1753,34 @@ function toLocalDateTimeInputFromValue(value?: string) {
   return toLocalDateTimeInputValue(parsed)
 }
 
-function parseOptionalNumber(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) {
-    return undefined
-  }
+type EventDraft = { eventName: string; eventDate: string }
 
-  const parsed = Number(trimmed)
-  if (!Number.isFinite(parsed)) {
-    return undefined
-  }
+const EMPTY_EVENT_DRAFT: EventDraft = { eventName: '', eventDate: '' }
 
-  return parsed
+function eventTime(row: EventRecord) {
+  const time = new Date(row.event_date).getTime()
+  return Number.isNaN(time) ? null : time
 }
 
-type EventDraft = {
-  eventDate: string
-  eventName: string
-  type: string
-  measurement: string
-  location: string
-  link: string
-  price: string
-  active: boolean
+function formatEventDate(row: EventRecord) {
+  const time = eventTime(row)
+  return time === null
+    ? 'No date'
+    : new Date(time).toLocaleString(undefined, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      })
 }
 
-function toEventDraft(row: EventRecord): EventDraft {
-  return {
-    eventDate: toLocalDateTimeInputFromValue(row.event_date),
-    eventName: row.event_name,
-    type: row.type ?? '',
-    measurement: row.measurement ?? '',
-    location: row.location ?? '',
-    link: row.link ?? '',
-    price: typeof row.price === 'number' ? String(row.price) : '',
-    active: row.active,
-  }
-}
-
+/**
+ * Counts down to the soonest event still ahead. There is no "active" event to
+ * pick any more: once one passes, the countdown moves on to the next by itself.
+ * Events are a title and a date, kept in D1.
+ */
 function NextEventCountdownCard({
   title,
   canWrite,
@@ -1804,22 +1797,12 @@ function NextEventCountdownCard({
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
   const [editingEventId, setEditingEventId] = useState('')
-  const [newEvent, setNewEvent] = useState<EventDraft>({
-    eventDate: '',
-    eventName: '',
-    type: '',
-    measurement: '',
-    location: '',
-    link: '',
-    price: '',
-    active: false,
-  })
+  const [draft, setDraft] = useState<EventDraft>(EMPTY_EVENT_DRAFT)
   const [nowMs, setNowMs] = useState(Date.now())
 
   async function loadEvents() {
     try {
-      const data = await getEvents()
-      setRows(data)
+      setRows(await getEvents())
     } catch {
       setRows([])
     } finally {
@@ -1839,7 +1822,24 @@ function NextEventCountdownCard({
     return () => window.clearInterval(timer)
   }, [])
 
-  const activeEvent = useMemo(() => rows.find((row) => row.active), [rows])
+  // Soonest first; undated events last, so they are still listed for fixing.
+  const sortedRows = useMemo(
+    () => [...rows].sort((a, b) => (eventTime(a) ?? Infinity) - (eventTime(b) ?? Infinity)),
+    [rows],
+  )
+  const nextEvent = sortedRows.find((row) => (eventTime(row) ?? 0) > nowMs)
+  const parts = getCountdownParts(nextEvent?.event_date ?? '', nowMs)
+
+  function resetEventForm() {
+    setEditingEventId('')
+    setDraft(EMPTY_EVENT_DRAFT)
+  }
+
+  function startEditingEvent(row: EventRecord) {
+    setEditingEventId(row.event_id)
+    setDraft({ eventName: row.event_name, eventDate: toLocalDateTimeInputFromValue(row.event_date) })
+    setWriteError('')
+  }
 
   async function handleDeleteEvent(eventId: string) {
     if (!canWrite || !idToken || isWriting) {
@@ -1850,6 +1850,7 @@ function NextEventCountdownCard({
     setWriteError('')
     try {
       await deleteEvent(idToken, eventId)
+      if (editingEventId === eventId) resetEventForm()
       await loadEvents()
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to delete event')
@@ -1858,54 +1859,13 @@ function NextEventCountdownCard({
     }
   }
 
-  async function handleSetActiveEvent(eventId: string) {
-    if (!canWrite || !idToken || isWriting) {
-      return
-    }
-
-    setIsWriting(true)
-    setWriteError('')
-    try {
-      await setActiveEvent(idToken, eventId)
-      await loadEvents()
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to set active event')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  const parts = getCountdownParts(activeEvent?.event_date ?? '', nowMs)
-  const isFinished = parts.totalMs <= 0
-  const targetLabel = activeEvent?.event_date ? new Date(activeEvent.event_date).toLocaleString() : 'Set a date'
-
-  function resetEventForm() {
-    setEditingEventId('')
-    setNewEvent({
-      eventDate: '',
-      eventName: '',
-      type: '',
-      measurement: '',
-      location: '',
-      link: '',
-      price: '',
-      active: false,
-    })
-  }
-
-  function startEditingEvent(row: EventRecord) {
-    setEditingEventId(row.event_id)
-    setNewEvent(toEventDraft(row))
-    setWriteError('')
-  }
-
   async function handleSubmitEvent() {
     if (!canWrite || !idToken || isWriting) {
       return
     }
 
-    const eventName = newEvent.eventName.trim()
-    const eventDate = newEvent.eventDate.trim()
+    const eventName = draft.eventName.trim()
+    const eventDate = draft.eventDate.trim()
     if (!eventName || !eventDate) {
       setWriteError('Event title and event date are required.')
       return
@@ -1916,28 +1876,9 @@ function NextEventCountdownCard({
 
     try {
       if (editingEventId) {
-        const editingRow = rows.find((row) => row.event_id === editingEventId)
-        await updateEvent(idToken, editingEventId, {
-          eventDate,
-          eventName,
-          type: newEvent.type.trim(),
-          measurement: newEvent.measurement.trim(),
-          location: newEvent.location.trim(),
-          link: newEvent.link.trim(),
-          price: parseOptionalNumber(newEvent.price),
-          active: editingRow?.active ?? false,
-        })
+        await updateEvent(idToken, editingEventId, { eventName, eventDate })
       } else {
-        await createEvent(idToken, {
-          eventDate,
-          eventName,
-          type: newEvent.type.trim(),
-          measurement: newEvent.measurement.trim(),
-          location: newEvent.location.trim(),
-          link: newEvent.link.trim(),
-          price: parseOptionalNumber(newEvent.price),
-          active: false,
-        })
+        await createEvent(idToken, { eventName, eventDate })
       }
 
       resetEventForm()
@@ -1981,39 +1922,40 @@ function NextEventCountdownCard({
         <>
           {isLoading ? <p className="sheets-meta">Loading events...</p> : null}
 
-          {!isLoading ? <p className="countdown-title">{activeEvent?.event_name || 'No active event'}</p> : null}
-          <p className="countdown-target">Target: {targetLabel}</p>
-          {activeEvent?.location ? <p className="countdown-location">Location: {activeEvent.location}</p> : null}
+          {!isLoading && nextEvent ? (
+            <>
+              <p className="countdown-title">{nextEvent.event_name}</p>
+              <p className="countdown-target">{formatEventDate(nextEvent)}</p>
 
-          {!isLoading && !activeEvent ? (
-            <p className="countdown-lock-note">No active event found. Set one active event to start countdown.</p>
+              <div className="countdown-grid" aria-live="polite">
+                <div className="countdown-cell">
+                  <strong>{pad2(parts.months)}</strong>
+                  <small>MM</small>
+                </div>
+                <div className="countdown-cell">
+                  <strong>{pad2(parts.days)}</strong>
+                  <small>DD</small>
+                </div>
+                <div className="countdown-cell">
+                  <strong>{pad2(parts.hours)}</strong>
+                  <small>HH</small>
+                </div>
+                <div className="countdown-cell">
+                  <strong>{pad2(parts.minutes)}</strong>
+                  <small>MM</small>
+                </div>
+                <div className="countdown-cell">
+                  <strong>{pad2(parts.seconds)}</strong>
+                  <small>SS</small>
+                </div>
+              </div>
+            </>
           ) : null}
 
-          <div className="countdown-grid" aria-live="polite">
-            <div className="countdown-cell">
-              <strong>{pad2(parts.months)}</strong>
-              <small>MM</small>
-            </div>
-            <div className="countdown-cell">
-              <strong>{pad2(parts.days)}</strong>
-              <small>DD</small>
-            </div>
-            <div className="countdown-cell">
-              <strong>{pad2(parts.hours)}</strong>
-              <small>HH</small>
-            </div>
-            <div className="countdown-cell">
-              <strong>{pad2(parts.minutes)}</strong>
-              <small>MM</small>
-            </div>
-            <div className="countdown-cell">
-              <strong>{pad2(parts.seconds)}</strong>
-              <small>SS</small>
-            </div>
-          </div>
-
-          {isFinished ? (
-            <p className="countdown-complete">Your event countdown is complete.</p>
+          {!isLoading && !nextEvent ? (
+            <p className="countdown-lock-note">
+              {canWrite ? 'No upcoming event. Add one with a future date to start the countdown.' : 'No upcoming event.'}
+            </p>
           ) : null}
 
           {canWrite && !idToken ? (
@@ -2028,13 +1970,8 @@ function NextEventCountdownCard({
                   <span>Event title</span>
                   <input
                     type="text"
-                    value={newEvent.eventName}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        eventName: event.target.value,
-                      }))
-                    }
+                    value={draft.eventName}
+                    onChange={(event) => setDraft((current) => ({ ...current, eventName: event.target.value }))}
                     placeholder="Race day, meet, hike, etc."
                     disabled={!idToken || isWriting}
                   />
@@ -2044,88 +1981,8 @@ function NextEventCountdownCard({
                   <span>Event date</span>
                   <input
                     type="datetime-local"
-                    value={newEvent.eventDate}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        eventDate: event.target.value,
-                      }))
-                    }
-                    disabled={!idToken || isWriting}
-                  />
-                </label>
-
-                <label>
-                  <span>Type</span>
-                  <input
-                    type="text"
-                    value={newEvent.type}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        type: event.target.value,
-                      }))
-                    }
-                    disabled={!idToken || isWriting}
-                  />
-                </label>
-
-                <label>
-                  <span>Measurement</span>
-                  <input
-                    type="text"
-                    value={newEvent.measurement}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        measurement: event.target.value,
-                      }))
-                    }
-                    disabled={!idToken || isWriting}
-                  />
-                </label>
-
-                <label>
-                  <span>Location</span>
-                  <input
-                    type="text"
-                    value={newEvent.location}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        location: event.target.value,
-                      }))
-                    }
-                    disabled={!idToken || isWriting}
-                  />
-                </label>
-
-                <label>
-                  <span>Link</span>
-                  <input
-                    type="text"
-                    value={newEvent.link}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        link: event.target.value,
-                      }))
-                    }
-                    disabled={!idToken || isWriting}
-                  />
-                </label>
-
-                <label>
-                  <span>Price</span>
-                  <input
-                    type="text"
-                    value={newEvent.price}
-                    onChange={(event) =>
-                      setNewEvent((current) => ({
-                        ...current,
-                        price: event.target.value,
-                      }))
-                    }
+                    value={draft.eventDate}
+                    onChange={(event) => setDraft((current) => ({ ...current, eventDate: event.target.value }))}
                     disabled={!idToken || isWriting}
                   />
                 </label>
@@ -2152,45 +2009,45 @@ function NextEventCountdownCard({
                 ) : null}
               </div>
 
-              {rows.length > 0 ? (
+              {sortedRows.length > 0 ? (
                 <ul className="countdown-event-list">
-                  {rows.map((row) => (
-                    <li key={row.event_id} className="countdown-event-item">
-                      <span className="countdown-event-name">
-                        {row.event_name}
-                        {row.active ? ' (Active)' : ''}
-                      </span>
-                      <div className="countdown-event-actions">
-                        <button
-                          type="button"
-                          className="secondary-action"
-                          onClick={() => startEditingEvent(row)}
-                          disabled={!idToken || isWriting}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="secondary-action"
-                          onClick={() => void handleSetActiveEvent(row.event_id)}
-                          disabled={!idToken || isWriting || row.active}
-                        >
-                          {row.active ? 'Active' : 'Set Active'}
-                        </button>
-                        <button
-                          type="button"
-                          className="secondary-action"
-                          onClick={() => void handleDeleteEvent(row.event_id)}
-                          disabled={!idToken || isWriting}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </li>
-                  ))}
+                  {sortedRows.map((row) => {
+                    const isPast = (eventTime(row) ?? Infinity) <= nowMs
+                    return (
+                      <li key={row.event_id} className={`countdown-event-item${isPast ? ' is-past' : ''}`}>
+                        <span className="countdown-event-name">
+                          {row.event_name}
+                          <small>
+                            {formatEventDate(row)}
+                            {isPast ? ' · past' : ''}
+                          </small>
+                        </span>
+                        <div className="countdown-event-actions">
+                          <button
+                            type="button"
+                            className="secondary-action"
+                            onClick={() => startEditingEvent(row)}
+                            disabled={!idToken || isWriting}
+                            aria-label={`Edit ${row.event_name}`}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="secondary-action"
+                            onClick={() => void handleDeleteEvent(row.event_id)}
+                            disabled={!idToken || isWriting}
+                            aria-label={`Delete ${row.event_name}`}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </li>
+                    )
+                  })}
                 </ul>
               ) : (
-                <p className="sheets-meta">No events found.</p>
+                <p className="sheets-meta">No events yet.</p>
               )}
             </div>
           ) : null}

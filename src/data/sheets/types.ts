@@ -33,16 +33,15 @@ export type TrainingRecord = {
   completed_evening: boolean
 }
 
+/**
+ * A countdown event, from the `events` table in D1. Title and date only.
+ * `event_date` is a datetime-local string ("2026-11-14T07:00"), read as local
+ * time.
+ */
 export type EventRecord = {
   event_id: string
-  event_date?: string
   event_name: string
-  type?: string
-  measurement?: string
-  location?: string
-  link?: string
-  price?: number
-  active: boolean
+  event_date: string
 }
 
 export type BackpackRecord = {

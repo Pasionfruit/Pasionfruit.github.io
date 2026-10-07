@@ -16,7 +16,6 @@ const repoMocks = vi.hoisted(() => ({
   createEvent: vi.fn(),
   updateEvent: vi.fn(),
   deleteEvent: vi.fn(),
-  setActiveEvent: vi.fn(),
   setTrainingWorkoutCompleted: vi.fn(),
   setBucketCompleted: vi.fn(),
   setCountryVisited: vi.fn(),
@@ -78,6 +77,14 @@ function renderAdminPage(path: string, email = 'pasionabe@gmail.com') {
       <App />
     </MemoryRouter>,
   )
+}
+
+/** A datetime-local string `days` from now at 7am, the format the countdown stores. */
+function eventDateInDays(days: number) {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+  const pad = (value: number) => String(value).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T07:00`
 }
 
 function renderTrainingPage(email = 'pasionabe@gmail.com') {
@@ -234,29 +241,11 @@ beforeEach(() => {
     },
   ])
 
+  // Relative to today, so "upcoming" stays true whenever the suite runs.
   repoMocks.getEvents.mockResolvedValue([
-    {
-      event_id: 'event-1',
-      event_date: '2026-10-18T06:00:00',
-      event_name: 'Chicago Marathon',
-      type: 'Run',
-      measurement: '26.2 mi',
-      location: 'Chicago',
-      link: 'https://example.com/chicago',
-      price: 250,
-      active: true,
-    },
-    {
-      event_id: 'event-2',
-      event_date: '2026-11-01T08:00:00',
-      event_name: 'Local 10K',
-      type: 'Run',
-      measurement: '10 km',
-      location: 'Oak Park',
-      link: '',
-      price: 50,
-      active: false,
-    },
+    { event_id: 'event-2', event_name: 'Turkey Trot', event_date: eventDateInDays(50) },
+    { event_id: 'event-1', event_name: 'Chicago Marathon', event_date: eventDateInDays(12) },
+    { event_id: 'event-0', event_name: 'Spring 10K', event_date: eventDateInDays(-30) },
   ])
 
   repoMocks.getTrainingRecords.mockResolvedValue([
@@ -306,7 +295,6 @@ beforeEach(() => {
   repoMocks.createEvent.mockResolvedValue(undefined)
   repoMocks.updateEvent.mockResolvedValue(undefined)
   repoMocks.deleteEvent.mockResolvedValue(undefined)
-  repoMocks.setActiveEvent.mockResolvedValue(undefined)
   repoMocks.createBucketItem.mockResolvedValue(undefined)
   repoMocks.createGroceryListItem.mockResolvedValue(undefined)
   repoMocks.updateBucketItem.mockResolvedValue(undefined)
@@ -668,9 +656,12 @@ describe('site sections and dashboards', () => {
 
     expect(within(card).getByLabelText('Event title')).toBeTruthy()
     expect(within(card).getByLabelText('Event date')).toBeTruthy()
+    // Title and date are the whole event now.
+    expect(within(card).queryByLabelText('Location')).toBeNull()
+    expect(within(card).queryByLabelText('Type')).toBeNull()
   })
 
-  it('renders countdown from active event and location', async () => {
+  it('counts down to the soonest event still ahead', async () => {
     renderTrainingPage()
 
     const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
@@ -679,11 +670,28 @@ describe('site sections and dashboards', () => {
       throw new Error('Next Event Countdown card not found')
     }
 
-    expect(within(card).getByText('Chicago Marathon')).toBeTruthy()
-    expect(within(card).getByText('Location: Chicago')).toBeTruthy()
+    // Not the past Spring 10K, and not the later Turkey Trot.
+    expect(await within(card).findByText('Chicago Marathon')).toBeTruthy()
+    expect(within(card).queryByText('Spring 10K')).toBeNull()
+    expect(within(card).queryByText('Turkey Trot')).toBeNull()
   })
 
-  it('allows authorized admin to create/update/delete and set active event', async () => {
+  it('says so when no event is ahead', async () => {
+    repoMocks.getEvents.mockResolvedValueOnce([
+      { event_id: 'event-0', event_name: 'Spring 10K', event_date: eventDateInDays(-30) },
+    ])
+    renderTrainingPage()
+
+    const heading = await screen.findByRole('heading', { name: 'Next Event Countdown' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Next Event Countdown card not found')
+    }
+
+    expect(await within(card).findByText(/^No upcoming event\./)).toBeTruthy()
+  })
+
+  it('lets the admin add, edit, and delete events by title and date', async () => {
     const user = userEvent.setup()
     renderTrainingPage()
 
@@ -700,39 +708,27 @@ describe('site sections and dashboards', () => {
     await user.click(within(card).getByRole('button', { name: 'Add Event' }))
 
     await waitFor(() => {
-      expect(repoMocks.createEvent).toHaveBeenCalledWith(
-        expect.stringContaining('.'),
-        expect.objectContaining({
-          eventName: 'Half Marathon',
-          eventDate: '2026-12-01T07:00',
-        }),
-      )
+      expect(repoMocks.createEvent).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        eventName: 'Half Marathon',
+        eventDate: '2026-12-01T07:00',
+      })
     })
 
-    const setActiveButtons = within(card).getAllByRole('button', { name: 'Set Active' })
-    await user.click(setActiveButtons[0])
-
-    await waitFor(() => {
-      expect(repoMocks.setActiveEvent).toHaveBeenCalledWith(expect.stringContaining('.'), 'event-2')
-    })
-
-    const editButtons = within(card).getAllByRole('button', { name: 'Edit' })
-    await user.click(editButtons[0])
+    await user.click(within(card).getByRole('button', { name: 'Edit Chicago Marathon' }))
+    expect((within(card).getByLabelText('Event title') as HTMLInputElement).value).toBe('Chicago Marathon')
     await user.click(within(card).getByRole('button', { name: 'Update Event' }))
 
     await waitFor(() => {
-      expect(repoMocks.updateEvent).toHaveBeenCalledWith(
-        expect.stringContaining('.'),
-        'event-1',
-        expect.any(Object),
-      )
+      expect(repoMocks.updateEvent).toHaveBeenCalledWith(expect.stringContaining('.'), 'event-1', {
+        eventName: 'Chicago Marathon',
+        eventDate: eventDateInDays(12),
+      })
     })
 
-    const deleteButtons = within(card).getAllByRole('button', { name: 'Delete' })
-    await user.click(deleteButtons[0])
+    await user.click(within(card).getByRole('button', { name: 'Delete Spring 10K' }))
 
     await waitFor(() => {
-      expect(repoMocks.deleteEvent).toHaveBeenCalledWith(expect.stringContaining('.'), 'event-1')
+      expect(repoMocks.deleteEvent).toHaveBeenCalledWith(expect.stringContaining('.'), 'event-0')
     })
   })
 

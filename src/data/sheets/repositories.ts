@@ -167,19 +167,13 @@ export async function getTrainingRecords(): Promise<TrainingRecord[]> {
 }
 
 export async function getEvents(): Promise<EventRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('events')
+  const rows = await dbRead<Record<string, unknown>>('events')
 
   return rows
     .map((row) => ({
       event_id: String(row.event_id ?? ''),
-      event_date: row.event_date ? String(row.event_date) : undefined,
       event_name: String(row.event_name ?? ''),
-      type: row.type ? String(row.type) : undefined,
-      measurement: row.measurement ? String(row.measurement) : undefined,
-      location: row.location ? String(row.location) : undefined,
-      link: row.link ? String(row.link) : undefined,
-      price: parseNumber(row.price),
-      active: parseBoolean(row.active),
+      event_date: String(row.event_date ?? ''),
     }))
     .filter((row) => row.event_id && row.event_name)
 }
@@ -458,76 +452,28 @@ export async function upsertTrainingRecord(
   })
 }
 
-export async function createEvent(
-  idToken: string,
-  payload: {
-    eventDate: string
-    eventName: string
-    type?: string
-    measurement?: string
-    location?: string
-    link?: string
-    price?: number
-    active?: boolean
-  },
-) {
-  await runWrite({
-    action: 'createEvent',
-    idToken,
-    event_date: payload.eventDate,
+export async function createEvent(idToken: string, payload: { eventName: string; eventDate: string }) {
+  await dbWrite('events', 'POST', idToken, {
+    event_id: crypto.randomUUID(),
     event_name: payload.eventName,
-    type: payload.type ?? '',
-    measurement: payload.measurement ?? '',
-    location: payload.location ?? '',
-    link: payload.link ?? '',
-    price: payload.price ?? '',
-    active: payload.active ?? false,
+    event_date: payload.eventDate,
   })
 }
 
 export async function updateEvent(
   idToken: string,
   eventId: string,
-  payload: {
-    eventDate: string
-    eventName: string
-    type?: string
-    measurement?: string
-    location?: string
-    link?: string
-    price?: number
-    active?: boolean
-  },
+  payload: { eventName: string; eventDate: string },
 ) {
-  await runWrite({
-    action: 'updateEvent',
-    idToken,
+  await dbWrite('events', 'PUT', idToken, {
     event_id: eventId,
-    event_date: payload.eventDate,
     event_name: payload.eventName,
-    type: payload.type ?? '',
-    measurement: payload.measurement ?? '',
-    location: payload.location ?? '',
-    link: payload.link ?? '',
-    price: payload.price ?? '',
-    active: payload.active ?? false,
+    event_date: payload.eventDate,
   })
 }
 
 export async function deleteEvent(idToken: string, eventId: string) {
-  await runWrite({
-    action: 'deleteEvent',
-    idToken,
-    event_id: eventId,
-  })
-}
-
-export async function setActiveEvent(idToken: string, eventId: string) {
-  await runWrite({
-    action: 'setActiveEvent',
-    idToken,
-    event_id: eventId,
-  })
+  await dbWrite('events', 'DELETE', idToken, { event_id: eventId })
 }
 
 export async function createPoll(idToken: string, question: string, optionA: string, optionB: string) {

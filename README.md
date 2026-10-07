@@ -34,6 +34,7 @@ dashboard.
 | Home | `/` | The month's calendar, today's tasks, yesterday's recap, and the inbox |
 | Personal | `/admin/personal` | Verse of the day, journal entries with gratitude prompts, mood tracker |
 | Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log |
+| News | `/admin/news` | Local, city, national, and international headlines |
 
 `/admin/journal` and `/admin/training` redirect to their renamed routes. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.
@@ -74,6 +75,31 @@ The context is gathered when the panel first opens, not on page load, and
 refreshed when it is reopened after 15 minutes. Today's conversation is kept in
 `localStorage` and survives navigation and reloads; it starts fresh each day.
 Setup for the model itself is in [docs/assistant-ace-setup.md](docs/assistant-ace-setup.md).
+
+### News
+
+`/admin/news` shows four cards, small to large: **Local**, **City**, **Nation**
+and **International**. Nation and International are Google News's US and World
+editions. Local and City follow the device location: the BigDataCloud lookup the
+weather card already uses turns the position into a city (Tallahassee) and a
+smaller area — the neighbourhood when there is one, otherwise the county (Leon
+County) — each searched with its state over the last three days.
+
+Google News RSS sends no CORS headers, so the feeds are read by
+[workers/news](workers/news/worker.js) and returned as JSON. That Worker holds no
+secrets: it checks the caller's bearer with the db Worker's `/auth/verify` over a
+service binding, so `SESSION_SECRET` is not copied to a fourth place. Deploy the
+db Worker before it (`cd workers/news && npx wrangler deploy`).
+
+### Countdown events
+
+The Next Event Countdown counts down to the soonest event still ahead and moves
+on by itself once it passes — there is no "active" event to pick. An event is a
+title and a date, stored in the `events` table of the `pasion-db` D1 database
+(created by [workers/db/events.sql](workers/db/events.sql)) and served by the db
+Worker: public reads, since the guest home page shows the countdown, and
+admin-only writes. It used to be a Google Sheets tab with type, distance,
+location, link and price columns; that tab was deleted.
 
 ### Garmin wellness
 

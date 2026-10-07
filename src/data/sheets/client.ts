@@ -67,7 +67,6 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     countries: 'countries!A1:D10000',
     current_study: 'current_study!A1:E10000',
     training_records: 'training_records!A1:F10000',
-    events: 'events!A1:I10000',
     traveling: 'traveling!A1:E10000',
     meal_plan: 'meal_plan!A1:E10000',
     grocery_list: 'grocery_list!A1:D10000',

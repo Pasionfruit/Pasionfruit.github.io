@@ -106,8 +106,8 @@ describe('renderAceContext', () => {
           { date: '2026-08-28', activity_type: 'treadmill_running', title: 'Treadmill', distance_mi: '3', duration_min: '30', avg_hr: '', max_hr: '', calories: '', tss: '' },
         ],
         races: [
-          { event_id: '2', event_date: '10/10/2026 6:30:00', event_name: 'Half', type: 'Running', measurement: 'Half Marathon', location: 'TBD', active: true },
-          { event_id: '5', event_date: 'TBD', event_name: 'Campeche', type: 'Ironman', measurement: '70.3', location: 'TBD', active: false },
+          { event_id: '2', event_date: '10/10/2026 6:30:00', event_name: 'Half Marathon' },
+          { event_id: '5', event_date: 'TBD', event_name: 'Campeche 70.3' },
         ],
       }),
     )
@@ -115,9 +115,9 @@ describe('renderAceContext', () => {
     // Aug 24–30, 2026 is one Monday-started week.
     expect(text).toMatch(/Week of Mon, Aug 24: swim 1× 25 min, 0\.5 mi; run 2× 70 min, 7\.0 mi \(total 95 min\)/)
     expect(text).toContain('- 2026-08-30 swim: Pool Swim — 0.5 mi, 25 min, avg HR 140')
-    expect(text).toMatch(/Half — Running, Half Marathon \[current goal\]/)
+    expect(text).toMatch(/: Half Marathon \[current goal\]$/m)
     expect(text).toMatch(/\(40 days away, about 6 weeks\)/)
-    expect(text).toContain('- date TBD: Campeche — Ironman, 70.3')
+    expect(text).toContain('- date TBD: Campeche 70.3')
   })
 
   it('marks past planned workouts done or missed', () => {

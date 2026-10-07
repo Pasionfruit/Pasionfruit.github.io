@@ -53,6 +53,12 @@ const ROUTE_META: Record<string, RouteMeta> = {
     ads: false,
     index: false,
   },
+  '/admin/news': {
+    title: `News — ${SITE_NAME}`,
+    description: 'Private news dashboard.',
+    ads: false,
+    index: false,
+  },
 
   '/tasks': {
     title: `Task manager — ${SITE_NAME}`,

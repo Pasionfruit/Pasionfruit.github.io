@@ -53,6 +53,13 @@ const TABLES = {
     columns: ['journal_id', 'entry_date', 'mood', 'title', 'body', 'gratitude', 'prompt', 'reflection', 'tags', 'created_at'],
     read: 'admin',
   },
+  // The countdown's events, moved off the deleted `events` sheet tab. Title and
+  // date only; public because the guest home page shows the countdown too.
+  events: {
+    key: 'event_id',
+    columns: ['event_id', 'event_name', 'event_date'],
+    read: 'public',
+  },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
 }

@@ -365,9 +365,7 @@ function raceWhen(key: string, today: string) {
 
 function raceLine(race: EventRecord, today: string, isGoal: boolean) {
   const when = raceWhen(sheetDateKey(race.event_date), today)
-  const kind = [race.type, race.measurement].filter(Boolean).join(', ')
-  const location = race.location && race.location !== 'TBD' ? ` @ ${race.location}` : ''
-  return `- ${when}: ${race.event_name}${kind ? ` — ${kind}` : ''}${location}${isGoal ? ' [current goal]' : ''}`
+  return `- ${when}: ${race.event_name}${isGoal ? ' [current goal]' : ''}`
 }
 
 /**
