@@ -166,23 +166,33 @@ function useGarminWellness() {
   return { rows, isLoading, error, refresh: load }
 }
 
-function MetricGrid({
+type MetricGroup = { title: string; metrics: Metric[] }
+
+/**
+ * Titled metric grids sharing one set of rows. Loading, error and empty states
+ * are said once for the card rather than once per group.
+ */
+function MetricGroups({
   rows,
-  metrics,
+  groups,
   isLoading,
   error,
 }: {
   rows: GarminWellnessRecord[]
-  metrics: Metric[]
+  groups: MetricGroup[]
   isLoading: boolean
   error: string
 }) {
-  const summaries = useMemo(
-    () => metrics.map((metric) => ({ metric, summary: summarise(rows, metric) })),
-    [rows, metrics],
+  const summarised = useMemo(
+    () =>
+      groups.map((group) => ({
+        title: group.title,
+        summaries: group.metrics.map((metric) => ({ metric, summary: summarise(rows, metric) })),
+      })),
+    [rows, groups],
   )
 
-  const hasAny = summaries.some((entry) => entry.summary !== null)
+  const hasAny = summarised.some((group) => group.summaries.some((entry) => entry.summary !== null))
 
   if (isLoading && rows.length === 0) {
     return <p className="sheets-meta">Loading Garmin data…</p>
@@ -202,6 +212,23 @@ function MetricGrid({
     )
   }
 
+  return (
+    <>
+      {summarised.map(({ title, summaries }) => (
+        <section key={title} className="garmin-metric-group" aria-label={title}>
+          <h4 className="garmin-metric-group-title">{title}</h4>
+          <MetricGrid summaries={summaries} />
+        </section>
+      ))}
+    </>
+  )
+}
+
+function MetricGrid({
+  summaries,
+}: {
+  summaries: { metric: Metric; summary: ReturnType<typeof summarise> }[]
+}) {
   return (
     <div className="garmin-metric-grid">
       {summaries.map(({ metric, summary }) => (
@@ -369,13 +396,11 @@ function RefreshButton({ onClick, busy }: { onClick: () => void; busy: boolean }
  */
 function GarminCard({
   title,
-  pill,
   actions,
   defaultCollapsed = false,
   children,
 }: {
   title: string
-  pill?: string
   actions?: ReactNode
   defaultCollapsed?: boolean
   children: ReactNode
@@ -387,7 +412,6 @@ function GarminCard({
       <div className="admin-card-head">
         <h3>{title}</h3>
         <div className="admin-card-actions">
-          {pill ? <span className="admin-pill">{pill}</span> : null}
           {actions}
           <button
             type="button"
@@ -406,11 +430,18 @@ function GarminCard({
   )
 }
 
+const WELLNESS_GROUPS: MetricGroup[] = [
+  { title: 'Sleep & recovery', metrics: SLEEP_METRICS },
+  { title: 'Activity', metrics: WELLNESS_METRICS },
+]
+
 /**
- * Sleep & recovery. Deliberately not collapsible — it is the reason the
- * Personal page loads, so it is always open.
+ * Daily wellness: last night's sleep and recovery and the day's activity on
+ * one card, under one date. Day / Week avg switches both groups together.
+ *
+ * No date pill in the header — the date row under it already names the day.
  */
-export function GarminSleepCard({ title }: { title: string }) {
+export function GarminWellnessCard({ title }: { title: string }) {
   const { rows, isLoading, error, refresh } = useGarminWellness()
   const [mode, setMode] = useState<'day' | 'week'>('day')
   const [selectedDate, setSelectedDate] = useState('')
@@ -429,14 +460,15 @@ export function GarminSleepCard({ title }: { title: string }) {
   }, [source, activeDate])
 
   return (
-    <article className="info-card admin-card">
-      <div className="admin-card-head">
-        <h3>{title}</h3>
-        <div className="admin-card-actions">
+    <GarminCard
+      title={title}
+      actions={
+        <>
           <div className="garmin-mode-toggle" role="group" aria-label="Averaging period">
             <button
               type="button"
               className={mode === 'day' ? 'active' : ''}
+              aria-pressed={mode === 'day'}
               onClick={() => { setMode('day'); setSelectedDate('') }}
             >
               Day
@@ -444,15 +476,16 @@ export function GarminSleepCard({ title }: { title: string }) {
             <button
               type="button"
               className={mode === 'week' ? 'active' : ''}
+              aria-pressed={mode === 'week'}
               onClick={() => { setMode('week'); setSelectedDate('') }}
             >
               Week avg
             </button>
           </div>
           <RefreshButton onClick={() => void refresh()} busy={isLoading} />
-        </div>
-      </div>
-
+        </>
+      }
+    >
       <WellnessDateNav
         unit={mode === 'week' ? 'week' : 'day'}
         dates={dates}
@@ -462,35 +495,7 @@ export function GarminSleepCard({ title }: { title: string }) {
 
       {mode === 'day' ? <SyncNote rows={rows} error={error} /> : null}
 
-      <MetricGrid rows={visible} metrics={SLEEP_METRICS} isLoading={isLoading} error={error} />
-    </article>
-  )
-}
-
-export function GarminWellnessCard({ title }: { title: string }) {
-  const { rows, isLoading, error, refresh } = useGarminWellness()
-  const [selectedDate, setSelectedDate] = useState('')
-
-  const dates = useMemo(() => rows.map((row) => row.date).filter(Boolean), [rows])
-  const activeDate = resolveDate(dates, selectedDate)
-
-  const visible = useMemo(() => {
-    if (!activeDate) return rows
-    const index = rows.findIndex((row) => row.date === activeDate)
-    return index < 0 ? rows : rows.slice(index)
-  }, [rows, activeDate])
-
-  return (
-    <GarminCard
-      title={title}
-      pill={activeDate ? formatDayLabel(activeDate) : undefined}
-      actions={<RefreshButton onClick={() => void refresh()} busy={isLoading} />}
-    >
-      <WellnessDateNav unit="day" dates={dates} activeDate={activeDate} onSelect={setSelectedDate} />
-
-      <SyncNote rows={rows} error={error} />
-
-      <MetricGrid rows={visible} metrics={WELLNESS_METRICS} isLoading={isLoading} error={error} />
+      <MetricGroups rows={visible} groups={WELLNESS_GROUPS} isLoading={isLoading} error={error} />
     </GarminCard>
   )
 }

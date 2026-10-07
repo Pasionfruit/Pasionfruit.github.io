@@ -22,7 +22,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     title: 'Personal',
     path: '/admin/personal',
     icon: 'personal',
-    summary: 'Journal entries, mood, gratitude, and a breathing timer',
+    summary: 'Verse of the day, journal entries with gratitude, and mood',
     accent: '#a855f7',
     eyebrow: 'Writing',
   },

@@ -438,14 +438,35 @@ describe('admin routing', () => {
     expect(hrefs).toEqual(['/tasks', '/weekly-reset'])
   })
 
-  it('shows those links as icons, named for screen readers and on hover', () => {
+  it('shows those links as icons in the top right of Tasks of the Day', async () => {
     renderAt('/', ADMIN_EMAIL)
 
-    const tasks = screen.getByRole('link', { name: 'Full task manager' })
-    const reset = screen.getByRole('link', { name: 'Weekly reset' })
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const header = heading.closest('.section-card-header')
+    if (!header) {
+      throw new Error('Tasks of the Day header not found')
+    }
+
+    const tasks = within(header as HTMLElement).getByRole('link', { name: 'Full task manager' })
+    const reset = within(header as HTMLElement).getByRole('link', { name: 'Weekly reset' })
 
     expect(tasks.textContent).toBe('')
     expect(reset.textContent).toBe('')
     expect(tasks.getAttribute('title')).toBe('Full task manager')
+  })
+
+  it('drops Milestones from Health and folds sleep into Daily wellness', async () => {
+    renderAt('/admin/health', ADMIN_EMAIL)
+
+    expect(await screen.findByRole('heading', { name: 'Daily wellness' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Milestones' })).toBeNull()
+  })
+
+  it('drops the Breathe and Sleep & recovery cards from Personal', async () => {
+    renderAt('/admin/personal', ADMIN_EMAIL)
+
+    expect(await screen.findByRole('heading', { name: 'Entries' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Breathe' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Sleep & recovery' })).toBeNull()
   })
 })

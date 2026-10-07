@@ -111,8 +111,7 @@
 
 /* Same min-width:auto blowout guard as .page-grid. */
 .admin-page > *,
-.admin-home-split > *,
-.journal-top-row > * {
+.admin-home-split > * {
   min-width: 0;
 }
 
@@ -152,22 +151,16 @@
   }
 }
 
-/* Round icon links at the bottom right of Home, under the last card. */
-.admin-home-links {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.45rem;
-}
-
+/* Icon links in the Tasks of the Day header, sized and shaped like the
+   collapse button beside them. */
 .admin-quick-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
+  width: 2rem;
+  height: 2rem;
   border: 1px solid var(--border);
-  border-radius: 50%;
+  border-radius: 0.55rem;
   background: var(--surface);
   color: var(--text-muted);
   text-decoration: none;
@@ -708,19 +701,7 @@
   margin-top: auto;
 }
 
-/* ── Journal: verse, breathing, mood ──────────────────────────────────────── */
-
-.journal-top-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.85rem;
-}
-
-@media (min-width: 52rem) {
-  .journal-top-row {
-    grid-template-columns: 1fr 1fr;
-  }
-}
+/* ── Journal: verse, mood ─────────────────────────────────────────────────── */
 
 .verse-text {
   margin: 0.7rem 0 0;
@@ -742,162 +723,6 @@
   font-size: 0.78rem;
   font-style: normal;
   letter-spacing: 0.03em;
-}
-
-/* Breathing timer */
-.breathing-stage {
-  position: relative;
-  display: grid;
-  place-items: center;
-  height: 11rem;
-  margin-top: 0.8rem;
-}
-
-.breathing-ring {
-  position: absolute;
-  width: 9.5rem;
-  height: 9.5rem;
-  border-radius: 50%;
-  border: 2px solid var(--page-accent, var(--accent));
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--page-accent, var(--accent)) 16%, transparent),
-    transparent 70%
-  );
-  transition-property: transform;
-  transition-timing-function: ease-in-out;
-  will-change: transform;
-}
-
-/* An expanding circle is the point of the exercise, but honour the setting. */
-@media (prefers-reduced-motion: reduce) {
-  .breathing-ring {
-    transition-duration: 0s !important;
-  }
-}
-
-.breathing-readout {
-  position: relative;
-  display: grid;
-  gap: 0.1rem;
-  text-align: center;
-}
-
-.breathing-phase {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.breathing-count {
-  margin: 0;
-  color: var(--text-strong);
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Sized to sit inside the resting circle, which is 55% of 9.5rem. */
-.breathing-idle {
-  margin: 0;
-  max-width: 4.5rem;
-  color: var(--text-strong);
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.1;
-}
-
-.breathing-controls {
-  display: grid;
-  justify-items: center;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
-}
-
-.breathing-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 7rem);
-  gap: 0.5rem;
-}
-
-/* Both controls share one size so neither reads as the "real" button. */
-.breathing-btn {
-  min-height: 2.75rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border-strong);
-  border-radius: 0.5rem;
-  background: var(--surface);
-  color: var(--text-strong);
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.breathing-btn-primary {
-  border-color: var(--page-accent, var(--accent));
-  background: color-mix(in srgb, var(--page-accent, var(--accent)) 14%, var(--surface));
-}
-
-.breathing-btn:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.breathing-options {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
-  gap: 0.6rem;
-  margin-top: 0.7rem;
-}
-
-.breathing-options label {
-  display: grid;
-  gap: 0.25rem;
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.breathing-options select {
-  padding: 0.35rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 0.45rem;
-  background: var(--surface);
-  color: var(--text-strong);
-  font: inherit;
-  font-size: 0.85rem;
-  text-transform: none;
-  letter-spacing: normal;
-}
-
-.breathing-durations {
-  display: flex;
-  gap: 0.3rem;
-}
-
-.breathing-durations button {
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  border: 1px solid var(--border);
-  border-radius: 0.45rem;
-  background: var(--surface);
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  cursor: pointer;
-}
-
-.breathing-durations button.active {
-  border-color: var(--page-accent, var(--accent));
-  color: var(--text-strong);
-  font-weight: 600;
 }
 
 /* Mood tracker */
@@ -1137,8 +962,25 @@
 }
 
 /* ── Garmin metric cards ──────────────────────────────────────────────────
-   Sleep & recovery, daily wellness, and training & performance all render the
-   same compact metric grid. */
+   Daily wellness renders one compact metric grid per group (sleep & recovery,
+   activity), each under a small heading. */
+.garmin-metric-group + .garmin-metric-group {
+  margin-top: 1rem;
+}
+
+.garmin-metric-group-title {
+  margin: 0.9rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.garmin-metric-group-title + .garmin-metric-grid {
+  margin-top: 0.45rem;
+}
+
 .garmin-metric-grid {
   /* Positioning context for the tooltips: anchoring them to the grid rather
      than to each tile is what keeps them inside the card. */
@@ -2070,7 +1912,6 @@
   .ace-ghost-btn,
   .ace-send-btn,
   .ace-quick-btn,
-  .admin-quick-link,
   .garmin-date-step,
   .training-log-year-btn {
     min-height: 2.5rem;

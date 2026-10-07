@@ -79,7 +79,6 @@ import {
   createEvent,
   deleteEvent,
   getEvents,
-  getPersonalTraining,
   getGarminHealth,
   getRingconnHealth,
   getAppleHealth,
@@ -93,7 +92,6 @@ import type {
   AppleHealthRecord,
   EventRecord,
   GarminHealthRecord,
-  PersonalTrainingRecord,
   RingconnHealthRecord,
   TrainingRecord,
 } from './data/sheets/types'
@@ -347,15 +345,6 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
 
       <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
-      {/* Icon-only, so the names live in aria-label and the hover tooltip. */}
-      <div className="admin-home-links">
-        <Link to="/tasks" className="admin-quick-link" aria-label="Full task manager" title="Full task manager">
-          <List size={17} strokeWidth={1.8} aria-hidden="true" />
-        </Link>
-        <Link to="/weekly-reset" className="admin-quick-link" aria-label="Weekly reset" title="Weekly reset">
-          <RotateCcw size={17} strokeWidth={1.8} aria-hidden="true" />
-        </Link>
-      </div>
     </div>
   )
 }
@@ -374,7 +363,6 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
       <GarminWellnessCard title="Daily wellness" />
       <HealthDataCard title="Health Data" />
       <TrainingLogCard title="Training Log" canWrite={false} idToken={googleIdToken} />
-      <MilestonesCard title="Milestones" />
     </AdminPage>
   )
 }
@@ -910,6 +898,13 @@ function TodoistTasksCard({
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
+          {/* Icon-only, so the names live in aria-label and the hover tooltip. */}
+          <Link to="/tasks" className="admin-quick-link" aria-label="Full task manager" title="Full task manager">
+            <List size={15} strokeWidth={1.8} aria-hidden="true" />
+          </Link>
+          <Link to="/weekly-reset" className="admin-quick-link" aria-label="Weekly reset" title="Weekly reset">
+            <RotateCcw size={15} strokeWidth={1.8} aria-hidden="true" />
+          </Link>
           <button
             type="button"
             className="section-collapse-btn home-todoist-collapse-btn"
@@ -2480,104 +2475,6 @@ function ExperienceRow({
         {entry.note ? <p className="experience-note">{entry.note}</p> : null}
       </div>
     </li>
-  )
-}
-
-function MilestonesCard({ title }: { title: string }) {
-  const [records, setRecords] = useState<PersonalTrainingRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [category, setCategory] = useState<string>('all')
-  const [isCollapsed, setIsCollapsed] = useState(true)
-
-  useEffect(() => {
-    let isMounted = true
-    getPersonalTraining()
-      .then((data) => {
-        if (isMounted) setRecords(data.filter((r) => r.type === 'milestone'))
-      })
-      .catch(() => {
-        if (isMounted) setRecords([])
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false)
-      })
-    return () => { isMounted = false }
-  }, [])
-
-  const categories = useMemo(() => {
-    const seen = new Set<string>()
-    for (const r of records) {
-      if (r.category) seen.add(r.category)
-    }
-    return Array.from(seen)
-  }, [records])
-
-  const visible = useMemo(
-    () => (category === 'all' ? records : records.filter((r) => r.category === category)),
-    [records, category],
-  )
-
-  return (
-    <article className="info-card section-page-card milestones-card">
-      <div className="section-card-header">
-        <h3>{title}</h3>
-        <button
-          type="button"
-          className="section-collapse-btn"
-          aria-expanded={!isCollapsed}
-          onClick={() => setIsCollapsed((c) => !c)}
-        >
-          {isCollapsed ? '▸' : '▾'}
-        </button>
-      </div>
-
-      {!isCollapsed && (
-        isLoading ? (
-          <p className="sheets-meta">Loading milestones...</p>
-        ) : records.length === 0 ? (
-          <p className="sheets-meta">No milestone data found.</p>
-        ) : (
-          <>
-            <div className="milestones-toggle" role="tablist" aria-label="Milestones category filter">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={category === 'all'}
-                className={`milestones-toggle-btn ${category === 'all' ? 'active' : ''}`}
-                onClick={() => setCategory('all')}
-              >
-                All
-              </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  role="tab"
-                  aria-selected={category === cat}
-                  className={`milestones-toggle-btn ${category === cat ? 'active' : ''}`}
-                  onClick={() => setCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="milestones-list-scroll">
-              <ul className="milestones-list">
-                {visible.map((entry) => (
-                  <li key={`${entry.category}-${entry.name}`} className="milestone-item">
-                    <div className="milestone-content">
-                      <p className="milestone-name">{entry.name}</p>
-                      <p className="milestone-value">{entry.value || '—'}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        )
-      )}
-    </article>
   )
 }
 

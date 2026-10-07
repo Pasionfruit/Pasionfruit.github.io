@@ -9,11 +9,9 @@ import {
   updateJournalEntry,
 } from '../data/sheets/repositories'
 import type { JournalEntryRecord } from '../data/sheets/types'
-import { BreathingTimerCard } from './BreathingTimerCard'
 import { MoodTrackerCard } from './MoodTrackerCard'
 import { MOOD_SCALE } from './journal/moods'
 import { VerseOfTheDayCard } from './VerseOfTheDayCard'
-import { GarminSleepCard } from './GarminCards'
 import { GRATITUDE_LINE_COUNT, getPromptOfTheDay } from './journal/prompts'
 import { JournalLock } from './journal/JournalLock'
 
@@ -232,8 +230,7 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
   return (
     <AdminPage meta={meta}>
-      {/* Verse first, then the entries right under it; sleep and the timer
-          share the row below them. */}
+      {/* Verse first, then the entries right under it, then the mood trend. */}
       <VerseOfTheDayCard title="Verse of the day" />
 
       <article className="info-card admin-card admin-card-wide">
@@ -464,11 +461,6 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
           )}
         </JournalLock>
       </article>
-
-      <div className="journal-top-row">
-        <GarminSleepCard title="Sleep & recovery" />
-        <BreathingTimerCard title="Breathe" />
-      </div>
 
       <MoodTrackerCard title="Mood" entries={entries} isLoading={isLoading} />
     </AdminPage>

@@ -108,8 +108,42 @@ describe('GarminWellnessCard', () => {
     render(<GarminWellnessCard title="Daily wellness" />)
 
     await screen.findByText('9,000')
-    // The pill names the day the numbers are actually from, not today.
+    // The date row names the day the numbers are actually from, not today.
     expect(screen.getByText(/No reading for today yet/)).toBeTruthy()
+  })
+
+  it('carries sleep & recovery and activity on one card, with no date pill', async () => {
+    repoMocks.getGarminWellness.mockResolvedValue([
+      row(YESTERDAY, { sleep_score: '81', steps: '9000' }),
+      row(TWO_DAYS_AGO, { sleep_score: '74', steps: '6000' }),
+    ])
+    const { container } = render(<GarminWellnessCard title="Daily wellness" />)
+
+    const sleep = await screen.findByRole('region', { name: 'Sleep & recovery' })
+    const activity = screen.getByRole('region', { name: 'Activity' })
+
+    expect(within(sleep).getByText('Sleep score')).toBeTruthy()
+    expect(within(sleep).getByText('81')).toBeTruthy()
+    expect(within(activity).getByText('9,000')).toBeTruthy()
+    expect(container.querySelector('.admin-pill')).toBeNull()
+  })
+
+  it('averages both groups by week from one toggle', async () => {
+    const user = userEvent.setup()
+    // A Tuesday and Wednesday, so both fall in the same week however weeks start.
+    repoMocks.getGarminWellness.mockResolvedValue([
+      row('2026-09-02', { sleep_score: '80', steps: '8000' }),
+      row('2026-09-01', { sleep_score: '70', steps: '6000' }),
+    ])
+    render(<GarminWellnessCard title="Daily wellness" />)
+
+    await screen.findByText('8,000')
+    await user.click(screen.getByRole('button', { name: 'Week avg' }))
+
+    const sleep = screen.getByRole('region', { name: 'Sleep & recovery' })
+    const activity = screen.getByRole('region', { name: 'Activity' })
+    expect(within(sleep).getByText('75')).toBeTruthy()
+    expect(within(activity).getByText('7,000')).toBeTruthy()
   })
 
   it('steps back to a previous day and back to the latest', async () => {

@@ -25,9 +25,6 @@ vi.mock('../data/sheets/repositories', () => ({
   deleteJournalEntry: vi.fn(),
 }))
 
-// The sleep card fetches Garmin data of its own; it has no part in this.
-vi.mock('./GarminCards', () => ({ GarminSleepCard: () => null }))
-
 // SHA-256 of 'pw'.
 const PASSWORD_HASH = '30c952fab122c3f9759f02a6d95c3758b246b4fee239957b2d4fee46e26170c4'
 

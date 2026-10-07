@@ -32,8 +32,8 @@ dashboard.
 | Nav item | Route | Contents |
 | --- | --- | --- |
 | Home | `/` | The month's calendar, today's tasks, yesterday's recap, and the inbox |
-| Personal | `/admin/personal` | Journal entries, mood tracker, gratitude prompts, breathing timer |
-| Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log, milestones |
+| Personal | `/admin/personal` | Verse of the day, journal entries with gratitude prompts, mood tracker |
+| Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log |
 
 `/admin/journal` and `/admin/training` redirect to their renamed routes. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.
@@ -105,8 +105,8 @@ It makes several API calls per day of history and Garmin rate-limits hard, so it
 sleeps a second between days and defaults to a 7-day window. Any metric your
 watch does not record degrades to a blank cell rather than failing the day.
 
-The data surfaces as **Sleep & recovery** on Personal and **Daily wellness** plus
-**Training & performance** on Health. The Training Log contribution grid is also
+The data surfaces as **Daily wellness** on Health — sleep and recovery and the
+day's activity on one card, by day or by week average. The Training Log contribution grid is also
 derived from Garmin now — a day counts because an activity was recorded, so it is
 read-only rather than something you tick off.
 
@@ -386,9 +386,6 @@ Beyond the entry list, the Journal dashboard has:
   ([src/admin/journal/prompts.ts](src/admin/journal/prompts.ts)). The question
   text is saved with the entry, so an old entry keeps the prompt it was written
   against rather than being re-labelled by whatever falls on that date later.
-- **Breathing timer** — box 4-4-4-4, relaxing 4-7-8, or coherent 5-5, over 1 to
-  10 minutes, with an expanding ring and a live phase announcement for screen
-  readers. The ring animation respects `prefers-reduced-motion`.
 
 The gratitude fields need three new columns on the `journal_entries` sheet
 (`gratitude`, `prompt`, `reflection`) and a redeployed Apps Script. Existing

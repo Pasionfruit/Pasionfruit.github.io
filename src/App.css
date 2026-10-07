@@ -1960,34 +1960,6 @@
   font-style: italic;
 }
 
-.milestones-toggle {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: 0.55rem;
-  overflow: hidden;
-}
-
-.milestones-toggle-btn {
-  border: 0;
-  background: var(--surface-muted);
-  color: var(--text-muted);
-  padding: 0.42rem 0.72rem;
-  cursor: pointer;
-  font-size: 0.84rem;
-}
-
-.milestones-toggle-btn.active {
-  background: var(--surface);
-  color: var(--text-strong);
-}
-
-.milestones-list-scroll {
-  overflow-y: auto;
-  max-height: 16rem;
-}
-
 /* ── Well-being overview ─────────────────────────────────────────────────── */
 
 .wellbeing-section {
@@ -2285,65 +2257,6 @@
   .wellbeing-stat-value {
     font-size: 1.05rem;
   }
-}
-
-.milestones-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.4rem;
-}
-
-.milestone-item {
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.milestone-item:last-child {
-  border-bottom: none;
-}
-
-.milestone-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.milestone-name {
-  margin: 0;
-  color: var(--text-strong);
-  font-size: 0.95rem;
-  flex-shrink: 0;
-}
-
-.milestone-value {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  text-align: right;
-}
-
-.milestone-value-input {
-  flex-grow: 1;
-  max-width: 200px;
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--page-accent);
-  border-radius: 0.25rem;
-  background: var(--surface);
-  color: var(--text-strong);
-  font-size: 0.9rem;
-  font-family: inherit;
-  transition: border-color 0.2s ease;
-}
-
-.milestone-value-input:focus {
-  outline: none;
-  border-color: var(--page-accent);
-  box-shadow: 0 0 0 2px var(--page-accent-alpha);
 }
 
 .countdown-card {
