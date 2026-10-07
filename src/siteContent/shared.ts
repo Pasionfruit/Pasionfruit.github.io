@@ -1,5 +1,5 @@
 /** Sections a signed-out visitor can reach. Everything else lives behind /admin. */
-export type SectionId = 'experiences' | 'personal-sites' | 'gaming'
+export type SectionId = 'experiences' | 'personal-sites' | 'gaming' | 'training'
 
 /**
  * The private dashboards, available only to the admin Google account.

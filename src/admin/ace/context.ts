@@ -21,6 +21,7 @@ import { getActiveTasks, getCompletedTasks } from '../../data/todoist/repositori
 import { addDaysToKey, dateFromKey, dueDateKey, todayKey, toLocalDateKey } from '../../data/todoist/dates'
 import type { TodoistTask } from '../../data/todoist/types'
 import { moodScore } from '../journal/moods'
+import { workoutOneLine } from '../../training/workoutPlan'
 
 /**
  * Everything Ace is shown about Abe, gathered client-side.
@@ -340,7 +341,8 @@ function planLine(record: TrainingRecord, today: string) {
   const session = (label: string, workout: string | undefined, done: boolean) => {
     if (!workout) return ''
     const status = past ? (done ? ' (done)' : ' (missed)') : done ? ' (done)' : ''
-    return `${label} ${workout}${status}`
+    // A pasted workout spans lines; the day has to stay one line of the list.
+    return `${label} ${workoutOneLine(workout)}${status}`
   }
   const sessions = [
     session('AM:', record.morning_workout, record.completed_morning),

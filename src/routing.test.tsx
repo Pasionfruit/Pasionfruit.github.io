@@ -138,6 +138,24 @@ describe('guest home page', () => {
     expect(expanded('experiences')).toBe('true')
     expect(expanded('personal-sites')).toBe('false')
     expect(expanded('gaming')).toBe('false')
+    expect(expanded('training')).toBe('false')
+  })
+
+  it('shows guests the week of workouts, read-only', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+
+    const toggle = document.querySelector<HTMLButtonElement>('#training .home-section-toggle')
+    if (!toggle) {
+      throw new Error('Training section toggle not found')
+    }
+    await user.click(toggle)
+
+    const heading = await screen.findByRole('heading', { name: 'Workouts for the Week' })
+    const card = heading.closest('article')
+    expect(card).toBeTruthy()
+    // Editing and pasting stay on /weekly-reset.
+    expect(card?.querySelector('[title="Edit values"]')).toBeNull()
   })
 
   it('expands and re-collapses a section', async () => {

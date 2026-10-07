@@ -6,6 +6,7 @@ import {
 } from './siteContent/experiences'
 import { navSections } from './siteContent/home'
 import { personalSiteEntries, personalSitesSectionPage } from './siteContent/personalSites'
+import { trainingSectionPage } from './siteContent/training'
 import { adminDashboards, adminDashboardsById } from './siteContent/admin'
 import type { PageContent, SectionId } from './siteContent/shared'
 
@@ -31,9 +32,10 @@ export {
   professionalExperienceEntries,
 }
 
-/** Section chrome for the three collapsible blocks on the home page. */
+/** Section chrome for the collapsible blocks on the home page. */
 export const sectionPages: Record<SectionId, PageContent> = {
   experiences: experiencesSectionPage,
   'personal-sites': personalSitesSectionPage,
   gaming: gamingSectionPage,
+  training: trainingSectionPage,
 }

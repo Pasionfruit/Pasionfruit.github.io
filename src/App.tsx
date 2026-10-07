@@ -58,6 +58,8 @@ import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
+import { WorkoutText } from './training/WorkoutText'
+import { assignPlanDates, parseWorkoutTable } from './training/workoutPlan'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   adminDashboards,
@@ -675,14 +677,14 @@ function HomeSection({
   )
 }
 
-const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming']
+const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming', 'training']
 
-/** The public home page: three collapsible sections. Admins get AdminHomePage. */
+/** The public home page: collapsible sections. Admins get AdminHomePage. */
 function HomePage() {
   const location = useLocation()
   /*
    * Experiences opens by default — it is the resume, and the reason most
-   * visitors are here. The other two stay collapsed so the page stays scannable.
+   * visitors are here. The others stay collapsed so the page stays scannable.
    */
   const [openSections, setOpenSections] = useState<SectionId[]>(['experiences'])
 
@@ -761,6 +763,15 @@ function HomePage() {
         onToggle={() => toggleSection('gaming')}
       >
         <MinecraftServerCards />
+      </HomeSection>
+
+      {/* Read-only here; the plan is pasted and edited on /weekly-reset. */}
+      <HomeSection
+        id="training"
+        isOpen={openSections.includes('training')}
+        onToggle={() => toggleSection('training')}
+      >
+        <WeeklyWorkoutResetCard title="Workouts for the Week" canWrite={false} idToken="" />
       </HomeSection>
     </div>
   )
@@ -957,7 +968,7 @@ function TodoistTasksCard({
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{todaysTrainingRecord.morning_workout || 'Morning —'}</td>
+                      <td><WorkoutText value={todaysTrainingRecord.morning_workout} empty="Morning —" /></td>
                       <td className="study-complete-cell">
                         {canWrite ? (
                           <button
@@ -974,7 +985,7 @@ function TodoistTasksCard({
                       </td>
                     </tr>
                     <tr>
-                      <td>{todaysTrainingRecord.evening_workout || 'Evening —'}</td>
+                      <td><WorkoutText value={todaysTrainingRecord.evening_workout} empty="Evening —" /></td>
                       <td className="study-complete-cell">
                         {canWrite ? (
                           <button
@@ -1623,7 +1634,7 @@ function TrainingLogCard({
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{todaysRecord.morning_workout || 'Morning —'}</td>
+                      <td><WorkoutText value={todaysRecord.morning_workout} empty="Morning —" /></td>
                       <td className="study-complete-cell">
                         {canWrite ? (
                           <button
@@ -1640,7 +1651,7 @@ function TrainingLogCard({
                       </td>
                     </tr>
                     <tr>
-                      <td>{todaysRecord.evening_workout || 'Evening —'}</td>
+                      <td><WorkoutText value={todaysRecord.evening_workout} empty="Evening —" /></td>
                       <td className="study-complete-cell">
                         {canWrite ? (
                           <button
@@ -3056,10 +3067,13 @@ function HealthDataCard({ title }: { title: string }) {
 }
 
 function getResetWeekDates() {
-  // Saturday-through-Friday week containing today, matching the meal plan's day ordering.
+  /*
+   * Today and the six days after it. A rolling window rather than a fixed
+   * Saturday-to-Friday week, so a plan pasted mid-week (say Wed–Sun) lands on
+   * the coming days instead of its weekend falling back into the last one.
+   */
   const start = new Date()
   start.setHours(0, 0, 0, 0)
-  start.setDate(start.getDate() - ((start.getDay() + 1) % 7))
 
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(start)
@@ -3093,6 +3107,12 @@ function WeeklyResetPage({ profile, googleIdToken }: { profile: UserProfile; goo
 
 type WeeklyWorkoutDraft = { morning: string; evening: string }
 
+const PASTE_PLACEHOLDER = [
+  '| Day | Morning | Evening |',
+  '|---|---|---|',
+  '| Wed | **Easy swim**<br>• 4×50m free | Legs |',
+].join('\n')
+
 // Default training split applied by "Reset week", keyed by Date.getDay() (0 = Sunday).
 const WEEKLY_WORKOUT_DEFAULTS: Record<number, WeeklyWorkoutDraft> = {
   0: { morning: 'Rest: —', evening: 'Rest: —' },
@@ -3123,6 +3143,9 @@ function WeeklyWorkoutResetCard({
   const [savedDrafts, setSavedDrafts] = useState<Record<string, WeeklyWorkoutDraft>>({})
   const [isExpanded, setIsExpanded] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
+  const [isPasting, setIsPasting] = useState(false)
+  const [pasteText, setPasteText] = useState('')
+  const [pasteMessage, setPasteMessage] = useState('')
 
   async function loadWeek() {
     try {
@@ -3169,6 +3192,51 @@ function WeeklyWorkoutResetCard({
     })
   }
 
+  /*
+   * Fill the drafts from a pasted Markdown plan. Nothing is saved here: the
+   * rows land in the editor for a look over, then Save workouts writes them.
+   */
+  function handleFillFromPaste() {
+    const parsed = parseWorkoutTable(pasteText)
+    if (parsed.error) {
+      setPasteMessage(parsed.error)
+      return
+    }
+
+    const shown = new Set(weekDates.map((date) => toDateOnlyKey(date.toISOString())))
+    const label = (date: Date) =>
+      date.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })
+    const updates: Record<string, WeeklyWorkoutDraft> = {}
+    const filled: string[] = []
+    const outside: string[] = []
+
+    for (const day of assignPlanDates(parsed.days, weekDates[0])) {
+      const key = toDateOnlyKey(day.date.toISOString())
+      if (shown.has(key)) {
+        updates[key] = { morning: day.morning, evening: day.evening }
+        filled.push(label(day.date))
+      } else {
+        outside.push(label(day.date))
+      }
+    }
+
+    setDrafts((current) => ({ ...current, ...updates }))
+
+    const notes = [
+      filled.length
+        ? `Filled ${filled.length === 1 ? filled[0] : `${filled[0]} – ${filled[filled.length - 1]}`}. Review, then Save workouts.`
+        : 'Nothing landed in the seven days shown.',
+    ]
+    if (outside.length) notes.push(`Skipped ${outside.join(', ')}: past the seven days shown.`)
+    if (parsed.skipped.length) notes.push(`Ignored rows without a weekday: ${parsed.skipped.join(', ')}.`)
+    setPasteMessage(notes.join(' '))
+
+    if (filled.length) {
+      setPasteText('')
+      setIsPasting(false)
+    }
+  }
+
   async function handleSaveAll() {
     if (!canWrite || !idToken || isWriting) return
     setIsWriting(true)
@@ -3199,6 +3267,8 @@ function WeeklyWorkoutResetCard({
 
       await loadWeek()
       setIsEditing(false)
+      setIsPasting(false)
+      setPasteMessage('')
       setSaveMessage(changedDates.length > 0 ? 'Workouts updated for this week.' : 'No workout changes to save.')
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to update workouts')
@@ -3222,6 +3292,8 @@ function WeeklyWorkoutResetCard({
                 if (isEditing) {
                   setDrafts(savedDrafts)
                   setIsEditing(false)
+                  setIsPasting(false)
+                  setPasteMessage('')
                 } else {
                   setIsExpanded(true)
                   setIsEditing(true)
@@ -3246,6 +3318,48 @@ function WeeklyWorkoutResetCard({
 
       {!isLoading && isExpanded ? (
         <>
+          {isEditing && isPasting ? (
+            <div className="weekly-paste">
+              <label htmlFor="weekly-paste-input">
+                Paste a <code>| Day | Morning | Evening |</code> table. Days fill from today forward.
+              </label>
+              <textarea
+                id="weekly-paste-input"
+                className="sheets-input"
+                rows={7}
+                value={pasteText}
+                placeholder={PASTE_PLACEHOLDER}
+                onChange={(event) => setPasteText(event.target.value)}
+              />
+              <div className="weekly-paste-actions">
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() => {
+                    setIsPasting(false)
+                    setPasteText('')
+                    setPasteMessage('')
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={handleFillFromPaste}
+                  disabled={!pasteText.trim()}
+                >
+                  Fill table
+                </button>
+              </div>
+            </div>
+          ) : null}
+          {isEditing && pasteMessage ? (
+            <p className="sheets-meta" role="status">
+              {pasteMessage}
+            </p>
+          ) : null}
+
           <div className="sheets-table-shell weekly-reset-table-shell">
             <table className="sheets-table weekly-reset-table">
               <thead>
@@ -3271,28 +3385,30 @@ function WeeklyWorkoutResetCard({
                       </td>
                       <td data-label="Morning workout">
                         {isEditing ? (
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
+                          <textarea
+                            className="sheets-input sheets-table-input weekly-reset-input"
+                            aria-label={`${date.toLocaleDateString('en-US', { weekday: 'long' })} morning workout`}
+                            rows={Math.max(1, draft.morning.split('\n').length)}
                             value={draft.morning}
                             onChange={(event) => setDraftValue(key, 'morning', event.target.value)}
                             disabled={!canWrite || !idToken || isWriting}
                           />
                         ) : (
-                          <span>{draft.morning || '—'}</span>
+                          <WorkoutText value={draft.morning} />
                         )}
                       </td>
                       <td data-label="Evening workout">
                         {isEditing ? (
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
+                          <textarea
+                            className="sheets-input sheets-table-input weekly-reset-input"
+                            aria-label={`${date.toLocaleDateString('en-US', { weekday: 'long' })} evening workout`}
+                            rows={Math.max(1, draft.evening.split('\n').length)}
                             value={draft.evening}
                             onChange={(event) => setDraftValue(key, 'evening', event.target.value)}
                             disabled={!canWrite || !idToken || isWriting}
                           />
                         ) : (
-                          <span>{draft.evening || '—'}</span>
+                          <WorkoutText value={draft.evening} />
                         )}
                       </td>
                     </tr>
@@ -3311,6 +3427,18 @@ function WeeklyWorkoutResetCard({
                 disabled={!canWrite || !idToken || isWriting}
               >
                 Reset week
+              </button>
+              <button
+                type="button"
+                className="secondary-action"
+                aria-expanded={isPasting}
+                onClick={() => {
+                  setIsPasting((value) => !value)
+                  setPasteMessage('')
+                }}
+                disabled={!canWrite || !idToken || isWriting}
+              >
+                Paste plan
               </button>
               <button
                 type="button"

@@ -218,6 +218,109 @@
   color: var(--text-muted);
 }
 
+/* The day needs only a name and a date; the workouts get the rest. */
+.weekly-reset-table th:first-child {
+  width: 6.5rem;
+}
+
+.weekly-reset-table td {
+  overflow-wrap: anywhere;
+}
+
+.weekly-reset-input {
+  display: block;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.weekly-paste {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+}
+
+.weekly-paste label {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.weekly-paste textarea {
+  width: 100%;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  resize: vertical;
+}
+
+.weekly-paste-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* A pasted workout: bold title, then its sets as a tight bullet list. */
+.workout-text {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.workout-text ul {
+  margin: 0;
+  padding-left: 1.05rem;
+}
+
+.workout-text li {
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Under 640px three columns of bullet lists are ~110px each, so each day
+   becomes its own block with the two workouts labelled underneath. */
+@media (max-width: 640px) {
+  .weekly-reset-table,
+  .weekly-reset-table thead,
+  .weekly-reset-table tbody,
+  .weekly-reset-table tr,
+  .weekly-reset-table th,
+  .weekly-reset-table td {
+    display: block;
+  }
+
+  .weekly-reset-table thead {
+    display: none;
+  }
+
+  .weekly-reset-table tr {
+    border-bottom: 1px solid var(--border);
+    padding: 0.35rem 0;
+  }
+
+  .weekly-reset-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .weekly-reset-table td {
+    border-bottom: 0;
+    padding: 0.3rem 0.55rem;
+  }
+
+  .weekly-reset-table td[data-label='Day'] {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .weekly-reset-table td:not([data-label='Day'])::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.15rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
 .theme-toggle {
   gap: 0.35rem;
 }

@@ -134,6 +134,24 @@ describe('renderAceContext', () => {
     expect(text).toMatch(/Mon, Aug 31 \(today\): AM: Bike 1h$/m)
   })
 
+  it('keeps a pasted multi-line workout on its own day line', () => {
+    const text = renderAceContext(
+      context({
+        trainingPlan: [
+          {
+            training_id: '2',
+            date: '8/31/2026',
+            morning_workout: '**Easy swim**\n• 100m breast\n• 4×50m free',
+            completed_morning: false,
+            completed_evening: false,
+          },
+        ],
+      }),
+    )
+
+    expect(text).toMatch(/Mon, Aug 31 \(today\): AM: Easy swim: 100m breast; 4×50m free$/m)
+  })
+
   it('summarises mood on its 1–5 scale and flags the journal as sensitive', () => {
     const text = renderAceContext(
       context({

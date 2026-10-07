@@ -8,7 +8,7 @@ The site has two faces, decided by which Google account is signed in.
 
 ### Public
 
-Everything public lives on the home page as three collapsible sections — there
+Everything public lives on the home page as collapsible sections — there
 are no separate section routes any more.
 
 | Section | Anchor | Contents |
@@ -16,6 +16,7 @@ are no separate section routes any more.
 | Experiences | `/#experiences` | Education, technical skills, professional history, resume downloads |
 | Personal Sites | `/#personal-sites` | Deployed side projects, linked out for anyone to try |
 | Gaming | `/#gaming` | Minecraft connection guide and live server status with a link to the control dashboard |
+| Training | `/#training` | Workouts for the next seven days, read-only (edited on `/weekly-reset`) |
 
 Sections start collapsed. The side menu links to each anchor, which expands the
 target section and scrolls to it. Collapsed panels keep their content in the DOM
@@ -41,6 +42,12 @@ The Calendar dashboard was merged into Home rather than getting its own tab, so
 `/admin`, `/admin/tasks`, and `/admin/calendar` all redirect to `/`. The full
 Todoist manager (`/tasks`) and `/weekly-reset` are linked from the bottom of the
 Home dashboard.
+
+`/weekly-reset` edits the workouts for today and the six days after it. In edit
+mode, **Paste plan** takes a Markdown `| Day | Morning | Evening |` table (cells
+may use `<br>`, `**bold**` and `•` bullets): each day lands on its next
+occurrence from today, in the order pasted, and the rows fill the editor for a
+look over before **Save workouts** writes them.
 
 Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card, no
 back link, and no intro paragraph, since the icon bar is always on screen. Below

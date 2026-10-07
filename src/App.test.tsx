@@ -736,4 +736,57 @@ describe('site sections and dashboards', () => {
     })
   })
 
+  it('fills the week from a pasted Markdown plan, then saves the filled days', async () => {
+    const user = userEvent.setup()
+    const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    // Relative to today, so both rows always land inside the seven days shown.
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const dayAfter = new Date()
+    dayAfter.setDate(dayAfter.getDate() + 2)
+    const sheetDate = (date: Date) => `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+
+    renderAdminPage('/weekly-reset')
+
+    const heading = await screen.findByRole('heading', { name: 'Workouts for the Week' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Workouts for the Week card not found')
+    }
+
+    await user.click(within(card).getByTitle('Edit values'))
+    await user.click(within(card).getByRole('button', { name: 'Paste plan' }))
+    await user.click(within(card).getByLabelText(/Paste a/))
+    await user.paste(
+      [
+        '| Day | Morning | Evening |',
+        '|---|---|---|',
+        `| ${names[tomorrow.getDay()]} | **Easy swim**<br>• 100m breast<br>• 4×50m free | Legs |`,
+        `| ${names[dayAfter.getDay()]} | **Quality run**<br>• 10min easy | Chest & Back |`,
+      ].join('\n'),
+    )
+    await user.click(within(card).getByRole('button', { name: 'Fill table' }))
+
+    expect(within(card).getByRole('status').textContent).toMatch(/^Filled .+ – .+\. Review, then Save workouts\.$/)
+    const tomorrowName = tomorrow.toLocaleDateString('en-US', { weekday: 'long' })
+    expect(
+      (within(card).getByLabelText(`${tomorrowName} morning workout`) as HTMLTextAreaElement).value,
+    ).toBe('**Easy swim**\n• 100m breast\n• 4×50m free')
+
+    await user.click(within(card).getByRole('button', { name: 'Save workouts' }))
+
+    await waitFor(() => {
+      expect(repoMocks.upsertTrainingRecord).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        date: sheetDate(tomorrow),
+        morningWorkout: '**Easy swim**\n• 100m breast\n• 4×50m free',
+        eveningWorkout: 'Legs',
+      })
+      expect(repoMocks.upsertTrainingRecord).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        date: sheetDate(dayAfter),
+        morningWorkout: '**Quality run**\n• 10min easy',
+        eveningWorkout: 'Chest & Back',
+      })
+    })
+  })
+
 })
