@@ -112,7 +112,8 @@ Removed along the way, with old URLs redirecting rather than 404ing:
 
 - **Cooking** — superseded by the standalone POV Cooking site, linked from Personal Sites.
 - **About Me** — the public cats, bucket list, countries, and backpack pages.
-- **Studying** — the actuarial exam table, study plan, and pomodoro timer.
+- **Studying** — the actuarial exam table, study plan, and pomodoro timer; later
+  the Studying tab on Tasks of the Day and the weekly study plan on `/weekly-reset`.
 - **Games lists and player leaderboards** — along with `scripts/gaming/sync_player_stats.py`,
   the `mc_player_stats` sheet reads, and the `updateMcPlayerStats` Apps Script action.
 

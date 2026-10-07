@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event'
 const repoMocks = vi.hoisted(() => {
   const empty = () => vi.fn().mockResolvedValue([])
   return {
-    getCurrentStudy: empty(),
     getEvents: empty(),
     getTrainingRecords: empty(),
     getPersonalTraining: empty(),
@@ -19,10 +18,8 @@ const repoMocks = vi.hoisted(() => {
     updateEvent: vi.fn(),
     deleteEvent: vi.fn(),
     setActiveEvent: vi.fn(),
-    setCurrentStudyCompleted: vi.fn(),
     setTrainingWorkoutCompleted: vi.fn(),
     upsertTrainingRecord: vi.fn(),
-    replaceCurrentStudyForDate: vi.fn(),
     createJournalEntry: vi.fn(),
     updateJournalEntry: vi.fn(),
     deleteJournalEntry: vi.fn(),

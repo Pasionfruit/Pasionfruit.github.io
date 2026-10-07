@@ -5,7 +5,6 @@ import type {
   BucketListRecord,
   CountryRecord,
   CouponRecord,
-  CurrentStudyRecord,
   EventRecord,
   GarminHealthRecord,
   GarminWellnessRecord,
@@ -150,20 +149,6 @@ export async function getCountries(): Promise<CountryRecord[]> {
       visited: parseBoolean(row.visited),
     }))
     .filter((row) => row.country_id && row.country_state_name)
-}
-
-export async function getCurrentStudy(): Promise<CurrentStudyRecord[]> {
-  const rows = await dbRead<Record<string, unknown>>('current_study')
-
-  return rows
-    .map((row) => ({
-      study_id: String(row.study_id ?? ''),
-      related_exam: String(row.related_exam ?? ''),
-      topic: String(row.topic ?? ''),
-      date: row.date ? String(row.date) : undefined,
-      completed: parseBoolean(row.completed),
-    }))
-    .filter((row) => row.study_id && row.topic)
 }
 
 export async function getTrainingRecords(): Promise<TrainingRecord[]> {
@@ -421,20 +406,6 @@ export async function setCountryVisited(idToken: string, countryId: string, visi
   })
 }
 
-export async function setCurrentStudyCompleted(idToken: string, studyId: string, completed: boolean) {
-  const rows = await dbRead<Record<string, unknown>>('current_study')
-  const row = rows.find((entry) => String(entry.study_id) === studyId)
-  if (!row) throw new Error('Study row not found')
-
-  await dbWrite('current_study', 'PUT', idToken, {
-    study_id: studyId,
-    related_exam: String(row.related_exam ?? ''),
-    topic: String(row.topic ?? ''),
-    date: String(row.date ?? ''),
-    completed,
-  })
-}
-
 export async function setTrainingWorkoutCompleted(
   idToken: string,
   trainingId: string,
@@ -485,29 +456,6 @@ export async function upsertTrainingRecord(
     completed_morning: false,
     completed_evening: false,
   })
-}
-
-export async function replaceCurrentStudyForDate(
-  idToken: string,
-  input: { date: string; relatedExam: string; topic: string },
-) {
-  const rows = await dbRead<Record<string, unknown>>('current_study')
-  const matches = rows.filter((row) => sameDateKey(String(row.date ?? ''), input.date))
-
-  for (const row of matches) {
-    await dbWrite('current_study', 'DELETE', idToken, { study_id: String(row.study_id) })
-  }
-
-  // An empty topic clears the day instead of writing a blank row.
-  if (input.topic.trim()) {
-    await dbWrite('current_study', 'POST', idToken, {
-      study_id: crypto.randomUUID(),
-      related_exam: input.relatedExam,
-      topic: input.topic,
-      date: input.date,
-      completed: false,
-    })
-  }
 }
 
 export async function createEvent(

@@ -24,14 +24,6 @@ export type CountryRecord = {
   visited: boolean
 }
 
-export type CurrentStudyRecord = {
-  study_id: string
-  related_exam: string
-  topic: string
-  date?: string
-  completed: boolean
-}
-
 export type TrainingRecord = {
   training_id: string
   date?: string

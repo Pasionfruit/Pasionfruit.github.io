@@ -3589,18 +3589,6 @@ button svg,
   border-bottom: 0;
 }
 
-.study-table-panel {
-  display: grid;
-  gap: 0.45rem;
-  border-top: 1px solid var(--border);
-  padding-top: 0.55rem;
-}
-
-.study-filter-row {
-  display: grid;
-  gap: 0.25rem;
-}
-
 .study-complete-cell {
   min-width: 8.5rem;
 }

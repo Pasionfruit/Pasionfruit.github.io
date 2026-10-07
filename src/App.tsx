@@ -1,7 +1,6 @@
 import React, { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Activity,
-  BookOpen,
   Check,
   ExternalLink,
   House,
@@ -77,7 +76,6 @@ import {
 import {
   createEvent,
   deleteEvent,
-  getCurrentStudy,
   getEvents,
   getPersonalTraining,
   getGarminHealth,
@@ -85,15 +83,12 @@ import {
   getAppleHealth,
   getTrainingRecords,
   setActiveEvent,
-  setCurrentStudyCompleted,
   setTrainingWorkoutCompleted,
   updateEvent,
   upsertTrainingRecord,
-  replaceCurrentStudyForDate,
 } from './data/sheets/repositories'
 import type {
   AppleHealthRecord,
-  CurrentStudyRecord,
   EventRecord,
   GarminHealthRecord,
   PersonalTrainingRecord,
@@ -798,12 +793,11 @@ function TodoistTasksCard({
   const canEditTodoist = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
   const canWrite = canEditTodoist
   const canViewOriginalTabs = shouldUseAdminProfile(googleEmail)
-  const [view, setView] = useState<'studying' | 'training' | 'todoist'>(
-    canViewOriginalTabs ? 'todoist' : 'studying',
+  const [view, setView] = useState<'training' | 'todoist'>(
+    canViewOriginalTabs ? 'todoist' : 'training',
   )
   const [rows, setRows] = useState<TodoistTask[]>([])
   const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
-  const [studyRows, setStudyRows] = useState<CurrentStudyRecord[]>([])
   const [isDailyLoading, setIsDailyLoading] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -817,23 +811,14 @@ function TodoistTasksCard({
     [trainingRows, todayKey],
   )
 
-  const todaysLessons = useMemo(() => {
-    return studyRows
-      .filter((row) => toDateOnlyKey(row.date) === todayKey && row.topic.trim().length > 0)
-      .sort((a, b) => a.topic.localeCompare(b.topic))
-  }, [studyRows, todayKey])
-
   const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
   const summaryTodayCount = rows.length - summaryOverdueCount
 
   async function loadDailyData() {
     try {
-      const [trainingData, studyData] = await Promise.all([getTrainingRecords(), getCurrentStudy()])
-      setTrainingRows(trainingData)
-      setStudyRows(studyData)
+      setTrainingRows(await getTrainingRecords())
     } catch {
       setTrainingRows([])
-      setStudyRows([])
     } finally {
       setIsDailyLoading(false)
     }
@@ -884,29 +869,6 @@ function TodoistTasksCard({
     } catch (error) {
       setTrainingRows(previousRows)
       setWriteError(error instanceof Error ? error.message : 'Unable to update workout completion state')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  async function handleToggleStudyLesson(row: CurrentStudyRecord) {
-    if (!canWrite || !googleIdToken || isWriting) return
-    const previousRows = studyRows
-    const nextCompleted = !row.completed
-    if (nextCompleted) sounds.studyWorkoutComplete()
-    setIsWriting(true)
-    setWriteError('')
-    setStudyRows((currentRows) =>
-      currentRows.map((currentRow) =>
-        currentRow.study_id === row.study_id ? { ...currentRow, completed: nextCompleted } : currentRow,
-      ),
-    )
-    try {
-      await setCurrentStudyCompleted(googleIdToken, row.study_id, nextCompleted)
-      await loadDailyData()
-    } catch (error) {
-      setStudyRows(previousRows)
-      setWriteError(error instanceof Error ? error.message : 'Unable to update completion state')
     } finally {
       setIsWriting(false)
     }
@@ -963,16 +925,6 @@ function TodoistTasksCard({
             <button
               type="button"
               role="tab"
-              aria-label="Studying"
-              aria-selected={view === 'studying'}
-              className={`experience-toggle-btn ${view === 'studying' ? 'active' : ''}`}
-              onClick={() => setView('studying')}
-            >
-              <BookOpen size={18} />
-            </button>
-            <button
-              type="button"
-              role="tab"
               aria-label="Training"
               aria-selected={view === 'training'}
               className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
@@ -987,11 +939,9 @@ function TodoistTasksCard({
 
           {view === 'training' ? <p className="sheets-meta">Workout(s) of the Day</p> : null}
 
-          {view === 'studying' ? <p className="sheets-meta">Today&apos;s Lesson</p> : null}
-
           {view === 'todoist' ? <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p> : null}
 
-          {(view === 'training' || view === 'studying') && isDailyLoading ? (
+          {view === 'training' && isDailyLoading ? (
             <p className="sheets-meta">Loading tasks...</p>
           ) : null}
 
@@ -1048,47 +998,7 @@ function TodoistTasksCard({
             )
           ) : null}
 
-          {view === 'studying' && !isDailyLoading ? (
-            todaysLessons.length > 0 ? (
-              <div className="study-today-shell">
-                <table className="study-today-table">
-                  <thead>
-                    <tr>
-                      <th>Topic</th>
-                      <th>Completed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {todaysLessons.map((row) => (
-                      <tr key={row.study_id}>
-                        <td>{row.topic}</td>
-                        <td className="study-complete-cell" aria-label={row.completed ? 'Completed' : 'Not completed'}>
-                          {canWrite ? (
-                            <button
-                              type="button"
-                              className="secondary-action study-complete-btn"
-                              onClick={() => void handleToggleStudyLesson(row)}
-                              disabled={!googleIdToken || isWriting}
-                            >
-                              {row.completed ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                            </button>
-                          ) : row.completed ? (
-                            <Check size={14} aria-hidden="true" />
-                          ) : (
-                            ''
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="sheets-meta">No lesson scheduled for today.</p>
-            )
-          ) : null}
-
-          {(view === 'training' || view === 'studying') && !canWrite ? (
+          {view === 'training' && !canWrite ? (
             <p className="sheets-meta">Edit access restricted to admin.</p>
           ) : null}
 
@@ -3170,14 +3080,13 @@ function WeeklyResetPage({ profile, googleIdToken }: { profile: UserProfile; goo
     <PageFrame
       eyebrow="Admin tools"
       title="Weekly Reset"
-      summary="One place to set this week's workouts and study plan."
+      summary="One place to set this week's workouts."
       accent="#f97316"
       backLink="/admin"
       backLabel="Back to dashboards"
       note=""
     >
       <WeeklyWorkoutResetCard title="Workouts for the Week" canWrite={canWrite} idToken={googleIdToken} />
-      <WeeklyStudyResetCard title="Study Plan for the Week" canWrite={canWrite} idToken={googleIdToken} />
     </PageFrame>
   )
 }
@@ -3414,241 +3323,6 @@ function WeeklyWorkoutResetCard({
             </div>
           ) : null}
 
-          {canWrite && !idToken ? (
-            <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
-          ) : null}
-          {saveMessage ? <p className="sheets-meta">{saveMessage}</p> : null}
-          {writeError ? <p className="sheets-error">{writeError}</p> : null}
-        </>
-      ) : null}
-    </article>
-  )
-}
-
-type WeeklyStudyDraft = { relatedExam: string; topic: string }
-
-function WeeklyStudyResetCard({
-  title,
-  canWrite,
-  idToken,
-}: {
-  title: string
-  canWrite: boolean
-  idToken: string
-}) {
-  const weekDates = useMemo(() => getResetWeekDates(), [])
-  const [rows, setRows] = useState<CurrentStudyRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isWriting, setIsWriting] = useState(false)
-  const [writeError, setWriteError] = useState('')
-  const [saveMessage, setSaveMessage] = useState('')
-  const [drafts, setDrafts] = useState<Record<string, WeeklyStudyDraft>>({})
-  const [savedDrafts, setSavedDrafts] = useState<Record<string, WeeklyStudyDraft>>({})
-  const [isExpanded, setIsExpanded] = useState(true)
-  const [isEditing, setIsEditing] = useState(false)
-
-  async function loadWeek() {
-    try {
-      const data = await getCurrentStudy()
-      setRows(data)
-    } catch {
-      setRows([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadWeek()
-  }, [])
-
-  useEffect(() => {
-    const next: Record<string, WeeklyStudyDraft> = {}
-    weekDates.forEach((date) => {
-      const key = toDateOnlyKey(date.toISOString())
-      const row = rows.find((candidate) => toDateOnlyKey(candidate.date) === key)
-      next[key] = { relatedExam: row?.related_exam ?? '', topic: row?.topic ?? '' }
-    })
-    setDrafts(next)
-    setSavedDrafts(next)
-  }, [rows, weekDates])
-
-  function setDraftValue(key: string, field: keyof WeeklyStudyDraft, value: string) {
-    setDrafts((current) => ({
-      ...current,
-      [key]: { ...(current[key] ?? { relatedExam: '', topic: '' }), [field]: value },
-    }))
-  }
-
-  function handleClearAll() {
-    setDrafts((current) => {
-      const next: Record<string, WeeklyStudyDraft> = {}
-      for (const key of Object.keys(current)) {
-        next[key] = { relatedExam: '', topic: '' }
-      }
-      return next
-    })
-  }
-
-  async function handleSaveAll() {
-    if (!canWrite || !idToken || isWriting) return
-    setIsWriting(true)
-    setWriteError('')
-    setSaveMessage('')
-    try {
-      const changedDates = weekDates.filter((date) => {
-        const key = toDateOnlyKey(date.toISOString())
-        const draft = drafts[key]
-        const saved = savedDrafts[key]
-        if (!draft) return false
-        return (
-          draft.relatedExam.trim() !== (saved?.relatedExam ?? '').trim() ||
-          draft.topic.trim() !== (saved?.topic ?? '').trim()
-        )
-      })
-
-      await Promise.all(
-        changedDates.map((date) => {
-          const draft = drafts[toDateOnlyKey(date.toISOString())]
-          return replaceCurrentStudyForDate(idToken, {
-            date: toSheetDateString(date),
-            relatedExam: draft.relatedExam.trim(),
-            topic: draft.topic.trim(),
-          })
-        }),
-      )
-
-      await loadWeek()
-      setIsEditing(false)
-      setSaveMessage(changedDates.length > 0 ? 'Study plan updated for this week.' : 'No study changes to save.')
-    } catch (error) {
-      setWriteError(error instanceof Error ? error.message : 'Unable to update study plan')
-    } finally {
-      setIsWriting(false)
-    }
-  }
-
-  return (
-    <article className="info-card section-page-card sheets-card">
-      <div className="section-card-header">
-        <h3>{title}</h3>
-        <div className="section-card-actions">
-          {canWrite ? (
-            <button
-              type="button"
-              className={`section-edit-btn ${isEditing ? 'active' : ''}`}
-              aria-pressed={isEditing}
-              title="Edit values"
-              onClick={() => {
-                if (isEditing) {
-                  setDrafts(savedDrafts)
-                  setIsEditing(false)
-                } else {
-                  setIsExpanded(true)
-                  setIsEditing(true)
-                }
-              }}
-            >
-              <Pencil size={14} aria-hidden="true" />
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className="section-collapse-btn"
-            aria-expanded={isExpanded}
-            onClick={() => setIsExpanded((value) => !value)}
-          >
-            {isExpanded ? '▾' : '▸'}
-          </button>
-        </div>
-      </div>
-
-      {isLoading ? <p className="sheets-meta">Loading study plan...</p> : null}
-
-      {!isLoading && isExpanded ? (
-        <>
-          <div className="sheets-table-shell weekly-reset-table-shell">
-            <table className="sheets-table weekly-reset-table">
-              <thead>
-                <tr>
-                  <th>Day</th>
-                  <th>Related exam</th>
-                  <th>Topic</th>
-                </tr>
-              </thead>
-              <tbody>
-                {weekDates.map((date) => {
-                  const key = toDateOnlyKey(date.toISOString())
-                  const draft = drafts[key] ?? { relatedExam: '', topic: '' }
-                  return (
-                    <tr key={key}>
-                      <td data-label="Day">
-                        <span className="weekly-reset-day">
-                          {date.toLocaleDateString('en-US', { weekday: 'long' })}
-                        </span>
-                        <span className="weekly-reset-date">
-                          {date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
-                        </span>
-                      </td>
-                      <td data-label="Related exam">
-                        {isEditing ? (
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
-                            value={draft.relatedExam}
-                            onChange={(event) => setDraftValue(key, 'relatedExam', event.target.value)}
-                            disabled={!canWrite || !idToken || isWriting}
-                          />
-                        ) : (
-                          <span>{draft.relatedExam || '—'}</span>
-                        )}
-                      </td>
-                      <td data-label="Topic">
-                        {isEditing ? (
-                          <input
-                            className="sheets-input sheets-table-input"
-                            type="text"
-                            value={draft.topic}
-                            onChange={(event) => setDraftValue(key, 'topic', event.target.value)}
-                            disabled={!canWrite || !idToken || isWriting}
-                          />
-                        ) : (
-                          <span>{draft.topic || '—'}</span>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {isEditing ? (
-            <div className="weekly-reset-actions">
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={handleClearAll}
-                disabled={!canWrite || !idToken || isWriting}
-              >
-                Clear week
-              </button>
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => void handleSaveAll()}
-                disabled={!canWrite || !idToken || isWriting}
-              >
-                {isWriting ? 'Saving...' : 'Save study plan'}
-              </button>
-            </div>
-          ) : null}
-
-          {isEditing ? (
-            <p className="sheets-meta">
-              Saving a day replaces all of that day's study rows; leave the topic empty to clear the day.
-            </p>
-          ) : null}
           {canWrite && !idToken ? (
             <p className="sheets-meta">Sign in with Google on Login page to submit admin writes.</p>
           ) : null}

@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event'
 const repoMocks = vi.hoisted(() => ({
   getBucketList: vi.fn(),
   getGroceryList: vi.fn(),
-  getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
   getBackpackItems: vi.fn(),
   getEvents: vi.fn(),
@@ -21,7 +20,6 @@ const repoMocks = vi.hoisted(() => ({
   setTrainingWorkoutCompleted: vi.fn(),
   setBucketCompleted: vi.fn(),
   setCountryVisited: vi.fn(),
-  setCurrentStudyCompleted: vi.fn(),
   createBucketItem: vi.fn(),
   createGroceryListItem: vi.fn(),
   updateBucketItem: vi.fn(),
@@ -44,7 +42,6 @@ const repoMocks = vi.hoisted(() => ({
   getAppleHealth: vi.fn(),
   getPersonalTraining: vi.fn(),
   upsertTrainingRecord: vi.fn(),
-  replaceCurrentStudyForDate: vi.fn(),
 }))
 
 const todoistMocks = vi.hoisted(() => ({
@@ -262,34 +259,6 @@ beforeEach(() => {
     },
   ])
 
-  const now = new Date()
-  const studyTomorrow = new Date(now)
-  studyTomorrow.setDate(now.getDate() + 1)
-
-  repoMocks.getCurrentStudy.mockResolvedValue([
-    {
-      study_id: 'study-1',
-      related_exam: 'Exam FM',
-      topic: 'Interest Theory',
-      date: now.toISOString(),
-      completed: false,
-    },
-    {
-      study_id: 'study-2',
-      related_exam: 'Exam P',
-      topic: 'Bayes Rule',
-      date: now.toISOString(),
-      completed: true,
-    },
-    {
-      study_id: 'study-3',
-      related_exam: 'Exam FM',
-      topic: 'Annuities',
-      date: studyTomorrow.toISOString(),
-      completed: false,
-    },
-  ])
-
   repoMocks.getTrainingRecords.mockResolvedValue([
     {
       training_id: 'training-1',
@@ -333,7 +302,6 @@ beforeEach(() => {
     },
   ])
   repoMocks.setCountryVisited.mockResolvedValue(undefined)
-  repoMocks.setCurrentStudyCompleted.mockResolvedValue(undefined)
   repoMocks.setTrainingWorkoutCompleted.mockResolvedValue(undefined)
   repoMocks.createEvent.mockResolvedValue(undefined)
   repoMocks.updateEvent.mockResolvedValue(undefined)
@@ -502,9 +470,7 @@ describe('site sections and dashboards', () => {
     })
   })
 
-  it('shows the studying tab and allows authorized admin to mark lesson complete', async () => {
-    const user = userEvent.setup()
-
+  it('no longer offers a Studying tab on Tasks of the Day', async () => {
     renderAdminTasksPage()
 
     const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
@@ -513,26 +479,11 @@ describe('site sections and dashboards', () => {
       throw new Error('Tasks of the Day card not found')
     }
 
-    await user.click(within(card).getByRole('tab', { name: 'Studying' }))
-
-    const interestTopic = await within(card).findByText('Interest Theory')
-    const interestRow = interestTopic.closest('tr')
-    if (!interestRow) {
-      throw new Error('Home Interest Theory row not found')
-    }
-
-    await user.click(within(interestRow).getByRole('button', { name: 'Mark Complete' }))
-
-    await waitFor(() => {
-      expect(repoMocks.setCurrentStudyCompleted).toHaveBeenCalledWith(
-        expect.stringContaining('.'),
-        'study-1',
-        true,
-      )
-    })
+    expect(within(card).getByRole('tab', { name: 'Training' })).toBeTruthy()
+    expect(within(card).queryByRole('tab', { name: 'Studying' })).toBeNull()
   })
 
-  it('blocks training/studying completion editing for non-authorized account', async () => {
+  it('blocks training completion editing for non-authorized account', async () => {
     const today = new Date()
     const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
 
