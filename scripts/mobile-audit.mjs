@@ -39,7 +39,7 @@ function fakeToken(email) {
 }
 
 const GUEST_ROUTES = ['/', '/login', '/minecraft.html']
-const ADMIN_ROUTES = ['/', '/admin/journal', '/admin/finance', '/admin/training', '/admin/work', '/tasks', '/weekly-reset']
+const ADMIN_ROUTES = ['/', '/admin/journal', '/admin/training', '/tasks', '/weekly-reset']
 
 /**
  * Panels that only exist after a click. Collapsed markup hides plenty of
@@ -47,7 +47,6 @@ const ADMIN_ROUTES = ['/', '/admin/journal', '/admin/finance', '/admin/training'
  */
 const OPEN_ACTIONS = {
   '/admin/journal': ['button:has-text("New entry")'],
-  '/admin/work': ['button:has-text("New item")'],
 }
 
 /** Elements whose right edge extends past the viewport. */
@@ -166,12 +165,14 @@ for (const vp of VIEWPORTS) {
         await page.click(selector, { timeout: 2000 }).catch(() => {})
       }
 
-      // Cycle the tabbed cards on the admin home so each tab gets measured.
+      // Cycle the tabbed cards on the admin home so each tab gets measured,
+      // then open Ace so its panel is measured over the page.
       if (label === 'admin' && route === '/') {
         for (const tab of ['Studying', 'Training']) {
           await page.click(`[role="tab"][aria-label="${tab}"]`, { timeout: 1500 }).catch(() => {})
           await page.waitForTimeout(150)
         }
+        await page.click('button[aria-label="Open Ace"]', { timeout: 1500 }).catch(() => {})
       }
 
       await page.waitForTimeout(250)

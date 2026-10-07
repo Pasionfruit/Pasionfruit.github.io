@@ -27,15 +27,6 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Writing',
   },
   {
-    id: 'finance',
-    title: 'Finance',
-    path: '/admin/finance',
-    icon: 'finance',
-    summary: 'Budget targets, spending by category, and the money calendar',
-    accent: '#16a34a',
-    eyebrow: 'Money',
-  },
-  {
     id: 'health',
     title: 'Health',
     path: '/admin/health',
@@ -43,24 +34,6 @@ export const adminDashboards: AdminDashboardMeta[] = [
     summary: 'Garmin, Apple Health, and RingConn data plus the session log',
     accent: '#14b8a6',
     eyebrow: 'Body',
-  },
-  {
-    id: 'work',
-    title: 'Work',
-    path: '/admin/work',
-    icon: 'work',
-    summary: 'Active projects, deadlines, and the links I open every morning',
-    accent: '#f97316',
-    eyebrow: 'Day job',
-  },
-  {
-    id: 'system',
-    title: 'System',
-    path: '/admin/system',
-    icon: 'system',
-    summary: 'Every machine on the network: health, services, and the MC server',
-    accent: '#2563eb',
-    eyebrow: 'Infrastructure',
   },
 ]
 

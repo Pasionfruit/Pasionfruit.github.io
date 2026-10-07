@@ -71,9 +71,6 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     traveling: 'traveling!A1:E10000',
     meal_plan: 'meal_plan!A1:E10000',
     grocery_list: 'grocery_list!A1:D10000',
-    abe_transactions: 'abe_transactions!A1:E10000',
-    ciara_transactions: 'ciara_transactions!A1:E10000',
-    budget_targets: 'budget_targets!A1:C10000',
     personal_training: 'personal_training!A1:D10000',
     garmin_health:     'garmin_health!A1:I10000',
     /*
@@ -87,10 +84,8 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     recipes:           'recipes!A1:H10000',
     recipe_components: 'recipe_components!A1:G10000',
     recipe_steps:      'recipe_steps!A1:D10000',
-    trips:             'trips!A1:E10000',
     mc_server_log:     'mc_server_log!A1:C10000',
     journal_entries:   'journal_entries!A1:J10000',
-    work_items:        'work_items!A1:H10000',
   }
   
   const range = ranges[tableName]

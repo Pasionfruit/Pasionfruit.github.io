@@ -7,7 +7,6 @@ import type {
   CouponRecord,
   CurrentStudyRecord,
   EventRecord,
-  FinanceTransactionRecord,
   GarminHealthRecord,
   GarminWellnessRecord,
   GroceryListRecord,
@@ -21,8 +20,6 @@ import type {
   RingconnHealthRecord,
   StoreDealRecord,
   TrainingRecord,
-  TripRecord,
-  WorkItemRecord,
 } from './types'
 
 function parseBoolean(value: unknown) {
@@ -372,67 +369,6 @@ export async function getGroceryList(): Promise<GroceryListRecord[]> {
       include: parseBoolean(row.include),
     }))
     .filter((row) => row.item)
-}
-
-function mapFinanceTransactions(rows: Record<string, unknown>[]): FinanceTransactionRecord[] {
-  const mapped = rows
-    .map((row) => ({
-      date: row.date ? String(row.date) : undefined,
-      description: String(row.description ?? ''),
-      amount: parseNumber(row.amount) ?? 0,
-      category: String(row.category ?? ''),
-      card: String(row.card ?? ''),
-    }))
-    .filter((row) => row.description)
-
-  if (import.meta.env.DEV) {
-    const uniqueCategories = [...new Set(mapped.map((r) => r.category).filter(Boolean))]
-    console.log('[finance] raw categories from sheet:', uniqueCategories)
-  }
-
-  return mapped
-}
-
-export type BudgetTargetRecord = {
-  user: string
-  category: string
-  budget_amount: number
-}
-
-export async function getBudgetTargets(): Promise<BudgetTargetRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('budget_targets')
-  return rows
-    .map((row) => ({
-      user: String(row.user ?? '').toLowerCase().trim(),
-      category: String(row.category ?? '').toLowerCase().trim(),
-      budget_amount: parseNumber(row.budget_amount) ?? 0,
-    }))
-    .filter((row) => row.user && row.category && row.budget_amount > 0)
-}
-
-export async function saveBudgetTarget(
-  idToken: string,
-  category: string,
-  budgetAmount: number | null,
-  user: string,
-) {
-  await runWrite({
-    action: 'setBudgetTarget',
-    idToken,
-    category: category.toLowerCase().trim(),
-    budget_amount: budgetAmount ?? 0,
-    user: user.toLowerCase().trim(),
-  })
-}
-
-export async function getAbeTransactions(): Promise<FinanceTransactionRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('abe_transactions')
-  return mapFinanceTransactions(rows)
-}
-
-export async function getCiaraTransactions(): Promise<FinanceTransactionRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('ciara_transactions')
-  return mapFinanceTransactions(rows)
 }
 
 async function runWrite(payload: Record<string, unknown>) {
@@ -1002,51 +938,6 @@ export async function deleteGroceryListItem(
   })
 }
 
-export async function getTrips(): Promise<TripRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('trips')
-  return rows
-    .map((row) => ({
-      trip_id: String(row.name ?? '').trim(),
-      name: String(row.name ?? '').trim(),
-      target_date: String(row.date ?? '').trim(),
-      target_amount: parseNumber(row.budget) ?? 0,
-      saved_amount: parseNumber(row.saved) ?? 0,
-    }))
-    .filter((row) => row.name)
-}
-
-export async function createTrip(
-  idToken: string,
-  name: string,
-  targetDate: string,
-  targetAmount: number,
-) {
-  await runWrite({
-    action: 'createTrip',
-    idToken,
-    name,
-    date: targetDate,
-    budget: targetAmount,
-  })
-}
-
-export async function updateTrip(idToken: string, tripId: string, savedAmount: number) {
-  await runWrite({
-    action: 'updateTrip',
-    idToken,
-    name: tripId,
-    saved: savedAmount,
-  })
-}
-
-export async function deleteTrip(idToken: string, tripId: string) {
-  await runWrite({
-    action: 'deleteTrip',
-    idToken,
-    name: tripId,
-  })
-}
-
 export async function getStoreDeals(): Promise<StoreDealRecord[]> {
   const rows = await fetchSheetTable<Record<string, unknown>>('store_deals')
   return rows
@@ -1506,71 +1397,5 @@ export async function updateJournalEntry(
 export async function deleteJournalEntry(idToken: string, journalId: string) {
   await dbWrite('journal_entries', 'DELETE', idToken, {
     journal_id: journalId,
-  })
-}
-
-// ── Work ──────────────────────────────────────────────────────────────────
-
-export async function getWorkItems(): Promise<WorkItemRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('work_items')
-
-  return rows
-    .map((row) => ({
-      work_id: String(row.work_id ?? ''),
-      project: String(row.project ?? ''),
-      item: String(row.item ?? ''),
-      status: String(row.status ?? 'Not started'),
-      due_date: row.due_date ? String(row.due_date).slice(0, 10) : undefined,
-      priority: parseNumber(row.priority) ?? 1,
-      notes: row.notes ? String(row.notes) : undefined,
-      link: row.link ? String(row.link) : undefined,
-    }))
-    .filter((row) => row.work_id && row.item)
-}
-
-type WorkItemDraft = {
-  project: string
-  item: string
-  status: string
-  dueDate?: string
-  priority: number
-  notes?: string
-  link?: string
-}
-
-export async function createWorkItem(idToken: string, draft: WorkItemDraft) {
-  await runWrite({
-    action: 'createWorkItem',
-    idToken,
-    project: draft.project,
-    item: draft.item,
-    status: draft.status,
-    due_date: draft.dueDate ?? '',
-    priority: draft.priority,
-    notes: draft.notes ?? '',
-    link: draft.link ?? '',
-  })
-}
-
-export async function updateWorkItem(idToken: string, workId: string, draft: WorkItemDraft) {
-  await runWrite({
-    action: 'updateWorkItem',
-    idToken,
-    work_id: workId,
-    project: draft.project,
-    item: draft.item,
-    status: draft.status,
-    due_date: draft.dueDate ?? '',
-    priority: draft.priority,
-    notes: draft.notes ?? '',
-    link: draft.link ?? '',
-  })
-}
-
-export async function deleteWorkItem(idToken: string, workId: string) {
-  await runWrite({
-    action: 'deleteWorkItem',
-    idToken,
-    work_id: workId,
   })
 }

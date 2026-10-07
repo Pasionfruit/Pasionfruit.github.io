@@ -1,6 +1,7 @@
 # Assistant Ace — setup
 
-Everything needed to bring the card on the admin home page to life. The front
+Everything needed to bring Ace — the floating button on every admin page — to
+life. The front
 end is already built and tested; nothing here touches application code.
 
 ## What you are building
@@ -26,7 +27,7 @@ Worker exists.
 ## Time
 
 Do these in order. Phase A is worth doing on its own first even though you want
-the full thing — it proves the model, the prompts and the card all work while
+the full thing — it proves the model, the prompts and the chat all work while
 there is only one moving part, so anything that breaks in Phase B is
 definitively transport.
 
@@ -92,9 +93,10 @@ VITE_ACE_MODEL=qwen3:8b
 npm run dev
 ```
 
-Open the admin home. **Checkpoint:** the pill top-right of the Assistant Ace
-card reads `qwen3:8b` rather than `Offline`, and pressing **Good morning**
-streams a briefing in a few seconds.
+Open the admin home and press the Ace button in the bottom-right corner.
+**Checkpoint:** the line under "Ace" in the panel header reads `qwen3:8b`
+rather than `Offline`, and the **Good morning** chip streams a briefing in a
+few seconds.
 
 This works only in a browser on this machine, and only in Chrome or Edge —
 they exempt `http://localhost` from mixed-content blocking, Safari does not.

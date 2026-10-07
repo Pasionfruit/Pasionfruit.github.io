@@ -32,11 +32,10 @@ dashboard.
 | --- | --- | --- |
 | Home | `/` | The month's calendar, today's tasks, yesterday's recap, and the inbox |
 | Personal | `/admin/personal` | Journal entries, mood tracker, gratitude prompts, breathing timer |
-| Finance | `/admin/finance` | Budget, spending by category, money calendar |
 | Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log, milestones |
-| Work | `/admin/work` | Projects, deadlines, morning links |
 
-`/admin/journal` and `/admin/training` redirect to their renamed routes.
+`/admin/journal` and `/admin/training` redirect to their renamed routes. The
+Finance, Work and System dashboards were removed; their old URLs land on `/`.
 
 The Calendar dashboard was merged into Home rather than getting its own tab, so
 `/admin`, `/admin/tasks`, and `/admin/calendar` all redirect to `/`. The full
@@ -47,10 +46,27 @@ Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card, 
 back link, and no intro paragraph, since the icon bar is always on screen. Below
 ~768px the nav labels drop and the icons carry it.
 
-The Home "Month View" reuses the Finance calendar's month grid (compact day
-cells, dots for events, tap for a dialog listing the day) so it fits a phone
-without horizontal scrolling. Today is highlighted in the same `#00cccc` accent
-as the Tasks of the Day tab selector, rather than Finance's green.
+The Home "Month View" is a compact month grid (day cells, dots for events, tap
+for a dialog listing the day) so it fits a phone without horizontal scrolling.
+Today is highlighted in the same `#00cccc` accent as the Tasks of the Day tab
+selector.
+
+### Ace
+
+Assistant Ace is a floating button in the bottom-right corner of every admin
+page ([AceLauncher.tsx](src/admin/ace/AceLauncher.tsx)), not a card on Home. It
+opens a chat panel — full screen on phones, above the tab bar — that answers
+general questions as well as ones about Abe's own data: mail, calendar and
+tasks; two weeks of Garmin sleep and recovery against his baseline; four weeks
+of activities totalled per discipline; the training log; upcoming races; personal
+records; and the mood journal. Quick prompts cover the morning and evening
+briefings, a sleep check, a training-week plan, a mental-health check-in and
+inbox triage.
+
+The context is gathered when the panel first opens, not on page load, and
+refreshed when it is reopened after 15 minutes. Today's conversation is kept in
+`localStorage` and survives navigation and reloads; it starts fresh each day.
+Setup for the model itself is in [docs/assistant-ace-setup.md](docs/assistant-ace-setup.md).
 
 ### Garmin wellness
 
@@ -314,7 +330,7 @@ The block is wrapped in `import.meta.env.DEV`, which Vite replaces with `false`
 when building, so none of it reaches production.
 
 With no `.env`, the dashboards render their own empty and error states: Sheets
-reads fail (Journal, Work, Finance, Training), Todoist shows its missing-token
+reads fail (Journal, Training), Todoist shows its missing-token
 message, and Gmail and Calendar show connect panels. That is enough to work on
 layout and navigation. Fill in `.env` when you need live data.
 
@@ -386,8 +402,7 @@ Notes on the responsive behaviour:
   mark.
 - The calendar week is a 7-column grid on desktop and a day list below 960px,
   so the week never has to be scrolled sideways.
-- Journal and Work editors stack their paired fields below 512px, and Work rows
-  move their controls under the item below 640px.
+- The Journal editor stacks its paired fields below 512px.
 
 ## Gmail and calendar integrations
 
@@ -486,8 +501,7 @@ Notes on the responsive behaviour:
   mark.
 - The calendar week is a 7-column grid on desktop and a day list below 960px,
   so the week never has to be scrolled sideways.
-- Journal and Work editors stack their paired fields below 512px, and Work rows
-  move their controls under the item below 640px.
+- The Journal editor stacks its paired fields below 512px.
 
 ## Gmail and calendar integrations
 

@@ -7,8 +7,6 @@ import userEvent from '@testing-library/user-event'
 const repoMocks = vi.hoisted(() => {
   const empty = () => vi.fn().mockResolvedValue([])
   return {
-    getAbeTransactions: empty(),
-    getCiaraTransactions: empty(),
     getCurrentStudy: empty(),
     getEvents: empty(),
     getTrainingRecords: empty(),
@@ -16,10 +14,7 @@ const repoMocks = vi.hoisted(() => {
     getGarminHealth: empty(),
     getRingconnHealth: empty(),
     getAppleHealth: empty(),
-    getBudgetTargets: empty(),
-    getTrips: empty(),
     getJournalEntries: empty(),
-    getWorkItems: empty(),
     createEvent: vi.fn(),
     updateEvent: vi.fn(),
     deleteEvent: vi.fn(),
@@ -28,16 +23,9 @@ const repoMocks = vi.hoisted(() => {
     setTrainingWorkoutCompleted: vi.fn(),
     upsertTrainingRecord: vi.fn(),
     replaceCurrentStudyForDate: vi.fn(),
-    saveBudgetTarget: vi.fn(),
-    createTrip: vi.fn(),
-    updateTrip: vi.fn(),
-    deleteTrip: vi.fn(),
     createJournalEntry: vi.fn(),
     updateJournalEntry: vi.fn(),
     deleteJournalEntry: vi.fn(),
-    createWorkItem: vi.fn(),
-    updateWorkItem: vi.fn(),
-    deleteWorkItem: vi.fn(),
   }
 })
 
@@ -127,8 +115,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
-  // The finance PIN is stubbed per-test; without this it leaks into every
-  // later test and silently locks the finance page.
+  // Env stubs are per-test; without this they leak into every later test.
   vi.unstubAllEnvs()
   vi.clearAllMocks()
 })
@@ -320,10 +307,9 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Assistant Ace' })).toBeTruthy()
-    // Both panes are present whether or not the local model is reachable.
-    expect(screen.getByRole('heading', { name: 'Briefing' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Ask Ace' })).toBeTruthy()
+    // Ace floats over the page rather than taking a card on it.
+    expect(screen.getByRole('button', { name: 'Open Ace' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
     expect(screen.getByRole('heading', { name: 'Inbox' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Month View' })).toBeTruthy()
   })
@@ -364,32 +350,25 @@ describe('admin routing', () => {
 
   it.each([
     ['/admin/personal', 'Personal'],
-    ['/admin/finance', 'Finance'],
     ['/admin/health', 'Health'],
-    ['/admin/work', 'Work'],
-    ['/admin/system', 'System'],
   ])('renders %s for the admin account', (path, title) => {
     renderAt(path, ADMIN_EMAIL)
     expect(pageTitle()).toBe(title)
   })
 
-  it('locks finances behind the PIN again after navigating away', async () => {
-    const user = userEvent.setup()
-    vi.stubEnv('VITE_FINANCE_PIN', '4821')
+  it.each(['/admin/finance', '/admin/work', '/admin/system', '/finances', '/mrpasionfruit/finances'])(
+    'sends the removed dashboard %s back to home',
+    async (path) => {
+      renderAt(path, ADMIN_EMAIL)
+      expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
+    },
+  )
 
-    renderAt('/admin/finance', ADMIN_EMAIL)
+  it('lists only the remaining dashboards in the nav', () => {
+    renderAt('/', ADMIN_EMAIL)
 
-    // Gated even though this is the admin account.
-    expect(screen.getByRole('heading', { name: 'Finances are locked' })).toBeTruthy()
-
-    await user.type(screen.getByLabelText('Finance PIN'), '4821')
-    expect(screen.queryByRole('heading', { name: 'Finances are locked' })).toBeNull()
-
-    // Leaving unmounts the route, which is what drops the unlocked state.
-    await user.click(screen.getByRole('link', { name: 'Health' }))
-    await user.click(screen.getByRole('link', { name: 'Finance' }))
-
-    expect(screen.getByRole('heading', { name: 'Finances are locked' })).toBeTruthy()
+    const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
+    expect(labels).toEqual(['Home', 'Personal', 'Health'])
   })
 
   it.each([
@@ -408,14 +387,9 @@ describe('admin routing', () => {
     },
   )
 
-  it('sends the retired /training and /finances routes to their dashboards', () => {
+  it('sends the retired /training route to the Health dashboard', () => {
     renderAt('/training', ADMIN_EMAIL)
     expect(pageTitle()).toBe('Health')
-
-    cleanup()
-
-    renderAt('/finances', ADMIN_EMAIL)
-    expect(pageTitle()).toBe('Finance')
   })
 
   it('links the full task manager and weekly reset from home', () => {

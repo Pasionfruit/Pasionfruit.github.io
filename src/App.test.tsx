@@ -5,9 +5,7 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event'
 
 const repoMocks = vi.hoisted(() => ({
-  getAbeTransactions: vi.fn(),
   getBucketList: vi.fn(),
-  getCiaraTransactions: vi.fn(),
   getGroceryList: vi.fn(),
   getCurrentStudy: vi.fn(),
   getCountries: vi.fn(),
@@ -41,20 +39,10 @@ const repoMocks = vi.hoisted(() => ({
   createJournalEntry: vi.fn(),
   updateJournalEntry: vi.fn(),
   deleteJournalEntry: vi.fn(),
-  getWorkItems: vi.fn(),
-  createWorkItem: vi.fn(),
-  updateWorkItem: vi.fn(),
-  deleteWorkItem: vi.fn(),
   getGarminHealth: vi.fn(),
   getRingconnHealth: vi.fn(),
   getAppleHealth: vi.fn(),
   getPersonalTraining: vi.fn(),
-  getBudgetTargets: vi.fn(),
-  saveBudgetTarget: vi.fn(),
-  getTrips: vi.fn(),
-  createTrip: vi.fn(),
-  updateTrip: vi.fn(),
-  deleteTrip: vi.fn(),
   upsertTrainingRecord: vi.fn(),
   replaceCurrentStudyForDate: vi.fn(),
 }))
@@ -103,25 +91,6 @@ function renderAdminTasksPage(email = 'pasionabe@gmail.com') {
   return renderAdminPage('/admin/tasks', email)
 }
 
-function renderFinancesPageWithEmail(email: string, path = '/admin/finance') {
-  localStorage.setItem('google-id-token', makeFakeGoogleIdToken(email))
-
-  return render(
-    <MemoryRouter initialEntries={[path]}>
-      <App />
-    </MemoryRouter>,
-  )
-}
-
-/**
- * A date key in the month the finance calendar opens on. Pinned literals here
- * made the calendar test pass only during that one calendar month.
- */
-function dayOfCurrentMonth(day: number) {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-}
-
 function makeFakeGoogleIdToken(email: string) {
   const header = { alg: 'none', typ: 'JWT' }
   const payload = {
@@ -165,15 +134,12 @@ beforeEach(() => {
     })) as unknown as typeof fetch,
   )
 
-  // Health and trip data are read by the training and finance dashboards.
+  // Health data is read by the training dashboard.
   repoMocks.getGarminHealth.mockResolvedValue([])
   repoMocks.getRingconnHealth.mockResolvedValue([])
   repoMocks.getAppleHealth.mockResolvedValue([])
   repoMocks.getPersonalTraining.mockResolvedValue([])
-  repoMocks.getBudgetTargets.mockResolvedValue([])
-  repoMocks.getTrips.mockResolvedValue([])
   repoMocks.getJournalEntries.mockResolvedValue([])
-  repoMocks.getWorkItems.mockResolvedValue([])
   todoistMocks.getCompletedTasks.mockResolvedValue([])
 
   repoMocks.getBucketList.mockResolvedValue([
@@ -352,24 +318,6 @@ beforeEach(() => {
   ])
 
   repoMocks.setBucketCompleted.mockResolvedValue(undefined)
-  repoMocks.getAbeTransactions.mockResolvedValue([
-    {
-      date: dayOfCurrentMonth(1),
-      description: 'Abe groceries',
-      amount: 120,
-      category: 'Grocery',
-      card: 'Chase Freedom',
-    },
-  ])
-  repoMocks.getCiaraTransactions.mockResolvedValue([
-    {
-      date: dayOfCurrentMonth(2),
-      description: 'Ciara coffee',
-      amount: 8.75,
-      category: 'Food',
-      card: 'Amex Gold',
-    },
-  ])
   repoMocks.getGroceryList.mockResolvedValue([
     {
       type: 'MEAT',
@@ -441,52 +389,16 @@ afterEach(() => {
 })
 
 describe('site sections and dashboards', () => {
-  it('shows the private Finances page only for approved Google accounts', async () => {
-    renderFinancesPageWithEmail('pixielee1000@gmail.com')
+  it('floats the Ace launcher over admin pages, and nowhere for guests', async () => {
+    renderAdminPage('/admin/health')
+    expect(await screen.findByRole('button', { name: 'Open Ace' })).toBeTruthy()
+    // Ace is no longer a card on the home dashboard.
+    expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
+    cleanup()
 
-    expect(await screen.findByRole('tab', { name: 'Dashboard' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Calendar' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Purchases' })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: 'Trips' })).toBeTruthy()
-  })
-
-  it('filters dashboard transactions by Abe, Ciara, and Both (default Both)', async () => {
-    const user = userEvent.setup()
-    renderFinancesPageWithEmail('pixielee1000@gmail.com')
-
-    // Dashboard shows budget tables — verify key category rows appear
-    expect(await screen.findByText('Rent')).toBeTruthy()
-    expect(screen.getByText('Salary')).toBeTruthy()
-
-    // Source filter buttons are present and clickable
-    const abeBtn = screen.getByRole('button', { name: 'Abe' })
-    const ciaraBtn = screen.getByRole('button', { name: 'Ciara' })
-    const bothBtn = screen.getByRole('button', { name: 'Both' })
-
-    await user.click(abeBtn)
-    expect(screen.getByText('Rent')).toBeTruthy()
-
-    await user.click(ciaraBtn)
-    expect(screen.getByText('Rent')).toBeTruthy()
-
-    await user.click(bothBtn)
-    expect(screen.getByText('Rent')).toBeTruthy()
-  })
-
-  it('shows calendar transactions popup when clicking a date with purchases', async () => {
-    const user = userEvent.setup()
-    renderFinancesPageWithEmail('pixielee1000@gmail.com')
-
-    await user.click(await screen.findByRole('tab', { name: 'Calendar' }))
-
-    const dayWithTransactions = (await screen.findAllByRole('button', {
-      name: /has 1 transaction/i,
-    }))[0]
-
-    await user.click(dayWithTransactions)
-
-    expect(await screen.findByRole('dialog', { name: /Transactions for/i })).toBeTruthy()
-    expect(screen.getByText(/Abe groceries|Ciara coffee/)).toBeTruthy()
+    // Signed in, but not as the admin.
+    renderAdminPage('/', 'someoneelse@gmail.com')
+    expect(screen.queryByRole('button', { name: 'Open Ace' })).toBeNull()
   })
 
   it('shows the Home Todoist summary with overdue counts and supports completing a task', async () => {

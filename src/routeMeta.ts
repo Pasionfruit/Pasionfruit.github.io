@@ -47,21 +47,9 @@ const ROUTE_META: Record<string, RouteMeta> = {
     ads: false,
     index: false,
   },
-  '/admin/finance': {
-    title: `Finance — ${SITE_NAME}`,
-    description: 'Private budget and spending dashboard for approved accounts.',
-    ads: false,
-    index: false,
-  },
   '/admin/training': {
     title: `Training — ${SITE_NAME}`,
     description: 'Private training and health data dashboard.',
-    ads: false,
-    index: false,
-  },
-  '/admin/work': {
-    title: `Work — ${SITE_NAME}`,
-    description: 'Private work project tracker.',
     ads: false,
     index: false,
   },

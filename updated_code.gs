@@ -5,7 +5,7 @@ var ALLOWED_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
  * "is the code I just pasted actually live?" is answerable in one request
  * instead of guessing from a failing feature.
  */
-var SCRIPT_BUILD = '2026-08-31-archive-reports-failures'
+var SCRIPT_BUILD = '2026-10-06-drop-finance-work'
 
 function doPost(e) {
   try {
@@ -126,9 +126,6 @@ function doPost(e) {
       case 'setActiveEvent':
         return jsonResponse_(setActiveEvent_(payload))
 
-      case 'setBudgetTarget':
-        return jsonResponse_(setBudgetTarget_(payload, auth))
-
       case 'createRecipe':
         return jsonResponse_(createRecipe_(payload))
 
@@ -176,24 +173,6 @@ function doPost(e) {
 
       case 'deleteJournalEntry':
         return jsonResponse_(deleteJournalEntry_(payload))
-
-      case 'createWorkItem':
-        return jsonResponse_(createWorkItem_(payload))
-
-      case 'updateWorkItem':
-        return jsonResponse_(updateWorkItem_(payload))
-
-      case 'deleteWorkItem':
-        return jsonResponse_(deleteWorkItem_(payload))
-
-      case 'createTrip':
-        return jsonResponse_(createTrip_(payload))
-
-      case 'updateTrip':
-        return jsonResponse_(updateTrip_(payload))
-
-      case 'deleteTrip':
-        return jsonResponse_(deleteTrip_(payload))
 
       default:
         return jsonResponse_({ ok: false, error: 'Unknown action: ' + action })
@@ -1069,53 +1048,6 @@ function setActiveEventById_(sheet, headerCols, eventId) {
   sheet.getRange(2, activeCol, lastRow - 1, 1).setValues(activeValues)
 }
 
-function emailToUser_(email) {
-  if (email === 'pasionabe@gmail.com') return 'abe'
-  if (email === 'pixielee1000@gmail.com') return 'ciara'
-  return String(email || '').split('@')[0].toLowerCase()
-}
-
-function setBudgetTarget_(payload, auth) {
-  var userVal = String(payload.user || '').toLowerCase().trim()
-  if (!userVal) userVal = emailToUser_(auth && auth.email ? auth.email : '')
-  var category = String(payload.category || '').toLowerCase().trim()
-  var rawAmount = payload.budget_amount
-  var amount = (rawAmount === null || rawAmount === '' || rawAmount === undefined)
-    ? NaN : Number(rawAmount)
-
-  if (!userVal) return { ok: false, error: 'Could not determine user' }
-  if (!category) return { ok: false, error: 'category is required' }
-
-  var sheet = getSheet_('budget_targets')
-  var h = headerMap_(sheet)
-  var userCol = requireHeader_(h, 'user')
-  var catCol = requireHeader_(h, 'category')
-  var amtCol = requireHeader_(h, 'budget_amount')
-
-  var lastRow = sheet.getLastRow()
-  if (lastRow > 1) {
-    var data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues()
-    for (var i = 0; i < data.length; i++) {
-      var rowUser = String(data[i][userCol - 1] || '').toLowerCase().trim()
-      var rowCat = String(data[i][catCol - 1] || '').toLowerCase().trim()
-      if (rowUser === userVal && rowCat === category) {
-        var rowNum = i + 2
-        if (isNaN(amount) || amount <= 0) {
-          sheet.deleteRow(rowNum)
-        } else {
-          sheet.getRange(rowNum, amtCol).setValue(amount)
-        }
-        return { ok: true }
-      }
-    }
-  }
-
-  if (!isNaN(amount) && amount > 0) {
-    appendByHeaders_(sheet, h, { user: userVal, category: category, budget_amount: amount })
-  }
-  return { ok: true }
-}
-
 function createRecipe_(payload) {
   var recipeName = String(payload.recipe_name || '').trim()
   if (!recipeName) return { ok: false, error: 'recipe_name is required' }
@@ -1287,52 +1219,6 @@ function deleteRecipeStep_(payload) {
   return { ok: true }
 }
 
-function createTrip_(payload) {
-  var name = String(payload.name || '').trim()
-  if (!name) return { ok: false, error: 'name is required' }
-
-  var sheet = getSheet_('trips')
-  var h = headerMap_(sheet)
-
-  appendByHeaders_(sheet, h, {
-    name: name,
-    date: String(payload.date || '').trim(),
-    budget: Number(payload.budget) || 0,
-    saved: 0,
-  })
-
-  return { ok: true }
-}
-
-function updateTrip_(payload) {
-  var name = String(payload.name || '').trim()
-  if (!name) return { ok: false, error: 'name is required' }
-
-  var sheet = getSheet_('trips')
-  var h = headerMap_(sheet)
-  var nameCol = requireHeader_(h, 'name')
-  var row = findRowById_(sheet, nameCol, name)
-  if (row < 0) return { ok: false, error: 'Trip not found' }
-
-  sheet.getRange(row, requireHeader_(h, 'saved')).setValue(Number(payload.saved) || 0)
-
-  return { ok: true }
-}
-
-function deleteTrip_(payload) {
-  var name = String(payload.name || '').trim()
-  if (!name) return { ok: false, error: 'name is required' }
-
-  var sheet = getSheet_('trips')
-  var h = headerMap_(sheet)
-  var nameCol = requireHeader_(h, 'name')
-  var row = findRowById_(sheet, nameCol, name)
-  if (row < 0) return { ok: false, error: 'Trip not found' }
-
-  sheet.deleteRow(row)
-  return { ok: true }
-}
-
 // ── Journal ───────────────────────────────────────────────────────────────
 
 function journalFields_(payload) {
@@ -1403,77 +1289,6 @@ function deleteJournalEntry_(payload) {
   var h = headerMap_(sheet)
   var row = findRowById_(sheet, requireHeader_(h, 'journal_id'), journalId)
   if (row < 0) return { ok: false, error: 'Journal entry not found' }
-
-  sheet.deleteRow(row)
-  return { ok: true }
-}
-
-// ── Work ──────────────────────────────────────────────────────────────────
-
-function workFields_(payload) {
-  return {
-    project:  String(payload.project || '').trim(),
-    item:     String(payload.item || '').trim(),
-    status:   String(payload.status || 'Not started').trim(),
-    due_date: String(payload.due_date || '').slice(0, 10),
-    priority: Number(payload.priority) || 1,
-    notes:    String(payload.notes || ''),
-    link:     String(payload.link || '').trim()
-  }
-}
-
-function createWorkItem_(payload) {
-  var fields = workFields_(payload)
-  if (!fields.item) return { ok: false, error: 'item is required' }
-
-  var sheet = getSheet_('work_items')
-  var h = headerMap_(sheet)
-
-  appendByHeaders_(sheet, h, {
-    work_id:  Utilities.getUuid(),
-    project:  fields.project,
-    item:     fields.item,
-    status:   fields.status,
-    due_date: fields.due_date,
-    priority: fields.priority,
-    notes:    fields.notes,
-    link:     fields.link
-  })
-
-  return { ok: true }
-}
-
-function updateWorkItem_(payload) {
-  var workId = String(payload.work_id || '').trim()
-  if (!workId) return { ok: false, error: 'work_id is required' }
-
-  var fields = workFields_(payload)
-  if (!fields.item) return { ok: false, error: 'item is required' }
-
-  var sheet = getSheet_('work_items')
-  var h = headerMap_(sheet)
-  var row = findRowById_(sheet, requireHeader_(h, 'work_id'), workId)
-  if (row < 0) return { ok: false, error: 'Work item not found' }
-
-  sheet.getRange(row, requireHeader_(h, 'project')).setValue(fields.project)
-  sheet.getRange(row, requireHeader_(h, 'item')).setValue(fields.item)
-  sheet.getRange(row, requireHeader_(h, 'status')).setValue(fields.status)
-  sheet.getRange(row, requireHeader_(h, 'due_date')).setValue(fields.due_date)
-  sheet.getRange(row, requireHeader_(h, 'priority')).setValue(fields.priority)
-  sheet.getRange(row, requireHeader_(h, 'notes')).setValue(fields.notes)
-  sheet.getRange(row, requireHeader_(h, 'link')).setValue(fields.link)
-
-  return { ok: true }
-}
-
-function deleteWorkItem_(payload) {
-  var workId = String(payload.work_id || '').trim()
-  if (!workId) return { ok: false, error: 'work_id is required' }
-
-  var sheet = getSheet_('work_items')
-  var h = headerMap_(sheet)
-  var row = findRowById_(sheet, requireHeader_(h, 'work_id'), workId)
-  if (row < 0) return { ok: false, error: 'Work item not found' }
 
   sheet.deleteRow(row)
   return { ok: true }

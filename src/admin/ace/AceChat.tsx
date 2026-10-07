@@ -1,0 +1,1093 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Check, Mic, MicOff, Plus, RotateCcw, Send, Sparkles, X } from 'lucide-react'
+import { aceChat, aceJson, aceTts, getAceConfig, type AceMessage } from './client'
+import { AceMarkdown } from './AceMarkdown'
+import { buildAceContext, renderAceContext, type AceContext } from './context'
+import {
+  ACE_SYSTEM_PROMPT,
+  ARCHIVE_SCHEMA,
+  COMPLETION_SCHEMA,
+  CONTEXT_PENDING_PROMPT,
+  QUICK_PROMPTS,
+  REMINDER_SCHEMA,
+  archiveExtractionPrompt,
+  completionExtractionPrompt,
+  reminderExtractionPrompt,
+  type ArchiveDraft,
+  type CompletionDraft,
+  type QuickPrompt,
+  type ReminderDraft,
+} from './prompts'
+import { archiveMail } from '../../data/sheets/repositories'
+import { closeTask, createTask } from '../../data/todoist/repositories'
+import { todayKey } from '../../data/todoist/dates'
+
+/**
+ * `prompt` is what the model was actually asked, when that differs from what
+ * the bubble shows — a quick prompt displays "Good morning" but sends the whole
+ * briefing instruction, and the history has to replay the real thing.
+ */
+type ChatTurn = { id: string; role: 'user' | 'assistant'; content: string; prompt?: string }
+
+/** One empty WAV, used only to unlock mobile audio from inside a tap. */
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA='
+
+const CONVERSATION_KEY = 'ace-conversation'
+
+/** Replayed to the model each turn; older turns fall off so the prompt stays inside the context window. */
+const HISTORY_TURNS = 20
+
+/** Kept on disk; a long day of chat is trimmed from the front. */
+const STORED_TURNS = 60
+
+/** Reopening the panel after this long refreshes what Ace knows. */
+const CONTEXT_STALE_MS = 15 * 60 * 1000
+
+/** Today's conversation only: tomorrow starts clean, like the briefings it replaced. */
+function readConversation(): ChatTurn[] {
+  try {
+    const raw = localStorage.getItem(CONVERSATION_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as { day?: string; turns?: ChatTurn[] }
+    return parsed.day === todayKey() && Array.isArray(parsed.turns) ? parsed.turns : []
+  } catch {
+    return []
+  }
+}
+
+function writeConversation(turns: ChatTurn[]) {
+  try {
+    if (turns.length === 0) {
+      localStorage.removeItem(CONVERSATION_KEY)
+    } else {
+      localStorage.setItem(CONVERSATION_KEY, JSON.stringify({ day: todayKey(), turns: turns.slice(-STORED_TURNS) }))
+    }
+  } catch {
+    // Private windows and blocked site data both throw; the conversation still
+    // works for this visit, it just will not survive a reload.
+  }
+}
+
+/**
+ * Ace's conversation: a chat with the model running on Abe's own machine, fed
+ * his mail, calendar, tasks, sleep, training and mood as context.
+ *
+ * Mounted once the launcher is first opened and kept mounted while hidden, so
+ * closing the panel or moving between dashboards does not lose the thread.
+ */
+export function AceChat({
+  idToken,
+  todoistConfigured,
+  open,
+  onClose,
+}: {
+  idToken: string
+  todoistConfigured: boolean
+  open: boolean
+  onClose: () => void
+}) {
+  const config = useMemo(() => getAceConfig(), [])
+
+  const [context, setContext] = useState<AceContext | null>(null)
+  const [contextError, setContextError] = useState('')
+  const contextLoadedAtRef = useRef(0)
+  const contextRequestRef = useRef(0)
+
+  const [turns, setTurns] = useState<ChatTurn[]>(() => readConversation())
+  const [draft, setDraft] = useState('')
+  const [streaming, setStreaming] = useState('')
+  const [isThinking, setIsThinking] = useState(false)
+  const [chatError, setChatError] = useState('')
+
+  const [reminder, setReminder] = useState<ReminderDraft | null>(null)
+  const [reminderNote, setReminderNote] = useState('')
+  const [isSavingReminder, setIsSavingReminder] = useState(false)
+  const [reminderNotice, setReminderNotice] = useState('')
+
+  const [completion, setCompletion] = useState<{ id: string; content: string } | null>(null)
+  const [isClosingTask, setIsClosingTask] = useState(false)
+
+  const [mailArchive, setMailArchive] = useState<{ threadId: string; subject: string } | null>(null)
+  const [isArchiving, setIsArchiving] = useState(false)
+
+  const abortRef = useRef<AbortController | null>(null)
+  const transcriptRef = useRef<HTMLDivElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
+
+  /* ── Voice mode: press the mic, speak, hear the reply, speak again. ── */
+  const [voiceState, setVoiceState] = useState<'off' | 'listening' | 'speaking'>('off')
+  const [voiceNote, setVoiceNote] = useState('')
+  const voiceOnRef = useRef(false)
+  const recognitionRef = useRef<{ stop: () => void } | null>(null)
+
+  const speechSupported = useMemo(() => {
+    if (typeof window === 'undefined') return false
+    const w = window as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown }
+    return Boolean(w.SpeechRecognition ?? w.webkitSpeechRecognition) && 'speechSynthesis' in window
+  }, [])
+
+  /*
+   * Voice quality: the default system voice is the robotic one. Prefer the
+   * "natural" neural voices Edge ships, then Google's, then any English voice.
+   * getVoices() is empty until the browser fires voiceschanged, so keep a ref.
+   */
+  const voicesRef = useRef<SpeechSynthesisVoice[]>([])
+
+  useEffect(() => {
+    if (!('speechSynthesis' in window)) return
+    const load = () => {
+      voicesRef.current = window.speechSynthesis.getVoices()
+    }
+    load()
+    window.speechSynthesis.addEventListener('voiceschanged', load)
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', load)
+  }, [])
+
+  function pickVoice(): SpeechSynthesisVoice | null {
+    const english = voicesRef.current.filter((voice) => voice.lang.toLowerCase().startsWith('en'))
+    return (
+      english.find((voice) => /natural/i.test(voice.name) && /en-US/i.test(voice.lang)) ??
+      english.find((voice) => /natural/i.test(voice.name)) ??
+      english.find((voice) => /Google US English/i.test(voice.name)) ??
+      english.find((voice) => /Google/i.test(voice.name)) ??
+      english[0] ??
+      null
+    )
+  }
+
+  /*
+   * Rocky's signature: he speaks in musical chords. A short bell-like arpeggio
+   * marks the start and end of Ace's speech — synthesized here, so it works
+   * offline and costs nothing.
+   */
+  const audioCtxRef = useRef<AudioContext | null>(null)
+
+  function playChord(frequencies: number[], duration = 0.55) {
+    try {
+      const w = window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }
+      const Ctx = w.AudioContext ?? w.webkitAudioContext
+      if (!Ctx) return
+      const ctx = audioCtxRef.current ?? new Ctx()
+      audioCtxRef.current = ctx
+      void ctx.resume()
+
+      const now = ctx.currentTime
+      frequencies.forEach((frequency, index) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.value = frequency
+        const start = now + index * 0.08
+        gain.gain.setValueAtTime(0, start)
+        gain.gain.linearRampToValueAtTime(0.1, start + 0.05)
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(start)
+        osc.stop(start + duration + 0.05)
+      })
+    } catch {
+      // A blocked or missing AudioContext should never break speech itself.
+    }
+  }
+
+  /** Bright rising chord: Ace is about to speak. */
+  const CHORD_SPEAK = [659.25, 783.99, 987.77] // E5 · G5 · B5
+  /** Soft settling chord: your turn. */
+  const CHORD_DONE = [523.25, 659.25, 783.99] // C5 · E5 · G5
+
+  /**
+   * Gathers everything Ace is told. Only the newest request may land: a slow
+   * first load must not overwrite the fresh one a "New conversation" started.
+   */
+  function loadContext() {
+    const request = ++contextRequestRef.current
+    void (async () => {
+      try {
+        const next = await buildAceContext(idToken, todoistConfigured)
+        if (request === contextRequestRef.current) {
+          setContext(next)
+          setContextError('')
+          contextLoadedAtRef.current = Date.now()
+        }
+      } catch (caught) {
+        if (request === contextRequestRef.current) {
+          setContextError(caught instanceof Error ? caught.message : 'Unable to gather context')
+        }
+      }
+    })()
+  }
+
+  // First load on mount — which is the first time the panel opens, not page load.
+  useEffect(() => {
+    loadContext()
+    return () => {
+      contextRequestRef.current += 1
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idToken, todoistConfigured])
+
+  useEffect(() => {
+    if (!open) {
+      // A hidden panel must not keep listening or talking.
+      if (voiceOnRef.current) endVoiceMode()
+      return
+    }
+
+    if (contextLoadedAtRef.current && Date.now() - contextLoadedAtRef.current > CONTEXT_STALE_MS) {
+      loadContext()
+    }
+
+    // Focus the box for keyboard users; on touch this would throw the keyboard
+    // up over the panel before anyone asked for it.
+    if (typeof window.matchMedia === 'function' && window.matchMedia('(pointer: fine)').matches) {
+      inputRef.current?.focus()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  useEffect(() => {
+    writeConversation(turns)
+  }, [turns])
+
+  // Keep the newest turn in view as tokens arrive.
+  useEffect(() => {
+    const node = transcriptRef.current
+    if (node) {
+      node.scrollTop = node.scrollHeight
+    }
+  }, [turns, streaming, open])
+
+  useEffect(
+    () => () => {
+      abortRef.current?.abort()
+      voiceOnRef.current = false
+      recognitionRef.current?.stop()
+      audioRef.current?.pause()
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+    },
+    [],
+  )
+
+  /**
+   * Always a block, never silence. While the sources are still loading the
+   * model is told so in plain terms — the system prompt promises a context
+   * block, and given that promise with no block, an 8B model invents a day.
+   */
+  function contextBlock(current: AceContext | null) {
+    return current ? `Context for today:\n\n${renderAceContext(current)}` : CONTEXT_PENDING_PROMPT
+  }
+
+  /** Every open task Ace can be told about, deduplicated. */
+  function openTasks() {
+    if (!context) return []
+    const seen = new Set<string>()
+    return [...context.tasksToday, ...context.tasksOverdue, ...context.slippedYesterday].filter(
+      (task) => !seen.has(task.id) && Boolean(seen.add(task.id)),
+    )
+  }
+
+  async function handleConfirmComplete() {
+    if (!completion || isClosingTask) return
+    setIsClosingTask(true)
+    setChatError('')
+
+    try {
+      await closeTask(completion.id)
+      setTurns((current) => [
+        ...current,
+        { id: `a-${Date.now()}`, role: 'assistant', content: `Done — checked off **${completion.content}**.` },
+      ])
+      // Keep the local context honest so the same task cannot be matched twice.
+      setContext((current) =>
+        current
+          ? {
+              ...current,
+              tasksToday: current.tasksToday.filter((task) => task.id !== completion.id),
+              tasksOverdue: current.tasksOverdue.filter((task) => task.id !== completion.id),
+              slippedYesterday: current.slippedYesterday.filter((task) => task.id !== completion.id),
+            }
+          : current,
+      )
+      if (voiceOnRef.current) void speakReply(`Checked off ${completion.content}.`)
+      setCompletion(null)
+    } catch (caught) {
+      setChatError(caught instanceof Error ? caught.message : 'Could not close the task')
+    } finally {
+      setIsClosingTask(false)
+    }
+  }
+
+  async function handleConfirmArchive() {
+    if (!mailArchive || isArchiving) return
+    setIsArchiving(true)
+    setChatError('')
+
+    try {
+      const result = await archiveMail(idToken, [mailArchive.threadId])
+      if (result.failed.length > 0) {
+        throw new Error('Gmail refused to archive that thread')
+      }
+      setTurns((current) => [
+        ...current,
+        { id: `a-${Date.now()}`, role: 'assistant', content: `Archived **${mailArchive.subject}**.` },
+      ])
+      setContext((current) =>
+        current
+          ? { ...current, mail: current.mail.filter((message) => message.threadId !== mailArchive.threadId) }
+          : current,
+      )
+      if (voiceOnRef.current) void speakReply(`Archived ${mailArchive.subject}.`)
+      setMailArchive(null)
+    } catch (caught) {
+      setChatError(caught instanceof Error ? caught.message : 'Could not archive the email')
+    } finally {
+      setIsArchiving(false)
+    }
+  }
+
+  /** Markdown reads badly aloud; strip it before it reaches the voice. */
+  function speechText(markdown: string) {
+    return markdown
+      .replace(/\*\*/g, '')
+      .replace(/^[-*]\s+/gm, '')
+      .replace(/^#+\s+/gm, '')
+      .replace(/`+/g, '')
+      .trim()
+  }
+
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  /** Bumped to cancel any in-flight chunked speech session. */
+  const speechSessionRef = useRef(0)
+
+  /*
+   * Mobile browsers only let audio start from a tap. A fresh new Audio() per
+   * chunk is exactly what iOS and Android block, so one element is created and
+   * unlocked inside the mic-button gesture, then reused for every chunk.
+   */
+  const speechAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  function unlockSpeechAudio() {
+    if (speechAudioRef.current) return
+    const audio = new Audio(SILENT_WAV)
+    void audio.play().catch(() => {
+      // Some engines reject even the silent unlock; real playback reports its
+      // own error through playBlob, so nothing to do here.
+    })
+    speechAudioRef.current = audio
+  }
+
+  function stopSpeaking() {
+    speechSessionRef.current += 1
+    audioRef.current?.pause()
+    audioRef.current = null
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+  }
+
+  /**
+   * Sentence-sized chunks so the first audio arrives after one sentence of
+   * synthesis rather than after the whole reply.
+   */
+  function splitForSpeech(text: string): string[] {
+    const sentences = text.match(/[^.!?\n]+[.!?]*/g) ?? [text]
+    const chunks: string[] = []
+    let current = ''
+    for (const sentence of sentences) {
+      if (current && (current + sentence).length > 180) {
+        chunks.push(current.trim())
+        current = sentence
+      } else {
+        current += sentence
+      }
+    }
+    if (current.trim()) chunks.push(current.trim())
+    return chunks
+  }
+
+  function playBlob(blob: Blob): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(blob)
+      const audio = speechAudioRef.current ?? new Audio()
+      audioRef.current = audio
+      const cleanup = () => {
+        URL.revokeObjectURL(url)
+        audio.onended = null
+        audio.onerror = null
+        if (audioRef.current === audio) audioRef.current = null
+      }
+      audio.onended = () => {
+        cleanup()
+        resolve()
+      }
+      // A chunk that fails to decode is skipped rather than killing the reply.
+      audio.onerror = () => {
+        cleanup()
+        resolve()
+      }
+      audio.src = url
+      audio.play().catch((caught: unknown) => {
+        // A rejected play() is the autoplay policy, not a bad chunk — surface
+        // it so speakReply can fall back to the browser voice.
+        cleanup()
+        reject(caught instanceof Error ? caught : new Error('Audio playback was blocked'))
+      })
+    })
+  }
+
+  /** Browser TTS — the fallback when the local Kokoro voice is unreachable. */
+  function fallbackSpeak(text: string) {
+    if (!('speechSynthesis' in window)) return
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    const voice = pickVoice()
+    if (voice) utterance.voice = voice
+    utterance.pitch = 0.92
+    utterance.rate = 1.02
+    utterance.onend = () => {
+      playChord(CHORD_DONE, 0.45)
+      if (voiceOnRef.current) startListening()
+    }
+    // Let the chord ring for a beat before the words begin.
+    window.setTimeout(() => window.speechSynthesis.speak(utterance), 380)
+  }
+
+  /**
+   * Speak with the Kokoro model running next to Ollama (human-like), falling
+   * back to the browser's synthesis when the host or tunnel is down.
+   *
+   * The reply is synthesized sentence-group by sentence-group with one chunk
+   * prefetched ahead, so speaking starts after the first sentence is ready
+   * instead of after the whole reply has been rendered to audio.
+   */
+  async function speakReply(markdown: string) {
+    const text = speechText(markdown)
+    if (!text) return
+
+    stopSpeaking()
+    const session = speechSessionRef.current
+    playChord(CHORD_SPEAK)
+    setVoiceState('speaking')
+
+    let chunks: string[] = []
+    let spoken = 0
+
+    try {
+      if (!config) throw new Error('Ace is not configured')
+
+      chunks = splitForSpeech(text)
+      let pending: Promise<Blob> = aceTts({ config, idToken, text: chunks[0] })
+
+      for (let index = 0; index < chunks.length; index += 1) {
+        const blob = await pending
+        if (session !== speechSessionRef.current) return
+        if (index + 1 < chunks.length) {
+          pending = aceTts({ config, idToken, text: chunks[index + 1] })
+        }
+        await playBlob(blob)
+        spoken = index + 1
+        if (session !== speechSessionRef.current) return
+      }
+
+      setVoiceNote('')
+      playChord(CHORD_DONE, 0.45)
+      if (voiceOnRef.current) startListening()
+    } catch (caught) {
+      if (session !== speechSessionRef.current) return
+      // Say why Kokoro was skipped — on a phone this note is the only clue.
+      setVoiceNote(
+        `Kokoro voice unavailable (${caught instanceof Error ? caught.message : 'unknown error'}) — using the browser voice.`,
+      )
+      fallbackSpeak(chunks.length > 0 ? chunks.slice(spoken).join(' ') : text)
+    }
+  }
+
+  function startListening() {
+    type RecognitionLike = {
+      lang: string
+      interimResults: boolean
+      onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null
+      onerror: ((event: { error?: string }) => void) | null
+      onend: (() => void) | null
+      start: () => void
+      stop: () => void
+    }
+    const w = window as unknown as {
+      SpeechRecognition?: new () => RecognitionLike
+      webkitSpeechRecognition?: new () => RecognitionLike
+    }
+    const Recognition = w.SpeechRecognition ?? w.webkitSpeechRecognition
+    if (!Recognition || !voiceOnRef.current) return
+
+    const recognition = new Recognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = true
+
+    let finalText = ''
+    recognition.onresult = (event) => {
+      const spoken = Array.from({ length: event.results.length }, (_, i) => event.results[i][0].transcript)
+        .join(' ')
+        .trim()
+      setDraft(spoken)
+      if (event.results[event.results.length - 1].isFinal) {
+        finalText = spoken
+      }
+    }
+    recognition.onerror = (event) => {
+      // Silence and manual stops are routine; anything else ends voice mode.
+      if (event.error && event.error !== 'no-speech' && event.error !== 'aborted') {
+        voiceOnRef.current = false
+        setVoiceState('off')
+        setChatError(`Voice input failed (${event.error}).`)
+      }
+    }
+    recognition.onend = () => {
+      recognitionRef.current = null
+      if (!voiceOnRef.current) return
+      if (finalText) {
+        setDraft('')
+        // Through the ref: this closure may be several renders old, and an old
+        // handleAsk would replay an old history.
+        void handleAskRef.current(finalText)
+      } else {
+        // Silence timeout — keep the mic open while voice mode is on.
+        startListening()
+      }
+    }
+
+    recognitionRef.current = recognition
+    setVoiceState('listening')
+    recognition.start()
+  }
+
+  function endVoiceMode() {
+    voiceOnRef.current = false
+    setVoiceState('off')
+    recognitionRef.current?.stop()
+    stopSpeaking()
+    playChord(CHORD_DONE, 0.5)
+  }
+
+  function toggleVoice() {
+    if (voiceOnRef.current) {
+      endVoiceMode()
+    } else {
+      voiceOnRef.current = true
+      setChatError('')
+      setVoiceNote('')
+      // Inside the tap gesture: unlock the audio element and the chord
+      // context, or mobile browsers will refuse both later.
+      unlockSpeechAudio()
+      playChord(CHORD_DONE, 0.4)
+      startListening()
+    }
+  }
+
+  async function handleAsk(spoken?: string, quick?: QuickPrompt) {
+    const question = quick ? quick.label : (spoken ?? draft).trim()
+    if (!config || !question || isThinking) return
+
+    if (!quick) {
+      // "End" closes the voice conversation outright.
+      if (voiceOnRef.current && /^(end|end (the )?conversation|stop listening|goodbye|bye)[\s.!]*$/i.test(question)) {
+        setDraft('')
+        endVoiceMode()
+        return
+      }
+
+      // A pending confirmation chip can be answered by voice or text.
+      const pendingYes = /^(yes|yeah|yep|sure|do it|confirm|check it|mark it|archive it)\b/i
+      const pendingNo = /^(no|nope|cancel|leave it|not that)\b/i
+      if (completion) {
+        if (pendingYes.test(question)) {
+          setDraft('')
+          void handleConfirmComplete()
+          return
+        }
+        if (pendingNo.test(question)) {
+          setCompletion(null)
+          setDraft('')
+          if (voiceOnRef.current) startListening()
+          return
+        }
+      }
+      if (mailArchive) {
+        if (pendingYes.test(question)) {
+          setDraft('')
+          void handleConfirmArchive()
+          return
+        }
+        if (pendingNo.test(question)) {
+          setMailArchive(null)
+          setDraft('')
+          if (voiceOnRef.current) startListening()
+          return
+        }
+      }
+    }
+
+    const turn: ChatTurn = { id: `u-${Date.now()}`, role: 'user', content: question, prompt: quick?.prompt }
+    const history = [...turns, turn]
+
+    setTurns(history)
+    if (!quick) setDraft('')
+    setChatError('')
+    setStreaming('')
+    setIsThinking(true)
+
+    // "I did X" → offer to check off the matching task instead of chatting.
+    if (!quick && todoistConfigured && /\b(did|done|finished|finish|complete|completed|closed|checked)\b/i.test(question)) {
+      const open = openTasks()
+      if (open.length > 0) {
+        try {
+          const extracted = await aceJson<CompletionDraft>({
+            config,
+            idToken,
+            format: COMPLETION_SCHEMA,
+            messages: [
+              { role: 'system', content: ACE_SYSTEM_PROMPT },
+              {
+                role: 'user',
+                content: completionExtractionPrompt(
+                  question,
+                  open.map((task) => ({ id: task.id, content: task.content })),
+                ),
+              },
+            ],
+          })
+          const match = extracted.isCompletion ? open.find((task) => task.id === extracted.taskId) : undefined
+          if (match) {
+            setCompletion({ id: match.id, content: match.content })
+            setIsThinking(false)
+            if (voiceOnRef.current) void speakReply(`Should I check off ${match.content}?`)
+            return
+          }
+        } catch {
+          // Extraction is best-effort; fall through to a normal chat turn.
+        }
+      }
+    }
+
+    // "I addressed that email" → offer to archive the matching thread.
+    if (
+      !quick &&
+      context &&
+      context.mail.length > 0 &&
+      /\b(address(ed)?|repl(y|ied)|respond(ed)?|archiv\w*|dealt with|took care of|handled|done with)\b/i.test(question)
+    ) {
+      try {
+        const extracted = await aceJson<ArchiveDraft>({
+          config,
+          idToken,
+          format: ARCHIVE_SCHEMA,
+          messages: [
+            { role: 'system', content: ACE_SYSTEM_PROMPT },
+            {
+              role: 'user',
+              content: archiveExtractionPrompt(
+                question,
+                context.mail.map((message) => ({
+                  threadId: message.threadId,
+                  from: message.from,
+                  subject: message.subject,
+                })),
+              ),
+            },
+          ],
+        })
+        const match = extracted.isArchive
+          ? context.mail.find((message) => message.threadId === extracted.threadId)
+          : undefined
+        if (match) {
+          setMailArchive({ threadId: match.threadId, subject: match.subject })
+          setIsThinking(false)
+          if (voiceOnRef.current) void speakReply(`Should I archive ${match.subject}?`)
+          return
+        }
+      } catch {
+        // Extraction is best-effort; fall through to a normal chat turn.
+      }
+    }
+
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    try {
+      const messages: AceMessage[] = [
+        { role: 'system', content: ACE_SYSTEM_PROMPT },
+        { role: 'system', content: contextBlock(context) },
+        ...history.slice(-HISTORY_TURNS).map((entry) => ({ role: entry.role, content: entry.prompt ?? entry.content })),
+      ]
+
+      const answer = await aceChat({
+        config,
+        idToken,
+        messages,
+        signal: controller.signal,
+        onProgress: setStreaming,
+      })
+
+      setTurns((current) => [...current, { id: `a-${Date.now()}`, role: 'assistant', content: answer }])
+
+      if (voiceOnRef.current) {
+        void speakReply(answer)
+      }
+    } catch (caught) {
+      if (!controller.signal.aborted) {
+        setChatError(caught instanceof Error ? caught.message : 'Ace could not answer')
+        // Keep the conversation open: a failed turn should not strand the mic.
+        if (voiceOnRef.current) startListening()
+      }
+    } finally {
+      setStreaming('')
+      setIsThinking(false)
+      abortRef.current = null
+    }
+  }
+
+  const handleAskRef = useRef(handleAsk)
+  useEffect(() => {
+    handleAskRef.current = handleAsk
+  })
+
+  /** Turn the box's contents into a proposed task, for confirmation. */
+  async function handleRemember() {
+    const note = draft.trim()
+    if (!config || !note || isThinking) return
+
+    setChatError('')
+    setReminderNotice('')
+    setIsThinking(true)
+
+    try {
+      const extracted = await aceJson<ReminderDraft>({
+        config,
+        idToken,
+        format: REMINDER_SCHEMA,
+        messages: [
+          { role: 'system', content: ACE_SYSTEM_PROMPT },
+          { role: 'user', content: reminderExtractionPrompt(note, todayKey()) },
+        ],
+      })
+
+      if (!extracted.isReminder || !extracted.content.trim()) {
+        setChatError('That did not look like something to remember. Try phrasing it as a thing to do.')
+        return
+      }
+
+      setReminder(extracted)
+      setReminderNote(note)
+      setDraft('')
+    } catch (caught) {
+      setChatError(caught instanceof Error ? caught.message : 'Ace could not read that as a reminder')
+    } finally {
+      setIsThinking(false)
+    }
+  }
+
+  async function handleSaveReminder() {
+    if (!reminder || isSavingReminder) return
+
+    setIsSavingReminder(true)
+    setChatError('')
+
+    try {
+      await createTask(reminder.content, reminder.dueDate || undefined, reminder.priority)
+      setReminderNotice(`Added to Todoist${reminder.dueDate ? ` for ${reminder.dueDate}` : ''}.`)
+      setReminder(null)
+      setReminderNote('')
+    } catch (caught) {
+      setChatError(caught instanceof Error ? caught.message : 'Could not create the task')
+    } finally {
+      setIsSavingReminder(false)
+    }
+  }
+
+  /** A clean slate: no turns, no pending chips, and freshly gathered context. */
+  function handleNewConversation() {
+    abortRef.current?.abort()
+    if (voiceOnRef.current) endVoiceMode()
+    setTurns([])
+    setDraft('')
+    setStreaming('')
+    setIsThinking(false)
+    setChatError('')
+    setReminder(null)
+    setReminderNotice('')
+    setCompletion(null)
+    setMailArchive(null)
+    setContext(null)
+    loadContext()
+  }
+
+  const unread = context?.mail.filter((message) => message.unread).length ?? 0
+  const eventsToday = useMemo(() => {
+    if (!context) return 0
+    const now = context.now
+    return context.events.filter((event) => {
+      const date = new Date(event.start)
+      return (
+        !Number.isNaN(date.getTime()) &&
+        date.getFullYear() === now.getFullYear() &&
+        date.getMonth() === now.getMonth() &&
+        date.getDate() === now.getDate()
+      )
+    }).length
+  }, [context])
+
+  const status = !config ? 'Offline' : context ? config.model : 'Gathering your day…'
+
+  return (
+    <>
+      <header className="ace-panel-head">
+        <div className="ace-panel-title">
+          <span className="ace-panel-mark" aria-hidden="true">
+            <Sparkles size={16} strokeWidth={1.8} />
+          </span>
+          <div>
+            <h2 id="ace-panel-title">Ace</h2>
+            <p>{status}</p>
+          </div>
+        </div>
+        <div className="ace-panel-actions">
+          <button
+            type="button"
+            className="ace-icon-btn"
+            onClick={handleNewConversation}
+            aria-label="New conversation"
+            title="New conversation"
+          >
+            <RotateCcw size={16} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+          <button type="button" className="ace-icon-btn" onClick={onClose} aria-label="Close" title="Close">
+            <X size={17} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+        </div>
+      </header>
+
+      {!config ? (
+        <div className="ace-panel-body">
+          <p className="sheets-meta">
+            Ace runs on your own machine. Point <code>VITE_ACE_BASE_URL</code> at the worker in front of Ollama and
+            set <code>VITE_ACE_MODEL</code> to pick the model.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="ace-transcript" ref={transcriptRef} aria-live="polite">
+            {turns.length === 0 && !streaming ? (
+              <div className="ace-welcome">
+                <p className="ace-welcome-title">What&apos;s on your mind?</p>
+                <p className="sheets-meta">
+                  Ask anything — your day, inbox, sleep, training, or how you&apos;re feeling. Dump a thought and press
+                  Remember to turn it into a task.
+                </p>
+
+                {context ? (
+                  <div className="ace-facts">
+                    <span className="ace-fact">
+                      <strong>{context.completedYesterday.length}</strong> done yesterday
+                    </span>
+                    <span className={`ace-fact${context.slippedYesterday.length ? ' ace-fact-warn' : ''}`}>
+                      <strong>{context.slippedYesterday.length}</strong> slipped
+                    </span>
+                    <span className="ace-fact">
+                      <strong>{unread}</strong> unread
+                    </span>
+                    <span className="ace-fact">
+                      <strong>{eventsToday}</strong> on today
+                    </span>
+                    {context.wellness?.sleep_score ? (
+                      <span className="ace-fact">
+                        sleep <strong>{context.wellness.sleep_score}</strong>
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {contextError ? <p className="sheets-meta">{contextError}</p> : null}
+                {context && context.gaps.length > 0 ? (
+                  <p className="sheets-meta">Not reachable: {context.gaps.join(', ')}.</p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {turns.map((turn) =>
+              turn.role === 'assistant' ? (
+                <AceMarkdown key={turn.id} text={turn.content} className="ace-turn ace-turn-assistant" />
+              ) : (
+                <div key={turn.id} className="ace-turn ace-turn-user">
+                  {turn.content}
+                </div>
+              ),
+            )}
+
+            {streaming ? <AceMarkdown text={streaming} className="ace-turn ace-turn-assistant" /> : null}
+
+            {isThinking && !streaming ? (
+              <div className="ace-typing" role="status" aria-label="Ace is thinking">
+                <span />
+                <span />
+                <span />
+              </div>
+            ) : null}
+          </div>
+
+          <div className="ace-panel-foot">
+            {reminder ? (
+              <div className="ace-reminder" role="group" aria-label="Proposed reminder">
+                <div className="ace-reminder-body">
+                  <strong>{reminder.content}</strong>
+                  {reminder.dueDate ? <span className="ace-reminder-due">{reminder.dueDate}</span> : null}
+                  {reminder.priority >= 3 ? <span className="ace-reminder-due">priority {reminder.priority}</span> : null}
+                </div>
+                <div className="ace-reminder-actions">
+                  <button type="button" onClick={handleSaveReminder} disabled={isSavingReminder}>
+                    <Plus size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>{isSavingReminder ? 'Adding…' : 'Add to Todoist'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setReminder(null)
+                      setDraft(reminderNote)
+                    }}
+                    disabled={isSavingReminder}
+                  >
+                    <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Discard</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {completion ? (
+              <div className="ace-reminder" role="group" aria-label="Task to complete">
+                <div className="ace-reminder-body">
+                  <strong>{completion.content}</strong>
+                  <span className="ace-reminder-due">mark complete?</span>
+                </div>
+                <div className="ace-reminder-actions">
+                  <button type="button" onClick={() => void handleConfirmComplete()} disabled={isClosingTask}>
+                    <Check size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>{isClosingTask ? 'Closing…' : 'Complete'}</span>
+                  </button>
+                  <button type="button" onClick={() => setCompletion(null)} disabled={isClosingTask}>
+                    <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Not this</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {mailArchive ? (
+              <div className="ace-reminder" role="group" aria-label="Email to archive">
+                <div className="ace-reminder-body">
+                  <strong>{mailArchive.subject}</strong>
+                  <span className="ace-reminder-due">archive?</span>
+                </div>
+                <div className="ace-reminder-actions">
+                  <button type="button" onClick={() => void handleConfirmArchive()} disabled={isArchiving}>
+                    <Check size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>{isArchiving ? 'Archiving…' : 'Archive'}</span>
+                  </button>
+                  <button type="button" onClick={() => setMailArchive(null)} disabled={isArchiving}>
+                    <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Not this</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {!context && !contextError ? (
+              <p className="sheets-meta" role="status">
+                Still gathering your mail, calendar, tasks and training — Ace cannot see them yet.
+              </p>
+            ) : null}
+            {reminderNotice ? <p className="sheets-meta">{reminderNotice}</p> : null}
+            {chatError ? <p className="sheets-meta">{chatError}</p> : null}
+            {voiceNote ? <p className="sheets-meta">{voiceNote}</p> : null}
+
+            <div className="ace-quick" role="group" aria-label="Quick prompts">
+              {QUICK_PROMPTS.map((quick) => (
+                <button
+                  key={quick.id}
+                  type="button"
+                  className="ace-quick-btn"
+                  onClick={() => void handleAsk(undefined, quick)}
+                  disabled={isThinking}
+                >
+                  {quick.label}
+                </button>
+              ))}
+            </div>
+
+            <form
+              className="ace-composer"
+              onSubmit={(event) => {
+                event.preventDefault()
+                void handleAsk()
+              }}
+            >
+              <label className="sr-only" htmlFor="ace-input">
+                Message Ace
+              </label>
+              <textarea
+                id="ace-input"
+                ref={inputRef}
+                value={draft}
+                rows={2}
+                placeholder="Ask anything, or dump a thought…"
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  // Enter sends; Shift+Enter is a newline.
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault()
+                    void handleAsk()
+                  }
+                }}
+              />
+              <div className="ace-composer-actions">
+                {speechSupported ? (
+                  <button
+                    type="button"
+                    className={`ace-ghost-btn ace-voice-btn${voiceState !== 'off' ? ' active' : ''}`}
+                    onClick={toggleVoice}
+                    title={voiceState === 'off' ? 'Talk to Ace' : 'End the voice conversation'}
+                  >
+                    {voiceState === 'off' ? (
+                      <Mic size={13} strokeWidth={1.8} aria-hidden="true" />
+                    ) : (
+                      <MicOff size={13} strokeWidth={1.8} aria-hidden="true" />
+                    )}
+                    <span>
+                      {voiceState === 'listening' ? 'Listening…' : voiceState === 'speaking' ? 'Speaking…' : 'Voice'}
+                    </span>
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  className="ace-ghost-btn"
+                  onClick={handleRemember}
+                  disabled={!draft.trim() || isThinking || !todoistConfigured}
+                  title={
+                    todoistConfigured ? 'Turn this into a Todoist task' : 'Set VITE_TODOIST_API_TOKEN to create reminders'
+                  }
+                >
+                  <Plus size={13} strokeWidth={1.8} aria-hidden="true" />
+                  <span>Remember</span>
+                </button>
+                <button type="submit" className="ace-send-btn" disabled={!draft.trim() || isThinking}>
+                  <Send size={14} strokeWidth={1.8} aria-hidden="true" />
+                  <span>Ask</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </>
+      )}
+    </>
+  )
+}

@@ -1,8 +1,7 @@
-import React, { type CSSProperties, type ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react'
+import React, { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Activity,
   BookOpen,
-  Briefcase,
   Check,
   ExternalLink,
   House,
@@ -11,10 +10,7 @@ import {
   Pencil,
   RotateCcw,
   SquareCheck,
-  Wallet,
-  X,
   type LucideIcon,
-  Server,
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
 import {
@@ -62,10 +58,7 @@ import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
-import { WorkDashboard } from './admin/WorkDashboard'
-import { SystemDashboard } from './admin/SystemDashboard'
-import { AssistantAceCard } from './admin/AssistantAceCard'
-import { FinancePinGate } from './admin/FinancePinGate'
+import { AceLauncher } from './admin/ace/AceLauncher'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
 import {
   adminDashboards,
@@ -82,8 +75,6 @@ import {
   type SectionId,
 } from './siteContent'
 import {
-  getAbeTransactions,
-  getCiaraTransactions,
   createEvent,
   deleteEvent,
   getCurrentStudy,
@@ -99,24 +90,15 @@ import {
   updateEvent,
   upsertTrainingRecord,
   replaceCurrentStudyForDate,
-  getBudgetTargets,
-  saveBudgetTarget,
-  type BudgetTargetRecord,
-  getTrips,
-  createTrip,
-  updateTrip,
-  deleteTrip,
 } from './data/sheets/repositories'
 import type {
   AppleHealthRecord,
   CurrentStudyRecord,
   EventRecord,
-  FinanceTransactionRecord,
   GarminHealthRecord,
   PersonalTrainingRecord,
   RingconnHealthRecord,
   TrainingRecord,
-  TripRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
 import { closeTask, getTasksOfTheDay } from './data/todoist/repositories'
@@ -127,7 +109,6 @@ type ThemeMode = 'light' | 'dark'
 type UserProfile = 'guest' | 'admin'
 const TODOIST_EDITOR_EMAIL = 'pasionabe@gmail.com'
 const ADMIN_GOOGLE_EMAILS = ['pasionabe@gmail.com', 'pixielee1000@gmail.com']
-const FINANCES_ACCESS_EMAILS = ADMIN_GOOGLE_EMAILS
 
 const googleClientConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim())
 
@@ -142,10 +123,6 @@ function getInitialProfile(): UserProfile {
 
   const storedProfile = window.localStorage.getItem('demo-profile')
   return storedProfile === 'admin' ? 'admin' : 'guest'
-}
-
-function canViewFinances(googleEmail: string) {
-  return FINANCES_ACCESS_EMAILS.includes(googleEmail)
 }
 
 function shouldUseAdminProfile(googleEmail: string) {
@@ -171,7 +148,6 @@ function App() {
   const [googleIdToken, setGoogleIdToken] = useState(() => readStoredToken())
   const previousGoogleTokenRef = useRef<string | null>(null)
   const googleEmail = getGoogleTokenEmail(googleIdToken)
-  const canViewPrivateFinances = canViewFinances(googleEmail)
   const trueAdmin = profile === 'admin' && shouldUseAdminProfile(googleEmail)
   const isAdmin = trueAdmin && !viewAsGuest
 
@@ -289,22 +265,10 @@ function App() {
             />
             <Route path="journal" element={<Navigate replace to="/admin/personal" />} />
             <Route
-              path="finance"
-              element={
-                canViewPrivateFinances ? (
-                  <AdminFinancePage googleIdToken={googleIdToken} />
-                ) : (
-                  <Navigate replace to="/admin" />
-                )
-              }
-            />
-            <Route
               path="health"
               element={<AdminHealthPage profile={profile} googleIdToken={googleIdToken} />}
             />
             <Route path="training" element={<Navigate replace to="/admin/health" />} />
-            <Route path="work" element={<WorkDashboard canWrite={isAdmin} idToken={googleIdToken} />} />
-            <Route path="system" element={<SystemDashboard idToken={googleIdToken} />} />
           </Route>
 
           <Route
@@ -331,9 +295,8 @@ function App() {
             }
           />
 
-          {/* Sections that moved or were retired. */}
-          <Route path="finances" element={<Navigate replace to="/admin/finance" />} />
-          <Route path="mrpasionfruit/finances" element={<Navigate replace to="/admin/finance" />} />
+          {/* Sections that moved or were retired. Finance, Work and System are
+              gone entirely; their old URLs fall through to the catch-all. */}
           <Route path="training" element={<Navigate replace to="/admin/health" />} />
           <Route path="training/*" element={<Navigate replace to="/admin/health" />} />
           <Route path="mrpasionfruit" element={<Navigate replace to="/" />} />
@@ -362,7 +325,8 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 
 /**
  * What the admin sees at `/` instead of the public sections: the month's
- * calendar, today's tasks and weather, Assistant Ace, and the inbox.
+ * calendar, today's tasks and weather, and the inbox. Ace is not a card here
+ * any more — it floats over every admin page (see AceLauncher).
  */
 function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   return (
@@ -384,12 +348,6 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
         <WeatherCard />
       </div>
 
-      <AssistantAceCard
-        title="Assistant Ace"
-        idToken={googleIdToken}
-        todoistConfigured={isTodoistConfigured()}
-      />
-
       <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
       <div className="admin-home-links">
@@ -403,18 +361,6 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
         </Link>
       </div>
     </div>
-  )
-}
-
-function AdminFinancePage({ googleIdToken }: { googleIdToken: string }) {
-  return (
-    <AdminPage meta={adminDashboardsById.finance}>
-      {/* Gated even for the admin. The gate holds its unlocked state locally,
-          so navigating away unmounts it and the page re-locks. */}
-      <FinancePinGate>
-        <FinancesHubCard idToken={googleIdToken} />
-      </FinancePinGate>
-    </AdminPage>
   )
 }
 
@@ -441,10 +387,7 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
 const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   home: House,
   personal: NotebookPen,
-  finance: Wallet,
   health: Activity,
-  work: Briefcase,
-  system: Server,
 }
 
 function AdminNav() {
@@ -609,6 +552,10 @@ function SiteLayout({
           <Outlet />
         </RouteErrorBoundary>
       </main>
+
+      {/* Lives in the layout rather than a page, so a conversation survives
+          moving between dashboards. */}
+      {isAdmin ? <AceLauncher idToken={googleIdToken} todoistConfigured={isTodoistConfigured()} /> : null}
     </div>
   )
 }
@@ -1264,1129 +1211,6 @@ function PersonalSiteCard({ entry }: { entry: PersonalSiteEntry }) {
   )
 }
 
-type BarChartMonth = { key: string; label: string; bills: number; expenses: number; income: number }
-
-function FinanceBarChart({
-  data,
-  selectedMonthIndex,
-  onMonthClick,
-}: {
-  data: BarChartMonth[]
-  selectedMonthIndex: number | null
-  onMonthClick: (index: number) => void
-}) {
-  const BAR_W = 12
-  const BAR_GAP = 3
-  const GROUP_PAD = 9
-  const GROUP_W = GROUP_PAD * 2 + BAR_W * 3 + BAR_GAP * 2
-  const TOP_PAD = 10
-  const CHART_H = 150
-  const LABEL_H = 22
-  const SVG_H = TOP_PAD + CHART_H + LABEL_H
-  const LEFT_PAD = 52
-  const RIGHT_PAD = 8
-  const svgW = LEFT_PAD + data.length * GROUP_W + RIGHT_PAD
-
-  // On a phone the year is wider than the card and opens on January; bring the
-  // selected month (this month by default) into view instead, and pin the
-  // dollar axis so it does not scroll away with the bars.
-  const shellRef = useRef<HTMLDivElement | null>(null)
-  const [isScrollable, setIsScrollable] = useState(false)
-
-  useEffect(() => {
-    const shell = shellRef.current
-    if (!shell || typeof ResizeObserver === 'undefined') return
-    // Fires once on observe, so this also takes the first measurement.
-    const observer = new ResizeObserver(() => setIsScrollable(shell.scrollWidth > shell.clientWidth + 1))
-    observer.observe(shell)
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    const shell = shellRef.current
-    if (!shell || selectedMonthIndex === null || shell.scrollWidth <= shell.clientWidth) return
-    shell.scrollLeft = LEFT_PAD + (selectedMonthIndex + 0.5) * GROUP_W - shell.clientWidth / 2
-  }, [selectedMonthIndex, data.length, GROUP_W, LEFT_PAD])
-
-  if (data.length === 0) return null
-
-  const maxVal = Math.max(...data.map((d) => Math.max(d.bills, d.expenses, d.income)), 1)
-
-  function bh(val: number) {
-    return val > 0 ? Math.max(2, (val / maxVal) * CHART_H) : 0
-  }
-
-  function fmtY(val: number) {
-    if (val >= 1000) return `$${(val / 1000 % 1 === 0 ? (val / 1000).toFixed(0) : (val / 1000).toFixed(1))}k`
-    return `$${Math.round(val)}`
-  }
-
-  return (
-    <div>
-      <div className="finance-bar-chart-shell" ref={shellRef}>
-        {/* Only while scrolling: then the SVG is exactly svgW wide, so these sit
-            precisely over its own axis labels. Wider, the SVG centres itself. */}
-        {isScrollable ? (
-          <div className="finance-bar-chart-yaxis" style={{ width: LEFT_PAD, height: TOP_PAD + CHART_H }} aria-hidden="true">
-            {[0.25, 0.5, 0.75, 1].map((pct) => (
-              <span key={pct} style={{ top: TOP_PAD + CHART_H - pct * CHART_H - 5 }}>
-                {fmtY(pct * maxVal)}
-              </span>
-            ))}
-          </div>
-        ) : null}
-        <svg
-          viewBox={`0 0 ${svgW} ${SVG_H}`}
-          height={SVG_H}
-          style={{ display: 'block', width: `max(100%, ${svgW}px)` }}
-          aria-label="Monthly finances bar chart"
-        >
-          {[0.25, 0.5, 0.75, 1].map((pct) => {
-            const y = TOP_PAD + CHART_H - pct * CHART_H
-            return (
-              <g key={pct}>
-                <line x1={LEFT_PAD} y1={y} x2={svgW - RIGHT_PAD} y2={y} stroke="var(--border)" strokeDasharray="4 3" strokeWidth={1} />
-                <text x={LEFT_PAD - 5} y={y + 4} textAnchor="end" fontSize={9} fill="var(--text-muted)">{fmtY(pct * maxVal)}</text>
-              </g>
-            )
-          })}
-          <line x1={LEFT_PAD} y1={TOP_PAD + CHART_H} x2={svgW - RIGHT_PAD} y2={TOP_PAD + CHART_H} stroke="var(--border)" strokeWidth={1} />
-          {data.map((month, i) => {
-            const gx = LEFT_PAD + i * GROUP_W + GROUP_PAD
-            const isSelected = selectedMonthIndex === i
-            const isDimmed = selectedMonthIndex !== null && !isSelected
-            const bars: Array<{ val: number; fill: string }> = [
-              { val: month.bills, fill: '#eab308' },
-              { val: month.expenses, fill: '#ef4444' },
-              { val: month.income, fill: '#22c55e' },
-            ]
-            return (
-              <g key={month.key} onClick={() => onMonthClick(i)} style={{ cursor: 'pointer' }}>
-                {isSelected && (
-                  <rect
-                    x={gx - GROUP_PAD + 1}
-                    y={TOP_PAD}
-                    width={GROUP_W - 2}
-                    height={CHART_H + LABEL_H - 4}
-                    fill="var(--accent, #6366f1)"
-                    opacity={0.08}
-                    rx={3}
-                  />
-                )}
-                {bars.map((bar, j) => {
-                  const h = bh(bar.val)
-                  return (
-                    <rect
-                      key={j}
-                      x={gx + j * (BAR_W + BAR_GAP)}
-                      y={TOP_PAD + CHART_H - h}
-                      width={BAR_W}
-                      height={h}
-                      fill={bar.fill}
-                      rx={2}
-                      opacity={isDimmed ? 0.28 : 0.9}
-                    />
-                  )
-                })}
-                <text
-                  x={gx + (BAR_W * 3 + BAR_GAP * 2) / 2}
-                  y={TOP_PAD + CHART_H + 15}
-                  textAnchor="middle"
-                  fontSize={9}
-                  fontWeight={isSelected ? 700 : undefined}
-                  fill={isSelected ? 'var(--text-strong)' : 'var(--text-muted)'}
-                >
-                  {month.label}
-                </text>
-              </g>
-            )
-          })}
-        </svg>
-      </div>
-      <div className="finance-bar-chart-legend">
-        {([['#eab308', 'Bills'], ['#ef4444', 'Expenses'], ['#22c55e', 'Income']] as const).map(([color, label]) => (
-          <span key={label} className="finance-bar-chart-legend-item">
-            <span className="finance-bar-chart-dot" style={{ background: color }} />
-            {label}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function PiggyBankIcon({ fillPct }: { fillPct: number }) {
-  const clipped = Math.min(Math.max(fillPct, 0), 100)
-  const fillY = 80 - (clipped / 100) * 60
-  // Unique per icon: with a shared id every piggy clips to the first trip's fill.
-  const id = `piggy-clip${useId()}`
-  return (
-    <svg className="trip-piggy" viewBox="0 0 100 100" width="80" height="80" aria-hidden="true">
-      <defs>
-        <clipPath id={id}>
-          <rect x="0" y={fillY} width="100" height="100" />
-        </clipPath>
-      </defs>
-      {/* filled body */}
-      <g clipPath={`url(#${id})`}>
-        <ellipse cx="44" cy="58" rx="28" ry="24" fill="var(--page-accent)" opacity="0.35" />
-        <circle cx="68" cy="46" rx="10" ry="10" r="10" fill="var(--page-accent)" opacity="0.35" />
-      </g>
-      {/* outline — always visible */}
-      <ellipse cx="44" cy="58" rx="28" ry="24" fill="none" stroke="currentColor" strokeWidth="3" />
-      {/* head */}
-      <circle cx="68" cy="46" r="10" fill="none" stroke="currentColor" strokeWidth="3" />
-      {/* ear */}
-      <ellipse cx="62" cy="37" rx="4" ry="3" fill="none" stroke="currentColor" strokeWidth="2" />
-      {/* snout */}
-      <ellipse cx="77" cy="49" rx="4" ry="3" fill="none" stroke="currentColor" strokeWidth="2" />
-      <circle cx="76" cy="49" r="1" fill="currentColor" />
-      <circle cx="78" cy="49" r="1" fill="currentColor" />
-      {/* eye */}
-      <circle cx="70" cy="43" r="1.5" fill="currentColor" />
-      {/* legs */}
-      <line x1="28" y1="79" x2="24" y2="90" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <line x1="38" y1="81" x2="36" y2="92" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <line x1="50" y1="81" x2="52" y2="92" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <line x1="60" y1="79" x2="64" y2="90" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      {/* tail */}
-      <path d="M16 55 Q8 48 12 42 Q16 36 12 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-      {/* coin slot */}
-      <rect x="36" y="32" width="12" height="3" rx="1.5" fill="currentColor" opacity="0.5" />
-    </svg>
-  )
-}
-
-const PIE_COLORS = ['#6366f1','#f59e0b','#22c55e','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899','#14b8a6','#84cc16','#a78bfa','#fb923c']
-
-function FinancePieChart({ data, title }: { data: { label: string; value: number }[]; title: string }) {
-  const filtered = data.filter((d) => d.value > 0)
-  const total = filtered.reduce((s, d) => s + d.value, 0)
-  if (total === 0 || filtered.length === 0) return (
-    <div className="finance-pie-chart">
-      <p className="finance-pie-title">{title}</p>
-      <p className="finance-pie-empty">No data</p>
-    </div>
-  )
-
-  const SIZE = 110
-  const cx = SIZE / 2
-  const cy = SIZE / 2
-  const r = SIZE / 2 - 5
-
-  let angle = -Math.PI / 2
-  const slices = filtered.map((d, i) => {
-    const pct = d.value / total
-    const end = angle + pct * 2 * Math.PI
-    const x1 = cx + r * Math.cos(angle)
-    const y1 = cy + r * Math.sin(angle)
-    const x2 = cx + r * Math.cos(end)
-    const y2 = cy + r * Math.sin(end)
-    const largeArc = pct > 0.5 ? 1 : 0
-    const path = filtered.length === 1
-      ? `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.001} ${cy - r} Z`
-      : `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`
-    const color = PIE_COLORS[i % PIE_COLORS.length]
-    angle = end
-    return { path, color, label: d.label, pct }
-  })
-
-  return (
-    <div className="finance-pie-chart">
-      <p className="finance-pie-title">{title}</p>
-      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true">
-        {slices.map((s, i) => <path key={i} d={s.path} fill={s.color} />)}
-      </svg>
-      <ul className="finance-pie-legend">
-        {slices.map((s, i) => (
-          <li key={i} className="finance-pie-legend-item">
-            <span className="finance-pie-dot" style={{ background: s.color }} />
-            <span className="finance-pie-label">{s.label.charAt(0).toUpperCase() + s.label.slice(1)}</span>
-            <span className="finance-pie-pct">{Math.round(s.pct * 100)}%</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function FinancesHubCard({ idToken }: { idToken: string }) {
-  type FinancesTab = 'dashboard' | 'calendar' | 'purchases' | 'trips'
-  type FinancesSource = 'both' | 'abe' | 'ciara'
-  const [activeTab, setActiveTab] = useState<FinancesTab>('dashboard')
-  const [dashboardSource, setDashboardSource] = useState<FinancesSource>('both')
-  const [abeTransactions, setAbeTransactions] = useState<FinanceTransactionRecord[]>([])
-  const [ciaraTransactions, setCiaraTransactions] = useState<FinanceTransactionRecord[]>([])
-  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true)
-  const [transactionError, setTransactionError] = useState('')
-  const [calendarMonth, setCalendarMonth] = useState(() => {
-    const now = new Date()
-    return new Date(now.getFullYear(), now.getMonth(), 1)
-  })
-  const [dashboardMonth, setDashboardMonth] = useState(() => {
-    const now = new Date()
-    return new Date(now.getFullYear(), now.getMonth(), 1)
-  })
-  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null)
-  const [purchasesCategoryFilter, setPurchasesCategoryFilter] = useState('all')
-  const [purchasesMonth, setPurchasesMonth] = useState(() => {
-    const now = new Date()
-    return new Date(now.getFullYear(), now.getMonth(), 1)
-  })
-  const [allBudgetRecords, setAllBudgetRecords] = useState<BudgetTargetRecord[]>([])
-  const [budgetDrafts, setBudgetDrafts] = useState<Record<string, string>>({})
-  const [selectedTableMonth, setSelectedTableMonth] = useState<number | null>(() => new Date().getMonth())
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const [tripRows, setTripRows] = useState<TripRecord[]>([])
-  const [isLoadingTrips, setIsLoadingTrips] = useState(true)
-  const [tripsError, setTripsError] = useState('')
-  const [newTripName, setNewTripName] = useState('')
-  const [newTripDate, setNewTripDate] = useState('')
-  const [newTripAmount, setNewTripAmount] = useState('')
-  const [isSavingTrip, setIsSavingTrip] = useState(false)
-  const [savingTripId, setSavingTripId] = useState<string | null>(null)
-  const [tripSavedDrafts, setTripSavedDrafts] = useState<Record<string, string>>({})
-  const [mobileDashSection, setMobileDashSection] = useState<'Bills' | 'Expenses' | 'Income'>('Bills')
-
-  const budgetUser = dashboardSource === 'both' ? null : dashboardSource
-
-  const budgetTargets = useMemo<Record<string, number>>(() => {
-    const targets: Record<string, number> = {}
-    const rows = budgetUser ? allBudgetRecords.filter((r) => r.user === budgetUser) : allBudgetRecords
-    rows.forEach((r) => { targets[r.category] = (targets[r.category] ?? 0) + r.budget_amount })
-    return targets
-  }, [allBudgetRecords, budgetUser])
-
-  useEffect(() => {
-    async function loadBudgets() {
-      try {
-        const records = await getBudgetTargets()
-        setAllBudgetRecords(records)
-      } catch {}
-    }
-    void loadBudgets()
-  }, [])
-
-  useEffect(() => {
-    const totals: Record<string, number> = {}
-    const rows = budgetUser ? allBudgetRecords.filter((r) => r.user === budgetUser) : allBudgetRecords
-    rows.forEach((r) => { totals[r.category] = (totals[r.category] ?? 0) + r.budget_amount })
-    setBudgetDrafts(Object.fromEntries(Object.entries(totals).map(([k, v]) => [k, String(v)])))
-  }, [allBudgetRecords, budgetUser])
-
-  useEffect(() => {
-    async function loadTransactions() {
-      try {
-        const [abeData, ciaraData] = await Promise.all([getAbeTransactions(), getCiaraTransactions()])
-        setAbeTransactions(abeData)
-        setCiaraTransactions(ciaraData)
-        setTransactionError('')
-      } catch (error) {
-        setAbeTransactions([])
-        setCiaraTransactions([])
-        setTransactionError(error instanceof Error ? error.message : 'Unable to load transactions')
-      } finally {
-        setIsLoadingTransactions(false)
-      }
-    }
-
-    void loadTransactions()
-  }, [])
-
-  async function loadTrips() {
-    try {
-      const data = await getTrips()
-      setTripRows(data)
-      setTripSavedDrafts(Object.fromEntries(data.map((t) => [t.trip_id, String(t.saved_amount)])))
-      setTripsError('')
-    } catch (error) {
-      setTripRows([])
-      setTripsError(error instanceof Error ? error.message : 'Unable to load trips')
-    } finally {
-      setIsLoadingTrips(false)
-    }
-  }
-
-  useEffect(() => { void loadTrips() }, [])
-
-  async function handleCreateTrip(event: React.FormEvent) {
-    event.preventDefault()
-    const name = newTripName.trim()
-    const amount = parseFloat(newTripAmount)
-    if (!name || !amount || amount <= 0) return
-    setIsSavingTrip(true)
-    setTripsError('')
-    try {
-      await createTrip(idToken, name, newTripDate, amount)
-      setNewTripName('')
-      setNewTripDate('')
-      setNewTripAmount('')
-      await loadTrips()
-    } catch (error) {
-      setTripsError(error instanceof Error ? error.message : 'Unable to create trip')
-    } finally {
-      setIsSavingTrip(false)
-    }
-  }
-
-  async function handleUpdateSaved(trip: TripRecord) {
-    const draft = tripSavedDrafts[trip.trip_id]
-    const saved = parseFloat(draft ?? '')
-    if (isNaN(saved) || saved < 0) return
-    setSavingTripId(trip.trip_id)
-    setTripsError('')
-    try {
-      await updateTrip(idToken, trip.trip_id, saved)
-      await loadTrips()
-    } catch (error) {
-      setTripsError(error instanceof Error ? error.message : 'Unable to update trip')
-    } finally {
-      setSavingTripId(null)
-    }
-  }
-
-  async function handleDeleteTrip(tripId: string) {
-    setTripRows((prev) => prev.filter((t) => t.trip_id !== tripId))
-    setTripsError('')
-    try {
-      await deleteTrip(idToken, tripId)
-    } catch (error) {
-      setTripsError(error instanceof Error ? error.message : 'Unable to delete trip')
-      await loadTrips()
-    }
-  }
-
-  const dashboardRows = useMemo(() => {
-    const withOwner = [
-      ...abeTransactions.map((row) => ({ ...row, owner: 'Abe' as const })),
-      ...ciaraTransactions.map((row) => ({ ...row, owner: 'Ciara' as const })),
-    ]
-
-    const filteredRows = withOwner.filter((row) => {
-      if (dashboardSource === 'both') {
-        return true
-      }
-
-      return dashboardSource === 'abe' ? row.owner === 'Abe' : row.owner === 'Ciara'
-    })
-
-    return filteredRows.sort((a, b) => {
-      const aTime = a.date ? new Date(a.date).getTime() : 0
-      const bTime = b.date ? new Date(b.date).getTime() : 0
-      return bTime - aTime
-    })
-  }, [abeTransactions, ciaraTransactions, dashboardSource])
-
-  const BILL_CATEGORIES = ['rent', 'utilities', 'internet', 'insurance', 'student loans', 'groceries', 'gas', 'car', 'car insurance/maintenance', 'phone', 'subscriptions']
-  const EXPENSE_CATEGORIES = ['hygiene', 'education', 'presents', 'restaurants', 'clothing', 'recreation', 'flights', 'hotels', 'excursions', 'miscellaneous']
-  const INCOME_CATEGORIES = ['salary', 'cash', 'transfers', 'side hustles']
-
-  const allMonthRows = useMemo(() => {
-    const year = dashboardMonth.getFullYear()
-    return dashboardRows.filter((row) => {
-      if (!row.date) return false
-      let rowYear: number, rowMonth: number
-      const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
-      if (literalMatch) {
-        rowYear = Number(literalMatch[1])
-        rowMonth = Number(literalMatch[2]) - 1
-      } else {
-        const parsed = new Date(row.date)
-        if (Number.isNaN(parsed.getTime())) return false
-        rowYear = parsed.getFullYear()
-        rowMonth = parsed.getMonth()
-      }
-      if (rowYear !== year) return false
-      if (selectedTableMonth !== null && rowMonth !== selectedTableMonth) return false
-      return true
-    })
-  }, [dashboardRows, dashboardMonth, selectedTableMonth])
-
-  const budgetTotals = useMemo(() => {
-    const totals: Record<string, number> = {}
-    const allCategories = [...BILL_CATEGORIES, ...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES]
-    allCategories.forEach((cat) => {
-      totals[cat] = 0
-    })
-    allMonthRows.forEach((row) => {
-      const key = row.category?.toLowerCase().trim() ?? ''
-      if (key in totals) {
-        totals[key] += row.amount
-      }
-    })
-    return totals
-  }, [allMonthRows])
-
-  function updateBudgetTarget(cat: string, raw: string) {
-    if (!budgetUser) return
-    const num = parseFloat(raw.replace(/[$,\s]/g, ''))
-    const valid = Number.isFinite(num) && num > 0
-    setBudgetDrafts((prev) => {
-      const next = { ...prev }
-      if (valid) next[cat] = String(num)
-      else delete next[cat]
-      return next
-    })
-    setAllBudgetRecords((prev) => {
-      const filtered = prev.filter((r) => !(r.user === budgetUser && r.category === cat))
-      return valid ? [...filtered, { user: budgetUser, category: cat, budget_amount: num }] : filtered
-    })
-    if (idToken) {
-      void saveBudgetTarget(idToken, cat, valid ? num : null, budgetUser).catch(() => {})
-    }
-  }
-
-  const monthlyTotals = useMemo<BarChartMonth[]>(() => {
-    const year = dashboardMonth.getFullYear()
-    const monthMap: Array<{ bills: number; expenses: number; income: number }> = Array.from(
-      { length: 12 },
-      () => ({ bills: 0, expenses: 0, income: 0 }),
-    )
-    const billSet = new Set(BILL_CATEGORIES)
-    const expenseSet = new Set(EXPENSE_CATEGORIES)
-    const incomeSet = new Set(INCOME_CATEGORIES)
-    dashboardRows.forEach((row) => {
-      if (!row.date) return
-      let rowYear: number, rowMonth: number
-      const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
-      if (literalMatch) {
-        rowYear = Number(literalMatch[1])
-        rowMonth = Number(literalMatch[2]) - 1
-      } else {
-        const parsed = new Date(row.date)
-        if (Number.isNaN(parsed.getTime())) return
-        rowYear = parsed.getFullYear()
-        rowMonth = parsed.getMonth()
-      }
-      if (rowYear !== year) return
-      const cat = row.category?.toLowerCase().trim() ?? ''
-      if (billSet.has(cat)) monthMap[rowMonth].bills += row.amount
-      else if (expenseSet.has(cat)) monthMap[rowMonth].expenses += row.amount
-      else if (incomeSet.has(cat)) monthMap[rowMonth].income += row.amount
-    })
-    return monthMap.map((totals, m) => ({
-      key: `${year}-${String(m + 1).padStart(2, '0')}`,
-      label: new Date(year, m, 1).toLocaleDateString(undefined, { month: 'short' }),
-      ...totals,
-    }))
-  }, [dashboardRows, dashboardMonth])
-
-  const purchasesMonthLabel = purchasesMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
-
-  const purchasesMonthRows = useMemo(() => {
-    const year = purchasesMonth.getFullYear()
-    const month = purchasesMonth.getMonth()
-    return dashboardRows.filter((row) => {
-      if (!row.date) return false
-      const literalMatch = row.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
-      if (literalMatch) {
-        return Number(literalMatch[1]) === year && Number(literalMatch[2]) === month + 1
-      }
-      const parsed = new Date(row.date)
-      return !Number.isNaN(parsed.getTime()) && parsed.getFullYear() === year && parsed.getMonth() === month
-    })
-  }, [dashboardRows, purchasesMonth])
-
-  const transactionsByDate = useMemo(() => {
-    const next: Record<string, Array<FinanceTransactionRecord & { owner: 'Abe' | 'Ciara' }>> = {}
-
-    dashboardRows.forEach((row) => {
-      const literalDateMatch = row.date?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-      const key = literalDateMatch ? literalDateMatch[0] : toDateOnlyKey(row.date)
-      if (!key) {
-        return
-      }
-
-      if (!next[key]) {
-        next[key] = []
-      }
-
-      next[key].push(row)
-    })
-
-    return next
-  }, [dashboardRows])
-
-  const calendarYear = calendarMonth.getFullYear()
-  const calendarMonthIndex = calendarMonth.getMonth()
-  const monthStart = new Date(calendarYear, calendarMonthIndex, 1)
-  const monthEnd = new Date(calendarYear, calendarMonthIndex + 1, 0)
-  const dayOffset = monthStart.getDay()
-  const daysInMonth = monthEnd.getDate()
-  const calendarCells: Array<number | null> = [
-    ...Array.from({ length: dayOffset }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
-  ]
-
-  const calendarMonthLabel = calendarMonth.toLocaleDateString(undefined, {
-    month: 'long',
-    year: 'numeric',
-  })
-
-  const todayKey = (() => {
-    const now = new Date()
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  })()
-
-  const selectedDateTransactions = selectedDateKey ? (transactionsByDate[selectedDateKey] ?? []) : []
-
-  return (
-    <article className="finance-hub-card info-card">
-      <div className="section-card-header">
-        <h3>Finances</h3>
-        <button
-          type="button"
-          className="section-collapse-btn"
-          aria-expanded={!isCollapsed}
-          onClick={() => setIsCollapsed((v) => !v)}
-        >
-          {isCollapsed ? '▸' : '▾'}
-        </button>
-      </div>
-      {!isCollapsed ? (
-      <>
-      <div className="experience-toggle" role="tablist" aria-label="Finances views">
-        <button
-          type="button"
-          className={`experience-toggle-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-          role="tab"
-          aria-selected={activeTab === 'dashboard'}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          Dashboard
-        </button>
-        <button
-          type="button"
-          className={`experience-toggle-btn ${activeTab === 'calendar' ? 'active' : ''}`}
-          role="tab"
-          aria-selected={activeTab === 'calendar'}
-          onClick={() => setActiveTab('calendar')}
-        >
-          Calendar
-        </button>
-        <button
-          type="button"
-          className={`experience-toggle-btn ${activeTab === 'purchases' ? 'active' : ''}`}
-          role="tab"
-          aria-selected={activeTab === 'purchases'}
-          onClick={() => setActiveTab('purchases')}
-        >
-          Purchases
-        </button>
-        <button
-          type="button"
-          className={`experience-toggle-btn ${activeTab === 'trips' ? 'active' : ''}`}
-          role="tab"
-          aria-selected={activeTab === 'trips'}
-          onClick={() => setActiveTab('trips')}
-        >
-          Trips
-        </button>
-      </div>
-
-      {activeTab !== 'trips' ? (
-      <div className="finance-tabbar" role="group" aria-label="Dashboard source filter">
-        <button
-          type="button"
-          className={`finance-tab ${dashboardSource === 'both' ? 'active' : ''}`}
-          onClick={() => setDashboardSource('both')}
-        >
-          Both
-        </button>
-        <button
-          type="button"
-          className={`finance-tab ${dashboardSource === 'abe' ? 'active' : ''}`}
-          onClick={() => setDashboardSource('abe')}
-        >
-          Abe
-        </button>
-        <button
-          type="button"
-          className={`finance-tab ${dashboardSource === 'ciara' ? 'active' : ''}`}
-          onClick={() => setDashboardSource('ciara')}
-        >
-          Ciara
-        </button>
-      </div>
-      ) : null}
-
-      {activeTab === 'dashboard' ? (
-        <div className="finance-panel">
-          <div className="finance-calendar-header">
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() => setDashboardMonth((m) => new Date(m.getFullYear() - 1, m.getMonth(), 1))}
-            >
-              Prev
-            </button>
-            <p className="finance-calendar-month">{dashboardMonth.getFullYear()}</p>
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() => setDashboardMonth((m) => new Date(m.getFullYear() + 1, m.getMonth(), 1))}
-            >
-              Next
-            </button>
-          </div>
-
-          {isLoadingTransactions ? <p className="sheets-meta">Loading dashboard transactions...</p> : null}
-          {transactionError ? <p className="sheets-error">{transactionError}</p> : null}
-
-          {!isLoadingTransactions && !transactionError ? (
-            <>
-              <FinanceBarChart
-                data={monthlyTotals}
-                selectedMonthIndex={selectedTableMonth}
-                onMonthClick={(i) => setSelectedTableMonth((prev) => (prev === i ? null : i))}
-              />
-              <div className="finance-section-selector">
-                {(['Bills', 'Expenses', 'Income'] as const).map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    className={`finance-section-selector-btn${mobileDashSection === g ? ' active' : ''}`}
-                    onClick={() => setMobileDashSection(g)}
-                  >
-                    {g}
-                  </button>
-                ))}
-              </div>
-              <div className="finance-pie-charts-row">
-                {(['Bills', 'Expenses', 'Income'] as const).map((group) => {
-                  const cats = group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
-                  return (
-                    <div key={group} className={mobileDashSection !== group ? 'finance-group-mobile-hide' : undefined}>
-                      <FinancePieChart
-                        title={group}
-                        data={cats.map((cat) => ({ label: cat, value: budgetTotals[cat] ?? 0 }))}
-                      />
-                    </div>
-                  )
-                })}
-              </div>
-              <div className="finance-table-month-filter">
-                <span className="finance-table-month-label">
-                  {selectedTableMonth !== null
-                    ? new Date(dashboardMonth.getFullYear(), selectedTableMonth, 1).toLocaleDateString(undefined, {
-                        month: 'long',
-                        year: 'numeric',
-                      })
-                    : `All of ${dashboardMonth.getFullYear()}`}
-                </span>
-                {selectedTableMonth !== null && (
-                  <button
-                    type="button"
-                    className="finance-table-month-clear"
-                    onClick={() => setSelectedTableMonth(null)}
-                  >
-                    Show all
-                  </button>
-                )}
-              </div>
-              {!budgetUser && (
-                <p className="finance-budget-both-note">
-                  Budget reflects the combined total for Abe and Ciara. Select a person to edit.
-                </p>
-              )}
-              {(['Bills', 'Expenses', 'Income'] as const).map((group) => {
-                const cats =
-                  group === 'Bills' ? BILL_CATEGORIES : group === 'Expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
-                const groupTotal = cats.reduce((sum, cat) => sum + (budgetTotals[cat] ?? 0), 0)
-                return (
-                  <div key={group} className={`finance-budget-group finance-budget-section${mobileDashSection !== group ? ' finance-group-mobile-hide' : ''}`}>
-                    <div className="finance-budget-group-header">
-                      <p className="finance-budget-group-label">{group}</p>
-                      <p className="finance-budget-group-total">
-                        {groupTotal.toLocaleString(undefined, {
-                          style: 'currency',
-                          currency: 'USD',
-                          maximumFractionDigits: 2,
-                        })}
-                      </p>
-                    </div>
-                    <div className="sheets-table-shell finance-budget-table-shell">
-                      <table className="sheets-table finance-budget-table">
-                        <thead>
-                          <tr>
-                            <th>Category</th>
-                            <th>Total</th>
-                            <th>Budget</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {cats.map((cat) => {
-                            const spent = budgetTotals[cat] ?? 0
-                            const target = budgetTargets[cat]
-                            const overBudget = target !== undefined && spent > target
-                            const underBudget = target !== undefined && spent <= target
-                            return (
-                              <tr key={cat}>
-                                <td>{cat.charAt(0).toUpperCase() + cat.slice(1)}</td>
-                                <td
-                                  style={{
-                                    color: overBudget
-                                      ? 'var(--error, #ef4444)'
-                                      : underBudget
-                                        ? 'var(--success, #22c55e)'
-                                        : undefined,
-                                    fontWeight: overBudget || underBudget ? 600 : undefined,
-                                  }}
-                                >
-                                  {spent.toLocaleString(undefined, {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                    maximumFractionDigits: 2,
-                                  })}
-                                </td>
-                                <td>
-                                  <input
-                                    type="number"
-                                    className="finance-budget-input"
-                                    min="0"
-                                    step="1"
-                                    value={budgetDrafts[cat] ?? ''}
-                                    placeholder={budgetUser ? '—' : ''}
-                                    disabled={!budgetUser}
-                                    onChange={(e) =>
-                                      setBudgetDrafts((prev) => ({ ...prev, [cat]: e.target.value }))
-                                    }
-                                    onBlur={(e) => updateBudgetTarget(cat, e.target.value)}
-                                  />
-                                </td>
-                              </tr>
-                            )
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )
-              })}
-            </>
-          ) : null}
-        </div>
-      ) : null}
-
-      {activeTab === 'calendar' ? (
-        <div className="finance-panel">
-          <div className="finance-calendar-shell">
-            <div className="finance-calendar-header">
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => {
-                  setCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
-                }}
-              >
-                Prev
-              </button>
-              <p className="finance-calendar-month">{calendarMonthLabel}</p>
-              <button
-                type="button"
-                className="secondary-action"
-                onClick={() => {
-                  setCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
-                }}
-              >
-                Next
-              </button>
-            </div>
-
-            <div className="finance-calendar-weekdays" aria-hidden="true">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <span key={day}>{day}</span>
-              ))}
-            </div>
-
-            <div className="finance-calendar-grid" aria-label="Financial calendar view">
-              {calendarCells.map((day, index) => {
-                if (!day) {
-                  return <span key={`blank-${index}`} className="finance-calendar-empty" />
-                }
-
-                const dateKey = `${calendarYear}-${String(calendarMonthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-                const transactions = transactionsByDate[dateKey] ?? []
-                const hasTransactions = transactions.length > 0
-
-                return (
-                  <button
-                    key={dateKey}
-                    type="button"
-                    className={`finance-calendar-day ${hasTransactions ? 'has-transactions' : ''} ${dateKey === todayKey ? 'is-today' : ''}`}
-                    onClick={() => {
-                      if (hasTransactions) {
-                        setSelectedDateKey(dateKey)
-                      }
-                    }}
-                    aria-label={
-                      hasTransactions
-                        ? `${dateKey} has ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`
-                        : `${dateKey} has no transactions`
-                    }
-                  >
-                    <span>{day}</span>
-                    {hasTransactions ? <span className="finance-transaction-dot" aria-hidden="true" /> : null}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {selectedDateKey && selectedDateTransactions.length > 0 ? (
-            <div
-              className="finance-access-dialog-backdrop"
-              role="presentation"
-              onClick={() => setSelectedDateKey(null)}
-            >
-              <div
-                className="finance-access-dialog"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="finance-calendar-popup-title"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <h2 id="finance-calendar-popup-title">Transactions for {formatSheetDate(selectedDateKey)}</h2>
-                <div className="sheets-table-shell">
-                  <table className="sheets-table finance-popup-table">
-                    <thead>
-                      <tr>
-                        <th>Description</th>
-                        <th>Owner</th>
-                        <th>Category</th>
-                        <th>Card</th>
-                        <th>Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedDateTransactions.map((row, index) => (
-                        <tr key={`${row.owner}-${row.description}-${index}`}>
-                          <td data-label="Description">{row.description}</td>
-                          <td data-label="Owner">{row.owner}</td>
-                          <td data-label="Category">{row.category || '—'}</td>
-                          <td data-label="Card">{row.card || '—'}</td>
-                          <td data-label="Amount">
-                            {row.amount.toLocaleString(undefined, {
-                              style: 'currency',
-                              currency: 'USD',
-                              maximumFractionDigits: 2,
-                            })}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <button type="button" className="finance-dialog-close" onClick={() => setSelectedDateKey(null)}>
-                  Close
-                </button>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      {activeTab === 'purchases' ? (
-        <div className="finance-panel">
-          <div className="finance-calendar-header">
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() => setPurchasesMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
-            >
-              Prev
-            </button>
-            <p className="finance-calendar-month">{purchasesMonthLabel}</p>
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() => setPurchasesMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
-            >
-              Next
-            </button>
-          </div>
-
-          {isLoadingTransactions ? <p className="sheets-meta">Loading purchases...</p> : null}
-          {transactionError ? <p className="sheets-error">{transactionError}</p> : null}
-
-          {!isLoadingTransactions && !transactionError ? (() => {
-            const allCategories = Array.from(
-              new Set(purchasesMonthRows.map((r) => r.category?.trim()).filter(Boolean))
-            ).sort() as string[]
-
-            const filtered =
-              purchasesCategoryFilter === 'all'
-                ? purchasesMonthRows
-                : purchasesMonthRows.filter(
-                    (r) => (r.category?.trim() ?? '') === purchasesCategoryFilter
-                  )
-
-            return (
-              <>
-                <div className="finance-purchases-filter">
-                  <label htmlFor="purchases-category-select" className="finance-purchases-filter-label">
-                    Category
-                  </label>
-                  <select
-                    id="purchases-category-select"
-                    className="sheets-table-input finance-purchases-select"
-                    value={purchasesCategoryFilter}
-                    onChange={(e) => setPurchasesCategoryFilter(e.target.value)}
-                  >
-                    <option value="all">All</option>
-                    {allCategories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {filtered.length > 0 ? (
-                  <div className="sheets-table-shell finance-purchases-table-shell">
-                    <table className="sheets-table finance-purchases-table" aria-label="Purchases transactions">
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Owner</th>
-                          <th>Description</th>
-                          <th>Category</th>
-                          <th>Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filtered.map((row, index) => (
-                          <tr key={`${row.owner}-${row.date ?? 'nodate'}-${row.description}-${index}`}>
-                            <td data-label="Date">{row.date ? formatShortDate(row.date) : 'Pending'}</td>
-                            <td data-label="Owner">{row.owner}</td>
-                            <td data-label="Description">{row.description}</td>
-                            <td data-label="Category">{row.category || '—'}</td>
-                            <td data-label="Amount">
-                              {row.amount.toLocaleString(undefined, {
-                                style: 'currency',
-                                currency: 'USD',
-                                maximumFractionDigits: 2,
-                              })}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p className="sheets-meta">No purchases found for the selected month and category.</p>
-                )}
-              </>
-            )
-          })() : null}
-        </div>
-      ) : null}
-
-      {activeTab === 'trips' ? (
-        <div className="trips-panel">
-          <form
-            className="trip-add-form"
-            onSubmit={(e) => { void handleCreateTrip(e) }}
-          >
-            <input
-              className="sheets-input"
-              type="text"
-              placeholder="Trip name"
-              value={newTripName}
-              onChange={(e) => setNewTripName(e.target.value)}
-              required
-              disabled={isSavingTrip}
-            />
-            <input
-              className="sheets-input"
-              type="date"
-              value={newTripDate}
-              onChange={(e) => setNewTripDate(e.target.value)}
-              disabled={isSavingTrip}
-            />
-            <input
-              className="sheets-input"
-              type="number"
-              placeholder="Goal $"
-              min="1"
-              step="any"
-              value={newTripAmount}
-              onChange={(e) => setNewTripAmount(e.target.value)}
-              required
-              disabled={isSavingTrip}
-            />
-            <button type="submit" className="primary-action" disabled={isSavingTrip}>
-              Add Trip
-            </button>
-          </form>
-
-          {isLoadingTrips ? <p className="sheets-meta">Loading trips...</p> : null}
-          {tripsError ? <p className="sheets-error">{tripsError}</p> : null}
-
-          {!isLoadingTrips && tripRows.length === 0 ? (
-            <p className="sheets-meta">No trips yet. Add one above!</p>
-          ) : null}
-
-          <div className="trips-list">
-            {tripRows.map((trip) => {
-              const pct = trip.target_amount > 0
-                ? Math.min((trip.saved_amount / trip.target_amount) * 100, 100)
-                : 0
-              return (
-                <div key={trip.trip_id} className="trip-card">
-                  <div className="trip-card-header">
-                    <strong className="trip-name">{trip.name}</strong>
-                    {trip.target_date ? (
-                      <span className="trip-date">{trip.target_date}</span>
-                    ) : null}
-                    <button
-                      type="button"
-                      className="section-collapse-btn trip-delete-btn"
-                      aria-label={`Delete ${trip.name}`}
-                      onClick={() => { void handleDeleteTrip(trip.trip_id) }}
-                    >
-                      <X size={14} aria-hidden="true" />
-                    </button>
-                  </div>
-
-                  <PiggyBankIcon fillPct={pct} />
-
-                  <p className="trip-progress-label">
-                    ${trip.saved_amount.toLocaleString()} / ${trip.target_amount.toLocaleString()} ({Math.round(pct)}%)
-                  </p>
-
-                  <div className="trip-save-row">
-                    <input
-                      className="sheets-input"
-                      type="number"
-                      min="0"
-                      step="any"
-                      value={tripSavedDrafts[trip.trip_id] ?? ''}
-                      onChange={(e) => setTripSavedDrafts((prev) => ({ ...prev, [trip.trip_id]: e.target.value }))}
-                      disabled={savingTripId === trip.trip_id}
-                    />
-                    <button
-                      type="button"
-                      className="secondary-action"
-                      onClick={() => { void handleUpdateSaved(trip) }}
-                      disabled={savingTripId === trip.trip_id}
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      ) : null}
-
-      </>
-      ) : null}
-    </article>
-  )
-}
-
 function CollapsibleSectionCard({
   title,
   className = '',
@@ -2443,19 +1267,6 @@ function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
   )
 }
 
-function formatShortDate(value?: string) {
-  if (!value) return 'Pending'
-  const literalMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
-  if (literalMatch) {
-    return `${literalMatch[2]}/${literalMatch[3]}/${literalMatch[1].slice(2)}`
-  }
-  const parsed = new Date(value)
-  if (Number.isNaN(parsed.getTime())) return value
-  const m = String(parsed.getMonth() + 1).padStart(2, '0')
-  const d = String(parsed.getDate()).padStart(2, '0')
-  const y = String(parsed.getFullYear()).slice(2)
-  return `${m}/${d}/${y}`
-}
 
 function formatSheetDate(value?: string) {
   if (!value) {
