@@ -2910,16 +2910,19 @@ function WorkoutOfTheDayCard({ title }: { title: string }) {
         <p className="sheets-meta">Loading today&apos;s workout…</p>
       ) : hasWorkout ? (
         <div className="study-today-shell">
+          {/* Two columns, morning beside evening, labels over the workouts. */}
           <table className="study-today-table workout-of-day-table">
+            <thead>
+              <tr>
+                <th scope="col">Morning</th>
+                <th scope="col">Evening</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
-                <th scope="row">Morning</th>
                 <td>
                   <WorkoutText value={record?.morning_workout} />
                 </td>
-              </tr>
-              <tr>
-                <th scope="row">Evening</th>
                 <td>
                   <WorkoutText value={record?.evening_workout} />
                 </td>

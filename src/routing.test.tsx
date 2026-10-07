@@ -172,6 +172,13 @@ describe('guest home page', () => {
 
     expect(await within(section).findByText('Easy swim')).toBeTruthy()
     expect(within(section).getByText('Legs')).toBeTruthy()
+    // Morning and evening are the two columns, side by side.
+    expect(within(section).getAllByRole('columnheader').map((cell) => cell.textContent)).toEqual([
+      'Morning',
+      'Evening',
+    ])
+    const [workoutRow] = within(section).getAllByRole('row').slice(1)
+    expect(within(workoutRow).getAllByRole('cell')).toHaveLength(2)
     // The log's own Garmin "today" panel would repeat the card above it.
     expect(within(section).queryByText('Workout(s) of the Day')).toBeNull()
     // Nothing here is editable for a guest.

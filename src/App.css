@@ -258,16 +258,34 @@
   gap: 0.5rem;
 }
 
-/* Guest home: the planned workout, labelled by session. */
-.workout-of-day-table th[scope='row'] {
-  width: 5.5rem;
+/* Guest home: the planned workout, morning and evening side by side. */
+.workout-of-day-table {
+  table-layout: fixed;
+}
+
+.workout-of-day-table th {
+  width: 50%;
   color: var(--text-muted);
-  font-weight: 500;
-  vertical-align: top;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .workout-of-day-table td {
   vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.workout-of-day-table th + th,
+.workout-of-day-table td + td {
+  border-left: 1px solid var(--border);
+}
+
+/* The guest Training section's notes and dates read as captions, centred. */
+#training .sheets-meta {
+  text-align: center;
 }
 
 /* A pasted workout: bold title, then its sets as a tight bullet list. */
