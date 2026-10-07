@@ -60,7 +60,7 @@ selector.
 
 ### Ace
 
-Assistant Ace is a floating button in the bottom-left corner of every admin
+Assistant Ace is a floating button in the bottom-right corner of every admin
 page ([AceLauncher.tsx](src/admin/ace/AceLauncher.tsx)), not a card on Home. It
 opens a chat panel — full screen on phones, above the tab bar — that answers
 general questions as well as ones about Abe's own data: mail, calendar and

@@ -279,13 +279,39 @@
   list-style: none;
 }
 
+/*
+ * Every row is the same height and the list is exactly three rows tall, so it
+ * always shows three threads and scrolls through the rest. Snapping keeps a
+ * scroll from stopping halfway through a row.
+ */
+.mail-list {
+  --mail-row-height: 4.75rem;
+  max-height: calc(var(--mail-row-height) * 3);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y proximity;
+}
+
 .mail-row {
-  padding: 0.55rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-sizing: border-box;
+  height: var(--mail-row-height);
+  padding: 0.45rem 0.1rem 0.45rem 0;
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  line-height: 1.35;
+  scroll-snap-align: start;
 }
 
 .mail-row:last-child {
   border-bottom: none;
+}
+
+.mail-row-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .mail-row-head {
@@ -317,7 +343,10 @@
 }
 
 .mail-subject {
-  margin: 0.2rem 0 0;
+  margin: 0.15rem 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text-strong);
   font-size: 0.86rem;
 }
@@ -329,14 +358,12 @@
 }
 
 .mail-snippet {
-  margin: 0.15rem 0 0;
+  margin: 0.1rem 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text-muted);
   font-size: 0.78rem;
-  line-height: 1.45;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .recap-columns {
@@ -1011,17 +1038,17 @@
 
 .mail-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-shrink: 0;
   gap: 0.35rem;
-  margin-top: 0.45rem;
 }
 
 .mail-action {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  min-height: 2rem;
-  padding: 0.25rem 0.6rem;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
   border: 1px solid var(--border);
   border-radius: 0.45rem;
   background: var(--surface);
@@ -1041,6 +1068,11 @@
 .mail-action:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.mail-action.is-active {
+  border-color: var(--page-accent, var(--accent));
+  color: var(--text-strong);
 }
 
 .mail-templates {
@@ -1069,6 +1101,26 @@
 .mail-templates .sheets-meta {
   flex-basis: 100%;
   margin: 0.2rem 0 0;
+}
+
+.mail-templates-title {
+  display: flex;
+  flex-basis: 100%;
+  gap: 0.4rem;
+  min-width: 0;
+  margin: 0 0 0.15rem;
+  color: var(--text-strong);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.mail-templates-title span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 .mail-open-gmail {
@@ -1241,36 +1293,6 @@
   color: #d1451b;
 }
 
-.mail-pager {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.7rem;
-}
-
-.mail-pager button {
-  min-height: 2rem;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--border);
-  border-radius: 0.45rem;
-  background: var(--surface);
-  color: var(--text-strong);
-  font: inherit;
-  font-size: 0.78rem;
-  cursor: pointer;
-}
-
-.mail-pager button:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.mail-pager .sheets-meta {
-  margin: 0;
-  white-space: nowrap;
-}
-
 /* Sleep & recovery: day / week-average toggle and date picker. */
 .garmin-mode-toggle {
   display: inline-flex;
@@ -1376,12 +1398,12 @@
 }
 
 /* ── Assistant Ace ────────────────────────────────────────────────────────
-   A floating button in the bottom-left corner of every admin page, opening a
+   A floating button in the bottom-right corner of every admin page, opening a
    chat panel above it. On phones the panel takes the whole screen and the
    button sits above the bottom tab bar. */
 
 .ace-launcher {
-  --ace-edge: max(1.25rem, calc(env(safe-area-inset-left) + 0.75rem));
+  --ace-edge: max(1.25rem, calc(env(safe-area-inset-right) + 0.75rem));
   --ace-fab-size: 3.5rem;
   --ace-fab-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
@@ -1393,7 +1415,7 @@
 
 .ace-fab {
   position: fixed;
-  left: var(--ace-edge);
+  right: var(--ace-edge);
   bottom: var(--ace-fab-bottom);
   z-index: 30;
   display: grid;
@@ -1429,7 +1451,7 @@
 
 .ace-panel {
   position: fixed;
-  left: var(--ace-edge);
+  right: var(--ace-edge);
   bottom: calc(var(--ace-fab-bottom) + var(--ace-fab-size) + 0.75rem);
   z-index: 30;
   display: flex;
@@ -1441,7 +1463,7 @@
   background: var(--surface);
   box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.22);
   overflow: hidden;
-  transform-origin: bottom left;
+  transform-origin: bottom right;
   animation: ace-panel-in 160ms ease-out;
 }
 

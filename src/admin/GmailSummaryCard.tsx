@@ -10,8 +10,11 @@ import {
 import type { ConnectionStatus } from './integrations/types'
 import { REPLY_TEMPLATES, fillTemplate, senderFirstName } from './mail/replyTemplates'
 
-/** Rows shown per page in the inbox list. */
-const PAGE_SIZE = 5
+/**
+ * Threads fetched in one go — the Apps Script caps `getMail` at 25. The list
+ * shows three at a time and scrolls through the rest (see `.mail-list`).
+ */
+const FETCH_LIMIT = 25
 
 function timeLabel(iso: string) {
   const date = new Date(iso)
@@ -58,13 +61,12 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
   const [notice, setNotice] = useState('')
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   const [busyId, setBusyId] = useState('')
-  const [page, setPage] = useState(0)
   /** Thread the reply-template picker is open for. */
   const [composingId, setComposingId] = useState('')
 
   async function load() {
     try {
-      const rows = await getMail(idToken, PAGE_SIZE * 5)
+      const rows = await getMail(idToken, FETCH_LIMIT)
       setMail(rows)
       setError('')
     } catch (caught) {
@@ -83,7 +85,7 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
 
     void (async () => {
       try {
-        const rows = await getMail(idToken, PAGE_SIZE * 5)
+        const rows = await getMail(idToken, FETCH_LIMIT)
         if (!cancelled) {
           setMail(rows)
           setError('')
@@ -188,9 +190,8 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
   }
 
   const unreadCount = mail.filter((message) => message.unread).length
-  const pageCount = Math.max(1, Math.ceil(mail.length / PAGE_SIZE))
-  const safePage = Math.min(page, pageCount - 1)
-  const visibleMail = mail.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE)
+  // Gone once its thread is archived, which closes the picker with it.
+  const composingMessage = mail.find((message) => message.threadId === composingId)
 
   return (
     <article className="info-card admin-card">
@@ -233,24 +234,28 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
           {mail.length === 0 ? (
             <p className="sheets-meta">Inbox is empty.</p>
           ) : (
-            <ul className="mail-list">
-              {visibleMail.map((message) => (
+            <ul className="mail-list" aria-label="Inbox threads">
+              {mail.map((message) => (
                 <li key={message.id} className={`mail-row ${message.unread ? 'unread' : ''}`}>
-                  <div className="mail-row-head">
-                    <span className="mail-from">{senderFirstName(message.from)}</span>
-                    <span className="mail-time">{timeLabel(message.receivedAt)}</span>
+                  <div className="mail-row-text">
+                    <div className="mail-row-head">
+                      <span className="mail-from">{senderFirstName(message.from)}</span>
+                      <span className="mail-time">{timeLabel(message.receivedAt)}</span>
+                    </div>
+
+                    {/* One line each, cut with an ellipsis: every row is the same
+                        height, so the list always shows exactly three. */}
+                    <p className="mail-subject" title={message.subject || undefined}>
+                      {message.important ? (
+                        <span className="mail-flag" aria-label="Important">
+                          !
+                        </span>
+                      ) : null}
+                      {message.subject || '(no subject)'}
+                    </p>
+
+                    <p className="mail-snippet">{message.snippet}</p>
                   </div>
-
-                  <p className="mail-subject">
-                    {message.important ? (
-                      <span className="mail-flag" aria-label="Important">
-                        !
-                      </span>
-                    ) : null}
-                    {message.subject || '(no subject)'}
-                  </p>
-
-                  <p className="mail-snippet">{message.snippet}</p>
 
                   <div className="mail-actions">
                     <button
@@ -258,68 +263,58 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
                       className="mail-action"
                       onClick={() => handleArchive(message)}
                       disabled={Boolean(busyId)}
+                      aria-label="Archive"
                       title="Archive — stays in All Mail"
                     >
-                      <Archive size={14} strokeWidth={1.8} aria-hidden="true" />
-                      <span>Archive</span>
+                      <Archive size={15} strokeWidth={1.8} aria-hidden="true" />
                     </button>
 
                     <button
                       type="button"
-                      className="mail-action"
+                      className={`mail-action${composingId === message.threadId ? ' is-active' : ''}`}
                       onClick={() =>
                         setComposingId(composingId === message.threadId ? '' : message.threadId)
                       }
                       disabled={Boolean(busyId)}
+                      aria-label="Draft reply"
+                      title="Draft reply"
                       aria-expanded={composingId === message.threadId}
+                      aria-controls={composingId === message.threadId ? 'mail-reply-templates' : undefined}
                     >
-                      <PenLine size={14} strokeWidth={1.8} aria-hidden="true" />
-                      <span>Draft reply</span>
+                      <PenLine size={15} strokeWidth={1.8} aria-hidden="true" />
                     </button>
                   </div>
-
-                  {composingId === message.threadId ? (
-                    <div className="mail-templates" role="group" aria-label="Reply templates">
-                      {REPLY_TEMPLATES.map((template) => (
-                        <button
-                          key={template.id}
-                          type="button"
-                          onClick={() => handleDraft(message, template.id)}
-                          disabled={Boolean(busyId)}
-                        >
-                          {template.label}
-                        </button>
-                      ))}
-                      <p className="sheets-meta">
-                        Saves a draft in Gmail and opens the thread. Nothing is sent from here.
-                      </p>
-                    </div>
-                  ) : null}
                 </li>
               ))}
             </ul>
           )}
 
-          {mail.length > PAGE_SIZE ? (
-            <div className="mail-pager">
-              <button
-                type="button"
-                onClick={() => setPage((value) => Math.max(0, value - 1))}
-                disabled={safePage === 0}
-              >
-                ‹ Newer
-              </button>
-              <span className="sheets-meta">
-                {safePage * PAGE_SIZE + 1}–{Math.min(mail.length, (safePage + 1) * PAGE_SIZE)} of{' '}
-                {mail.length}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))}
-                disabled={safePage >= pageCount - 1}
-              >
-                Older ›
-              </button>
+          {/* Below the list rather than inside the row, so opening it never
+              breaks the fixed row height. */}
+          {composingMessage ? (
+            <div
+              id="mail-reply-templates"
+              className="mail-templates"
+              role="group"
+              aria-label={`Reply templates for ${senderFirstName(composingMessage.from)}`}
+            >
+              <p className="mail-templates-title">
+                Reply to {senderFirstName(composingMessage.from)}
+                <span>{composingMessage.subject || '(no subject)'}</span>
+              </p>
+              {REPLY_TEMPLATES.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  onClick={() => handleDraft(composingMessage, template.id)}
+                  disabled={Boolean(busyId)}
+                >
+                  {template.label}
+                </button>
+              ))}
+              <p className="sheets-meta">
+                Saves a draft in Gmail and opens the thread. Nothing is sent from here.
+              </p>
             </div>
           ) : null}
 

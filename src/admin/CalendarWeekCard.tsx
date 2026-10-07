@@ -6,6 +6,23 @@ import type { ConnectionStatus } from './integrations/types'
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const MONTH_STORAGE_KEY = 'admin-calendar-month'
+const COLLAPSED_STORAGE_KEY = 'admin-calendar-collapsed'
+
+function readStoredCollapsed(): boolean {
+  try {
+    return window.localStorage.getItem(COLLAPSED_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function writeStoredCollapsed(collapsed: boolean) {
+  try {
+    window.localStorage.setItem(COLLAPSED_STORAGE_KEY, collapsed ? 'true' : 'false')
+  } catch {
+    // Nothing to do — the card just opens expanded next visit.
+  }
+}
 
 function readStoredMonth(): Date | null {
   try {
@@ -107,7 +124,9 @@ function getStatus(idToken: string): ConnectionStatus {
  *
  * The viewed month is remembered in localStorage, the same idea as the sliding
  * session token: reopening the app lands back where you left off instead of
- * snapping to today's month every time.
+ * snapping to today's month every time. Collapsing is remembered the same way,
+ * so a card folded away on the daily dashboard stays folded. The events still
+ * load while collapsed, so the count in the header stays current.
  */
 export function CalendarWeekCard({ title, idToken }: { title: string; idToken: string }) {
   const status = getStatus(idToken)
@@ -124,12 +143,17 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
   const [appleConfigured, setAppleConfigured] = useState(true)
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
+  const [isCollapsed, setIsCollapsed] = useState(readStoredCollapsed)
 
   const monthLabel = month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
 
   useEffect(() => {
     writeStoredMonth(month)
   }, [month])
+
+  useEffect(() => {
+    writeStoredCollapsed(isCollapsed)
+  }, [isCollapsed])
 
   useEffect(() => {
     if (status.state !== 'connected') {
@@ -207,152 +231,167 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
     <article className="info-card admin-card admin-card-wide">
       <div className="admin-card-head">
         <h3>{title}</h3>
-        {status.state === 'connected' && !isLoading ? (
-          <span className="admin-pill">
-            {events.length} event{events.length === 1 ? '' : 's'}
-          </span>
-        ) : null}
+        <div className="admin-card-actions">
+          {status.state === 'connected' && !isLoading ? (
+            <span className="admin-pill">
+              {events.length} event{events.length === 1 ? '' : 's'}
+            </span>
+          ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
+            onClick={() => setIsCollapsed((value) => !value)}
+          >
+            {isCollapsed ? '▸' : '▾'}
+          </button>
+        </div>
       </div>
 
-      {errors.map((message) => (
-        <p key={message} className="sheets-meta">
-          {message}
-        </p>
-      ))}
+      {isCollapsed ? null : (
+        <>
+          {errors.map((message) => (
+            <p key={message} className="sheets-meta">
+              {message}
+            </p>
+          ))}
 
-      {status.state === 'connected' ? (
-        <div className="month-calendar-shell admin-calendar-shell">
-          <div className="month-calendar-header">
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() =>
-                setMonth((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
-              }
-            >
-              Prev
-            </button>
-            <p className="month-calendar-month">{monthLabel}</p>
-            <button
-              type="button"
-              className="secondary-action"
-              onClick={() =>
-                setMonth((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
-              }
-            >
-              Next
-            </button>
-          </div>
-
-          <div className="month-calendar-weekdays" aria-hidden="true">
-            {WEEKDAYS.map((day) => (
-              <span key={day}>{day}</span>
-            ))}
-          </div>
-
-          <div className="month-calendar-grid" aria-label="Calendar view">
-            {cells.map((day, index) => {
-              if (!day) {
-                return <span key={`blank-${index}`} className="month-calendar-empty" />
-              }
-
-              const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-              const dayEvents = eventsByDay[key] ?? []
-              const hasEvents = dayEvents.length > 0
-
-              return (
+          {status.state === 'connected' ? (
+            <div className="month-calendar-shell admin-calendar-shell">
+              <div className="month-calendar-header">
                 <button
-                  key={key}
                   type="button"
-                  className={`month-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''}`}
-                  onClick={() => {
-                    if (hasEvents) {
-                      setSelectedDayKey(key)
-                    }
-                  }}
-                  aria-label={
-                    hasEvents
-                      ? `${key} has ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}`
-                      : `${key} has no events`
+                  className="secondary-action"
+                  onClick={() =>
+                    setMonth((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
                   }
                 >
-                  <span>{day}</span>
-                  {hasEvents ? (
-                    <span className="calendar-event-dots" aria-hidden="true">
-                      {dayEvents.slice(0, 3).map((event, dotIndex) => (
-                        <span
-                          key={`${event.source}-${event.id}-${dotIndex}`}
-                          className={`calendar-event-dot source-${event.source}`}
-                        />
-                      ))}
-                    </span>
-                  ) : null}
+                  Prev
                 </button>
-              )
-            })}
-          </div>
-        </div>
-      ) : null}
+                <p className="month-calendar-month">{monthLabel}</p>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={() =>
+                    setMonth((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
+                  }
+                >
+                  Next
+                </button>
+              </div>
 
-      {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
+              <div className="month-calendar-weekdays" aria-hidden="true">
+                {WEEKDAYS.map((day) => (
+                  <span key={day}>{day}</span>
+                ))}
+              </div>
 
-      {selectedDayKey && selectedEvents.length > 0 ? (
-        <div
-          className="calendar-dialog-backdrop"
-          role="presentation"
-          onClick={() => setSelectedDayKey(null)}
-        >
-          <div
-            className="calendar-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-calendar-popup-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h2 id="admin-calendar-popup-title">{formatDayHeading(selectedDayKey)}</h2>
+              <div className="month-calendar-grid" aria-label="Calendar view">
+                {cells.map((day, index) => {
+                  if (!day) {
+                    return <span key={`blank-${index}`} className="month-calendar-empty" />
+                  }
 
-            <ul className="admin-calendar-day-list">
-              {selectedEvents.map((event) => (
-                <li key={`${event.source}-${event.id}`} className={`source-${event.source}`}>
-                  <span className="calendar-event-time">{eventTimeLabel(event)}</span>
-                  <span className="calendar-event-title">{event.title}</span>
-                  {event.location ? (
-                    <span className="calendar-event-location">{event.location}</span>
-                  ) : null}
-                  {event.calendarName ? (
-                    <span className="calendar-event-source">{event.calendarName}</span>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
+                  const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                  const dayEvents = eventsByDay[key] ?? []
+                  const hasEvents = dayEvents.length > 0
 
-            <button
-              type="button"
-              className="calendar-dialog-close"
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`month-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''}`}
+                      onClick={() => {
+                        if (hasEvents) {
+                          setSelectedDayKey(key)
+                        }
+                      }}
+                      aria-label={
+                        hasEvents
+                          ? `${key} has ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}`
+                          : `${key} has no events`
+                      }
+                    >
+                      <span>{day}</span>
+                      {hasEvents ? (
+                        <span className="calendar-event-dots" aria-hidden="true">
+                          {dayEvents.slice(0, 3).map((event, dotIndex) => (
+                            <span
+                              key={`${event.source}-${event.id}-${dotIndex}`}
+                              className={`calendar-event-dot source-${event.source}`}
+                            />
+                          ))}
+                        </span>
+                      ) : null}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ) : null}
+
+          {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
+
+          {selectedDayKey && selectedEvents.length > 0 ? (
+            <div
+              className="calendar-dialog-backdrop"
+              role="presentation"
               onClick={() => setSelectedDayKey(null)}
             >
-              Close
-            </button>
-          </div>
-        </div>
-      ) : null}
+              <div
+                className="calendar-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="admin-calendar-popup-title"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <h2 id="admin-calendar-popup-title">{formatDayHeading(selectedDayKey)}</h2>
 
-      {status.state !== 'connected' ? <ConnectPanel name="Calendars" status={status} /> : null}
+                <ul className="admin-calendar-day-list">
+                  {selectedEvents.map((event) => (
+                    <li key={`${event.source}-${event.id}`} className={`source-${event.source}`}>
+                      <span className="calendar-event-time">{eventTimeLabel(event)}</span>
+                      <span className="calendar-event-title">{event.title}</span>
+                      {event.location ? (
+                        <span className="calendar-event-location">{event.location}</span>
+                      ) : null}
+                      {event.calendarName ? (
+                        <span className="calendar-event-source">{event.calendarName}</span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
 
-      {status.state === 'connected' && !appleConfigured ? (
-        <ConnectPanel
-          name="Apple Calendar"
-          status={{
-            state: 'not-configured',
-            message: 'Google calendars are connected. Apple is not linked yet.',
-            steps: [
-              'On iPhone: Calendar → the calendar → Share Calendar → turn on Public Calendar, then copy the link.',
-              'Change the webcal:// prefix to https://',
-              'Apps Script → Project Settings → Script Properties → add APPLE_CALENDAR_ICS_URL with that link.',
-            ],
-          }}
-        />
-      ) : null}
+                <button
+                  type="button"
+                  className="calendar-dialog-close"
+                  onClick={() => setSelectedDayKey(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {status.state !== 'connected' ? <ConnectPanel name="Calendars" status={status} /> : null}
+
+          {status.state === 'connected' && !appleConfigured ? (
+            <ConnectPanel
+              name="Apple Calendar"
+              status={{
+                state: 'not-configured',
+                message: 'Google calendars are connected. Apple is not linked yet.',
+                steps: [
+                  'On iPhone: Calendar → the calendar → Share Calendar → turn on Public Calendar, then copy the link.',
+                  'Change the webcal:// prefix to https://',
+                  'Apps Script → Project Settings → Script Properties → add APPLE_CALENDAR_ICS_URL with that link.',
+                ],
+              }}
+            />
+          ) : null}
+        </>
+      )}
     </article>
   )
 }

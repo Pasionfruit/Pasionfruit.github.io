@@ -93,7 +93,7 @@ VITE_ACE_MODEL=qwen3:8b
 npm run dev
 ```
 
-Open the admin home and press the Ace button in the bottom-left corner.
+Open the admin home and press the Ace button in the bottom-right corner.
 **Checkpoint:** the line under "Ace" in the panel header reads `qwen3:8b`
 rather than `Offline`, and the **Good morning** chip streams a briefing in a
 few seconds.

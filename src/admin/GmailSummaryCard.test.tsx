@@ -138,3 +138,40 @@ describe('GmailSummaryCard clear inbox', () => {
     expect(screen.queryByText('Invoice for August')).toBeNull()
   })
 })
+
+describe('GmailSummaryCard list', () => {
+  it('fetches up to 25 threads into one scrolling list, with no pager', async () => {
+    const many = Array.from({ length: 7 }, (_, index) => ({
+      ...MESSAGE,
+      id: `m-${index}`,
+      threadId: `t-${index}`,
+      subject: `Thread ${index}`,
+    }))
+    mailMocks.getMail.mockResolvedValue(many)
+    render(<GmailSummaryCard title="Inbox" idToken="token" />)
+
+    const list = await screen.findByRole('list', { name: 'Inbox threads' })
+
+    expect(mailMocks.getMail).toHaveBeenCalledWith('token', 25)
+    // All rows are in the list; the stylesheet sizes it to show three and scroll.
+    expect(list.querySelectorAll('.mail-row')).toHaveLength(7)
+    expect(screen.queryByRole('button', { name: /Older|Newer/ })).toBeNull()
+  })
+
+  it('opens the reply templates below the list for the chosen thread', async () => {
+    const user = userEvent.setup()
+    mailMocks.createDraftReply.mockResolvedValue({ draftId: 'd-1', permalink: '' })
+    await renderCard()
+
+    await user.click(screen.getByRole('button', { name: 'Draft reply' }))
+
+    const picker = screen.getByRole('group', { name: 'Reply templates for Sam' })
+    // Outside the row, so the row keeps its fixed height.
+    expect(picker.closest('.mail-row')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Acknowledge' }))
+
+    expect(mailMocks.createDraftReply).toHaveBeenCalledWith('token', 't-1', expect.any(String))
+    expect(screen.queryByRole('group', { name: 'Reply templates for Sam' })).toBeNull()
+  })
+})

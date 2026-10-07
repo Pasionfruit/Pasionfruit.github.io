@@ -232,15 +232,9 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
   return (
     <AdminPage meta={meta}>
-      {/* Verse spans the full width; sleep and the timer share the row below. */}
+      {/* Verse first, then the entries right under it; sleep and the timer
+          share the row below them. */}
       <VerseOfTheDayCard title="Verse of the day" />
-
-      <div className="journal-top-row">
-        <GarminSleepCard title="Sleep & recovery" />
-        <BreathingTimerCard title="Breathe" />
-      </div>
-
-      <MoodTrackerCard title="Mood" entries={entries} isLoading={isLoading} />
 
       <article className="info-card admin-card admin-card-wide">
         <div className="admin-card-head">
@@ -470,6 +464,13 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
           )}
         </JournalLock>
       </article>
+
+      <div className="journal-top-row">
+        <GarminSleepCard title="Sleep & recovery" />
+        <BreathingTimerCard title="Breathe" />
+      </div>
+
+      <MoodTrackerCard title="Mood" entries={entries} isLoading={isLoading} />
     </AdminPage>
   )
 }
