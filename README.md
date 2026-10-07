@@ -16,7 +16,7 @@ are no separate section routes any more.
 | Experiences | `/#experiences` | Education, technical skills, professional history, resume downloads |
 | Personal Sites | `/#personal-sites` | Deployed side projects, linked out for anyone to try |
 | Gaming | `/#gaming` | Minecraft connection guide and live server status with a link to the control dashboard |
-| Training | `/#training` | Workouts for the next seven days, read-only (edited on `/weekly-reset`) |
+| Training | `/#training` | Today's planned workout, the Garmin training log, and the next event countdown — all read-only |
 
 Sections start collapsed. The side menu links to each anchor, which expands the
 target section and scrolls to it. Collapsed panels keep their content in the DOM

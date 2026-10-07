@@ -347,14 +347,13 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
 
       <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
+      {/* Icon-only, so the names live in aria-label and the hover tooltip. */}
       <div className="admin-home-links">
-        <Link to="/tasks" className="admin-quick-link">
-          <List size={15} strokeWidth={1.8} aria-hidden="true" />
-          <span>Full task manager</span>
+        <Link to="/tasks" className="admin-quick-link" aria-label="Full task manager" title="Full task manager">
+          <List size={17} strokeWidth={1.8} aria-hidden="true" />
         </Link>
-        <Link to="/weekly-reset" className="admin-quick-link">
-          <RotateCcw size={15} strokeWidth={1.8} aria-hidden="true" />
-          <span>Weekly reset</span>
+        <Link to="/weekly-reset" className="admin-quick-link" aria-label="Weekly reset" title="Weekly reset">
+          <RotateCcw size={17} strokeWidth={1.8} aria-hidden="true" />
         </Link>
       </div>
     </div>
@@ -765,13 +764,16 @@ function HomePage() {
         <MinecraftServerCards />
       </HomeSection>
 
-      {/* Read-only here; the plan is pasted and edited on /weekly-reset. */}
+      {/* Read-only here: the plan is pasted on /weekly-reset, and the log and
+          countdown are edited from the Health dashboard. */}
       <HomeSection
         id="training"
         isOpen={openSections.includes('training')}
         onToggle={() => toggleSection('training')}
       >
-        <WeeklyWorkoutResetCard title="Workouts for the Week" canWrite={false} idToken="" />
+        <WorkoutOfTheDayCard title="Workout of the Day" />
+        <TrainingLogCard title="Training Log" canWrite={false} idToken="" showToday={false} />
+        <NextEventCountdownCard title="Next Event Countdown" canWrite={false} idToken="" />
       </HomeSection>
     </div>
   )
@@ -1301,10 +1303,16 @@ function TrainingLogCard({
   title,
   canWrite,
   idToken,
+  showToday = true,
 }: {
   title: string
   canWrite: boolean
   idToken: string
+  /**
+   * The panel of today's Garmin activities under the tiles. Off on the guest
+   * home page, where the planned Workout of the Day card sits above the log.
+   */
+  showToday?: boolean
 }) {
   const currentDate = new Date()
   const currentYear = String(currentDate.getFullYear())
@@ -1621,67 +1629,69 @@ function TrainingLogCard({
             </div>
           </div>
 
-          <div className="training-log-today-panel">
-            <p className="sheets-meta">Workout(s) of the Day</p>
-            {todaysRecord ? (
-              <div className="study-today-shell">
-                <table className="study-today-table">
-                  <thead>
-                    <tr>
-                      <th>Workout</th>
-                      <th>Completed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><WorkoutText value={todaysRecord.morning_workout} empty="Morning —" /></td>
-                      <td className="study-complete-cell">
-                        {canWrite ? (
-                          <button
-                            type="button"
-                            className="secondary-action study-complete-btn"
-                            onClick={() => void handleToggleWorkout('morning')}
-                            disabled={!idToken || isWriting}
-                          >
-                            {todaysRecord.completed_morning ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                          </button>
-                        ) : (
-                          <span>{todaysRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><WorkoutText value={todaysRecord.evening_workout} empty="Evening —" /></td>
-                      <td className="study-complete-cell">
-                        {canWrite ? (
-                          <button
-                            type="button"
-                            className="secondary-action study-complete-btn"
-                            onClick={() => void handleToggleWorkout('evening')}
-                            disabled={!idToken || isWriting}
-                          >
-                            {todaysRecord.completed_evening ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                          </button>
-                        ) : (
-                          <span>{todaysRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="sheets-meta">No workout scheduled for today.</p>
-            )}
+          {showToday ? (
+            <div className="training-log-today-panel">
+              <p className="sheets-meta">Workout(s) of the Day</p>
+              {todaysRecord ? (
+                <div className="study-today-shell">
+                  <table className="study-today-table">
+                    <thead>
+                      <tr>
+                        <th>Workout</th>
+                        <th>Completed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><WorkoutText value={todaysRecord.morning_workout} empty="Morning —" /></td>
+                        <td className="study-complete-cell">
+                          {canWrite ? (
+                            <button
+                              type="button"
+                              className="secondary-action study-complete-btn"
+                              onClick={() => void handleToggleWorkout('morning')}
+                              disabled={!idToken || isWriting}
+                            >
+                              {todaysRecord.completed_morning ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
+                            </button>
+                          ) : (
+                            <span>{todaysRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><WorkoutText value={todaysRecord.evening_workout} empty="Evening —" /></td>
+                        <td className="study-complete-cell">
+                          {canWrite ? (
+                            <button
+                              type="button"
+                              className="secondary-action study-complete-btn"
+                              onClick={() => void handleToggleWorkout('evening')}
+                              disabled={!idToken || isWriting}
+                            >
+                              {todaysRecord.completed_evening ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
+                            </button>
+                          ) : (
+                            <span>{todaysRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="sheets-meta">No workout scheduled for today.</p>
+              )}
 
-            {!canWrite ? (
-              <p className="sheets-meta">
-                Edit access restricted to admin.
-              </p>
-            ) : null}
+              {!canWrite ? (
+                <p className="sheets-meta">
+                  Edit access restricted to admin.
+                </p>
+              ) : null}
 
-            {writeError ? <p className="sheets-error">{writeError}</p> : null}
-          </div>
+              {writeError ? <p className="sheets-error">{writeError}</p> : null}
+            </div>
+          ) : null}
         </>
       ) : null}
     </CollapsibleSectionCard>
@@ -3102,6 +3112,71 @@ function WeeklyResetPage({ profile, googleIdToken }: { profile: UserProfile; goo
     >
       <WeeklyWorkoutResetCard title="Workouts for the Week" canWrite={canWrite} idToken={googleIdToken} />
     </PageFrame>
+  )
+}
+
+/**
+ * Today's planned workout, read-only, for the guest home page. Planned rather
+ * than recorded: what actually happened shows in the Training Log below it.
+ */
+function WorkoutOfTheDayCard({ title }: { title: string }) {
+  const [record, setRecord] = useState<TrainingRecord | undefined>()
+  const [isLoading, setIsLoading] = useState(true)
+  const today = new Date()
+  const todayKey = toDateOnlyKey(today.toISOString())
+
+  useEffect(() => {
+    let cancelled = false
+
+    void (async () => {
+      try {
+        const rows = await getTrainingRecords()
+        if (!cancelled) setRecord(rows.find((row) => toDateOnlyKey(row.date) === todayKey))
+      } catch {
+        if (!cancelled) setRecord(undefined)
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [todayKey])
+
+  const hasWorkout = Boolean(record?.morning_workout || record?.evening_workout)
+
+  return (
+    <CollapsibleSectionCard title={title} className="workout-of-day-card">
+      <p className="sheets-meta">
+        {today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+      </p>
+
+      {isLoading ? (
+        <p className="sheets-meta">Loading today&apos;s workout…</p>
+      ) : hasWorkout ? (
+        <div className="study-today-shell">
+          <table className="study-today-table workout-of-day-table">
+            <tbody>
+              <tr>
+                <th scope="row">Morning</th>
+                <td>
+                  <WorkoutText value={record?.morning_workout} />
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Evening</th>
+                <td>
+                  <WorkoutText value={record?.evening_workout} />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="sheets-meta">No workout planned for today.</p>
+      )}
+    </CollapsibleSectionCard>
   )
 }
 

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const repoMocks = vi.hoisted(() => {
@@ -141,8 +141,19 @@ describe('guest home page', () => {
     expect(expanded('training')).toBe('false')
   })
 
-  it('shows guests the week of workouts, read-only', async () => {
+  it("shows guests today's workout, then the training log and countdown, read-only", async () => {
     const user = userEvent.setup()
+    const today = new Date()
+    repoMocks.getTrainingRecords.mockResolvedValueOnce([
+      {
+        training_id: 'today',
+        date: `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`,
+        morning_workout: '**Easy swim**\n• 4×50m free',
+        evening_workout: 'Legs',
+        completed_morning: false,
+        completed_evening: false,
+      },
+    ])
     renderAt('/')
 
     const toggle = document.querySelector<HTMLButtonElement>('#training .home-section-toggle')
@@ -151,11 +162,22 @@ describe('guest home page', () => {
     }
     await user.click(toggle)
 
-    const heading = await screen.findByRole('heading', { name: 'Workouts for the Week' })
-    const card = heading.closest('article')
-    expect(card).toBeTruthy()
-    // Editing and pasting stay on /weekly-reset.
-    expect(card?.querySelector('[title="Edit values"]')).toBeNull()
+    const section = document.getElementById('training')
+    if (!section) {
+      throw new Error('Training section not found')
+    }
+    const headings = within(section)
+      .getAllByRole('heading', { level: 3 })
+      .map((heading) => heading.textContent)
+    expect(headings).toEqual(['Workout of the Day', 'Training Log', 'Next Event Countdown'])
+
+    expect(await within(section).findByText('Easy swim')).toBeTruthy()
+    expect(within(section).getByText('Legs')).toBeTruthy()
+    // The log's own Garmin "today" panel would repeat the card above it.
+    expect(within(section).queryByText('Workout(s) of the Day')).toBeNull()
+    // Nothing here is editable for a guest.
+    expect(section.querySelector('[title="Edit values"]')).toBeNull()
+    expect(within(section).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
   })
 
   it('expands and re-collapses a section', async () => {
@@ -414,5 +436,16 @@ describe('admin routing', () => {
       link.getAttribute('href'),
     )
     expect(hrefs).toEqual(['/tasks', '/weekly-reset'])
+  })
+
+  it('shows those links as icons, named for screen readers and on hover', () => {
+    renderAt('/', ADMIN_EMAIL)
+
+    const tasks = screen.getByRole('link', { name: 'Full task manager' })
+    const reset = screen.getByRole('link', { name: 'Weekly reset' })
+
+    expect(tasks.textContent).toBe('')
+    expect(reset.textContent).toBe('')
+    expect(tasks.getAttribute('title')).toBe('Full task manager')
   })
 })

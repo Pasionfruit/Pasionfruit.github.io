@@ -258,6 +258,18 @@
   gap: 0.5rem;
 }
 
+/* Guest home: the planned workout, labelled by session. */
+.workout-of-day-table th[scope='row'] {
+  width: 5.5rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  vertical-align: top;
+}
+
+.workout-of-day-table td {
+  vertical-align: top;
+}
+
 /* A pasted workout: bold title, then its sets as a tight bullet list. */
 .workout-text {
   display: grid;

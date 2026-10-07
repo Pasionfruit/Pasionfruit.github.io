@@ -4,15 +4,15 @@ export const trainingNavSection: NavSection = {
   id: 'training',
   title: 'Training',
   path: '/#training',
-  summary: 'The workouts planned for the next seven days',
+  summary: "Today's workout, the training log, and the next event",
   accent: '#3a86ff',
   children: [],
 }
 
 export const trainingSectionPage: PageContent = {
-  eyebrow: 'This week',
+  eyebrow: 'Today',
   title: 'Training',
-  summary: 'The workouts I have planned for the next seven days, morning and evening.',
+  summary: "Today's planned workout, the activities I've logged, and the countdown to my next event.",
   accent: '#3a86ff',
   cards: [],
   callout: '',
