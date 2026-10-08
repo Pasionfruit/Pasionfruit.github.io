@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Sparkles } from 'lucide-react'
 import { AdminPage } from '../AdminPage'
 import { adminDashboardsById } from '../../siteContent'
 import { getNews, type NewsItem } from '../../data/news/client'
 import { useNewsPlaces } from './useNewsPlaces'
-
-/** Headlines shown per card; the Worker sends up to 20, newest first. */
-const ITEMS_SHOWN = 8
+import { askAceAboutNews } from '../ace/newsSummary'
 
 function timeAgo(iso: string, now: number) {
   const time = new Date(iso).getTime()
@@ -109,19 +107,33 @@ function NewsCard({
       ) : items.length === 0 ? (
         <p className="sheets-meta">No headlines in the last few days.</p>
       ) : (
-        <ul className="news-list" aria-label={`${title} headlines`}>
-          {items.slice(0, ITEMS_SHOWN).map((item) => (
-            <li key={item.url} className="news-item">
-              <a href={item.url} target="_blank" rel="noopener noreferrer" className="news-link">
-                <span className="news-title">{item.title}</span>
-                <ExternalLink size={13} strokeWidth={1.8} aria-hidden="true" />
-              </a>
-              <span className="news-meta">
-                {[item.source, timeAgo(item.publishedAt, loadedAt)].filter(Boolean).join(' · ')}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="news-list" aria-label={`${title} headlines`} tabIndex={0}>
+            {items.map((item) => (
+              <li key={item.url} className="news-item">
+                <a href={item.url} target="_blank" rel="noopener noreferrer" className="news-link">
+                  <span className="news-title">{item.title}</span>
+                  <ExternalLink size={13} strokeWidth={1.8} aria-hidden="true" />
+                </a>
+                <div className="news-item-foot">
+                  <span className="news-meta">
+                    {[item.source, timeAgo(item.publishedAt, loadedAt)].filter(Boolean).join(' · ')}
+                  </span>
+                  <button
+                    type="button"
+                    className="news-summary-btn"
+                    aria-label={`Ask Ace to summarize ${item.title}`}
+                    onClick={() => askAceAboutNews(item)}
+                  >
+                    <Sparkles size={13} aria-hidden="true" />
+                    <span>Ask Ace</span>
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {items.length > 4 ? <p className="sheets-meta news-scroll-hint">{items.length} articles · Scroll for more</p> : null}
+        </>
       )}
     </article>
   )

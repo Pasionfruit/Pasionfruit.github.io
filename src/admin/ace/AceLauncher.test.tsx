@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const contextMocks = vi.hoisted(() => ({
@@ -19,6 +19,7 @@ vi.mock('../../data/sheets/repositories', () => ({ archiveMail: vi.fn() }))
 vi.mock('../../data/todoist/repositories', () => ({ closeTask: vi.fn(), createTask: vi.fn() }))
 
 import { AceLauncher } from './AceLauncher'
+import { askAceAboutNews } from './newsSummary'
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -31,6 +32,18 @@ afterEach(() => {
 })
 
 describe('AceLauncher', () => {
+  it('opens Ace with the selected article summary prompt, including repeated selections', async () => {
+    render(<AceLauncher idToken="token" todoistConfigured={false} />)
+    const article = { title: 'City opens a new park', url: 'https://publisher.com/park', source: 'City News', publishedAt: '' }
+    act(() => askAceAboutNews(article))
+    expect(screen.getByRole('dialog', { name: 'Ace' })).toBeTruthy()
+    expect((screen.getByLabelText('Message Ace') as HTMLTextAreaElement).value).toContain(article.url)
+    expect((screen.getByLabelText('Message Ace') as HTMLTextAreaElement).value).toContain('high-level summary')
+    await userEvent.setup().clear(screen.getByLabelText('Message Ace'))
+    act(() => askAceAboutNews(article))
+    expect((screen.getByLabelText('Message Ace') as HTMLTextAreaElement).value).toContain(article.title)
+  })
+
   it('gathers nothing until the button is pressed', () => {
     render(<AceLauncher idToken="token" todoistConfigured={false} />)
 

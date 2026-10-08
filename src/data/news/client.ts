@@ -18,6 +18,20 @@ export type NewsItem = {
 
 export type NewsQuery = { feed: 'nation' | 'world' } | { place: string; region?: string }
 
+export type NewsArticle = { url: string; title: string; text: string; excerpt: boolean }
+
+export async function getNewsArticle(idToken: string, url: string, signal?: AbortSignal): Promise<NewsArticle> {
+  const response = await fetch(`${NEWS_BASE_URL}/article?${new URLSearchParams({ url })}`, {
+    headers: { Authorization: `Bearer ${idToken}` },
+    signal,
+  })
+  const data = await response.json().catch(() => null) as (NewsArticle & { error?: string }) | null
+  if (!response.ok || !data?.text) {
+    throw new Error(data?.error || 'The article text is unavailable. Paste the article into Ace to summarize it.')
+  }
+  return data
+}
+
 export async function getNews(idToken: string, query: NewsQuery): Promise<NewsItem[]> {
   const params = new URLSearchParams()
   if ('feed' in query) {

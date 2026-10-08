@@ -14,9 +14,11 @@ const contextMocks = vi.hoisted(() => ({
   buildAceContext: vi.fn(),
   renderAceContext: vi.fn(() => 'RENDERED CONTEXT'),
 }))
+const newsMocks = vi.hoisted(() => ({ getNewsArticle: vi.fn() }))
 
 vi.mock('./client', () => clientMocks)
 vi.mock('./context', () => contextMocks)
+vi.mock('../../data/news/client', () => newsMocks)
 vi.mock('../../data/sheets/repositories', () => ({ archiveMail: vi.fn() }))
 vi.mock('../../data/todoist/repositories', () => ({ closeTask: vi.fn(), createTask: vi.fn() }))
 
@@ -99,6 +101,62 @@ describe('AceChat context', () => {
     expect(messages[1].role).toBe('system')
     expect(messages[1].content).toContain('RENDERED CONTEXT')
     expect(messages[1].content).not.toBe(CONTEXT_PENDING_PROMPT)
+  })
+})
+
+describe('AceChat news summaries', () => {
+  it('replays only the latest article text so multiple summaries do not exhaust the context', async () => {
+    contextMocks.buildAceContext.mockResolvedValue(EMPTY_CONTEXT)
+    newsMocks.getNewsArticle
+      .mockResolvedValueOnce({ url: 'https://publisher.com/first', title: 'First story', text: 'FIRST ARTICLE TEXT', excerpt: false })
+      .mockResolvedValueOnce({ url: 'https://publisher.com/second', title: 'Second story', text: 'SECOND ARTICLE TEXT', excerpt: false })
+    renderChat()
+    await ask('Summarize https://publisher.com/first')
+    const user = userEvent.setup()
+    await user.type(screen.getByLabelText('Message Ace'), 'Summarize https://publisher.com/second')
+    await user.click(screen.getByRole('button', { name: 'Ask' }))
+    await waitFor(() => expect(clientMocks.aceChat).toHaveBeenCalledTimes(2))
+    const content = sentMessages(1).map((message) => message.content).join('\n')
+    expect(content).toContain('Summarize https://publisher.com/first')
+    expect(content).not.toContain('FIRST ARTICLE TEXT')
+    expect(content).toContain('SECOND ARTICLE TEXT')
+  })
+
+  it('retrieves the linked article on request and retains its text for follow-up questions', async () => {
+    contextMocks.buildAceContext.mockResolvedValue(EMPTY_CONTEXT)
+    newsMocks.getNewsArticle.mockResolvedValue({
+      url: 'https://publisher.com/park', title: 'New park', text: 'The city opened a park on Tuesday.', excerpt: false,
+    })
+    renderChat()
+    const messages = await ask('Summarize this article: https://publisher.com/park')
+    expect(newsMocks.getNewsArticle).toHaveBeenCalledWith('token', 'https://publisher.com/park', expect.any(AbortSignal))
+    expect(messages.at(-1)?.content).toContain('The city opened a park on Tuesday.')
+    expect(messages.at(-1)?.content).toContain('under 120 words')
+    const user = userEvent.setup()
+    await user.type(screen.getByLabelText('Message Ace'), 'Why does that matter?')
+    await user.click(screen.getByRole('button', { name: 'Ask' }))
+    await waitFor(() => expect(clientMocks.aceChat).toHaveBeenCalledTimes(2))
+    expect(sentMessages(1).some((message) => message.content.includes('The city opened a park on Tuesday.'))).toBe(true)
+    expect(newsMocks.getNewsArticle).toHaveBeenCalledTimes(1)
+  })
+
+  it('labels excerpt-only content in the model prompt', async () => {
+    contextMocks.buildAceContext.mockResolvedValue(EMPTY_CONTEXT)
+    newsMocks.getNewsArticle.mockResolvedValue({ url: 'https://publisher.com/park', title: 'New park', text: 'A short excerpt.', excerpt: true })
+    renderChat()
+    const messages = await ask('Summarize https://publisher.com/park')
+    expect(messages.at(-1)?.content).toContain('Only an excerpt is available')
+  })
+
+  it('asks for pasted text when the article cannot be read, without asking the model to guess', async () => {
+    contextMocks.buildAceContext.mockResolvedValue(EMPTY_CONTEXT)
+    newsMocks.getNewsArticle.mockRejectedValue(new Error('Ace could not read this article. Paste the article text into the chat to summarize it.'))
+    renderChat()
+    const user = userEvent.setup()
+    await user.type(screen.getByLabelText('Message Ace'), 'Summarize https://publisher.com/park')
+    await user.click(screen.getByRole('button', { name: 'Ask' }))
+    expect(await screen.findByText(/Paste the article text into the chat/)).toBeTruthy()
+    expect(clientMocks.aceChat).not.toHaveBeenCalled()
   })
 })
 

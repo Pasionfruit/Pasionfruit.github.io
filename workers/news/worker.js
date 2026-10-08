@@ -2,7 +2,8 @@
  * News for the admin dashboard: Google News RSS, fetched server-side because
  * news.google.com sends no CORS headers, and handed back as JSON.
  *
- * Route: GET /news?feed=nation|world   or   GET /news?place=…&region=…
+ * Routes: GET /news?feed=nation|world   or   GET /news?place=…&region=…
+ *         GET /article?url=… (plain article text for an on-request Ace summary)
  *
  * Admin-only, like every other Worker here, but it holds none of the auth
  * secrets: the bearer is checked by the db Worker's /auth/verify over a service
@@ -15,6 +16,7 @@
 
 import { createHttp } from '../shared/admin.js'
 import { feedUrl, parseFeed } from './feed.js'
+import { publicArticleUrl, readArticle } from './article.js'
 
 const { json, deny, preflight } = createHttp({ methods: 'GET, OPTIONS' })
 
@@ -67,7 +69,7 @@ export default {
     }
 
     const url = new URL(request.url)
-    if (url.pathname !== '/news') {
+    if (url.pathname !== '/news' && url.pathname !== '/article') {
       return deny(404, 'No such route', request, env)
     }
     if (request.method !== 'GET') {
@@ -77,6 +79,18 @@ export default {
     const auth = await verifyCaller(request, env)
     if (!auth.ok) {
       return deny(403, auth.reason, request, env)
+    }
+
+    if (url.pathname === '/article') {
+      const articleUrl = publicArticleUrl(url.searchParams.get('url'))
+      if (!articleUrl) return deny(400, 'Use a public HTTPS article link', request, env)
+      try {
+        const response = json(await readArticle(articleUrl.href), request, env)
+        response.headers.set('Cache-Control', `private, max-age=${CACHE_SECONDS}`)
+        return response
+      } catch {
+        return deny(502, 'Ace could not read this article. Paste the article text into the chat to summarize it.', request, env)
+      }
     }
 
     const upstream = feedUrl(url.searchParams)

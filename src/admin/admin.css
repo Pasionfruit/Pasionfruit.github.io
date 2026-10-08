@@ -728,16 +728,36 @@
 }
 
 .news-list {
+  --news-row-height: 7rem;
   margin: 0.6rem 0 0;
   padding: 0;
   list-style: none;
+  max-height: calc(4 * var(--news-row-height));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  scroll-snap-type: y proximity;
+}
+
+.news-list:focus-visible {
+  outline: 2px solid var(--page-accent, var(--accent));
+  outline-offset: 3px;
+}
+
+.news-scroll-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
 }
 
 .news-item {
   display: grid;
+  grid-template-rows: 1fr auto;
   gap: 0.15rem;
-  padding: 0.5rem 0;
+  box-sizing: border-box;
+  height: var(--news-row-height);
+  padding: 0.65rem 0.35rem 0.65rem 0;
   border-bottom: 1px solid var(--border);
+  scroll-snap-align: start;
 }
 
 .news-item:last-child {
@@ -757,6 +777,44 @@
 .news-link svg {
   flex-shrink: 0;
   color: var(--text-muted);
+}
+
+.news-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.news-item-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.news-item-foot .news-meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.news-summary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  min-height: 1.75rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
 }
 
 @media (hover: hover) {

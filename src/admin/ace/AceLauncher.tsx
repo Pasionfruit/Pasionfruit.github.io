@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Sparkles, X } from 'lucide-react'
 import { AceChat } from './AceChat'
+import { NEWS_SUMMARY_EVENT, type NewsSummaryRequest } from './newsSummary'
 
 /**
  * Ace as a floating button in the bottom-right corner of every admin page.
@@ -13,7 +14,18 @@ import { AceChat } from './AceChat'
 export function AceLauncher({ idToken, todoistConfigured }: { idToken: string; todoistConfigured: boolean }) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [newsRequest, setNewsRequest] = useState<NewsSummaryRequest | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+  useEffect(() => {
+    function onNewsSummary(event: Event) {
+      setNewsRequest((event as CustomEvent<NewsSummaryRequest>).detail)
+      setMounted(true)
+      setOpen(true)
+    }
+    window.addEventListener(NEWS_SUMMARY_EVENT, onNewsSummary)
+    return () => window.removeEventListener(NEWS_SUMMARY_EVENT, onNewsSummary)
+  }, [])
 
   function openPanel() {
     setMounted(true)
@@ -49,7 +61,7 @@ export function AceLauncher({ idToken, todoistConfigured }: { idToken: string; t
           aria-labelledby="ace-panel-title"
           hidden={!open}
         >
-          <AceChat idToken={idToken} todoistConfigured={todoistConfigured} open={open} onClose={closePanel} />
+          <AceChat idToken={idToken} todoistConfigured={todoistConfigured} open={open} onClose={closePanel} newsRequest={newsRequest} />
         </section>
       ) : null}
 

@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { NEWS_SUMMARY_EVENT } from '../ace/newsSummary'
 
 const newsMocks = vi.hoisted(() => ({
   getNews: vi.fn(),
@@ -55,6 +57,32 @@ afterEach(() => {
 })
 
 describe('NewsDashboard', () => {
+  it('keeps every headline available in a keyboard-focusable scrolling list', async () => {
+    stubGeolocation('deny')
+    newsMocks.getNews.mockResolvedValue(Array.from({ length: 20 }, (_, index) => headline(`Story ${index + 1}`)))
+    render(<NewsDashboard idToken="token" />)
+    const list = await screen.findByRole('list', { name: 'Nation headlines' })
+    expect(within(list).getAllByRole('listitem')).toHaveLength(20)
+    expect(within(list).getByRole('link', { name: 'Story 20' })).toBeTruthy()
+    expect(list.tabIndex).toBe(0)
+  })
+
+  it('passes the selected article to Ace only when the summary button is pressed', async () => {
+    stubGeolocation('deny')
+    const requested = vi.fn()
+    window.addEventListener(NEWS_SUMMARY_EVENT, requested)
+    try {
+      render(<NewsDashboard idToken="token" />)
+      const button = await screen.findByRole('button', { name: 'Ask Ace to summarize nation story' })
+      expect(requested).not.toHaveBeenCalled()
+      await userEvent.setup().click(button)
+      expect(requested).toHaveBeenCalledTimes(1)
+      expect((requested.mock.calls[0][0] as CustomEvent).detail.article.title).toBe('nation story')
+    } finally {
+      window.removeEventListener(NEWS_SUMMARY_EVENT, requested)
+    }
+  })
+
   it('shows local, city, national and international headlines, small to large', async () => {
     stubGeolocation('allow')
     render(<NewsDashboard idToken="token" />)
