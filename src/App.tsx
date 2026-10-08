@@ -1007,7 +1007,7 @@ function TodoistTasksCard({
           ) : null}
 
           {view === 'training' && !isDailyLoading ? (
-            <p className="sheets-meta">Completed is read from Garmin, which syncs each morning.</p>
+            <p className="sheets-meta">Completed is read from Garmin, which syncs at 9 AM and 9 PM.</p>
           ) : null}
 
           {view === 'training' && garminError ? <p className="sheets-error">{garminError}</p> : null}
