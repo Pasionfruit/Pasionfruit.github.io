@@ -448,7 +448,10 @@ function SiteLayout({
   }, [])
 
   return (
-    <div className={`app-shell ${isAdmin ? 'app-shell-admin' : ''}`}>
+    <div
+      className={`app-shell ${isAdmin ? 'app-shell-admin' : ''}`}
+      style={{ '--nav-accent': adminDashboards.find((dashboard) => dashboard.path === location.pathname)?.accent ?? '#9333ea' } as CSSProperties}
+    >
       <header className={`topbar ${isAdmin ? 'topbar-admin' : ''}`}>
         <Link to="/" className="brand" aria-label="Go to home page">
           <span className="brand-mark">{brandMark}</span>

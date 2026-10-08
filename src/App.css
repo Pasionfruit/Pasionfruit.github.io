@@ -4212,7 +4212,7 @@ button svg,
      toward the bottom-right. */
   background-image: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--page-accent, var(--accent)) 16%, transparent),
+    color-mix(in srgb, var(--page-accent, var(--accent)) 20%, transparent),
     transparent 70%
   );
 }
@@ -4235,6 +4235,15 @@ button svg,
 /* Every card on a page carries a sliver of the section color. */
 .page-grid > .info-card {
   border-top: 3px solid color-mix(in srgb, var(--page-accent, var(--accent)) 60%, var(--border));
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--page-accent, var(--accent)) 5%, transparent), transparent 55%);
+}
+
+.page-frame .back-link,
+.admin-page .secondary-action,
+.admin-page .admin-quick-link,
+.news-summary-btn {
+  border-color: color-mix(in srgb, var(--page-accent, var(--accent)) 25%, var(--border));
+  background-color: color-mix(in srgb, var(--page-accent, var(--accent)) 7%, var(--surface));
 }
 
 .page-hero-header {
@@ -5443,7 +5452,7 @@ button svg,
   border: 1px solid var(--border);
   border-top: 3px solid var(--page-accent, var(--accent));
   border-radius: 0.9rem;
-  background: var(--surface);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--page-accent, var(--accent)) 7%, var(--surface)), var(--surface) 55%);
   box-shadow: var(--shadow);
   overflow: hidden;
 }

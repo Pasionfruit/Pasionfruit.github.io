@@ -397,18 +397,20 @@ function RefreshButton({ onClick, busy }: { onClick: () => void; busy: boolean }
 function GarminCard({
   title,
   actions,
+  className = '',
   defaultCollapsed = false,
   children,
 }: {
   title: string
   actions?: ReactNode
+  className?: string
   defaultCollapsed?: boolean
   children: ReactNode
 }) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
 
   return (
-    <article className="info-card admin-card">
+    <article className={`info-card admin-card ${className}`.trim()}>
       <div className="admin-card-head">
         <h3>{title}</h3>
         <div className="admin-card-actions">
@@ -462,6 +464,7 @@ export function GarminWellnessCard({ title }: { title: string }) {
   return (
     <GarminCard
       title={title}
+      className="garmin-wellness-card"
       actions={
         <>
           <div className="garmin-mode-toggle" role="group" aria-label="Averaging period">

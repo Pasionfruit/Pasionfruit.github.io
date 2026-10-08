@@ -41,7 +41,7 @@
 }
 
 .admin-nav-link.active {
-  background: var(--surface-muted);
+  background: color-mix(in srgb, var(--nav-accent, var(--accent)) 12%, var(--surface));
   color: var(--text-strong);
   font-weight: 550;
 }
@@ -94,7 +94,7 @@
   }
 
   .admin-nav-link.active svg {
-    background: color-mix(in srgb, var(--text-strong) 12%, transparent);
+    background: color-mix(in srgb, var(--nav-accent, var(--accent)) 20%, transparent);
   }
 
   .app-shell-admin .page-shell {
@@ -118,6 +118,32 @@
 .admin-page-head {
   display: grid;
   gap: 0.2rem;
+  padding: 0.75rem 0.9rem;
+  border-left: 3px solid var(--page-accent, var(--accent));
+  border-radius: 0.2rem 0.7rem 0.7rem 0.2rem;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--page-accent, var(--accent)) 11%, var(--surface)), var(--surface));
+}
+
+.admin-page .info-card {
+  --card-accent: var(--page-accent, var(--accent));
+  border-top: 3px solid color-mix(in srgb, var(--card-accent) 65%, var(--border));
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--card-accent) 5%, transparent), transparent 55%);
+}
+
+.admin-home .weather-card {
+  --card-accent: var(--color-amber);
+}
+
+.admin-home > .admin-card:last-child {
+  --card-accent: var(--color-lavender);
+}
+
+.admin-page .countdown-card {
+  --card-accent: var(--color-coral);
+}
+
+.admin-page .verse-card {
+  --card-accent: var(--color-amber);
 }
 
 .admin-page-head h1 {
@@ -719,6 +745,25 @@
   min-width: 0;
 }
 
+.admin-page .news-card:nth-child(1) { --card-accent: var(--color-teal); }
+.admin-page .news-card:nth-child(2) { --card-accent: var(--color-blue); }
+.admin-page .news-card:nth-child(3) { --card-accent: var(--color-amber); }
+.admin-page .news-card:nth-child(4) { --card-accent: var(--color-lavender); }
+
+.news-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.news-card h3::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--card-accent);
+}
+
 .news-card-titles {
   min-width: 0;
 }
@@ -808,9 +853,9 @@
   flex-shrink: 0;
   min-height: 1.75rem;
   padding: 0.2rem 0.45rem;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--card-accent, var(--accent)) 30%, var(--border));
   border-radius: 0.4rem;
-  background: transparent;
+  background: color-mix(in srgb, var(--card-accent, var(--accent)) 6%, var(--surface));
   color: var(--text-strong);
   font: inherit;
   font-size: 0.75rem;
@@ -1104,6 +1149,14 @@
   text-transform: uppercase;
 }
 
+.garmin-metric-group {
+  --metric-accent: var(--color-lavender);
+}
+
+.garmin-metric-group + .garmin-metric-group {
+  --metric-accent: var(--color-teal);
+}
+
 .garmin-metric-group-title + .garmin-metric-grid {
   margin-top: 0.45rem;
 }
@@ -1125,9 +1178,9 @@
   align-content: start;
   gap: 0.1rem;
   padding: 0.55rem 0.6rem;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--metric-accent) 28%, var(--border));
   border-radius: 0.5rem;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--metric-accent) 6%, var(--surface));
   min-width: 0;
 }
 
@@ -1352,6 +1405,88 @@
   cursor: default;
 }
 
+/* Keep the title/collapse control together and the period/refresh controls on
+   their own row. The date picker stays between equally sized navigation taps. */
+@media (max-width: 48rem) {
+  .garmin-wellness-card .admin-card-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .garmin-wellness-card .admin-card-head h3 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .garmin-wellness-card .admin-card-actions {
+    display: contents;
+  }
+
+  .garmin-wellness-card .section-collapse-btn {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .garmin-mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  .garmin-mode-toggle button {
+    min-height: 2.75rem;
+    padding: 0.35rem;
+    white-space: nowrap;
+  }
+
+  .garmin-wellness-card .admin-card-actions > .secondary-action {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 2.75rem;
+  }
+
+  .garmin-date-row {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+    align-items: end;
+    gap: 0.45rem;
+  }
+
+  .garmin-date-row label {
+    display: grid;
+    min-width: 0;
+    gap: 0.2rem;
+  }
+
+  .garmin-date-row input {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+  }
+
+  .garmin-date-step {
+    width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .garmin-date-row .sheets-meta,
+  .garmin-date-row .secondary-action {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+
+  .garmin-date-row .secondary-action {
+    min-height: 2.75rem;
+  }
+}
+
 /* The day being shown had no reading for this metric, so an older one is
    standing in — say which day it came from rather than implying it is today's. */
 .garmin-metric-from {
@@ -1456,7 +1591,9 @@
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.7rem 0.7rem 0.65rem 0.9rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-lavender) 25%, var(--border));
+  background: color-mix(in srgb, var(--color-lavender) 7%, var(--surface));
+  flex-shrink: 0;
 }
 
 .ace-panel-title {
@@ -1862,6 +1999,39 @@
     animation-name: ace-sheet-in;
   }
 
+  .ace-panel-head,
+  .ace-panel-title {
+    align-items: flex-start;
+  }
+
+  .ace-panel-head {
+    padding-top: 1rem;
+  }
+
+  .ace-welcome {
+    margin: 0;
+    align-content: start;
+  }
+
+  .ace-transcript {
+    justify-content: flex-start;
+  }
+
+  .ace-panel-foot {
+    flex-shrink: 0;
+  }
+
+  .ace-icon-btn,
+  .ace-ghost-btn,
+  .ace-send-btn {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .ace-quick-btn {
+    min-height: 2.75rem;
+  }
+
   .ace-launcher.is-open .ace-fab {
     display: none;
   }
@@ -1935,6 +2105,7 @@
 
 .journal-lock {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 0.5rem;
   margin-top: 0.8rem;
@@ -1942,6 +2113,11 @@
   border: 1px dashed var(--border);
   border-radius: 0.6rem;
   text-align: center;
+}
+
+.journal-lock > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .journal-lock h4 {
@@ -2041,7 +2217,7 @@
   .ace-quick-btn,
   .garmin-date-step,
   .training-log-year-btn {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
   }
 
   .training-log-year-btn {

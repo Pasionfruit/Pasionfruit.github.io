@@ -20,6 +20,11 @@
   --shadow: 0 1px 2px rgba(94, 70, 32, 0.08);
   --backdrop: rgba(64, 48, 22, 0.24);
   --header-bg: rgba(242, 233, 212, 0.92);
+  --color-teal: #14b8a6;
+  --color-blue: #3b82f6;
+  --color-lavender: #a855f7;
+  --color-amber: #f59e0b;
+  --color-coral: #ef806b;
 }
 
 :root[data-theme='dark'] {
@@ -36,6 +41,11 @@
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
   --backdrop: rgba(0, 0, 0, 0.4);
   --header-bg: rgba(30, 32, 32, 0.92);
+  --color-teal: #5eead4;
+  --color-blue: #93b4ff;
+  --color-lavender: #c4a0ff;
+  --color-amber: #f6c76b;
+  --color-coral: #f5a18f;
 }
 
 :root[data-theme='dark'] body {
