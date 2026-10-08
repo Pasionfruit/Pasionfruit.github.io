@@ -41,8 +41,11 @@ Headers, for reference or manual creation:
 
 **`garmin_health`** (row 1) — one row per activity:
 ```
-date  activity_type  title  distance_mi  duration_min  avg_hr  max_hr  calories  tss
+date  activity_type  title  distance_mi  duration_min  avg_hr  max_hr  calories  tss  activity_id
 ```
+`activity_id` is Garmin's id for the activity and the key the API sync upserts
+on, so two workouts on one day keep a row each. The sync adds the column itself
+if it is missing and keeps it formatted as plain text.
 
 **`garmin_wellness`** (row 1) — one row per day, the passive metrics:
 ```

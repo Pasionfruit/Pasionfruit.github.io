@@ -101,9 +101,9 @@ describe('renderAceContext', () => {
     const text = renderAceContext(
       context({
         activities: [
-          { date: '2026-08-30', activity_type: 'lap_swimming', title: 'Pool Swim', distance_mi: '0.5', duration_min: '25', avg_hr: '140', max_hr: '', calories: '', tss: '' },
-          { date: '2026-08-29', activity_type: 'running', title: 'Easy Run', distance_mi: '4', duration_min: '40', avg_hr: '150', max_hr: '', calories: '', tss: '' },
-          { date: '2026-08-28', activity_type: 'treadmill_running', title: 'Treadmill', distance_mi: '3', duration_min: '30', avg_hr: '', max_hr: '', calories: '', tss: '' },
+          { date: '2026-08-30', activity_type: 'lap_swimming', title: 'Pool Swim', distance_mi: '0.5', duration_min: '25', avg_hr: '140', max_hr: '', calories: '', tss: '', activity_id: '' },
+          { date: '2026-08-29', activity_type: 'running', title: 'Easy Run', distance_mi: '4', duration_min: '40', avg_hr: '150', max_hr: '', calories: '', tss: '', activity_id: '' },
+          { date: '2026-08-28', activity_type: 'treadmill_running', title: 'Treadmill', distance_mi: '3', duration_min: '30', avg_hr: '', max_hr: '', calories: '', tss: '', activity_id: '' },
         ],
         races: [
           { event_id: '2', event_date: '10/10/2026 6:30:00', event_name: 'Half Marathon' },

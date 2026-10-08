@@ -16,7 +16,6 @@ const repoMocks = vi.hoisted(() => ({
   createEvent: vi.fn(),
   updateEvent: vi.fn(),
   deleteEvent: vi.fn(),
-  setTrainingWorkoutCompleted: vi.fn(),
   setBucketCompleted: vi.fn(),
   setCountryVisited: vi.fn(),
   createBucketItem: vi.fn(),
@@ -291,7 +290,6 @@ beforeEach(() => {
     },
   ])
   repoMocks.setCountryVisited.mockResolvedValue(undefined)
-  repoMocks.setTrainingWorkoutCompleted.mockResolvedValue(undefined)
   repoMocks.createEvent.mockResolvedValue(undefined)
   repoMocks.updateEvent.mockResolvedValue(undefined)
   repoMocks.deleteEvent.mockResolvedValue(undefined)
@@ -417,45 +415,98 @@ describe('site sections and dashboards', () => {
     vi.stubEnv('VITE_TODOIST_API_TOKEN', 'test-todoist-token')
   })
 
-  it('shows the training tab and allows authorized admin to mark workout complete', async () => {
-    const user = userEvent.setup()
-
+  /*
+   * Completion on the training tab is read from Garmin, never ticked by hand.
+   * Today's plan comes from training_records; today's activities from the
+   * garmin_health sheet, keyed by the local date.
+   */
+  function seedTodaysTraining(morning: string, evening: string, activities: Array<{ id: string; title: string; minutes: string }>) {
     const today = new Date()
-    const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
+    const pad = (value: number) => String(value).padStart(2, '0')
+    const todayKey = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`
 
-    repoMocks.getTrainingRecords.mockResolvedValueOnce([
+    repoMocks.getTrainingRecords.mockResolvedValue([
       {
         training_id: 'home-training-today',
-        date: todayIso,
-        morning_workout: 'Easy Run 20 min',
-        evening_workout: 'Stretch 10 min',
+        date: new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString(),
+        morning_workout: morning,
+        evening_workout: evening,
         completed_morning: false,
         completed_evening: false,
       },
     ])
+    const toRow = ({ id, title, minutes }: { id: string; title: string; minutes: string }) => ({
+      date: todayKey,
+      activity_type: 'other',
+      title,
+      distance_mi: '',
+      duration_min: minutes,
+      avg_hr: '',
+      max_hr: '',
+      calories: '',
+      tss: '',
+      activity_id: id,
+    })
+    repoMocks.getGarminHealth.mockResolvedValue([
+      ...activities.map(toRow),
+      // Yesterday's activity must not count toward today.
+      { ...toRow({ id: '1', title: 'Yesterday Ride', minutes: '60' }), date: '2000-01-01' },
+    ])
+    return toRow
+  }
 
+  async function openTrainingTab() {
+    const user = userEvent.setup()
     renderAdminTasksPage()
-
     const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
     const card = heading.closest('article')
     if (!card) {
       throw new Error('Tasks of the Day card not found')
     }
-
     // Todoist is the default view; training sits behind its own tab.
     await user.click(within(card).getByRole('tab', { name: 'Training' }))
+    return { card: card as HTMLElement, user }
+  }
 
-    const markButtons = await within(card).findAllByRole('button', { name: 'Mark Complete' })
-    await user.click(markButtons[0])
+  it('reads training completion from Garmin and refreshes it on demand', async () => {
+    const toRow = seedTodaysTraining('Easy Run 20 min', 'Stretch 10 min', [
+      { id: '200', title: 'Treadmill Running', minutes: '40' },
+    ])
+    const { card, user } = await openTrainingTab()
+
+    const [, morning, evening] = await within(card).findAllByRole('row')
+    expect(within(morning).getByText('Treadmill Running · 40 min')).toBeTruthy()
+    expect(within(evening).getByText('Not yet')).toBeTruthy()
+    expect(within(card).queryByText(/Yesterday Ride/)).toBeNull()
+    expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
+
+    // The desktop sync has since written the evening session to the sheet.
+    repoMocks.getGarminHealth.mockResolvedValue([
+      toRow({ id: '200', title: 'Treadmill Running', minutes: '40' }),
+      toRow({ id: '201', title: 'Pool Swim', minutes: '30' }),
+    ])
+    await user.click(within(card).getByRole('button', { name: 'Refresh from Garmin' }))
 
     await waitFor(() => {
-      expect(repoMocks.setTrainingWorkoutCompleted).toHaveBeenCalledWith(
-        expect.stringContaining('.'),
-        'home-training-today',
-        'morning',
-        true,
-      )
+      const [, , refreshedEvening] = within(card).getAllByRole('row')
+      expect(within(refreshedEvening).getByText('Pool Swim · 30 min')).toBeTruthy()
     })
+    expect(repoMocks.getGarminHealth).toHaveBeenCalledTimes(2)
+  })
+
+  it('fills planned slots in the order Garmin recorded them, skipping rest days', async () => {
+    // Listed out of order: the lower Garmin id happened first.
+    seedTodaysTraining('Rest day', 'Swim 2k', [
+      { id: '311', title: 'Pool Swim', minutes: '35' },
+      { id: '310', title: 'Strength', minutes: '45' },
+    ])
+    const { card } = await openTrainingTab()
+
+    const [, morning, evening, unplanned] = await within(card).findAllByRole('row')
+    expect(within(morning).getByText('—')).toBeTruthy()
+    expect(within(evening).getByText('Strength · 45 min')).toBeTruthy()
+    expect(within(unplanned).getByText('Unplanned')).toBeTruthy()
+    expect(within(unplanned).getByText('Pool Swim · 35 min')).toBeTruthy()
   })
 
   it('no longer offers a Studying tab on Tasks of the Day', async () => {
@@ -469,35 +520,6 @@ describe('site sections and dashboards', () => {
 
     expect(within(card).getByRole('tab', { name: 'Training' })).toBeTruthy()
     expect(within(card).queryByRole('tab', { name: 'Studying' })).toBeNull()
-  })
-
-  it('blocks training completion editing for non-authorized account', async () => {
-    const today = new Date()
-    const todayIso = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
-
-    repoMocks.getTrainingRecords.mockResolvedValueOnce([
-      {
-        training_id: 'home-training-today',
-        date: todayIso,
-        morning_workout: 'Easy Run 20 min',
-        evening_workout: 'Stretch 10 min',
-        completed_morning: false,
-        completed_evening: false,
-      },
-    ])
-
-    renderAdminTasksPage('pixielee1000@gmail.com')
-
-    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
-    const card = heading.closest('article')
-    if (!card) {
-      throw new Error('Tasks of the Day card not found')
-    }
-
-    expect(within(card).queryByRole('button', { name: 'Mark Complete' })).toBeNull()
-    expect(
-      within(card).getByText('Edit access restricted to admin.'),
-    ).toBeTruthy()
   })
 
   /*

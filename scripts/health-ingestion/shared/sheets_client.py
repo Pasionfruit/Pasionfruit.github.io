@@ -68,16 +68,44 @@ def ensure_worksheet(
     return worksheet
 
 
+def ensure_text_column(worksheet: gspread.Worksheet, header: str) -> None:
+    """
+    Append `header` to row 1 if the tab does not have it yet, and keep the
+    column below it formatted as plain text.
+
+    Meant for ids that look like numbers. The web app reads formatted values,
+    so an id stored as a number comes back however Sheets chooses to display
+    it; stored as text it comes back exactly as written.
+    """
+    headers = worksheet.row_values(1)
+    if header in headers:
+        col = headers.index(header) + 1
+    else:
+        col = len(headers) + 1
+        if col > worksheet.col_count:
+            worksheet.add_cols(col - worksheet.col_count)
+        worksheet.update_cell(1, col, header)
+        print(f"  Added column '{header}' to '{worksheet.title}'.")
+
+    first_cell = gspread.utils.rowcol_to_a1(2, col)
+    worksheet.format(f"{first_cell}:{first_cell[:-1]}", {"numberFormat": {"type": "TEXT"}})
+
+
 def upsert_rows(
     worksheet: gspread.Worksheet,
     rows: list[dict],
     key_col: str = "date",
+    claim_by: str | None = None,
 ) -> tuple[int, int]:
     """
     Upsert rows into a worksheet keyed on key_col.
 
     - Rows whose key already exists are updated in-place.
     - Rows with a new key are appended.
+    - With `claim_by`, a row with a new key first claims an existing row that
+      has no key yet and the same `claim_by` value, and updates it in place.
+      That is how a key column added after the fact adopts the rows already in
+      the tab instead of duplicating them. Each existing row is claimed once.
 
     Returns (updated_count, inserted_count).
     """
@@ -89,18 +117,26 @@ def upsert_rows(
 
     # Build a map from key value → 1-based row index (row 1 = header, data starts at 2)
     key_to_row: dict[str, int] = {}
+    unkeyed_rows: dict[str, list[int]] = {}
     for i, record in enumerate(existing):
         key_val = str(record.get(key_col, "")).strip()
         if key_val:
             key_to_row[key_val] = i + 2  # +2 because enumerate starts at 0 and row 1 is header
+        elif claim_by:
+            claim_val = str(record.get(claim_by, "")).strip()
+            if claim_val:
+                unkeyed_rows.setdefault(claim_val, []).append(i + 2)
 
     to_update: list[dict] = []
     to_insert: list[list] = []
 
     for row in rows:
         key_val = str(row.get(key_col, "")).strip()
+        claimable = unkeyed_rows.get(str(row.get(claim_by, "")).strip()) if claim_by else None
         if key_val in key_to_row:
             to_update.append({"row_index": key_to_row[key_val], "data": row})
+        elif claimable:
+            to_update.append({"row_index": claimable.pop(0), "data": row})
         else:
             to_insert.append([row.get(h, "") for h in headers])
 

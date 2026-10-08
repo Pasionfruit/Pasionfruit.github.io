@@ -71,7 +71,7 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
     meal_plan: 'meal_plan!A1:E10000',
     grocery_list: 'grocery_list!A1:D10000',
     personal_training: 'personal_training!A1:D10000',
-    garmin_health:     'garmin_health!A1:I10000',
+    garmin_health:     'garmin_health!A1:J10000',
     /*
      * Must span every column in the sheet, not just the ones the ingest script
      * still writes: the tab kept two retired columns, which pushed

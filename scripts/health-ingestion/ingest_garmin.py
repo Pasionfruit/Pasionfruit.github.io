@@ -13,14 +13,18 @@ Two modes:
     Omit --since to default to the last 30 days.
 
 Sheet target: garmin_health
-Headers: date, activity_type, title, distance_mi, duration_min, avg_hr, max_hr, calories, tss
+Headers: date, activity_type, title, distance_mi, duration_min, avg_hr, max_hr, calories, tss, activity_id
 
 Notes:
   - CSV mode: Distance is read as-is from the export. Make sure your Garmin Connect
     account is set to statute (imperial) units so the Distance column contains miles.
   - API mode: Garmin returns distance in meters; the script converts to miles.
-  - date is the upsert key — running twice with the same data updates in-place.
-    If you record multiple activities on one day, only the last one in the source wins.
+  - API mode upserts on activity_id, Garmin's own id for the activity, so two
+    workouts on one day keep a row each. Rows from before the column existed
+    have no id; the first sync that sees their activity claims them by date and
+    fills it in, rather than appending duplicates.
+  - CSV mode upserts on date, because the export carries no activity id. With
+    several activities on one day, only the last one in the file wins.
 """
 
 import argparse
@@ -34,7 +38,7 @@ from pathlib import Path
 from dotenv import load_dotenv  # type: ignore[import]
 
 sys.path.insert(0, str(Path(__file__).parent))
-from shared.sheets_client import ensure_worksheet, get_spreadsheet, upsert_rows
+from shared.sheets_client import ensure_text_column, ensure_worksheet, get_spreadsheet, upsert_rows
 
 # Windows consoles default to cp1252, which cannot encode the arrows and
 # ellipses used in this script's progress output — printing one raises
@@ -57,7 +61,7 @@ SHEET_NAME = "garmin_health"
 # and `upsert_rows` maps these keys onto columns by name.
 HEADERS = [
     "date", "activity_type", "title", "distance_mi",
-    "duration_min", "avg_hr", "max_hr", "calories", "tss",
+    "duration_min", "avg_hr", "max_hr", "calories", "tss", "activity_id",
 ]
 
 _COL_MAP = {
@@ -191,6 +195,7 @@ def fetch_garmin_api(since_date: str) -> list[dict]:
             "max_hr":        str(a.get("maxHR") or ""),
             "calories":      str(a.get("calories") or ""),
             "tss":           str(tss) if tss is not None else "",
+            "activity_id":   str(a.get("activityId") or ""),
         })
     return rows
 
@@ -230,7 +235,11 @@ def main() -> None:
 
     ss = get_spreadsheet()
     ws = ensure_worksheet(ss, SHEET_NAME, HEADERS)
-    updated, inserted = upsert_rows(ws, rows, key_col="date")
+    if args.api:
+        ensure_text_column(ws, "activity_id")
+        updated, inserted = upsert_rows(ws, rows, key_col="activity_id", claim_by="date")
+    else:
+        updated, inserted = upsert_rows(ws, rows, key_col="date")
     print(f"  Done: {updated} updated, {inserted} inserted.")
 
 

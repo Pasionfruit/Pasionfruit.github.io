@@ -3639,10 +3639,12 @@ button svg,
   min-width: 8.5rem;
 }
 
-.study-complete-btn {
-  min-width: 7.5rem;
-  padding: 0.25rem 0.45rem;
-  font-size: 0.74rem;
+/* "Workout(s) of the Day" with its Garmin refresh button at the far end. */
+.workout-of-day-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .training-log-main {
@@ -3853,11 +3855,6 @@ button svg,
 
   .study-complete-cell {
     min-width: 0;
-  }
-
-  .study-complete-btn {
-    min-width: 0;
-    width: 100%;
   }
 
   .study-today-table th,

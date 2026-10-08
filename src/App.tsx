@@ -8,6 +8,7 @@ import {
   NotebookPen,
   Newspaper,
   Pencil,
+  RefreshCw,
   RotateCcw,
   SquareCheck,
   type LucideIcon,
@@ -85,7 +86,6 @@ import {
   getRingconnHealth,
   getAppleHealth,
   getTrainingRecords,
-  setTrainingWorkoutCompleted,
   updateEvent,
   upsertTrainingRecord,
 } from './data/sheets/repositories'
@@ -364,7 +364,7 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
       <GarminWellnessCard title="Daily wellness" />
       <HealthDataCard title="Health Data" />
-      <TrainingLogCard title="Training Log" canWrite={false} idToken={googleIdToken} />
+      <TrainingLogCard title="Training Log" />
     </AdminPage>
   )
 }
@@ -763,7 +763,7 @@ function HomePage() {
         onToggle={() => toggleSection('training')}
       >
         <WorkoutOfTheDayCard title="Workout of the Day" />
-        <TrainingLogCard title="Training Log" canWrite={false} idToken="" showToday={false} />
+        <TrainingLogCard title="Training Log" showToday={false} />
         <NextEventCountdownCard title="Next Event Countdown" canWrite={false} idToken="" />
       </HomeSection>
     </div>
@@ -795,14 +795,16 @@ function TodoistTasksCard({
   const todoistConfigured = isTodoistConfigured()
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const canEditTodoist = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
-  const canWrite = canEditTodoist
   const canViewOriginalTabs = shouldUseAdminProfile(googleEmail)
   const [view, setView] = useState<'training' | 'todoist'>(
     canViewOriginalTabs ? 'todoist' : 'training',
   )
   const [rows, setRows] = useState<TodoistTask[]>([])
   const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
+  const [garminRows, setGarminRows] = useState<GarminHealthRecord[]>([])
+  const [garminError, setGarminError] = useState('')
   const [isDailyLoading, setIsDailyLoading] = useState(true)
+  const [isRefreshingDaily, setIsRefreshingDaily] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
@@ -815,17 +817,37 @@ function TodoistTasksCard({
     [trainingRows, todayKey],
   )
 
+  /*
+   * Completion is whatever Garmin recorded today, not a box ticked here. The
+   * sheet only advances when the desktop sync runs, so refreshing re-reads it
+   * but cannot make the watch's newest activity appear any sooner.
+   */
+  const todaysWorkouts = useMemo(
+    () =>
+      pairPlanWithGarmin(
+        todaysTrainingRecord,
+        garminRows.filter((row) => String(row.date ?? '').slice(0, 10) === todayKey),
+      ),
+    [todaysTrainingRecord, garminRows, todayKey],
+  )
+
   const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
   const summaryTodayCount = rows.length - summaryOverdueCount
 
+  /** A failed read keeps what is already on screen rather than blanking it. */
   async function loadDailyData() {
-    try {
-      setTrainingRows(await getTrainingRecords())
-    } catch {
-      setTrainingRows([])
-    } finally {
-      setIsDailyLoading(false)
-    }
+    const [training, garmin] = await Promise.allSettled([getTrainingRecords(), getGarminHealth()])
+    if (training.status === 'fulfilled') setTrainingRows(training.value)
+    if (garmin.status === 'fulfilled') setGarminRows(garmin.value)
+    setGarminError(garmin.status === 'rejected' ? 'Could not load Garmin activities.' : '')
+    setIsDailyLoading(false)
+  }
+
+  async function handleRefreshDaily() {
+    if (isRefreshingDaily) return
+    setIsRefreshingDaily(true)
+    await loadDailyData()
+    setIsRefreshingDaily(false)
   }
 
   async function loadTasks() {
@@ -852,31 +874,6 @@ function TodoistTasksCard({
 
     void loadTasks()
   }, [])
-
-  async function handleToggleTrainingWorkout(period: 'morning' | 'evening') {
-    if (!canWrite || !googleIdToken || !todaysTrainingRecord || isWriting) return
-    const isMorning = period === 'morning'
-    const nextCompleted = isMorning ? !todaysTrainingRecord.completed_morning : !todaysTrainingRecord.completed_evening
-    if (nextCompleted) sounds.studyWorkoutComplete()
-    const previousRows = trainingRows
-    setIsWriting(true)
-    setWriteError('')
-    setTrainingRows((currentRows) =>
-      currentRows.map((row) => {
-        if (row.training_id !== todaysTrainingRecord.training_id) return row
-        return isMorning ? { ...row, completed_morning: nextCompleted } : { ...row, completed_evening: nextCompleted }
-      }),
-    )
-    try {
-      await setTrainingWorkoutCompleted(googleIdToken, todaysTrainingRecord.training_id, period, nextCompleted)
-      await loadDailyData()
-    } catch (error) {
-      setTrainingRows(previousRows)
-      setWriteError(error instanceof Error ? error.message : 'Unable to update workout completion state')
-    } finally {
-      setIsWriting(false)
-    }
-  }
 
   async function handleCompleteTask(task: TodoistTask) {
     if (isWriting || !todoistConfigured || !canEditTodoist) {
@@ -948,7 +945,21 @@ function TodoistTasksCard({
             </button>
           </div>
 
-          {view === 'training' ? <p className="sheets-meta">Workout(s) of the Day</p> : null}
+          {view === 'training' ? (
+            <div className="workout-of-day-heading">
+              <p className="sheets-meta">Workout(s) of the Day</p>
+              <button
+                type="button"
+                className="section-collapse-btn"
+                onClick={() => void handleRefreshDaily()}
+                disabled={isDailyLoading || isRefreshingDaily}
+                aria-label="Refresh from Garmin"
+                title="Refresh from Garmin"
+              >
+                <RefreshCw size={14} aria-hidden="true" />
+              </button>
+            </div>
+          ) : null}
 
           {view === 'todoist' ? <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p> : null}
 
@@ -957,7 +968,7 @@ function TodoistTasksCard({
           ) : null}
 
           {view === 'training' && !isDailyLoading ? (
-            todaysTrainingRecord ? (
+            todaysWorkouts.planned.length > 0 || todaysWorkouts.unplanned.length > 0 ? (
               <div className="study-today-shell">
                 <table className="study-today-table">
                   <thead>
@@ -967,40 +978,26 @@ function TodoistTasksCard({
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td><WorkoutText value={todaysTrainingRecord.morning_workout} empty="Morning —" /></td>
-                      <td className="study-complete-cell">
-                        {canWrite ? (
-                          <button
-                            type="button"
-                            className="secondary-action study-complete-btn"
-                            onClick={() => void handleToggleTrainingWorkout('morning')}
-                            disabled={!googleIdToken || isWriting}
-                          >
-                            {todaysTrainingRecord.completed_morning ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                          </button>
-                        ) : (
-                          <span>{todaysTrainingRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><WorkoutText value={todaysTrainingRecord.evening_workout} empty="Evening —" /></td>
-                      <td className="study-complete-cell">
-                        {canWrite ? (
-                          <button
-                            type="button"
-                            className="secondary-action study-complete-btn"
-                            onClick={() => void handleToggleTrainingWorkout('evening')}
-                            disabled={!googleIdToken || isWriting}
-                          >
-                            {todaysTrainingRecord.completed_evening ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                          </button>
-                        ) : (
-                          <span>{todaysTrainingRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
-                        )}
-                      </td>
-                    </tr>
+                    {todaysWorkouts.planned.map(({ workout, isPlanned, activity }, index) => (
+                      <tr key={index === 0 ? 'morning' : 'evening'}>
+                        <td><WorkoutText value={workout} empty={index === 0 ? 'Morning —' : 'Evening —'} /></td>
+                        <td className="study-complete-cell">
+                          {activity ? (
+                            <span><Check size={12} aria-hidden="true" /> {describeGarminActivity(activity)}</span>
+                          ) : (
+                            <span>{isPlanned ? 'Not yet' : '—'}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {todaysWorkouts.unplanned.map((activity, index) => (
+                      <tr key={activity.activity_id || `unplanned-${index}`}>
+                        <td className="sheets-meta">Unplanned</td>
+                        <td className="study-complete-cell">
+                          <span><Check size={12} aria-hidden="true" /> {describeGarminActivity(activity)}</span>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -1009,9 +1006,11 @@ function TodoistTasksCard({
             )
           ) : null}
 
-          {view === 'training' && !canWrite ? (
-            <p className="sheets-meta">Edit access restricted to admin.</p>
+          {view === 'training' && !isDailyLoading ? (
+            <p className="sheets-meta">Completed is read from Garmin, which syncs each morning.</p>
           ) : null}
+
+          {view === 'training' && garminError ? <p className="sheets-error">{garminError}</p> : null}
 
           {view === 'todoist' && !todoistConfigured ? (
             <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
@@ -1266,20 +1265,55 @@ function garminToTrainingRows(rows: GarminHealthRecord[]): TrainingRecord[] {
     byDay.set(key, [...(byDay.get(key) ?? []), row])
   }
 
-  const describe = (row: GarminHealthRecord) => {
-    const name = (row.title || row.activity_type || 'Activity').trim()
-    const minutes = Number(row.duration_min)
-    return Number.isFinite(minutes) && minutes > 0 ? `${name} · ${Math.round(minutes)} min` : name
-  }
+  return [...byDay.entries()].map(([date, dayRows]) => {
+    const [first, second] = [...dayRows].sort(byGarminStartOrder)
+    return {
+      training_id: date,
+      date,
+      morning_workout: first ? describeGarminActivity(first) : '',
+      evening_workout: second ? describeGarminActivity(second) : '',
+      completed_morning: dayRows.length >= 1,
+      completed_evening: dayRows.length >= 2,
+    }
+  })
+}
 
-  return [...byDay.entries()].map(([date, dayRows]) => ({
-    training_id: date,
-    date,
-    morning_workout: dayRows[0] ? describe(dayRows[0]) : '',
-    evening_workout: dayRows[1] ? describe(dayRows[1]) : '',
-    completed_morning: dayRows.length >= 1,
-    completed_evening: dayRows.length >= 2,
-  }))
+/** "Pool Swim · 30 min" — how the log and the daily card name an activity. */
+function describeGarminActivity(row: GarminHealthRecord) {
+  const name = (row.title || row.activity_type || 'Activity').trim()
+  const minutes = Number(row.duration_min)
+  return Number.isFinite(minutes) && minutes > 0 ? `${name} · ${Math.round(minutes)} min` : name
+}
+
+/**
+ * Orders a day's activities by when they happened. Garmin's activity ids rise
+ * over time; rows ingested before the id column existed have none, and keep
+ * their sheet order after the ones that do.
+ */
+function byGarminStartOrder(a: GarminHealthRecord, b: GarminHealthRecord) {
+  const rank = (row: GarminHealthRecord) => (row.activity_id ? Number(row.activity_id) : Number.POSITIVE_INFINITY)
+  const [rankA, rankB] = [rank(a), rank(b)]
+  return rankA === rankB ? 0 : rankA < rankB ? -1 : 1
+}
+
+type PlannedWorkout = { workout: string; isPlanned: boolean; activity?: GarminHealthRecord }
+
+/**
+ * Today's plan beside what Garmin recorded. Activities fill the planned slots
+ * in the order they happened; an empty slot or a rest day takes none, so an
+ * evening session is not spent on a morning with nothing planned. Activities
+ * beyond the plan come back as `unplanned`.
+ */
+function pairPlanWithGarmin(plan: TrainingRecord | undefined, activities: GarminHealthRecord[]) {
+  const unclaimed = [...activities].sort(byGarminStartOrder)
+  const planned: PlannedWorkout[] = plan
+    ? [plan.morning_workout ?? '', plan.evening_workout ?? ''].map((workout) => {
+        const isPlanned = Boolean(workout.trim()) && !isRestDayWorkout(workout)
+        return { workout, isPlanned, activity: isPlanned ? unclaimed.shift() : undefined }
+      })
+    : []
+
+  return { planned, unplanned: unclaimed }
 }
 
 function getTrainingTileLevel(row: TrainingRecord) {
@@ -1299,13 +1333,9 @@ function getTrainingTileLevel(row: TrainingRecord) {
 
 function TrainingLogCard({
   title,
-  canWrite,
-  idToken,
   showToday = true,
 }: {
   title: string
-  canWrite: boolean
-  idToken: string
   /**
    * The panel of today's Garmin activities under the tiles. Off on the guest
    * home page, where the planned Workout of the Day card sits above the log.
@@ -1317,8 +1347,6 @@ function TrainingLogCard({
 
   const [rows, setRows] = useState<TrainingRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isWriting, setIsWriting] = useState(false)
-  const [writeError, setWriteError] = useState('')
   const [yearFilter, setYearFilter] = useState(currentYear)
   const [mobilePage, setMobilePage] = useState(() => Math.floor(currentDate.getMonth() / 3))
   const [desktopPage, setDesktopPage] = useState(() => currentDate.getMonth() >= 6 ? 1 : 0)
@@ -1456,41 +1484,6 @@ function TrainingLogCard({
     () => rows.find((row) => toDateOnlyKey(row.date) === todayKey),
     [rows, todayKey],
   )
-
-  async function handleToggleWorkout(period: 'morning' | 'evening') {
-    if (!canWrite || !idToken || !todaysRecord || isWriting) {
-      return
-    }
-
-    const isMorning = period === 'morning'
-    const nextCompleted = isMorning ? !todaysRecord.completed_morning : !todaysRecord.completed_evening
-    const previousRows = rows
-
-    setWriteError('')
-    setIsWriting(true)
-    setRows((currentRows) =>
-      currentRows.map((row) => {
-        if (row.training_id !== todaysRecord.training_id) {
-          return row
-        }
-
-        if (isMorning) {
-          return { ...row, completed_morning: nextCompleted }
-        }
-
-        return { ...row, completed_evening: nextCompleted }
-      }),
-    )
-
-    try {
-      await setTrainingWorkoutCompleted(idToken, todaysRecord.training_id, period, nextCompleted)
-    } catch (error) {
-      setRows(previousRows)
-      setWriteError(error instanceof Error ? error.message : 'Unable to update workout completion state')
-    } finally {
-      setIsWriting(false)
-    }
-  }
 
   return (
     <CollapsibleSectionCard title={title} className="training-log-card">
@@ -1643,35 +1636,13 @@ function TrainingLogCard({
                       <tr>
                         <td><WorkoutText value={todaysRecord.morning_workout} empty="Morning —" /></td>
                         <td className="study-complete-cell">
-                          {canWrite ? (
-                            <button
-                              type="button"
-                              className="secondary-action study-complete-btn"
-                              onClick={() => void handleToggleWorkout('morning')}
-                              disabled={!idToken || isWriting}
-                            >
-                              {todaysRecord.completed_morning ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                            </button>
-                          ) : (
-                            <span>{todaysRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
-                          )}
+                          <span>{todaysRecord.completed_morning ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
                         </td>
                       </tr>
                       <tr>
                         <td><WorkoutText value={todaysRecord.evening_workout} empty="Evening —" /></td>
                         <td className="study-complete-cell">
-                          {canWrite ? (
-                            <button
-                              type="button"
-                              className="secondary-action study-complete-btn"
-                              onClick={() => void handleToggleWorkout('evening')}
-                              disabled={!idToken || isWriting}
-                            >
-                              {todaysRecord.completed_evening ? <><Check size={13} aria-hidden="true" /> Completed</> : 'Mark Complete'}
-                            </button>
-                          ) : (
-                            <span>{todaysRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
-                          )}
+                          <span>{todaysRecord.completed_evening ? <><Check size={12} aria-hidden="true" /> Yes</> : 'No'}</span>
                         </td>
                       </tr>
                     </tbody>
@@ -1681,13 +1652,6 @@ function TrainingLogCard({
                 <p className="sheets-meta">No workout scheduled for today.</p>
               )}
 
-              {!canWrite ? (
-                <p className="sheets-meta">
-                  Edit access restricted to admin.
-                </p>
-              ) : null}
-
-              {writeError ? <p className="sheets-error">{writeError}</p> : null}
             </div>
           ) : null}
         </>

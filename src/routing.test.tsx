@@ -17,7 +17,6 @@ const repoMocks = vi.hoisted(() => {
     createEvent: vi.fn(),
     updateEvent: vi.fn(),
     deleteEvent: vi.fn(),
-    setTrainingWorkoutCompleted: vi.fn(),
     upsertTrainingRecord: vi.fn(),
     createJournalEntry: vi.fn(),
     updateJournalEntry: vi.fn(),

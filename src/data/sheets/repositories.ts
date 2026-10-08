@@ -205,6 +205,7 @@ export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
       max_hr:        String(row.max_hr ?? '').trim(),
       calories:      String(row.calories ?? '').trim(),
       tss:           String(row.tss ?? '').trim(),
+      activity_id:   String(row.activity_id ?? '').trim(),
     }))
     .filter((row) => row.date)
 }
@@ -397,26 +398,6 @@ export async function setCountryVisited(idToken: string, countryId: string, visi
     idToken,
     country_id: countryId,
     visited,
-  })
-}
-
-export async function setTrainingWorkoutCompleted(
-  idToken: string,
-  trainingId: string,
-  workoutPeriod: 'morning' | 'evening',
-  completed: boolean,
-) {
-  const rows = await dbRead<Record<string, unknown>>('training_records')
-  const row = rows.find((entry) => String(entry.training_id) === trainingId)
-  if (!row) throw new Error('Training row not found')
-
-  await dbWrite('training_records', 'PUT', idToken, {
-    training_id: trainingId,
-    date: String(row.date ?? ''),
-    morning_workout: String(row.morning_workout ?? ''),
-    evening_workout: String(row.evening_workout ?? ''),
-    completed_morning: workoutPeriod === 'morning' ? completed : Boolean(Number(row.completed_morning)),
-    completed_evening: workoutPeriod === 'evening' ? completed : Boolean(Number(row.completed_evening)),
   })
 }
 

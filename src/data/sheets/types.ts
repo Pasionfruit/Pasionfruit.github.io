@@ -84,6 +84,11 @@ export type GarminHealthRecord = {
   max_hr: string
   calories: string
   tss: string
+  /**
+   * Garmin's own id for the activity. Ids rise over time, so they order a
+   * day's activities; rows ingested before the column existed have none.
+   */
+  activity_id: string
 }
 
 export type RingconnHealthRecord = {
