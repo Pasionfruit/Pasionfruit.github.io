@@ -1,6 +1,7 @@
 /**
- * News for the admin dashboard: Google News RSS, fetched server-side because
- * news.google.com sends no CORS headers, and handed back as JSON.
+ * News for the admin dashboard: publisher RSS and Bing News searches (see
+ * feed.js), fetched server-side because feeds send no CORS headers, and handed
+ * back as JSON.
  *
  * Routes: GET /news?feed=nation|world   or   GET /news?place=…&region=…
  *         GET /article?url=… (plain article text for an on-request Ace summary)
@@ -15,7 +16,7 @@
  */
 
 import { createHttp } from '../shared/admin.js'
-import { feedUrl, parseFeed } from './feed.js'
+import { feedSources, mergeFeeds, parseFeed } from './feed.js'
 import { publicArticleUrl, readArticle } from './article.js'
 
 const { json, deny, preflight } = createHttp({ methods: 'GET, OPTIONS' })
@@ -93,28 +94,44 @@ export default {
       }
     }
 
-    const upstream = feedUrl(url.searchParams)
-    if (!upstream) {
+    const sources = feedSources(url.searchParams)
+    if (sources.length === 0) {
       return deny(400, 'Ask for ?feed=nation, ?feed=world, or ?place=…', request, env)
     }
 
-    try {
-      const feed = await fetch(upstream, {
-        headers: { Accept: 'application/rss+xml, application/xml' },
-      })
-      if (!feed.ok || !feed.body) {
-        throw new Error(`upstream returned ${feed.status}`)
+    // One outlet being down thins the card out; only all of them failing is an error.
+    const results = await Promise.allSettled(sources.map((source) => readFeed(source)))
+    const lists = []
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        lists.push(result.value)
+      } else {
+        console.error(
+          JSON.stringify({
+            message: 'news feed failed',
+            upstream: sources[index].url,
+            error: String(result.reason?.message ?? result.reason),
+          }),
+        )
       }
+    })
 
-      const items = parseFeed(await readCapped(feed, MAX_FEED_BYTES))
-      const response = json({ items }, request, env)
-      response.headers.set('Cache-Control', `private, max-age=${CACHE_SECONDS}`)
-      return response
-    } catch (error) {
-      console.error(
-        JSON.stringify({ message: 'news feed failed', upstream, error: String(error?.message ?? error) }),
-      )
+    if (lists.length === 0) {
       return deny(502, 'The news feed is unavailable right now', request, env)
     }
+
+    const response = json({ items: mergeFeeds(lists) }, request, env)
+    response.headers.set('Cache-Control', `private, max-age=${CACHE_SECONDS}`)
+    return response
   },
+}
+
+async function readFeed({ url, source }) {
+  const feed = await fetch(url, {
+    headers: { Accept: 'application/rss+xml, application/xml' },
+  })
+  if (!feed.ok || !feed.body) {
+    throw new Error(`upstream returned ${feed.status}`)
+  }
+  return parseFeed(await readCapped(feed, MAX_FEED_BYTES), source)
 }

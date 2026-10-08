@@ -141,7 +141,7 @@ function NewsCard({
 
 /**
  * Four scopes of headlines, small to large. Local and City follow the device
- * location; Nation and International are Google News's US and World editions.
+ * location; Nation and International blend a few outlets' US and World feeds.
  */
 export function NewsDashboard({ idToken }: { idToken: string }) {
   const meta = adminDashboardsById.news

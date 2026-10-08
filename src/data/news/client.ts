@@ -1,6 +1,6 @@
 /**
- * Headlines from the news Worker (workers/news), which reads Google News RSS
- * server-side and returns JSON. Admin-only: the Worker checks the bearer with
+ * Headlines from the news Worker (workers/news), which reads publisher RSS and
+ * Bing News searches server-side and returns JSON. Admin-only: the Worker checks the bearer with
  * the db Worker, the same session the rest of the dashboards use.
  */
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FEEDS, MAX_ITEMS, decodeEntities, feedUrl, parseFeed } from './feed.js'
+import { FEEDS, MAX_ITEMS, decodeEntities, feedSources, mergeFeeds, parseFeed } from './feed.js'
 
 // Trimmed from a real Google News RSS response.
 const SAMPLE = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><rss version="2.0"><channel>
@@ -10,31 +10,46 @@ const SAMPLE = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><rss vers
 <item><title>No link here - Nowhere</title><source url="https://x.example">Nowhere</source></item>
 </channel></rss>`
 
+// Trimmed from a real Bing News search RSS response.
+const BING_SAMPLE = `<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xmlns:News="https://www.bing.com/news/search?q=x&amp;format=rss"><channel>
+<item><title>Tallahassee on tropical storm warning</title><link>http://www.bing.com/news/apiclick.aspx?ref=FexRss&amp;aid=&amp;tid=abc&amp;url=https%3a%2f%2fwww.tallahassee.com%2fstory%2fnews%2f2026%2f10%2f08%2fstorm%2f&amp;c=1&amp;mkt=en-us</link><description>Storm.</description><pubDate>Thu, 08 Oct 2026 13:08:24 GMT</pubDate><News:Source>Tallahassee Democrat on MSN</News:Source></item>
+</channel></rss>`
+
 function params(query) {
   return new URLSearchParams(query)
 }
 
-describe('feedUrl', () => {
+describe('feedSources', () => {
   it('serves the two fixed feeds and nothing else by name', () => {
-    expect(feedUrl(params('feed=nation'))).toBe(FEEDS.nation)
-    expect(feedUrl(params('feed=world'))).toBe(FEEDS.world)
-    expect(feedUrl(params('feed=toString'))).toBe('')
-    expect(feedUrl(params('feed=https://evil.example'))).toBe('')
+    expect(feedSources(params('feed=nation'))).toBe(FEEDS.nation)
+    expect(feedSources(params('feed=world'))).toBe(FEEDS.world)
+    expect(feedSources(params('feed=toString'))).toEqual([])
+    expect(feedSources(params('feed=https://evil.example'))).toEqual([])
   })
 
-  it('searches a place as a phrase, narrowed by its region, over three days', () => {
-    const url = new URL(feedUrl(params('place=Leon County&region=Florida')))
+  it('names the outlet of every fixed feed, over HTTPS', () => {
+    for (const source of [...FEEDS.nation, ...FEEDS.world]) {
+      expect(source.url).toMatch(/^https:\/\//)
+      expect(source.source).not.toBe('')
+    }
+  })
 
-    expect(url.origin + url.pathname).toBe('https://news.google.com/rss/search')
-    expect(url.searchParams.get('q')).toBe('"Leon County" Florida when:3d')
-    expect(url.searchParams.get('gl')).toBe('US')
+  it('searches a place as a phrase, narrowed by its region, over the past week', () => {
+    const [source] = feedSources(params('place=Leon County&region=Florida'))
+    const url = new URL(source.url)
+
+    expect(url.origin + url.pathname).toBe('https://www.bing.com/news/search')
+    expect(url.searchParams.get('q')).toBe('"Leon County" Florida')
+    expect(url.searchParams.get('qft')).toBe('interval="8"')
+    expect(url.searchParams.get('format')).toBe('rss')
   })
 
   it('drops quotes a caller sends, and refuses missing or oversized places', () => {
-    expect(new URL(feedUrl(params('place=Tal"la"hassee'))).searchParams.get('q')).toBe('"Tal la hassee" when:3d')
-    expect(feedUrl(params('region=Florida'))).toBe('')
-    expect(feedUrl(params(`place=${'x'.repeat(81)}`))).toBe('')
-    expect(feedUrl(params(''))).toBe('')
+    const [source] = feedSources(params('place=Tal"la"hassee'))
+    expect(new URL(source.url).searchParams.get('q')).toBe('"Tal la hassee"')
+    expect(feedSources(params('region=Florida'))).toEqual([])
+    expect(feedSources(params(`place=${'x'.repeat(81)}`))).toEqual([])
+    expect(feedSources(params(''))).toEqual([])
   })
 })
 
@@ -70,6 +85,61 @@ describe('parseFeed', () => {
     ).join('')
 
     expect(parseFeed(`<rss>${many}</rss>`)).toHaveLength(MAX_ITEMS)
+  })
+
+  it("unwraps Bing's click-tracking link and reads its News:Source", () => {
+    const [item] = parseFeed(BING_SAMPLE)
+
+    expect(item).toEqual({
+      title: 'Tallahassee on tropical storm warning',
+      url: 'https://www.tallahassee.com/story/news/2026/10/08/storm/',
+      source: 'Tallahassee Democrat on MSN',
+      publishedAt: '2026-10-08T13:08:24.000Z',
+    })
+  })
+
+  it("falls back to the feed's outlet when an item names none", () => {
+    const [item] = parseFeed(
+      '<rss><item><title>Story</title><link>https://www.npr.org/a</link></item></rss>',
+      'NPR',
+    )
+
+    expect(item.source).toBe('NPR')
+  })
+})
+
+describe('mergeFeeds', () => {
+  const story = (source, index, minute) => ({
+    title: `${source} story ${index}`,
+    url: `https://${source}.example/${index}`,
+    source,
+    publishedAt: `2026-10-08T12:${String(minute).padStart(2, '0')}:00.000Z`,
+  })
+
+  it('blends outlets newest first without letting a busy one crowd the rest out', () => {
+    const busy = Array.from({ length: MAX_ITEMS }, (_, index) => story('busy', index, 59 - index))
+    const quiet = [story('quiet', 0, 0), story('quiet', 1, 1)]
+
+    const items = mergeFeeds([busy, quiet])
+
+    expect(items).toHaveLength(MAX_ITEMS)
+    expect(items.filter((item) => item.source === 'quiet')).toHaveLength(2)
+    expect(items[0].title).toBe('busy story 0')
+    expect(items.at(-1).title).toBe('quiet story 0')
+  })
+
+  it('keeps a single feed whole', () => {
+    const only = Array.from({ length: MAX_ITEMS }, (_, index) => story('only', index, 59 - index))
+
+    expect(mergeFeeds([only])).toHaveLength(MAX_ITEMS)
+  })
+
+  it('shows a story two outlets carry once', () => {
+    const first = story('a', 0, 10)
+    const sameLink = { ...story('b', 0, 11), url: first.url }
+    const sameTitle = { ...story('c', 0, 12), title: first.title.toUpperCase() }
+
+    expect(mergeFeeds([[first], [sameLink], [sameTitle]])).toHaveLength(1)
   })
 })
 

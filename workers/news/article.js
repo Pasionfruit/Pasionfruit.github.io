@@ -126,7 +126,7 @@ async function resolveGoogleArticle(page, signal) {
     null, null, null, null, null, 0, 1], 'en-US', 'US', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0]
   const rpc = JSON.stringify(['garturlreq', settings, id, timestamp, signature])
   const response = await fetch('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
-    method: 'POST', signal, redirect: 'error',
+    method: 'POST', signal, redirect: 'manual',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ 'f.req': JSON.stringify([[['Fbv4je', rpc, null, 'generic']]]) }),
   })
@@ -144,8 +144,38 @@ async function resolveGoogleArticle(page, signal) {
   throw new Error('Google News link could not be resolved')
 }
 
+/**
+ * MSN story pages render client-side, so their HTML has no text to read. Bing
+ * local results link to MSN often; the text comes from MSN's content API,
+ * which also names the publisher's original story to cite.
+ */
+function msnArticleId(value) {
+  const url = new URL(value)
+  if (!/(^|\.)msn\.com$/.test(url.hostname)) return ''
+  return url.pathname.match(/\/ar-([A-Za-z0-9]+)\/?$/)?.[1] ?? ''
+}
+
+async function readMsnArticle(url, id, signal) {
+  const response = await fetch(`https://assets.msn.com/content/view/v2/Detail/en-us/${id}`, {
+    signal, redirect: 'manual', headers: { Accept: 'application/json' },
+  })
+  const story = JSON.parse(await readCapped(response))
+  const text = [...String(story.body ?? '').matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map(([, paragraph]) => plainText(paragraph)).filter(Boolean).join('\n\n')
+  if (!text) throw new Error('No readable article text')
+  return {
+    url: publicArticleUrl(story.sourceHref)?.href ?? url,
+    title: plainText(String(story.title ?? '')),
+    text: text.slice(0, MAX_TEXT),
+    excerpt: false,
+  }
+}
+
 export async function readArticle(url) {
   const signal = AbortSignal.timeout(15_000)
+  const msnId = msnArticleId(url)
+  if (msnId) return readMsnArticle(url, msnId, signal)
+
   let page = await fetchPage(url, signal)
   if (new URL(page.url).hostname === 'news.google.com') {
     page = await fetchPage(await resolveGoogleArticle(page, signal), signal)

@@ -54,6 +54,23 @@ describe('article retrieval', () => {
     expect(fetched.mock.calls[2][0]).toBe('https://publisher.com/story')
   })
 
+  it("reads MSN stories from MSN's content API and cites the original publisher", async () => {
+    const fetched = vi.fn(async () => Response.json({
+      title: 'Leon County declares an emergency',
+      body: `<img data-reference="image" /><p>${body}</p><p><a href="https://x.example">Second</a> paragraph.</p>`,
+      sourceHref: 'https://www.tallahassee.com/story/news/emergency/',
+    }))
+    vi.stubGlobal('fetch', fetched)
+    const article = await readArticle('https://www.msn.com/en-us/news/other/leon-county-declares/ar-AA2dQVmo')
+    expect(fetched.mock.calls[0][0]).toBe('https://assets.msn.com/content/view/v2/Detail/en-us/AA2dQVmo')
+    expect(article).toEqual({
+      url: 'https://www.tallahassee.com/story/news/emergency/',
+      title: 'Leon County declares an emergency',
+      text: `${body}\n\nSecond paragraph.`,
+      excerpt: false,
+    })
+  })
+
   it('rejects oversized responses', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => page('x'.repeat(2_000_001))))
     await expect(readArticle('https://publisher.com/story')).rejects.toThrow('Article too large')

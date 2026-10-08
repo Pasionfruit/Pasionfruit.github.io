@@ -18,6 +18,20 @@ The existing `DB_API` binding verifies the admin session. No additional secrets
 or bindings are needed. Ace must already be configured through
 `VITE_ACE_BASE_URL` and `VITE_ACE_MODEL`.
 
+## Sources
+
+Google News RSS answers Cloudflare's egress IPs with a 503 "Sorry…" page
+whatever the User-Agent, so it cannot be read from a Worker. Instead:
+
+- **Nation** blends NPR National, CBS News US, ABC News US and PBS News.
+- **International** blends BBC World, NPR World, CBS News World and ABC News
+  International.
+- **Local** and **City** are Bing News RSS searches for the place, limited to
+  the past week. Bing's click-tracking links are unwrapped to the publisher URL.
+
+Outlets take turns filling the 20 slots, so one busy feed cannot crowd out the
+others, and a feed that fails only thins the card out.
+
 ## Routes
 
 - `GET /news?feed=nation|world` or `GET /news?place=...&region=...`: up to 20 headlines.
@@ -25,7 +39,9 @@ or bindings are needed. Ace must already be configured through
   `excerpt` flag. Uses the same bearer authentication as `/news`.
 
 Article retrieval runs only when the user sends a linked article request.
-Google News links are resolved to their publisher through Google's signed
+MSN links (common in Bing's local results) render client-side, so their text
+is read from MSN's content API, citing the original publisher. Google News
+links are still resolved to their publisher through Google's signed
 redirect RPC, following the approach used by
 [newspaper4k](https://github.com/AndyTheFactory/newspaper4k/blob/master/newspaper/google_news.py).
 This private Google endpoint may change. Retrieval is capped at 15 seconds and

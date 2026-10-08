@@ -271,7 +271,7 @@ export function AceChat({
     if (node) {
       node.scrollTop = node.scrollHeight
     }
-  }, [turns, streaming, open])
+  }, [turns, streaming, isThinking, open])
 
   useEffect(
     () => () => {
@@ -957,7 +957,7 @@ export function AceChat({
             {streaming ? <AceMarkdown text={streaming} className="ace-turn ace-turn-assistant" /> : null}
 
             {isThinking && !streaming ? (
-              <div className="ace-typing" role="status" aria-label="Ace is thinking">
+              <div className="ace-turn ace-turn-assistant ace-typing" role="status" aria-label="Ace is thinking">
                 <span />
                 <span />
                 <span />

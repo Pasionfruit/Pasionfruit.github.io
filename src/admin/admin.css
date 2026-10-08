@@ -1922,37 +1922,50 @@
   gap: 0.4rem;
 }
 
-/* ── Ace: bouncing thinking dots ── */
+/* ── Ace: bouncing thinking dots ──
+   Sits in an assistant bubble, where the reply will land, so a long think
+   reads as Ace working rather than the panel hanging. */
 .ace-typing {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 0.28rem;
-  padding: 0.5rem 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.32rem;
+  min-height: 2.1rem;
+  padding: 0.55rem 0.8rem 0.45rem;
 }
 
 .ace-typing span {
-  width: 0.42rem;
-  height: 0.42rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
-  background: var(--text-muted);
-  animation: ace-bounce 1.15s ease-in-out infinite;
+  background: var(--accent);
+  animation: ace-bounce 1.1s ease-in-out infinite;
 }
 
 .ace-typing span:nth-child(2) {
-  animation-delay: 0.15s;
+  animation-delay: 0.16s;
 }
 
 .ace-typing span:nth-child(3) {
-  animation-delay: 0.3s;
+  animation-delay: 0.32s;
 }
 
 @keyframes ace-bounce {
-  0%, 55%, 100% {
+  0%, 60%, 100% {
     transform: translateY(0);
-    opacity: 0.5;
+    opacity: 0.4;
   }
-  25% {
-    transform: translateY(-0.32rem);
+  30% {
+    transform: translateY(-0.4rem);
+    opacity: 1;
+  }
+}
+
+/* Reduced motion keeps a fade, not nothing: static dots look frozen. */
+@keyframes ace-fade {
+  0%, 60%, 100% {
+    opacity: 0.35;
+  }
+  30% {
     opacity: 1;
   }
 }
@@ -2046,9 +2059,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ace-panel,
-  .ace-typing span,
   .ace-voice-btn.active {
     animation: none;
+  }
+
+  .ace-typing span {
+    animation-name: ace-fade;
   }
 
   .ace-fab {
