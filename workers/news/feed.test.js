@@ -20,15 +20,16 @@ function params(query) {
 }
 
 describe('feedSources', () => {
-  it('serves the two fixed feeds and nothing else by name', () => {
+  it('serves the fixed feeds and nothing else by name', () => {
     expect(feedSources(params('feed=nation'))).toBe(FEEDS.nation)
     expect(feedSources(params('feed=world'))).toBe(FEEDS.world)
+    expect(feedSources(params('feed=tech'))).toBe(FEEDS.tech)
     expect(feedSources(params('feed=toString'))).toEqual([])
     expect(feedSources(params('feed=https://evil.example'))).toEqual([])
   })
 
   it('names the outlet of every fixed feed, over HTTPS', () => {
-    for (const source of [...FEEDS.nation, ...FEEDS.world]) {
+    for (const source of Object.values(FEEDS).flat()) {
       expect(source.url).toMatch(/^https:\/\//)
       expect(source.source).not.toBe('')
     }

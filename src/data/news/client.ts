@@ -16,7 +16,7 @@ export type NewsItem = {
   publishedAt: string
 }
 
-export type NewsQuery = { feed: 'nation' | 'world' } | { place: string; region?: string }
+export type NewsQuery = { feed: 'nation' | 'world' | 'tech' } | { place: string; region?: string }
 
 export type NewsArticle = { url: string; title: string; text: string; excerpt: boolean }
 

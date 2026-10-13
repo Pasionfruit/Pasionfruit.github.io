@@ -20,6 +20,7 @@ const ENTRY: JournalEntryRecord = {
 
 vi.mock('../data/sheets/repositories', () => ({
   getJournalEntries: vi.fn(async () => [ENTRY]),
+  getGarminWellness: vi.fn(async () => []),
   createJournalEntry: vi.fn(),
   updateJournalEntry: vi.fn(),
   deleteJournalEntry: vi.fn(),

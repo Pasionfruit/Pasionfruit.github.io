@@ -11,6 +11,7 @@ const repoMocks = vi.hoisted(() => {
     getTrainingRecords: empty(),
     getPersonalTraining: empty(),
     getGarminHealth: empty(),
+    getGarminWellness: empty(),
     getRingconnHealth: empty(),
     getAppleHealth: empty(),
     getJournalEntries: empty(),
@@ -539,18 +540,22 @@ describe('admin routing', () => {
     expect(tasks.getAttribute('title')).toBe('Full task manager')
   })
 
-  it('drops Milestones from Health and folds sleep into Daily wellness', async () => {
+  it('keeps Health to workouts: no Milestones, and Daily wellness lives on Personal', async () => {
     renderAt('/admin/health', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Daily wellness' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Health Data' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Milestones' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Daily wellness' })).toBeNull()
   })
 
-  it('drops the Breathe and Sleep & recovery cards from Personal', async () => {
+  it('shows Daily wellness on Personal, after Mood, and no separate Breathe or Sleep card', async () => {
     renderAt('/admin/personal', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Entries' })).toBeTruthy()
+    const mood = await screen.findByRole('heading', { name: 'Mood', level: 3 })
+    const wellness = await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })
+    expect(mood.compareDocumentPosition(wellness) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Breathe' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Sleep & recovery' })).toBeNull()
+    // Sleep is a group inside Daily wellness now, never a card of its own.
+    expect(screen.queryByRole('heading', { name: 'Sleep & recovery', level: 3 })).toBeNull()
   })
 })

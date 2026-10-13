@@ -223,7 +223,21 @@ export function hasWellnessMetrics(row: GarminWellnessRecord) {
   return Object.entries(row).some(([key, value]) => key !== 'date' && String(value).trim() !== '')
 }
 
-export async function getGarminWellness(): Promise<GarminWellnessRecord[]> {
+/*
+ * Personal shows Daily wellness and the mood-and-sleep chart side by side, and
+ * both read this sheet on mount. Callers that overlap share one request; once
+ * it settles the next call (a Refresh) fetches fresh.
+ */
+let wellnessRequest: Promise<GarminWellnessRecord[]> | null = null
+
+export function getGarminWellness(): Promise<GarminWellnessRecord[]> {
+  wellnessRequest ??= loadGarminWellness().finally(() => {
+    wellnessRequest = null
+  })
+  return wellnessRequest
+}
+
+async function loadGarminWellness(): Promise<GarminWellnessRecord[]> {
   const rows = await fetchSheetTable<Record<string, unknown>>('garmin_wellness')
 
   const text = (value: unknown) => String(value ?? '').trim()

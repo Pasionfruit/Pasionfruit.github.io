@@ -26,6 +26,8 @@ whatever the User-Agent, so it cannot be read from a Worker. Instead:
 - **Nation** blends NPR National, CBS News US, ABC News US and PBS News.
 - **International** blends BBC World, NPR World, CBS News World and ABC News
   International.
+- **Tech** blends Ars Technica, TechCrunch, Wired and BBC Technology. These are
+  RSS feeds; the parser reads `<item>` only, so Atom-only outlets are left out.
 - **Local** and **City** are Bing News RSS searches for the place, limited to
   the past week. Bing's click-tracking links are unwrapped to the publisher URL.
 
@@ -34,7 +36,7 @@ others, and a feed that fails only thins the card out.
 
 ## Routes
 
-- `GET /news?feed=nation|world` or `GET /news?place=...&region=...`: up to 20 headlines.
+- `GET /news?feed=nation|world|tech` or `GET /news?place=...&region=...`: up to 20 headlines.
 - `GET /article?url=...`: publisher URL, title, available plain text and an
   `excerpt` flag. Uses the same bearer authentication as `/news`.
 

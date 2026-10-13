@@ -83,17 +83,19 @@ describe('NewsDashboard', () => {
     }
   })
 
-  it('shows local, city, national and international headlines, small to large', async () => {
+  it('shows local, city, national and international headlines, small to large, then tech', async () => {
     stubGeolocation('allow')
     render(<NewsDashboard idToken="token" />)
 
     const headings = screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)
-    expect(headings).toEqual(['Local', 'City', 'Nation', 'International'])
+    expect(headings).toEqual(['Local', 'City', 'Nation', 'International', 'Tech'])
 
     expect(await screen.findByText('Leon County story')).toBeTruthy()
     expect(await screen.findByText('Tallahassee story')).toBeTruthy()
     expect(await screen.findByText('nation story')).toBeTruthy()
     expect(await screen.findByText('world story')).toBeTruthy()
+    expect(await screen.findByText('tech story')).toBeTruthy()
+    expect(newsMocks.getNews).toHaveBeenCalledWith('token', { feed: 'tech' })
 
     expect(newsMocks.getNews).toHaveBeenCalledWith('token', { place: 'Leon County', region: 'Florida' })
     expect(newsMocks.getNews).toHaveBeenCalledWith('token', { place: 'Tallahassee', region: 'Florida' })

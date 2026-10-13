@@ -744,6 +744,11 @@
   .news-grid {
     grid-template-columns: 1fr 1fr;
   }
+
+  /* An odd card out (Tech, fifth) spans the row instead of leaving a hole. */
+  .news-grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
 }
 
 .news-grid > * {
@@ -754,6 +759,7 @@
 .admin-page .news-card:nth-child(2) { --card-accent: var(--color-blue); }
 .admin-page .news-card:nth-child(3) { --card-accent: var(--color-amber); }
 .admin-page .news-card:nth-child(4) { --card-accent: var(--color-lavender); }
+.admin-page .news-card:nth-child(5) { --card-accent: var(--color-coral); }
 
 .news-card h3 {
   display: flex;
@@ -902,28 +908,44 @@
   letter-spacing: 0.03em;
 }
 
-/* Mood tracker */
-.mood-strip {
+/* Mood tracker: mood against hours of sleep, as two lines */
+.mood-series-key {
   display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 4.5rem;
-  margin: 0.8rem 0 0;
-  padding: 0;
-  list-style: none;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.76rem;
 }
 
-.mood-cell {
-  flex: 1 1 0;
-  min-width: 0;
-  border-radius: 2px;
-  background: var(--surface-muted);
+.mood-series-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.mood-cell.empty {
-  height: 18%;
-  background: var(--border);
-  opacity: 0.55;
+.mood-series-swatch {
+  width: 1rem;
+  height: 3px;
+  border-radius: var(--radius-pill);
+}
+
+/* Mood's line is neutral; its points carry the mood colors. */
+.mood-series-swatch--mood {
+  background: var(--text-faint);
+}
+
+/* Chart.js needs a sized box to be responsive into. */
+.mood-chart {
+  position: relative;
+  height: 13rem;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 52rem) {
+  .mood-chart {
+    height: 15rem;
+  }
 }
 
 .mood-legend {
@@ -949,7 +971,7 @@
 .mood-swatch {
   width: 0.65rem;
   height: 0.65rem;
-  border-radius: 2px;
+  border-radius: 50%;
 }
 
 /* Gratitude prompts inside the entry editor */

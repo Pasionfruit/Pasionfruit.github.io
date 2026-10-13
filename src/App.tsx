@@ -67,7 +67,6 @@ import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
-import { GarminWellnessCard } from './admin/GarminCards'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
@@ -373,7 +372,6 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
   return (
     <AdminPage meta={adminDashboardsById.health}>
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
-      <GarminWellnessCard title="Daily wellness" />
       <HealthDataCard title="Health Data" />
       <TrainingLogCard title="Training Log" />
     </AdminPage>

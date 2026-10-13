@@ -9,7 +9,7 @@
  */
 
 /**
- * The two fixed feeds, each blended from several outlets. Their RSS carries no
+ * The fixed feeds, each blended from several outlets. Their RSS carries no
  * <source> element, so the outlet's name rides along with the URL.
  */
 export const FEEDS = {
@@ -25,6 +25,13 @@ export const FEEDS = {
     { url: 'https://www.cbsnews.com/latest/rss/world', source: 'CBS News' },
     { url: 'https://abcnews.go.com/abcnews/internationalheadlines', source: 'ABC News' },
   ],
+  // RSS only: the parser reads <item>, so Atom-only outlets (The Verge) are out.
+  tech: [
+    { url: 'https://feeds.arstechnica.com/arstechnica/index', source: 'Ars Technica' },
+    { url: 'https://techcrunch.com/feed/', source: 'TechCrunch' },
+    { url: 'https://www.wired.com/feed/rss', source: 'Wired' },
+    { url: 'https://feeds.bbci.co.uk/news/technology/rss.xml', source: 'BBC News' },
+  ],
 }
 
 const BING_NEWS = 'https://www.bing.com/news/search'
@@ -38,7 +45,7 @@ const MAX_QUERY_PART = 80
  * The upstream feeds for a request's query string, or [] if it is not one we
  * serve. Only these shapes are accepted, so the Worker cannot be pointed at an
  * arbitrary URL:
- *   ?feed=nation | ?feed=world
+ *   ?feed=nation | ?feed=world | ?feed=tech
  *   ?place=Tallahassee&region=Florida   (region optional)
  *
  * A place is quoted so "Leon County" is matched as a phrase; the region narrows

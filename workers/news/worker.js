@@ -3,7 +3,7 @@
  * feed.js), fetched server-side because feeds send no CORS headers, and handed
  * back as JSON.
  *
- * Routes: GET /news?feed=nation|world   or   GET /news?place=…&region=…
+ * Routes: GET /news?feed=nation|world|tech   or   GET /news?place=…&region=…
  *         GET /article?url=… (plain article text for an on-request Ace summary)
  *
  * Admin-only, like every other Worker here, but it holds none of the auth
@@ -96,7 +96,7 @@ export default {
 
     const sources = feedSources(url.searchParams)
     if (sources.length === 0) {
-      return deny(400, 'Ask for ?feed=nation, ?feed=world, or ?place=…', request, env)
+      return deny(400, 'Ask for ?feed=nation, ?feed=world, ?feed=tech, or ?place=…', request, env)
     }
 
     // One outlet being down thins the card out; only all of them failing is an error.

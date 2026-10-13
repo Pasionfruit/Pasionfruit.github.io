@@ -9,6 +9,7 @@ import {
   updateJournalEntry,
 } from '../data/sheets/repositories'
 import type { JournalEntryRecord } from '../data/sheets/types'
+import { GarminWellnessCard } from './GarminCards'
 import { MoodTrackerCard } from './MoodTrackerCard'
 import { MOOD_SCALE } from './journal/moods'
 import { VerseOfTheDayCard } from './VerseOfTheDayCard'
@@ -463,6 +464,8 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
       </article>
 
       <MoodTrackerCard title="Mood" entries={entries} isLoading={isLoading} />
+      {/* Sleep and recovery sit with mood: how the day felt next to how the night went. */}
+      <GarminWellnessCard title="Daily wellness" />
     </AdminPage>
   )
 }

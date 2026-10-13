@@ -29,7 +29,7 @@ function NewsCard({
   title: string
   subtitle: string
   /** A fixed feed, or else a place to search for. */
-  feed?: 'nation' | 'world'
+  feed?: 'nation' | 'world' | 'tech'
   /** Empty while the place is still being worked out, or if it cannot be. */
   place?: string
   region?: string
@@ -140,8 +140,9 @@ function NewsCard({
 }
 
 /**
- * Four scopes of headlines, small to large. Local and City follow the device
- * location; Nation and International blend a few outlets' US and World feeds.
+ * Four scopes of headlines, small to large, then one topic. Local and City
+ * follow the device location; Nation, International and Tech each blend a few
+ * outlets' feeds.
  */
 export function NewsDashboard({ idToken }: { idToken: string }) {
   const meta = adminDashboardsById.news
@@ -178,6 +179,13 @@ export function NewsDashboard({ idToken }: { idToken: string }) {
           title="International"
           subtitle="World"
           feed="world"
+          idToken={idToken}
+          waitingMessage=""
+        />
+        <NewsCard
+          title="Tech"
+          subtitle="Technology"
+          feed="tech"
           idToken={idToken}
           waitingMessage=""
         />
