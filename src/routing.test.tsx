@@ -211,6 +211,55 @@ describe('guest home page', () => {
     expect(screen.getByRole('heading', { name: 'Professional Experience', hidden: true })).toBeTruthy()
     expect(screen.getAllByRole('link', { name: 'Try it', hidden: true }).length).toBeGreaterThan(0)
     expect(screen.getByRole('heading', { name: 'Server Status', hidden: true })).toBeTruthy()
+    // An Experiences tab that is not selected still ships its content.
+    expect(screen.getByText('Florida State University, Tallahassee, FL')).toBeTruthy()
+  })
+
+  it('opens Experiences straight to work history, with education and skills as tabs', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+
+    const section = document.getElementById('experiences')!
+    expect(within(section).getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+      'Experience',
+      'Education',
+      'Skills',
+    ])
+    // No second layer of collapse: the roles are on screen as soon as the section is.
+    expect(section.querySelector('.section-collapse-btn')).toBeNull()
+    const work = within(section).getByRole('tabpanel', { name: 'Experience' })
+    expect(within(work).getByText('Data Analyst - State Farm')).toBeTruthy()
+
+    await user.click(within(section).getByRole('tab', { name: 'Education' }))
+
+    expect(within(section).getByRole('tab', { name: 'Education' }).getAttribute('aria-selected')).toBe('true')
+    const education = within(section).getByRole('tabpanel')
+    expect(within(education).getByText('Florida State University, Tallahassee, FL')).toBeTruthy()
+    expect(within(education).queryByText('Data Analyst - State Farm')).toBeNull()
+  })
+
+  it('lays Experiences out side by side on desktop, with no tabs or collapse buttons', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn((query: string) => ({
+        matches: query === '(min-width: 900px)',
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      })),
+    )
+    renderAt('/')
+
+    const section = document.getElementById('experiences')!
+    expect(within(section).queryAllByRole('tab')).toHaveLength(0)
+    expect(section.querySelector('.section-collapse-btn')).toBeNull()
+    expect(
+      within(section)
+        .getAllByRole('heading', { level: 3 })
+        .map((heading) => heading.textContent),
+    ).toEqual(['Professional Experience', 'Education', 'Technical Skills'])
+    // Skill details lose the content's "-   -" marker.
+    expect(within(section).getByText(/^Excel\/Google Sheets/)).toBeTruthy()
   })
 
   it('puts the resume downloads in the hero, not behind a section', () => {

@@ -1,4 +1,13 @@
-import React, { type CSSProperties, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  type CSSProperties,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import {
   Activity,
   Check,
@@ -611,6 +620,7 @@ function HomeSection({
   onToggle,
   downloadPdfHref,
   downloadWordHref,
+  gridClassName = '',
   children,
 }: {
   id: SectionId
@@ -618,6 +628,8 @@ function HomeSection({
   onToggle: () => void
   downloadPdfHref?: string
   downloadWordHref?: string
+  /** Extra class on the card grid, for a section that lays its cards out differently. */
+  gridClassName?: string
   children: ReactNode
 }) {
   const section = sectionPages[id]
@@ -664,7 +676,7 @@ function HomeSection({
       <div id={`${id}-panel`} className="home-section-panel" hidden={!isOpen}>
         <SummaryText summary={section.summary} />
         {section.callout ? <p className="page-note">{section.callout}</p> : null}
-        <div className="page-grid">{children}</div>
+        <div className={`page-grid ${gridClassName}`.trim()}>{children}</div>
       </div>
     </section>
   )
@@ -717,27 +729,13 @@ function HomePage() {
         id="experiences"
         isOpen={openSections.includes('experiences')}
         onToggle={() => toggleSection('experiences')}
+        gridClassName="experiences-grid"
       >
-        {sectionPages.experiences.cards.map((card) => {
-          if (card.title === 'Education') {
-            return <EducationCard key={card.title} title={card.title} />
+        <ExperiencesOverview
+          skillsBody={
+            sectionPages.experiences.cards.find((card) => card.title === 'Technical Skills')?.body ?? ''
           }
-
-          if (card.title === 'Professional Experience') {
-            return <ProfessionalExperienceCard key={card.title} title={card.title} />
-          }
-
-          if (card.title === 'Technical Skills') {
-            return <TechnicalSkillsCard key={card.title} title={card.title} body={card.body} />
-          }
-
-          return (
-            <article key={card.title} className="info-card section-page-card">
-              <h3>{card.title}</h3>
-              <p>{card.body}</p>
-            </article>
-          )
-        })}
+        />
       </HomeSection>
 
       <HomeSection
@@ -1166,27 +1164,117 @@ function CollapsibleSectionCard({
   )
 }
 
-function TechnicalSkillsCard({ title, body }: { title: string; body: string }) {
+function TechnicalSkillsList({ body }: { body: string }) {
   const lines = body
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line.length > 0)
 
   return (
-    <CollapsibleSectionCard title={title} className="technical-skills-card" defaultCollapsed>
-      <ul className="technical-skills-list">
-        {lines.map((line) => {
-          const cleanedLine = line.replace(/^•\s*/, '')
-          const isDetail = cleanedLine.startsWith('-')
+    <ul className="technical-skills-list">
+      {lines.map((line) => {
+        const cleanedLine = line.replace(/^•\s*/, '')
+        const isDetail = cleanedLine.startsWith('-')
 
-          return (
-            <li key={line} className={isDetail ? 'technical-skill-detail' : 'technical-skill-heading'}>
-              {isDetail ? cleanedLine.replace(/^-\s*/, '') : cleanedLine}
-            </li>
-          )
-        })}
-      </ul>
-    </CollapsibleSectionCard>
+        return (
+          <li key={line} className={isDetail ? 'technical-skill-detail' : 'technical-skill-heading'}>
+            {/* Detail lines in the content start with a doubled "-   -" marker. */}
+            {isDetail ? cleanedLine.replace(/^(-\s*)+/, '') : cleanedLine}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+/** Tracks a CSS media query, for components that swap layouts rather than just restyle. */
+function useMediaQuery(query: string) {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const mq = window.matchMedia(query)
+      mq.addEventListener('change', onChange)
+      return () => mq.removeEventListener('change', onChange)
+    },
+    [query],
+  )
+
+  return useSyncExternalStore(subscribe, () => window.matchMedia(query).matches)
+}
+
+type ExperienceTab = 'work' | 'education' | 'skills'
+
+const EXPERIENCE_TABS: { id: ExperienceTab; label: string; title: string }[] = [
+  { id: 'work', label: 'Experience', title: 'Professional Experience' },
+  { id: 'education', label: 'Education', title: 'Education' },
+  { id: 'skills', label: 'Skills', title: 'Technical Skills' },
+]
+
+/**
+ * Work, education and skills. On desktop they sit side by side, all open; on
+ * narrower screens they share one card as tabs, so opening the section lands on
+ * content rather than on three more collapsed cards. Every panel stays in the
+ * DOM either way, because this is the only indexed page on the site.
+ */
+function ExperiencesOverview({ skillsBody }: { skillsBody: string }) {
+  const isWide = useMediaQuery('(min-width: 900px)')
+  const [activeTab, setActiveTab] = useState<ExperienceTab>('work')
+
+  const panes: Record<ExperienceTab, ReactNode> = {
+    work: <ProfessionalExperienceList />,
+    education: <EducationList />,
+    skills: <TechnicalSkillsList body={skillsBody} />,
+  }
+
+  if (isWide) {
+    return (
+      <>
+        {EXPERIENCE_TABS.map((tab) => (
+          <article
+            key={tab.id}
+            className={`info-card section-page-card experience-card experience-pane-${tab.id}`}
+          >
+            <h3>{tab.title}</h3>
+            {panes[tab.id]}
+          </article>
+        ))}
+      </>
+    )
+  }
+
+  return (
+    <article className="info-card section-page-card experience-tabs-card">
+      <div className="experience-tabs" role="tablist" aria-label="Experiences">
+        {EXPERIENCE_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            id={`experience-tab-${tab.id}`}
+            type="button"
+            role="tab"
+            aria-selected={tab.id === activeTab}
+            aria-controls={`experience-panel-${tab.id}`}
+            className="experience-tab"
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {EXPERIENCE_TABS.map((tab) => (
+        <section
+          key={tab.id}
+          id={`experience-panel-${tab.id}`}
+          role="tabpanel"
+          aria-labelledby={`experience-tab-${tab.id}`}
+          className="experience-panel"
+          hidden={tab.id !== activeTab}
+        >
+          {/* The tab already names the panel on screen; the heading keeps the outline. */}
+          <h3 className="sr-only">{tab.title}</h3>
+          {panes[tab.id]}
+        </section>
+      ))}
+    </article>
   )
 }
 
@@ -2026,18 +2114,16 @@ function NextEventCountdownCard({
   )
 }
 
-function EducationCard({ title }: { title: string }) {
+function EducationList() {
   return (
-    <CollapsibleSectionCard title={title} className="experience-card" defaultCollapsed>
-      <ul className="experience-list">
-        {educationEntries.map((entry) => (
-          <EducationRow
-            key={`${entry.degree}-${entry.institution}`}
-            entry={entry}
-          />
-        ))}
-      </ul>
-    </CollapsibleSectionCard>
+    <ul className="experience-list">
+      {educationEntries.map((entry) => (
+        <EducationRow
+          key={`${entry.degree}-${entry.institution}`}
+          entry={entry}
+        />
+      ))}
+    </ul>
   )
 }
 
@@ -2138,7 +2224,7 @@ function formatDuration(rawDate: string): string {
   return ` (${months} ${monthLabel})`
 }
 
-function ProfessionalExperienceCard({ title }: { title: string }) {
+function ProfessionalExperienceList() {
   const [viewMode, setViewMode] = useState<'technical' | 'all'>('technical')
 
   const visibleEntries =
@@ -2152,13 +2238,13 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
         })
       : professionalExperienceEntries.filter((entry) => entry.category === 'technical')
 
+  // A filter, not tabs: on narrow screens it already sits inside a tab panel.
   return (
-    <CollapsibleSectionCard title={title} className="experience-card" defaultCollapsed>
-      <div className="experience-toggle" role="tablist" aria-label="Professional experience filter">
+    <>
+      <div className="experience-toggle" role="group" aria-label="Professional experience filter">
         <button
           type="button"
-          role="tab"
-          aria-selected={viewMode === 'technical'}
+          aria-pressed={viewMode === 'technical'}
           className={`experience-toggle-btn ${viewMode === 'technical' ? 'active' : ''}`}
           onClick={() => setViewMode('technical')}
         >
@@ -2166,8 +2252,7 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
         </button>
         <button
           type="button"
-          role="tab"
-          aria-selected={viewMode === 'all'}
+          aria-pressed={viewMode === 'all'}
           className={`experience-toggle-btn ${viewMode === 'all' ? 'active' : ''}`}
           onClick={() => setViewMode('all')}
         >
@@ -2184,7 +2269,7 @@ function ProfessionalExperienceCard({ title }: { title: string }) {
           />
         ))}
       </ul>
-    </CollapsibleSectionCard>
+    </>
   )
 }
 
@@ -2283,6 +2368,11 @@ function ExperienceRow({
 }) {
   const dateLabel = `${entry.date}${showDuration ? formatDuration(entry.date) : ''}`
   const icon = getExperienceIcon(entry.position)
+  // Notes are stored as "- point" lines; a real list keeps wrapped lines indented.
+  const points = (entry.note ?? '')
+    .split('\n')
+    .map((line) => line.trim().replace(/^-\s*/, ''))
+    .filter(Boolean)
 
   return (
     <li className="experience-item">
@@ -2296,7 +2386,13 @@ function ExperienceRow({
           <p className="experience-role">{entry.position} - {entry.company}</p>
           <p className="experience-date">{dateLabel}</p>
         </div>
-        {entry.note ? <p className="experience-note">{entry.note}</p> : null}
+        {points.length ? (
+          <ul className="experience-points">
+            {points.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     </li>
   )

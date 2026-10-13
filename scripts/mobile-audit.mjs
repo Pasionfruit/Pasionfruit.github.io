@@ -154,8 +154,9 @@ for (const vp of VIEWPORTS) {
 
       // On the guest home page, open the sections so their content is measured too.
       if (label === 'guest' && route === '/') {
+        // Only the closed ones: Experiences starts open, and a click would shut it.
         for (const id of ['experiences', 'personal-sites', 'gaming']) {
-          await page.click(`#${id} .home-section-toggle`).catch(() => {})
+          await page.click(`#${id} .home-section-toggle[aria-expanded="false"]`, { timeout: 1500 }).catch(() => {})
         }
         await page.waitForTimeout(300)
       }

@@ -1978,6 +1978,90 @@
   font-style: italic;
 }
 
+.experience-points {
+  margin: 0.4rem 0 0;
+  padding-left: 1.05rem;
+  display: grid;
+  gap: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+/* ── Experiences overview ─────────────────────────────────────────────────
+   Below 900px work, education and skills share one card as tabs. Above it
+   they sit side by side: work on the left, education and skills stacked. */
+.experience-tabs-card {
+  display: grid;
+  gap: 0.85rem;
+}
+
+/* Full-bleed strip across the top of the card, cancelling its padding. */
+.experience-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: -0.9rem -0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.experience-tab {
+  min-height: 2.75rem;
+  padding: 0.6rem 0.4rem;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 0 -2px 0 transparent;
+  transition: color 130ms ease, box-shadow 130ms ease;
+}
+
+/* Same robin egg blue as the other tab selectors. */
+.experience-tab[aria-selected='true'] {
+  color: #007f7f;
+  box-shadow: inset 0 -2px 0 #00cccc;
+}
+
+:root[data-theme='dark'] .experience-tab[aria-selected='true'] {
+  color: #6ee7e7;
+}
+
+@media (hover: hover) {
+  .experience-tab:not([aria-selected='true']):hover {
+    color: var(--text-strong);
+  }
+}
+
+.experience-tab:focus-visible {
+  outline: 2px solid #00cccc;
+  outline-offset: -2px;
+}
+
+.experience-panel {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.experience-panel[hidden] {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .home-section-panel .experiences-grid {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    /* The flexible second row absorbs the work card's extra height, so
+       education and skills stay stacked with no gap opening between them. */
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+
+  .experiences-grid > .experience-pane-work {
+    grid-row: span 2;
+  }
+}
+
 /* ── Well-being overview ─────────────────────────────────────────────────── */
 
 .wellbeing-section {
