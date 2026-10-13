@@ -29,8 +29,9 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
     name: 'Quack Island',
     url: 'https://quackisland.onrender.com/',
     tagline: 'Multiplayer 3D browser game',
-    description: 'A browser multiplayer world where players explore a procedural island, swim through the ocean, and join friends through code-based lobbies. Features synchronized weather, day-night cycles, and tides, with a volcano board-game race and a growing collection of party minigames.',
-    stack: ['TypeScript', 'React', 'Vite', 'Three.js', 'React Three Fiber', 'Node.js', 'WebSocket'],
+    description:
+      'Explore a procedural 3D island with friends through code-based lobbies, with live weather, day-night cycles, and tides, plus a volcano board-game race and party minigames.',
+    stack: ['TypeScript', 'React', 'Three.js', 'Node.js', 'WebSocket'],
     status: 'in-progress',
   },
   {
@@ -38,8 +39,9 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
     url: 'https://pov-cooking.vercel.app/',
     logo: '/POV_Cooking.png',
     tagline: 'Personal cookbook, meal plan, and pantry — desktop and phone',
-    description: 'A personal recipe cookbook with weekly meal planning and pantry tracking. It features checkable recipes, kitchen timers, meal randomizers, grocery-list exports, pantry expiration alerts, and ingredient-based recipe matching. Recipes can be imported from URLs, while admins manage suggestions and imports. The app uses an Express API with a swappable JSON/MongoDB data layer and encrypted user emails with blind-index lookup.',
-    stack: ['JavaScript', 'React', 'React Router', 'Vite', 'Context API', 'CSS', 'SVG', 'Node.js', 'Express', 'MongoDB', 'JWT', 'bcrypt', 'Google OAuth', 'Tesseract.js', 'ZXing', 'PWA', 'Vercel', 'Render'],
+    description:
+      'A recipe cookbook with weekly meal plans, pantry tracking, and grocery exports. Import recipes from any URL, then cook with checkable steps and kitchen timers.',
+    stack: ['React', 'Node.js', 'Express', 'MongoDB', 'PWA'],
     status: 'live',
   },
   {
@@ -47,8 +49,9 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
     url: 'https://texthero.onrender.com/',
     logo: '/Text-To-Beat.png',
     tagline: 'Rhythm game played with keyboard inputs',
-    description: 'A browser rhythm game where you hit notes by typing. Charts are generated automatically from any song you upload via Web Audio onset detection, and a WebSocket lobby lets you race others in real time.',
-    stack: ['TypeScript', 'Vite', 'Canvas', 'Web Audio API', 'Node.js', 'WebSocket', 'Postgres', 'Render'],
+    description:
+      'A rhythm game you play by typing. Upload any song and it builds the chart automatically, then race friends live.',
+    stack: ['TypeScript', 'Canvas', 'Web Audio API', 'WebSocket', 'Postgres'],
     status: 'live',
   },
   {
@@ -56,8 +59,9 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
     url: 'https://mahjong-xmhv.onrender.com/',
     logo: '/LocalRot.png',
     tagline: 'Browser game night — party, solo, and daily puzzles',
-    description: 'A game-night arcade in the browser with three wings: room-based real-time multiplayer (Mahjong, Bomberman, Tetris, Quoridor and more) behind a 4-letter room code, a solo offline-capable arcade with global leaderboards, and one shared daily puzzle per game per UTC day with streak tracking. All multiplayer rule legality is computed server-side over Socket.IO; solo games run client-authoritative on deterministic seeds and sync through an IndexedDB outbox.',
-    stack: ['TypeScript', 'React', 'Vite', 'zustand', 'Canvas', 'SVG', 'Node.js', 'Express', 'Socket.IO', 'Supabase', 'Postgres', 'IndexedDB', 'PWA', 'Render'],
+    description:
+      'A browser game-night arcade: real-time multiplayer rooms (Mahjong, Bomberman, Tetris, and more), a solo arcade with leaderboards, and a daily puzzle with streaks.',
+    stack: ['TypeScript', 'React', 'Socket.IO', 'Supabase', 'PWA'],
     status: 'live',
   },
   {
@@ -65,7 +69,7 @@ export const personalSiteEntries: PersonalSiteEntry[] = [
     url: 'https://pasionfruit.github.io',
     tagline: 'This site',
     description:
-      'The site you are on. React and TypeScript on GitHub Pages, with a Google Sheets and Apps Script backend, Todoist for tasks, and daily sync jobs for training and health data. There is actually an admin side to this site that is not public, which is where I manage the content and sync jobs, and use a locally hosted AI assistant to manage training, work, and personal projects.',
+      'This site: React and TypeScript on GitHub Pages, backed by Google Sheets and Apps Script, with daily training and health syncs and a private admin side.',
     stack: ['React', 'TypeScript', 'Vite', 'Apps Script'],
     status: 'live',
   },

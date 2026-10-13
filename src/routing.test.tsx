@@ -287,6 +287,35 @@ describe('guest home page', () => {
     expect(hrefs.length).toBeGreaterThan(0)
   })
 
+  it('shows at most five tags per project', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+
+    await user.click(document.querySelector<HTMLButtonElement>('#personal-sites .home-section-toggle')!)
+
+    const cards = document.querySelectorAll('#personal-sites .project-card')
+    expect(cards.length).toBe(personalSiteEntries.length)
+    for (const card of cards) {
+      expect(card.querySelectorAll('.project-chip').length).toBeLessThanOrEqual(5)
+    }
+  })
+
+  it('puts Training directly under Experiences', () => {
+    renderAt('/')
+
+    const order = [...document.querySelectorAll('.home-section')].map((section) => section.id)
+    expect(order).toEqual(['experiences', 'training', 'personal-sites', 'gaming'])
+  })
+
+  it('opens Experiences with its summary as a short bullet list', () => {
+    renderAt('/')
+
+    const panel = document.getElementById('experiences-panel')!
+    const points = within(panel).getAllByRole('listitem').filter((item) => item.closest('.page-summary-list'))
+    expect(points.length).toBeGreaterThanOrEqual(2)
+    expect(points.length).toBeLessThanOrEqual(3)
+  })
+
   it('puts the section note above the cards', () => {
     renderAt('/')
 

@@ -45,10 +45,9 @@
   border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text-strong);
-  font-family: var(--font-mono);
-  font-weight: 500;
+  font-weight: 700;
   font-size: 0.8rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .brand-copy {
@@ -95,7 +94,7 @@
 .menu-child-link,
 .back-link {
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   font: inherit;
   text-decoration: none;
   cursor: pointer;
@@ -237,11 +236,9 @@
   width: 50%;
   color: var(--text-muted);
   font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   text-align: center;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
 }
 
 .workout-of-day-table td {
@@ -317,9 +314,7 @@
     margin-bottom: 0.15rem;
     color: var(--text-muted);
     font-size: 0.7rem;
-    text-transform: lowercase;
-    font-family: var(--font-mono);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.01em;
   }
 }
 
@@ -553,9 +548,8 @@
 .eyebrow {
   margin: 0;
   color: var(--text-muted);
-  font: 500 0.6875rem / 1.4 var(--font-mono);
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  font: 600 0.75rem / 1.4 var(--font-sans);
+  letter-spacing: 0.01em;
 }
 
 .page-shell {
@@ -613,18 +607,15 @@
   gap: 1rem;
 }
 
-/* Every panel is a flat hairline frame. --frame-behind is whatever the frame
-   sits on, --frame-fill its own color; the border label uses both. */
+/* Every panel is a flat, softly rounded hairline frame. */
 .hero-card,
 .page-hero,
 .section-tile,
 .info-card,
 .login-card {
-  --frame-fill: var(--surface);
-  --frame-behind: var(--bg);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  background: var(--frame-fill);
+  background: var(--surface);
 }
 
 .hero-card,
@@ -686,7 +677,7 @@
   justify-content: center;
   text-decoration: none;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.5rem 0.72rem;
@@ -695,6 +686,19 @@
 
 .download-link:hover {
   background: var(--surface-muted);
+}
+
+.page-summary-list {
+  display: grid;
+  gap: 0.3rem;
+  max-width: 72ch;
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.page-summary-list li::marker {
+  color: var(--text-faint);
 }
 
 .page-summary-block {
@@ -843,29 +847,29 @@
 }
 
 /*
- * Labelled frames: a card's title rides its top border as a lowercase mono
- * tag. The tag's background is split, top half matching what is behind the
- * frame and bottom half the frame's fill, so it masks the line on any page.
- * The title is the first heading in the card's first row; that row keeps the
- * card's actions, pushed right.
+ * Labelled frames: a card's title sits on its top border as a small pill chip.
+ * The chip has its own fill and hairline, so it masks the border on any
+ * background. The title is the first heading in the card's first row; that row
+ * keeps the card's actions, pushed right.
  */
 .info-card > h3:first-child:not(.sr-only),
 .info-card > :first-child h3:not(.sr-only) {
   position: absolute;
   top: 0;
-  left: 0.5rem;
+  left: 1rem;
   z-index: 1;
-  max-width: calc(100% - 1rem);
+  max-width: calc(100% - 2rem);
   margin: 0;
-  padding: 0 0.35rem;
+  padding: 0.1rem 0.65rem;
   overflow: hidden;
   transform: translateY(-50%);
-  background: linear-gradient(var(--frame-behind) 50%, var(--frame-fill) 50%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
   color: var(--text-strong);
-  font: 500 0.6875rem / 1.4 var(--font-mono);
-  letter-spacing: 0.03em;
+  font: 600 0.75rem / 1.4 var(--font-sans);
+  letter-spacing: 0.01em;
   text-overflow: ellipsis;
-  text-transform: lowercase;
   white-space: nowrap;
 }
 
@@ -884,10 +888,8 @@
 }
 
 .month-calendar-header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 0.5rem;
+  display: flex;
+  justify-content: center;
 }
 
 .month-calendar-month {
@@ -1097,7 +1099,7 @@
 
 .primary-action {
   padding: 0.45rem 0.9rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -1224,10 +1226,8 @@
 
 .recipe-card-edit-label {
   font-size: 0.7rem;
-  font-weight: 500;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--text-muted);
 }
 
@@ -1410,7 +1410,7 @@
 
 .recipe-comp-tab-count {
   background: var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   padding: 0.05rem 0.4rem;
   font-size: 0.72rem;
   font-weight: 600;
@@ -1461,7 +1461,7 @@
   cursor: pointer;
   font-size: 0.8rem;
   padding: 0.1rem 0.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   line-height: 1;
   flex-shrink: 0;
   transition: color 0.15s;
@@ -1478,7 +1478,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0.1rem 0.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   line-height: 1;
   flex-shrink: 0;
   transition: color 0.15s;
@@ -1664,7 +1664,7 @@
   justify-self: start;
   padding: 0.7rem 1rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--text-strong);
   font: inherit;
@@ -1711,7 +1711,7 @@
      tabs rather than the page. */
   max-width: 100%;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -1801,9 +1801,7 @@
   color: var(--text-muted);
   padding: 0.35rem 0.7rem;
   cursor: pointer;
-  font-family: var(--font-mono);
   font-size: 0.75rem;
-  text-transform: lowercase;
   white-space: nowrap;
   transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
@@ -1902,11 +1900,13 @@
   font-weight: 600;
 }
 
+/* A long date phrase stays in Manrope (mono is for short tokens), with
+   tabular figures so the years still line up down the list. */
 .experience-date {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.82rem;
-  font-style: italic;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
   flex-shrink: 0;
   text-align: right;
@@ -2002,31 +2002,35 @@
   gap: 0.85rem;
 }
 
-/* Full-bleed strip across the top of the card, cancelling its padding. */
+/* A pill track of three equal tabs; the selected one fills with the accent. */
 .experience-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: -1rem -0.75rem 0;
-  border-bottom: 1px solid var(--border);
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
 }
 
 .experience-tab {
-  min-height: 2.75rem;
-  padding: 0.6rem 0.4rem;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.4rem;
   border: 0;
+  border-radius: var(--radius-pill);
   background: none;
   color: var(--text-muted);
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: inset 0 -2px 0 transparent;
-  transition: color 130ms ease, box-shadow 130ms ease;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
 
 .experience-tab[aria-selected='true'] {
-  color: var(--text-strong);
-  box-shadow: inset 0 -2px 0 var(--accent);
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 @media (hover: hover) {
@@ -2037,7 +2041,7 @@
 
 .experience-tab:focus-visible {
   outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
+  outline-offset: 1px;
 }
 
 .experience-panel {
@@ -2111,11 +2115,9 @@
 
 .wellbeing-stat-label {
   color: var(--text-muted);
-  font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   line-height: 1.2;
-  text-transform: lowercase;
 }
 
 .wellbeing-trend-up {
@@ -2164,7 +2166,7 @@
   min-height: 2rem;
   padding: 0.35rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--text-muted);
   font-size: 0.72rem;
@@ -2290,11 +2292,9 @@
   background: var(--surface);
   border-bottom-color: var(--border-strong);
   color: var(--text-muted);
-  font-family: var(--font-mono);
   font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   position: sticky;
   top: 0;
 }
@@ -2522,7 +2522,7 @@
 
 .section-edit-btn {
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   width: 2rem;
@@ -2542,7 +2542,7 @@
 
 .section-collapse-btn {
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   width: 2rem;
@@ -2811,11 +2811,9 @@ button svg,
   background: var(--surface);
   border-bottom-color: var(--border-strong);
   color: var(--text-muted);
-  font-family: var(--font-mono);
   font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .sheets-table tr:last-child td {
@@ -3219,9 +3217,7 @@ button svg,
   background: var(--surface-muted);
   color: var(--text-strong);
   font-size: 0.76rem;
-  font-weight: 500;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 .grocery-catalog-row {
@@ -3251,7 +3247,7 @@ button svg,
   width: 1.9rem;
   height: 1.9rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--text-strong);
   font-size: 1.05rem;
@@ -3377,10 +3373,8 @@ button svg,
 
 .meal-randomizer-reel-label {
   font-size: 0.7rem;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
-  font-weight: 500;
+  letter-spacing: 0.01em;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -3528,9 +3522,7 @@ button svg,
 .meal-plan-label {
   color: var(--text-muted);
   font-size: 0.78rem;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   margin-bottom: 0.28rem;
 }
 
@@ -3819,22 +3811,79 @@ button svg,
   min-width: 0;
 }
 
-.training-log-desktop-page-nav {
-  display: flex;
+/*
+ * Pager: one short pill, ‹ label ›, instead of two full-height buttons.
+ * Shared by the month calendar and the training log.
+ */
+.pager {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
+  align-self: center;
+  justify-self: center;
+  gap: 0.1rem;
+  padding: 0.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
 }
 
-.training-log-desktop-page-nav .secondary-action,
-.training-log-page-nav .secondary-action {
+.pager-btn {
   display: inline-grid;
   place-items: center;
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  padding: 0.1rem 0.3rem;
-  font-size: 1rem;
-  line-height: 1;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .pager-btn:not(:disabled):hover {
+    background: var(--surface-2);
+    color: var(--text-strong);
+  }
+}
+
+.pager-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pager-label {
+  min-width: 4.5rem;
+  padding: 0 0.4rem;
+  color: var(--text-strong);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* A range of months reads as data. */
+.pager--range .pager-label {
+  font: 500 0.75rem / 1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A month name is the calendar's heading. */
+.pager--title .pager-label {
+  min-width: 8rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Touch screens get a slightly larger hit area, still well short of a full button. */
+@media (pointer: coarse) {
+  .pager-btn {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.training-log-desktop-page-nav {
+  display: inline-flex;
 }
 
 .training-log-page-nav {
@@ -3869,8 +3918,7 @@ button svg,
 .training-log-month-label {
   color: var(--text-muted);
   font-size: 0.74rem;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  letter-spacing: 0.01em;
   font-family: var(--font-mono);
   text-align: center;
 }
@@ -3924,10 +3972,7 @@ button svg,
   }
 
   .training-log-page-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
+    display: inline-flex;
   }
 
   .training-log-month-col.training-log-month-col--desktop-hidden {
@@ -4025,9 +4070,7 @@ button svg,
     margin-bottom: 0.22rem;
     color: var(--text-muted);
     font-size: 0.72rem;
-    text-transform: lowercase;
-    font-family: var(--font-mono);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.01em;
   }
 
   .meal-plan-table td[data-label='Actions']::before {
@@ -4224,9 +4267,7 @@ button svg,
 
 .pomodoro-status {
   margin: 0;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   font-size: 0.74rem;
   color: var(--text-muted);
   text-align: center;
@@ -4305,11 +4346,9 @@ button svg,
 
 .section-child-card .section-child-label {
   margin: 0;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
@@ -4564,11 +4603,9 @@ button svg,
 .price-table th {
   background: var(--surface-muted);
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.78rem;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
 }
 
 .price-table-item {
@@ -4688,10 +4725,8 @@ button svg,
 
 .deal-store-heading {
   font-size: 0.82rem;
-  font-weight: 500;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--text-muted);
   margin: 0;
   padding-bottom: 0.3rem;
@@ -4821,10 +4856,8 @@ button svg,
 
 .coupon-place-heading {
   font-size: 0.82rem;
-  font-weight: 500;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--text-muted);
   margin: 0;
   padding-bottom: 0.3rem;
@@ -5245,7 +5278,7 @@ button svg,
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.25rem 0.65rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
 }
 
 .mc-srv-badge--on {
@@ -5343,10 +5376,8 @@ button svg,
 .mc-lb-title {
   margin: 0 0 0.2rem;
   font-size: 0.78rem;
-  font-weight: 500;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--accent);
 }
 
@@ -5534,16 +5565,14 @@ button svg,
 /* ── Home page sections ───────────────────────────────────────────────────
    The three public sections live on the home page as collapsible blocks
    rather than separate routes. */
-/* Each section is an open frame on the paper: its eyebrow and index ride the
-   top border, and the cards inside are the white frames. */
+/* Each section is an open frame on the paper: its eyebrow and index sit on the
+   top border as pills, and the cards inside are the white frames. */
 .home-section {
-  --frame-fill: var(--bg);
-  --frame-behind: var(--bg);
   position: relative;
   margin-top: 1.5rem;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
-  background: var(--frame-fill);
+  background: var(--bg);
 }
 
 .home-section-header {
@@ -5597,20 +5626,22 @@ button svg,
 .home-section-index {
   position: absolute;
   top: 0;
-  padding: 0 0.35rem;
+  padding: 0.1rem 0.65rem;
   transform: translateY(-50%);
-  background: var(--frame-fill);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
 }
 
 .home-section-titles .eyebrow {
-  left: 0.5rem;
+  left: 1rem;
   color: var(--text-strong);
 }
 
 .home-section-index {
-  right: 0.5rem;
+  right: 1rem;
   color: var(--text-muted);
-  font: 400 0.6875rem / 1.4 var(--font-mono);
+  font: 500 0.75rem / 1.4 var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
@@ -5705,15 +5736,16 @@ button svg,
 .home-hero-eyebrow {
   position: absolute;
   top: 0;
-  left: 0.5rem;
+  left: 1rem;
   margin: 0;
-  padding: 0 0.35rem;
+  padding: 0.1rem 0.65rem;
   transform: translateY(-50%);
-  background: linear-gradient(var(--bg) 50%, var(--surface) 50%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
   color: var(--text-strong);
-  font: 500 0.6875rem / 1.4 var(--font-mono);
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  font: 600 0.75rem / 1.4 var(--font-sans);
+  letter-spacing: 0.01em;
 }
 
 .home-hero-copy {
@@ -5796,13 +5828,13 @@ button svg,
 }
 
 .home-hero-currently-label {
-  padding: 0 0.35rem;
-  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
-  border-radius: var(--radius-sm);
+  padding: 0.05rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--success) 35%, transparent);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--success) 8%, transparent);
   color: var(--success);
-  font: 500 0.6875rem / 1.6 var(--font-mono);
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  font: 600 0.72rem / 1.6 var(--font-sans);
+  letter-spacing: 0.01em;
 }
 
 .home-hero-actions {
@@ -5834,7 +5866,7 @@ button svg,
   min-height: 2.5rem;
   padding: 0.45rem 0.95rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   font: inherit;

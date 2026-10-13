@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
+import { Pager } from '../components/Pager'
 import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
 import type { ConnectionStatus } from './integrations/types'
 
@@ -261,25 +262,18 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
           {status.state === 'connected' ? (
             <div className="month-calendar-shell admin-calendar-shell">
               <div className="month-calendar-header">
-                <button
-                  type="button"
-                  className="secondary-action"
-                  onClick={() =>
+                <Pager
+                  variant="title"
+                  label={monthLabel}
+                  prevLabel="Previous month"
+                  nextLabel="Next month"
+                  onPrev={() =>
                     setMonth((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
                   }
-                >
-                  Prev
-                </button>
-                <p className="month-calendar-month">{monthLabel}</p>
-                <button
-                  type="button"
-                  className="secondary-action"
-                  onClick={() =>
+                  onNext={() =>
                     setMonth((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
                   }
-                >
-                  Next
-                </button>
+                />
               </div>
 
               <div className="month-calendar-weekdays" aria-hidden="true">

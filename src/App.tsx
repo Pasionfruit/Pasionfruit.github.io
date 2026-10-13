@@ -61,6 +61,7 @@ import './admin/admin.css'
 import { sounds } from './sounds'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { HomeHero } from './components/HomeHero'
+import { Pager } from './components/Pager'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
@@ -686,7 +687,7 @@ function HomeSection({
   )
 }
 
-const ALL_SECTION_IDS: SectionId[] = ['experiences', 'personal-sites', 'gaming', 'training']
+const ALL_SECTION_IDS: SectionId[] = ['experiences', 'training', 'personal-sites', 'gaming']
 
 /** The public home page: collapsible sections. Admins get AdminHomePage. */
 function HomePage() {
@@ -742,6 +743,18 @@ function HomePage() {
         />
       </HomeSection>
 
+      {/* Right under the résumé. Read-only here: the plan is pasted on /weekly-reset,
+          and the log and countdown are edited from the Health dashboard. */}
+      <HomeSection
+        id="training"
+        isOpen={openSections.includes('training')}
+        onToggle={() => toggleSection('training')}
+      >
+        <WorkoutOfTheDayCard title="Workout of the Day" />
+        <TrainingLogCard title="Training Log" showToday={false} />
+        <NextEventCountdownCard title="Next Event Countdown" canWrite={false} idToken="" />
+      </HomeSection>
+
       <HomeSection
         id="personal-sites"
         isOpen={openSections.includes('personal-sites')}
@@ -760,17 +773,6 @@ function HomePage() {
         <MinecraftServerCards />
       </HomeSection>
 
-      {/* Read-only here: the plan is pasted on /weekly-reset, and the log and
-          countdown are edited from the Health dashboard. */}
-      <HomeSection
-        id="training"
-        isOpen={openSections.includes('training')}
-        onToggle={() => toggleSection('training')}
-      >
-        <WorkoutOfTheDayCard title="Workout of the Day" />
-        <TrainingLogCard title="Training Log" showToday={false} />
-        <NextEventCountdownCard title="Next Event Countdown" canWrite={false} idToken="" />
-      </HomeSection>
     </div>
   )
 }
@@ -1590,47 +1592,27 @@ function TrainingLogCard({
         <>
           <div className="training-log-main">
             <div className="training-log-grid" aria-label="Training activity tiles by month">
-              <div className="training-log-desktop-page-nav">
-                <button
-                  type="button"
-                  className="secondary-action"
-                  onClick={() => setDesktopPage(0)}
-                  disabled={desktopPage === 0}
-                >
-                  ‹
-                </button>
-                <span className="sheets-meta">{desktopPage === 0 ? 'Jan – Jun' : 'Jul – Dec'}</span>
-                <button
-                  type="button"
-                  className="secondary-action"
-                  onClick={() => setDesktopPage(1)}
-                  disabled={desktopPage === 1}
-                >
-                  ›
-                </button>
-              </div>
+              <Pager
+                className="training-log-desktop-page-nav"
+                label={desktopPage === 0 ? 'Jan – Jun' : 'Jul – Dec'}
+                prevLabel="First half of the year"
+                nextLabel="Second half of the year"
+                onPrev={() => setDesktopPage(0)}
+                onNext={() => setDesktopPage(1)}
+                prevDisabled={desktopPage === 0}
+                nextDisabled={desktopPage === 1}
+              />
 
-              <div className="training-log-page-nav">
-                <button
-                  type="button"
-                  className="secondary-action"
-                  aria-label="Previous quarter"
-                  onClick={() => setMobilePage((p) => Math.max(0, p - 1))}
-                  disabled={mobilePage === 0}
-                >
-                  ‹
-                </button>
-                <span className="sheets-meta">{['Jan – Mar', 'Apr – Jun', 'Jul – Sep', 'Oct – Dec'][mobilePage]}</span>
-                <button
-                  type="button"
-                  className="secondary-action"
-                  aria-label="Next quarter"
-                  onClick={() => setMobilePage((p) => Math.min(3, p + 1))}
-                  disabled={mobilePage === 3}
-                >
-                  ›
-                </button>
-              </div>
+              <Pager
+                className="training-log-page-nav"
+                label={['Jan – Mar', 'Apr – Jun', 'Jul – Sep', 'Oct – Dec'][mobilePage]}
+                prevLabel="Previous quarter"
+                nextLabel="Next quarter"
+                onPrev={() => setMobilePage((p) => Math.max(0, p - 1))}
+                onNext={() => setMobilePage((p) => Math.min(3, p + 1))}
+                prevDisabled={mobilePage === 0}
+                nextDisabled={mobilePage === 3}
+              />
 
               <div className="training-log-tiles-row">
                 <div className="training-log-grid-panel">

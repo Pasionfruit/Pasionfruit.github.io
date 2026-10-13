@@ -6,7 +6,7 @@ import { trainingNavSection } from './training'
 
 export const navSections: NavSection[] = [
   experiencesNavSection,
+  trainingNavSection,
   personalSitesNavSection,
   gamingNavSection,
-  trainingNavSection,
 ]

@@ -18,7 +18,7 @@ export const experiencesSectionPage: PageContent = {
   eyebrow: 'Work and study',
   title: 'Experiences',
   summary:
-    'Six years across BI development, data analysis, and cybersecurity. Most of the work is the same shape: take messy operational data, make it trustworthy, and turn it into something a decision can rest on.',
+    '- Six years across BI development, data analysis, and cybersecurity.\n- Most of the work has the same shape: take messy operational data, make it trustworthy, and turn it into something a decision can rest on.\n- I like using code, math, and statistics to solve hard problems, and sharing what I learn along the way.',
   accent: '#1fcecb',
   cards: [
     {
@@ -34,8 +34,8 @@ export const experiencesSectionPage: PageContent = {
       body: 'Roles across BI development, data analysis, cybersecurity, and a few jobs before that. Use the toggle to narrow it to technical work or show everything.',
     },
   ],
-  callout:
-    'I like to use technical tools, mathematics, and statistical reasoning to understand data, improve systems, and solve complex problems. I enjoy mastering new skills, collaborating with like-minded individuals, and sharing what I learned along the way.',
+  // Folded into the summary bullets above.
+  callout: '',
 }
 
 export const educationEntries: EducationEntry[] = [
@@ -61,41 +61,41 @@ export const professionalExperienceEntries: ProfessionalExperienceEntry[] = [
     company: 'HNTB / FDOT',
     date: 'April 2025 - September 2026',
     category: 'technical',
-    note: '  - Developed SQL, Python, and VBA–based analytics and automation pipelines to reconcile traffic and pricing data between source systems and reporting layers, reducing manual validation effort by ~60% and improving data reliability for statewide decision-making \n  - Analyzed statewide traffic and Dynamic Message Sign (DMS) datasets to validate operational accuracy across 28 transportation subsystems, supporting FDOT’s traffic management and pricing strategies for express lanes \n  - Designed reusable validation frameworks and dashboards to surface SLA risks, trend anomalies, and release readiness metrics, accelerating test and release cycles across three statewide deployments (2 SunGuide hotfixes, 1 SELS release)\n  - Partnered directly with FDOT stakeholders, developers, and BI teams to translate business and operational requirements into measurable data checks, curated datasets, and reporting outputs used by internal and external consumers\n  - Supported ingestion and transformation of 20+ enterprise datasets, ensuring accuracy and consistency across reporting workflows used for operational monitoring and client-facing dashboards\n  - Leveraged LLM-assisted documentation analysis (self-hosted Ollama, Gemini Notebook LM) to extract requirements and generate structured validation artifacts, improving analysis throughput and accelerating development timelines by 40%+\n',
+    note: '  - Built SQL, Python, and VBA pipelines that reconcile traffic and pricing data across source systems and reports, cutting manual validation by ~60%\n  - Validated statewide traffic and DMS data across 28 subsystems with reusable checks and dashboards that sped up three statewide releases\n  - Turned FDOT requirements into data checks and curated datasets for 20+ enterprise sources, using LLM-assisted doc analysis to speed delivery 40%+',
   },
   {
     position: 'Software Developer Intern',
     company: 'Shop Online New York',
     date: 'February 2025 - April 2025',
     category: 'technical',
-    note: '  - Built a cross-platform Flutter application supporting four role-based user types, implementing access controls and structured data flows to reduce authorization defects and improve system reliability\n  - Integrated Firebase for real-time data ingestion, authentication, and storage; managed the full Jira ticket lifecycle, translating functional requirements into deliverable features',
+    note: '  - Built a cross-platform Flutter app for four role-based user types, with access controls that cut authorization defects\n  - Integrated Firebase for real-time data, auth, and storage, and ran the full Jira ticket lifecycle from requirement to feature',
   },
   {
     position: 'Cybersecurity Analyst Intern',
     company: 'Florida State University',
     date: 'September 2023 - May 2024',
     category: 'technical',
-    note: '  - Standardized security and compliance controls for FSU Health Research teams, aligning workflows to NIST 800-53 and FedRAMP Moderate, reducing audit preparation effort and compliance ambiguity\n  - Conducted risk assessments and control gap analysis across Azure and Alert Logic integrations, evaluating identity management, logging, and data protection controls for health data systems',
+    note: '  - Standardized security controls for FSU Health Research teams against NIST 800-53 and FedRAMP Moderate, easing audit prep\n  - Ran risk assessments and control-gap analysis across Azure and Alert Logic, covering identity, logging, and data protection',
   },
   {
     position: 'Information Technology Support Assistant',
     company: 'Escambia County School District',
     date: 'August 2022 - May 2021',
     category: 'technical',
-    note: '  - Standardized security and compliance controls for FSU Health Research teams, aligning workflows to NIST 800-53 and FedRAMP Moderate, reducing audit preparation effort and compliance ambiguity\n  - Conducted risk assessments and control gap analysis across Azure and Alert Logic integrations, evaluating identity management, logging, and data protection controls for health data systems',
+    note: '  - Standardized security controls for FSU Health Research teams against NIST 800-53 and FedRAMP Moderate, easing audit prep\n  - Ran risk assessments and control-gap analysis across Azure and Alert Logic, covering identity, logging, and data protection',
   },
   {
     position: 'Mathematics Tutor',
     company: 'Mathnasium',
     date: 'September 2022 - August 2023',
     category: 'other',
-    note: '  - Delivered individualized mathematics instruction from arithmetic through calculus II, improving student performance by an average of one letter grade through structured problem-solving methods\n  - Prepared students for college admission exams, achieving 20%+ average score improvement, demonstrating ability to translate complex quantitative concepts into clear, accessible explanations',
+    note: '  - Taught math from arithmetic through Calculus II, raising students by about one letter grade on average\n  - Prepped students for college admission exams, with 20%+ average score gains',
   },
   {
     position: 'Lifeguard',
     company: 'Splash City Adventures and City of Tallahassee',
     date: '3 seasons, May 2021 - December 2022',
     category: 'other',
-    note: '  - Skilled in performing rescue operations, administering first aid, and enforcing pool rules and regulations. \n  - Demonstrated ability to remain calm and act quickly in emergency situations. Proficient in maintaining clean and safe pool environments, including regular testing and balancing of pool chemicals.',
+    note: '  - Performed rescues, administered first aid, and enforced pool safety rules\n  - Stayed calm in emergencies and kept pools clean and safe, including testing and balancing chemicals',
   },
 ]

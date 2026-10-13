@@ -182,9 +182,7 @@
 
 .weather-metric-label {
   font-size: 0.72rem;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
   color: var(--text-muted);
 }
 
@@ -202,7 +200,7 @@
   font-size: 0.68rem;
   font-weight: 600;
   padding: 0.12rem 0.4rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   color: #fff;
   white-space: nowrap;
 }
@@ -233,10 +231,8 @@
 .weather-section-title {
   margin: 0;
   font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--text-muted);
 }
 
@@ -276,7 +272,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.2rem 0.4rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--surface) 85%, transparent);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);

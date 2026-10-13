@@ -25,7 +25,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.65rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   color: var(--text-muted);
   font-size: 0.86rem;
   text-decoration: none;
@@ -200,7 +200,7 @@
   width: 2rem;
   height: 2rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-muted);
   text-decoration: none;
@@ -234,7 +234,7 @@
 .admin-pill {
   padding: 0.15rem 0.5rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--text-muted);
   font-size: 0.72rem;
@@ -267,12 +267,10 @@
 
 .connect-badge {
   padding: 0.12rem 0.5rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .connect-badge-connected {
@@ -419,10 +417,8 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.76rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .recap-list li {
@@ -560,10 +556,8 @@
   gap: 0.25rem;
   color: var(--text-muted);
   font-size: 0.76rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .journal-editor input,
@@ -638,8 +632,7 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.74rem;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
+  letter-spacing: 0.01em;
   font-family: var(--font-mono);
 }
 
@@ -667,7 +660,7 @@
 
 .journal-tag {
   padding: 0.12rem 0.45rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--text-muted);
   font-size: 0.7rem;
@@ -727,7 +720,7 @@
 .project-chip {
   padding: 0.12rem 0.45rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   color: var(--text-muted);
   font-size: 0.7rem;
 }
@@ -866,7 +859,7 @@
   min-height: 1.75rem;
   padding: 0.2rem 0.45rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   font: inherit;
@@ -974,10 +967,8 @@
   padding: 0 0.3rem;
   color: var(--text-muted);
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .gratitude-block input {
@@ -1010,10 +1001,8 @@
   margin: 0 0 0.25rem;
   color: var(--text-muted);
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .journal-gratitude ul {
@@ -1063,7 +1052,7 @@
   height: 2.15rem;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-muted);
   font: inherit;
@@ -1103,7 +1092,7 @@
   min-height: 2rem;
   padding: 0.25rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   font: inherit;
@@ -1162,10 +1151,8 @@
   margin: 0.9rem 0 0;
   color: var(--text-strong);
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .garmin-metric-group-title::before {
@@ -1313,9 +1300,7 @@
 .garmin-metric-label {
   color: var(--text-muted);
   font-size: 0.6875rem;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
 }
 
 .garmin-metric-value {
@@ -1353,7 +1338,7 @@
 .garmin-mode-toggle {
   display: inline-flex;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
@@ -1389,10 +1374,8 @@
   gap: 0.4rem;
   color: var(--text-muted);
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .garmin-date-row input {
@@ -1724,7 +1707,7 @@
   flex: 0 0 auto;
   padding: 0.3rem 0.7rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text-strong);
   font: inherit;
@@ -1781,7 +1764,7 @@
 .ace-fact {
   padding: 0.15rem 0.5rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--text-muted);
   font-size: 0.74rem;

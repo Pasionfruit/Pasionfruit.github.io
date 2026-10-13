@@ -155,6 +155,17 @@ export function SummaryText({ summary }: { summary: string }) {
     .map((line) => line.trim())
     .filter((line) => line.length > 0)
 
+  // A summary written entirely as "- point" lines reads as a short list.
+  if (lines.length > 1 && lines.every((line) => /^[-•]\s/.test(line))) {
+    return (
+      <ul className="page-summary page-summary-list">
+        {lines.map((line) => (
+          <li key={line}>{line.replace(/^[-•]\s*/, '')}</li>
+        ))}
+      </ul>
+    )
+  }
+
   return (
     <div className="page-summary page-summary-block">
       {lines.map((line) => {

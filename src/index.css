@@ -1,6 +1,6 @@
 /*
- * Pasionfruit style tokens: warm paper, one teal accent, hairlines instead of
- * shadows. Older names (--surface-muted, --text-strong, --shadow) are kept and
+ * Pasionfruit style tokens: warm paper, one teal accent, soft rounded hairline
+ * frames instead of shadows. Older names (--surface-muted, --text-strong, --shadow) are kept and
  * pointed at the new values so existing rules follow without renaming.
  */
 :root {
@@ -40,8 +40,10 @@
   --warning: #b45309;
   --danger: #b91c1c;
 
-  --radius: 4px;
-  --radius-sm: 2px;
+  /* Soft corners: frames are rounded, controls and tags are pills. */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
   --dur: 140ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
 
