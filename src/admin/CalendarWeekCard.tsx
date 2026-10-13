@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
 import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
@@ -244,7 +245,7 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
             aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? '▸' : '▾'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>

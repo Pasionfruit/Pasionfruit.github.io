@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { getGarminWellness } from '../data/sheets/repositories'
 import { todayKey } from '../data/todoist/dates'
@@ -422,7 +423,7 @@ function GarminCard({
             aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? '▸' : '▾'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>

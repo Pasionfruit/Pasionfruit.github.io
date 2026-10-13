@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  ChevronDown,
   Cloud,
   CloudDrizzle,
   CloudFog,
@@ -7,12 +8,12 @@ import {
   CloudRain,
   CloudSnow,
   CloudSun,
+  type LucideIcon,
   Moon,
   RotateCcw,
   Snowflake,
   Sun,
   Thermometer,
-  type LucideIcon,
 } from 'lucide-react'
 import { HourlyChart } from './HourlyChart'
 import { RadarMap } from './RadarMap'
@@ -71,7 +72,7 @@ export function WeatherCard() {
             onClick={() => setIsCollapsed((value) => !value)}
             aria-label={isCollapsed ? 'Expand weather' : 'Collapse weather'}
           >
-            {isCollapsed ? '▸' : '▾'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>

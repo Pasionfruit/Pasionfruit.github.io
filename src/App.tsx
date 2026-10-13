@@ -11,6 +11,7 @@ import React, {
 import {
   Activity,
   Check,
+  ChevronDown,
   ExternalLink,
   House,
   List,
@@ -650,12 +651,15 @@ function HomeSection({
           aria-controls={`${id}-panel`}
           onClick={onToggle}
         >
-          <span className="home-section-caret" aria-hidden="true">{isOpen ? '▾' : '▸'}</span>
           <span className="home-section-titles">
             <span className="eyebrow">{section.eyebrow}</span>
             <span id={headingId} className="home-section-title">{section.title}</span>
           </span>
+          <ChevronDown className="home-section-chevron" size={18} strokeWidth={1.8} aria-hidden="true" />
         </button>
+        <span className="home-section-index" aria-hidden="true">
+          {String(ALL_SECTION_IDS.indexOf(id) + 1).padStart(2, '0')}
+        </span>
 
         {downloadPdfHref || downloadWordHref ? (
           <div className="download-actions" aria-label="Download files">
@@ -910,9 +914,10 @@ function TodoistTasksCard({
             type="button"
             className="section-collapse-btn home-todoist-collapse-btn"
             aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? '▸' : '▾'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -1153,9 +1158,10 @@ function CollapsibleSectionCard({
           type="button"
           className="section-collapse-btn"
           aria-expanded={!isCollapsed}
+          aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
           onClick={() => setIsCollapsed((value) => !value)}
         >
-          {isCollapsed ? '▸' : '▾'}
+          <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
         </button>
       </div>
 
@@ -1966,9 +1972,10 @@ function NextEventCountdownCard({
             type="button"
             className="section-collapse-btn"
             aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? '▸' : '▾'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -2748,7 +2755,7 @@ function HealthDataCard({ title }: { title: string }) {
           aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
           onClick={() => setIsCollapsed((value) => !value)}
         >
-          {isCollapsed ? '▸' : '▾'}
+          <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
         </button>
       </div>
 
@@ -3202,9 +3209,10 @@ function WeeklyWorkoutResetCard({
             type="button"
             className="section-collapse-btn"
             aria-expanded={isExpanded}
+            aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${title}`}
             onClick={() => setIsExpanded((value) => !value)}
           >
-            {isExpanded ? '▾' : '▸'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ExternalLink, Sparkles } from 'lucide-react'
+import { ChevronDown, ExternalLink, Sparkles } from 'lucide-react'
 import { AdminPage } from '../AdminPage'
 import { adminDashboardsById } from '../../siteContent'
 import { getNews, type NewsItem } from '../../data/news/client'
@@ -93,7 +93,7 @@ function NewsCard({
             aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
             onClick={() => setIsCollapsed((value) => !value)}
           >
-            {isCollapsed ? '▸' : '▾'}
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>

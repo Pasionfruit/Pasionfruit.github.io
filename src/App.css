@@ -41,12 +41,14 @@
   place-items: center;
   width: 2.2rem;
   height: 2.2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text-strong);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
 }
 
 .brand-copy {
@@ -92,21 +94,22 @@
 .menu-section-link,
 .menu-child-link,
 .back-link {
-  border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
   font: inherit;
   text-decoration: none;
   cursor: pointer;
   color: var(--text-strong);
   background: var(--surface);
-  transition: transform 130ms ease, box-shadow 130ms ease, filter 130ms ease;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 
 .section-edit-btn,
 .section-collapse-btn {
-  transition: transform 130ms ease, box-shadow 130ms ease, filter 130ms ease;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 
+/* Hover is a quiet fill change; nothing lifts. */
 @media (hover: hover) {
   .login-link:hover,
   .reset-link:hover,
@@ -114,51 +117,19 @@
   .menu-toggle:hover,
   .menu-close:hover,
   .menu-back:hover,
-  .primary-action:hover,
   .secondary-action:hover,
   .menu-section-link:hover,
   .menu-child-link:hover,
   .back-link:hover,
   .section-edit-btn:hover,
   .section-collapse-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px color-mix(in srgb, var(--text-strong) 15%, transparent);
-    filter: brightness(1.02);
+    background-color: var(--surface-2);
   }
-}
 
-.login-link:active,
-.reset-link:active,
-.theme-toggle:active,
-.menu-toggle:active,
-.menu-close:active,
-.menu-back:active,
-.primary-action:active,
-.secondary-action:active,
-.menu-section-link:active,
-.menu-child-link:active,
-.back-link:active,
-.section-edit-btn:active,
-.section-collapse-btn:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-strong) 10%, transparent);
-  filter: brightness(0.98);
-}
-
-:root[data-theme='dark'] .login-link:active,
-:root[data-theme='dark'] .theme-toggle:active,
-:root[data-theme='dark'] .menu-toggle:active,
-:root[data-theme='dark'] .menu-close:active,
-:root[data-theme='dark'] .menu-back:active,
-:root[data-theme='dark'] .primary-action:active,
-:root[data-theme='dark'] .secondary-action:active,
-:root[data-theme='dark'] .menu-section-link:active,
-:root[data-theme='dark'] .menu-child-link:active,
-:root[data-theme='dark'] .back-link:active,
-:root[data-theme='dark'] .section-edit-btn:active,
-:root[data-theme='dark'] .section-collapse-btn:active {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 30%, transparent);
-  filter: brightness(1.08);
+  .primary-action:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
 }
 
 .primary-action:disabled,
@@ -169,9 +140,8 @@
 .menu-toggle:disabled,
 .menu-close:disabled,
 .menu-back:disabled {
-  transform: none;
-  box-shadow: none;
-  filter: none;
+  opacity: 0.5;
+  cursor: default;
 }
 
 .secondary-action,
@@ -267,10 +237,11 @@
   width: 50%;
   color: var(--text-muted);
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   text-align: center;
-  text-transform: uppercase;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
 }
 
 .workout-of-day-table td {
@@ -346,8 +317,9 @@
     margin-bottom: 0.15rem;
     color: var(--text-muted);
     font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    font-family: var(--font-mono);
+    letter-spacing: 0.03em;
   }
 }
 
@@ -377,12 +349,7 @@
 .menu-section-link--accent {
   border-color: var(--accent);
   background: var(--accent);
-  color: #ffffff;
-}
-
-:root[data-theme='dark'] .primary-action,
-:root[data-theme='dark'] .menu-section-link--accent {
-  color: #1a1a1a;
+  color: var(--accent-contrast);
 }
 
 .menu-toggle {
@@ -454,7 +421,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
-  border-radius: 0.9rem;
+  border-radius: var(--radius);
   background: var(--surface);
   overflow: hidden;
 }
@@ -557,7 +524,7 @@
   gap: 0.2rem;
   padding: 0.85rem 0.95rem;
   border: 1px solid var(--border);
-  border-radius: 0.8rem;
+  border-radius: var(--radius);
   background: var(--surface);
   text-decoration: none;
   color: var(--text-strong);
@@ -585,16 +552,10 @@
 .menu-section-eyebrow,
 .eyebrow {
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--page-accent, var(--text-accent));
-}
-
-/* Section accents can be dark hues — lift them for dark backgrounds. */
-:root[data-theme='dark'] .eyebrow {
-  color: color-mix(in srgb, var(--page-accent, var(--text-accent)) 60%, #ffffff);
+  color: var(--text-muted);
+  font: 500 0.6875rem / 1.4 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
 }
 
 .page-shell {
@@ -613,7 +574,7 @@
   margin: 3rem auto;
   padding: 1.75rem 1.5rem;
   border: 1px solid var(--border);
-  border-radius: 0.9rem;
+  border-radius: var(--radius);
   background: var(--surface);
   text-align: center;
 }
@@ -637,7 +598,7 @@
   margin-top: 0.4rem;
   padding: 0.5rem 1rem;
   border: 1px solid var(--border-strong);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   color: var(--text-strong);
   text-decoration: none;
   font-weight: 500;
@@ -652,15 +613,18 @@
   gap: 1rem;
 }
 
+/* Every panel is a flat hairline frame. --frame-behind is whatever the frame
+   sits on, --frame-fill its own color; the border label uses both. */
 .hero-card,
 .page-hero,
 .section-tile,
 .info-card,
 .login-card {
-  border-radius: 0.9rem;
+  --frame-fill: var(--surface);
+  --frame-behind: var(--bg);
+  border-radius: var(--radius);
   border: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  background: var(--frame-fill);
 }
 
 .hero-card,
@@ -677,9 +641,10 @@
 .page-hero h1 {
   margin: 0.3rem 0 0;
   color: var(--text-strong);
-  font-size: clamp(2.2rem, 8vw, 3.6rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.6rem, 6vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
 .hero-text,
@@ -721,7 +686,7 @@
   justify-content: center;
   text-decoration: none;
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.5rem 0.72rem;
@@ -793,13 +758,6 @@
   gap: 0.3rem;
   min-height: 7rem;
   padding: 0.8rem 0.85rem;
-  border-top: 3px solid var(--tile-accent, var(--accent));
-  /* Transparent tint so the hover background-color still shows through. */
-  background-image: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--tile-accent, var(--accent)) 10%, transparent),
-    transparent 55%
-  );
   overflow: hidden;
   font: inherit;
   text-align: left;
@@ -820,15 +778,27 @@
 }
 
 .section-tile:focus-visible {
-  outline: 2px solid var(--tile-accent, #111827);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 .tile-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   color: var(--text-strong);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.2;
+}
+
+.tile-title::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--tile-accent, var(--text-faint));
 }
 
 .tile-summary {
@@ -854,8 +824,8 @@
 .info-card h3 {
   margin: 0.5rem 0 0;
   color: var(--text-strong);
-  font-size: 1.02rem;
-  font-weight: 400;
+  font-size: 0.9375rem;
+  font-weight: 600;
 }
 
 .split-block {
@@ -863,12 +833,45 @@
 }
 
 .info-card {
-  padding: 0.9rem;
+  position: relative;
+  padding: 1rem 0.75rem 0.75rem;
 }
 
 .info-card p {
   margin: 0.45rem 0 0;
   white-space: pre-wrap;
+}
+
+/*
+ * Labelled frames: a card's title rides its top border as a lowercase mono
+ * tag. The tag's background is split, top half matching what is behind the
+ * frame and bottom half the frame's fill, so it masks the line on any page.
+ * The title is the first heading in the card's first row; that row keeps the
+ * card's actions, pushed right.
+ */
+.info-card > h3:first-child:not(.sr-only),
+.info-card > :first-child h3:not(.sr-only) {
+  position: absolute;
+  top: 0;
+  left: 0.5rem;
+  z-index: 1;
+  max-width: calc(100% - 1rem);
+  margin: 0;
+  padding: 0 0.35rem;
+  overflow: hidden;
+  transform: translateY(-50%);
+  background: linear-gradient(var(--frame-behind) 50%, var(--frame-fill) 50%);
+  color: var(--text-strong);
+  font: 500 0.6875rem / 1.4 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-overflow: ellipsis;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.section-card-header > :last-child,
+.admin-card-head > :last-child {
+  margin-left: auto;
 }
 
 /* ── Month calendar ───────────────────────────────────────────────────────
@@ -915,7 +918,7 @@
   position: relative;
   min-height: 2.6rem;
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   cursor: default;
@@ -931,7 +934,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 30rem;
@@ -979,7 +982,7 @@
   flex-direction: column;
   gap: 0.65rem;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   padding: 0.75rem;
   background: var(--surface);
 }
@@ -998,7 +1001,7 @@
 .recipe-import-notice {
   padding: 0.4rem 0.6rem;
   background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
   margin: 0;
 }
@@ -1094,18 +1097,13 @@
 
 .primary-action {
   padding: 0.45rem 0.9rem;
-  border-radius: 0.45rem;
+  border-radius: var(--radius);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  border: none;
+  border: 1px solid var(--accent);
   background: var(--accent);
-  color: #fff;
-  transition: opacity 0.15s;
-}
-
-.primary-action:hover:not(:disabled) {
-  opacity: 0.85;
+  color: var(--accent-contrast);
 }
 
 .primary-action:disabled {
@@ -1171,7 +1169,7 @@
 
 .recipe-card {
   border: 1px solid var(--border);
-  border-radius: 0.65rem;
+  border-radius: var(--radius);
   background: var(--surface);
   padding: 0.6rem 0.65rem;
   display: flex;
@@ -1226,9 +1224,10 @@
 
 .recipe-card-edit-label {
   font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
   color: var(--text-muted);
 }
 
@@ -1266,10 +1265,10 @@
   display: grid;
   gap: 0.85rem;
   padding: 1.25rem;
-  border-radius: 1rem;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--surface);
-  box-shadow: 0 1.3rem 3rem rgba(0, 0, 0, 0.24);
+  box-shadow: var(--shadow-float);
 }
 
 .recipe-popup-header {
@@ -1395,7 +1394,7 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  border-radius: 0.4rem 0.4rem 0 0;
+  border-radius: var(--radius) var(--radius) 0 0;
   transition: color 0.15s, border-color 0.15s;
 }
 
@@ -1411,7 +1410,7 @@
 
 .recipe-comp-tab-count {
   background: var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   padding: 0.05rem 0.4rem;
   font-size: 0.72rem;
   font-weight: 600;
@@ -1433,7 +1432,7 @@
   padding: 0.35rem 0.6rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   font-size: 0.87rem;
 }
 
@@ -1462,7 +1461,7 @@
   cursor: pointer;
   font-size: 0.8rem;
   padding: 0.1rem 0.25rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius);
   line-height: 1;
   flex-shrink: 0;
   transition: color 0.15s;
@@ -1479,7 +1478,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0.1rem 0.25rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius);
   line-height: 1;
   flex-shrink: 0;
   transition: color 0.15s;
@@ -1538,7 +1537,7 @@
   padding: 0.65rem;
   background: var(--surface);
   border: 1px dashed var(--border);
-  border-radius: 0.6rem;
+  border-radius: var(--radius);
 }
 
 .recipe-comp-add-fields {
@@ -1593,7 +1592,7 @@
   padding: 0.4rem 0.6rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   font-size: 0.87rem;
 }
 
@@ -1644,10 +1643,10 @@
   display: grid;
   gap: 0.85rem;
   padding: 1.15rem;
-  border-radius: 1rem;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--surface);
-  box-shadow: 0 1.3rem 3rem rgba(0, 0, 0, 0.24);
+  box-shadow: var(--shadow-float);
 }
 
 .calendar-dialog h2 {
@@ -1665,7 +1664,7 @@
   justify-self: start;
   padding: 0.7rem 1rem;
   border: 1px solid var(--border-strong);
-  border-radius: 0.6rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   color: var(--text-strong);
   font: inherit;
@@ -1711,8 +1710,8 @@
   /* On the narrowest phones a four-tab group is wider than its card; scroll the
      tabs rather than the page. */
   max-width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -1798,24 +1797,31 @@
 .experience-toggle-btn {
   flex-shrink: 0;
   border: 0;
-  background: var(--surface-muted);
+  background: var(--surface);
   color: var(--text-muted);
-  padding: 0.42rem 0.72rem;
+  padding: 0.35rem 0.7rem;
   cursor: pointer;
-  font-size: 0.84rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: lowercase;
   white-space: nowrap;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
 
-/* Robin egg blue active state for every filter/tab selector. */
+.experience-toggle-btn + .experience-toggle-btn {
+  border-left: 1px solid var(--border);
+}
+
+@media (hover: hover) {
+  .experience-toggle-btn:not(.active):hover {
+    color: var(--text-strong);
+  }
+}
+
+/* The one accent marks the active segment of every filter/tab selector. */
 .experience-toggle-btn.active {
-  background: color-mix(in srgb, #00cccc 20%, var(--surface));
-  color: #007f7f;
-  box-shadow: inset 0 -2px 0 #00cccc;
-}
-
-:root[data-theme='dark'] .experience-toggle-btn.active {
-  background: color-mix(in srgb, #00cccc 26%, var(--surface));
-  color: #6ee7e7;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .oreo-gang-card {
@@ -1841,7 +1847,7 @@
   width: 100%;
   max-width: 26rem;
   aspect-ratio: 4 / 3;
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   object-fit: cover;
   display: block;
 }
@@ -2000,7 +2006,7 @@
 .experience-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: -0.9rem -0.9rem 0;
+  margin: -1rem -0.75rem 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -2018,14 +2024,9 @@
   transition: color 130ms ease, box-shadow 130ms ease;
 }
 
-/* Same robin egg blue as the other tab selectors. */
 .experience-tab[aria-selected='true'] {
-  color: #007f7f;
-  box-shadow: inset 0 -2px 0 #00cccc;
-}
-
-:root[data-theme='dark'] .experience-tab[aria-selected='true'] {
-  color: #6ee7e7;
+  color: var(--text-strong);
+  box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 @media (hover: hover) {
@@ -2035,7 +2036,7 @@
 }
 
 .experience-tab:focus-visible {
-  outline: 2px solid #00cccc;
+  outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
 }
 
@@ -2089,16 +2090,17 @@
   gap: 0.12rem;
   padding: 0.6rem 0.7rem;
   border: 1px solid var(--border);
-  border-radius: 0.6rem;
-  background: var(--surface-muted);
+  border-radius: var(--radius);
+  background: var(--surface);
 }
 
 .wellbeing-stat-value {
   font-size: 1.25rem;
-  font-weight: 650;
+  font-weight: 600;
   color: var(--text-strong);
   line-height: 1.1;
   letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 .wellbeing-stat-meta {
@@ -2108,30 +2110,30 @@
 }
 
 .wellbeing-stat-label {
-  font-size: 0.7rem;
   color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
   line-height: 1.2;
+  text-transform: lowercase;
 }
 
 .wellbeing-trend-up {
   font-size: 0.75rem;
-  font-weight: 700;
-  color: #22c55e;
+  font-weight: 600;
+  color: var(--success);
 }
 
 .wellbeing-trend-down {
   font-size: 0.75rem;
-  font-weight: 700;
-  color: #ef4444;
+  font-weight: 600;
+  color: var(--danger);
 }
 
+/* A line of commentary, not a callout: no box, no bar. */
 .wellbeing-insight {
   margin: 0;
-  padding: 0.55rem 0.75rem;
-  border-radius: 0.5rem;
-  border-left: 2px solid var(--border-strong);
-  background: color-mix(in srgb, var(--surface-muted) 60%, transparent);
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   line-height: 1.45;
 }
@@ -2140,9 +2142,9 @@
 
 .health-chart-container {
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   padding: 0.6rem 0.75rem 0.4rem;
-  background: var(--surface-muted, rgba(0,0,0,0.03));
+  background: var(--surface);
   overflow: hidden;   /* clip chart so it never bleeds past the container */
   margin-bottom: 0.75rem;
 }
@@ -2162,7 +2164,7 @@
   min-height: 2rem;
   padding: 0.35rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 0.35rem;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--text-muted);
   font-size: 0.72rem;
@@ -2193,7 +2195,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   margin-bottom: 0.25rem;
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
   -webkit-overflow-scrolling: touch;
@@ -2242,7 +2244,7 @@
   font-size: 0.82rem;
   color: var(--text-muted);
   border: 1px dashed var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   margin-bottom: 0.5rem;
 }
 
@@ -2259,7 +2261,7 @@
 .health-data-table-scroll {
   overflow-x: auto;
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   /* Fade hint on right edge to signal scrollability */
   -webkit-mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
   mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent 100%);
@@ -2285,12 +2287,21 @@
 }
 
 .health-data-table th {
-  background: var(--surface-muted);
+  background: var(--surface);
+  border-bottom-color: var(--border-strong);
   color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
   font-weight: 500;
-  text-transform: capitalize;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
   position: sticky;
   top: 0;
+}
+
+/* Every cell after the date and type columns is a measurement. */
+.health-data-table td {
+  font-variant-numeric: tabular-nums;
 }
 
 .health-data-table tr:last-child td {
@@ -2316,7 +2327,7 @@
   width: 2rem;
   height: 2rem;
   border: 1px solid var(--border);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   font-size: 1.1rem;
@@ -2385,7 +2396,7 @@
 
 .countdown-inputs input {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.5rem 0.6rem;
@@ -2418,7 +2429,7 @@
 
 .countdown-cell {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   padding: 0.5rem 0.3rem;
   text-align: center;
@@ -2463,7 +2474,7 @@
 
 .countdown-event-item {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   padding: 0.45rem 0.55rem;
   display: flex;
@@ -2511,7 +2522,7 @@
 
 .section-edit-btn {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   width: 2rem;
@@ -2524,13 +2535,14 @@
 }
 
 .section-edit-btn.active {
-  border-color: var(--page-accent);
-  box-shadow: 0 0 0 1px var(--page-accent-alpha);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .section-collapse-btn {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   width: 2rem;
@@ -2541,6 +2553,15 @@
   font-size: 0.95rem;
   line-height: 1;
   cursor: pointer;
+}
+
+/* The collapse chevron points right while closed. */
+.section-collapse-btn svg {
+  transition: transform var(--dur) var(--ease);
+}
+
+.section-collapse-btn[aria-expanded='false'] svg {
+  transform: rotate(-90deg);
 }
 
 /* Keep inline lucide icons optically aligned with adjacent text. */
@@ -2744,7 +2765,7 @@ button svg,
 
 .sheets-input {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.42rem 0.55rem;
@@ -2764,7 +2785,7 @@ button svg,
   max-height: 320px;
   overflow: auto;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   background: var(--surface);
 }
 
@@ -2787,8 +2808,14 @@ button svg,
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--surface-muted);
-  color: var(--text-strong);
+  background: var(--surface);
+  border-bottom-color: var(--border-strong);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
 }
 
 .sheets-table tr:last-child td {
@@ -2828,19 +2855,15 @@ button svg,
   user-select: none;
   -webkit-user-select: none;
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
-  transition: background 0.1s, box-shadow 0.1s, opacity 0.1s;
+  transition: background-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
   cursor: grab;
 }
 
-.todoist-task-row[data-priority='1'] { border-left: 3px solid #d1453b; }
-.todoist-task-row[data-priority='2'] { border-left: 3px solid #eb8909; }
-.todoist-task-row[data-priority='3'] { border-left: 3px solid #4073ff; }
-
+/* Priority shows once, as the checkbox ring color, not also as a side bar. */
 .todoist-task-row:hover {
-  background: var(--surface-muted);
-  box-shadow: var(--shadow);
+  background: var(--surface-2);
 }
 
 .todoist-task-row.is-completed {
@@ -2997,7 +3020,7 @@ button svg,
 
 .todoist-task-row.is-editing {
   background: var(--surface-raised, color-mix(in srgb, var(--accent) 6%, var(--surface)));
-  border-radius: 0.5rem 0.5rem 0 0;
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .todoist-inline-edit {
@@ -3006,7 +3029,7 @@ button svg,
   gap: 0.4rem;
   padding: 0.55rem 0.6rem 0.6rem 2.4rem;
   background: var(--surface-raised, color-mix(in srgb, var(--accent) 6%, var(--surface)));
-  border-radius: 0 0 0.5rem 0.5rem;
+  border-radius: 0 0 var(--radius) var(--radius);
   margin-bottom: 0.15rem;
 }
 
@@ -3039,7 +3062,7 @@ button svg,
   gap: 0.4rem;
   padding: 0.4rem 0.5rem;
   border: 1px dashed var(--border);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
 }
 
 .todoist-subtask-list {
@@ -3048,7 +3071,7 @@ button svg,
   padding: 0;
   border-left: 2px solid var(--border);
   margin-left: 1.5rem;
-  border-radius: 0 0 0.25rem 0.25rem;
+  border-radius: 0 0 var(--radius) var(--radius);
 }
 
 .todoist-subtask-row {
@@ -3065,7 +3088,7 @@ button svg,
 }
 
 .todoist-subtask-inline-edit {
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   padding: 0.5rem;
 }
 
@@ -3091,7 +3114,7 @@ button svg,
   color: var(--text-muted);
   font-size: 0.78rem;
   padding: 0.1rem 0.25rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -3172,7 +3195,7 @@ button svg,
   max-height: 360px;
   overflow: auto;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   background: var(--surface);
   padding: 0.65rem;
 }
@@ -3196,8 +3219,9 @@ button svg,
   background: var(--surface-muted);
   color: var(--text-strong);
   font-size: 0.76rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-weight: 500;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
 }
 
 .grocery-catalog-row {
@@ -3227,7 +3251,7 @@ button svg,
   width: 1.9rem;
   height: 1.9rem;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--surface-muted);
   color: var(--text-strong);
   font-size: 1.05rem;
@@ -3270,7 +3294,7 @@ button svg,
   height: 1.6rem;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 0.35rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   font-size: 1rem;
@@ -3320,7 +3344,7 @@ button svg,
 
 .meal-plan-day-item {
   border: 1px solid var(--border);
-  border-radius: 0.7rem;
+  border-radius: var(--radius);
   background: var(--surface);
   padding: 0.7rem 0.8rem;
 }
@@ -3353,9 +3377,10 @@ button svg,
 
 .meal-randomizer-reel-label {
   font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-weight: 600;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -3364,7 +3389,7 @@ button svg,
   height: 3.2rem;
   overflow: hidden;
   border: 2px solid var(--border-strong);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   display: flex;
   align-items: center;
@@ -3413,7 +3438,7 @@ button svg,
   background: #e0a800;
   color: #1a1000;
   border: none;
-  border-radius: 2rem;
+  border-radius: var(--radius);
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -3422,8 +3447,7 @@ button svg,
 }
 
 .meal-randomizer-spin-btn:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 16px color-mix(in srgb, #e0a800 45%, transparent);
+  filter: brightness(1.05);
 }
 
 .meal-randomizer-spin-btn:not(:disabled):active {
@@ -3472,7 +3496,7 @@ button svg,
   margin-top: 1rem;
   padding: 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   animation: slot-tick 200ms ease-out;
 }
@@ -3504,8 +3528,9 @@ button svg,
 .meal-plan-label {
   color: var(--text-muted);
   font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
   margin-bottom: 0.28rem;
 }
 
@@ -3553,7 +3578,7 @@ button svg,
 
   .recipe-edit-mobile-item {
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius);
     overflow: hidden;
   }
 
@@ -3671,7 +3696,7 @@ button svg,
 
 .meal-plan-nav-btn {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   width: 2rem;
@@ -3698,7 +3723,7 @@ button svg,
 
 .study-today-shell {
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
@@ -3757,7 +3782,7 @@ button svg,
 .training-log-year-btn {
   background: none;
   border: 1px solid transparent;
-  border-radius: 0.35rem;
+  border-radius: var(--radius);
   color: var(--text-muted);
   cursor: pointer;
   font-size: 0.74rem;
@@ -3822,7 +3847,7 @@ button svg,
 
 .training-log-grid-panel {
   border: 1px solid var(--border);
-  border-radius: 0.6rem;
+  border-radius: var(--radius);
   background: var(--surface);
   padding: 0.45rem;
   display: grid;
@@ -3844,8 +3869,9 @@ button svg,
 .training-log-month-label {
   color: var(--text-muted);
   font-size: 0.74rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
   text-align: center;
 }
 
@@ -3976,7 +4002,7 @@ button svg,
 
   .meal-plan-table tr {
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius);
     background: var(--surface);
     padding: 0.25rem;
   }
@@ -3999,8 +4025,9 @@ button svg,
     margin-bottom: 0.22rem;
     color: var(--text-muted);
     font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    font-family: var(--font-mono);
+    letter-spacing: 0.03em;
   }
 
   .meal-plan-table td[data-label='Actions']::before {
@@ -4038,7 +4065,7 @@ button svg,
 
 .world-map-container {
   width: 100%;
-  border-radius: 6px;
+  border-radius: var(--radius);
   overflow: hidden;
   background: var(--map-ocean);
 }
@@ -4062,7 +4089,7 @@ button svg,
   display: grid;
   gap: 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   padding: 0.75rem;
 }
@@ -4081,7 +4108,7 @@ button svg,
 
 .pomodoro-collapse-btn {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.38rem 0.62rem;
@@ -4115,7 +4142,7 @@ button svg,
 
 .pomodoro-settings input {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.5rem 0.6rem;
@@ -4197,8 +4224,9 @@ button svg,
 
 .pomodoro-status {
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
   font-size: 0.74rem;
   color: var(--text-muted);
   text-align: center;
@@ -4219,7 +4247,7 @@ button svg,
   justify-self: center;
   width: fit-content;
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
@@ -4277,11 +4305,12 @@ button svg,
 
 .section-child-card .section-child-label {
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
   font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--page-accent, var(--text-muted));
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .page-frame {
@@ -4291,43 +4320,24 @@ button svg,
 
 .page-hero {
   position: relative;
-  overflow: hidden;
-  /* Clean diagonal accent wash: section color at the top-left, fading out
-     toward the bottom-right. */
-  background-image: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--page-accent, var(--accent)) 20%, transparent),
-    transparent 70%
-  );
 }
 
-/* Accent underline beneath the page title. */
-.page-title-block h1::after {
+/* A section's color appears only as the dot before its eyebrow. */
+.page-title-block .eyebrow,
+.home-section-titles .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.page-title-block .eyebrow::before,
+.home-section-titles .eyebrow::before {
   content: '';
-  display: block;
-  width: 2.8rem;
-  height: 0.24rem;
-  margin-top: 0.4rem;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--page-accent, var(--accent)),
-    color-mix(in srgb, var(--page-accent, var(--accent)) 30%, transparent)
-  );
-}
-
-/* Every card on a page carries a sliver of the section color. */
-.page-grid > .info-card {
-  border-top: 3px solid color-mix(in srgb, var(--page-accent, var(--accent)) 60%, var(--border));
-  background-image: linear-gradient(135deg, color-mix(in srgb, var(--page-accent, var(--accent)) 5%, transparent), transparent 55%);
-}
-
-.page-frame .back-link,
-.admin-page .secondary-action,
-.admin-page .admin-quick-link,
-.news-summary-btn {
-  border-color: color-mix(in srgb, var(--page-accent, var(--accent)) 25%, var(--border));
-  background-color: color-mix(in srgb, var(--page-accent, var(--accent)) 7%, var(--surface));
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--page-accent, var(--text-faint));
 }
 
 .page-hero-header {
@@ -4344,17 +4354,6 @@ button svg,
 
 .page-title-block .eyebrow {
   margin-top: 0.15rem;
-}
-
-.page-hero::after {
-  content: '';
-  position: absolute;
-  inset: auto 1rem 1rem auto;
-  width: 0.65rem;
-  height: 0.65rem;
-  border-radius: 50%;
-  background: var(--page-accent, #111827);
-  opacity: 0.55;
 }
 
 .back-link {
@@ -4402,7 +4401,7 @@ button svg,
 
 .login-card input {
   border: 1px solid var(--border);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.72rem 0.8rem;
@@ -4518,7 +4517,7 @@ button svg,
   background: var(--surface-muted);
   color: var(--text-muted);
   padding: 0.3rem 0.7rem;
-  border-radius: 0.35rem;
+  border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 500;
@@ -4565,9 +4564,10 @@ button svg,
 .price-table th {
   background: var(--surface-muted);
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.78rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
   letter-spacing: 0.03em;
 }
 
@@ -4607,7 +4607,7 @@ button svg,
   background: #22c55e;
   color: #fff;
   padding: 0.18rem 0.48rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius);
   font-size: 0.76rem;
   font-weight: 600;
 }
@@ -4657,7 +4657,7 @@ button svg,
   gap: 0.45rem;
   padding: 0.75rem;
   background: var(--surface-muted);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
 }
 
@@ -4688,9 +4688,10 @@ button svg,
 
 .deal-store-heading {
   font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
   color: var(--text-muted);
   margin: 0;
   padding-bottom: 0.3rem;
@@ -4713,7 +4714,7 @@ button svg,
 
 .deals-page-btn {
   border: 1px solid var(--border);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   padding: 0.3rem 0.7rem;
@@ -4734,7 +4735,7 @@ button svg,
 .deal-card {
   position: relative;
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   padding: 0.6rem 0.85rem;
   background: var(--surface);
   display: flex;
@@ -4760,7 +4761,7 @@ button svg,
   color: var(--text-muted);
   background: var(--surface-muted);
   padding: 0.1rem 0.35rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
 }
 
 .deal-card-prices {
@@ -4789,7 +4790,7 @@ button svg,
   font-size: 0.72rem;
   font-weight: 700;
   padding: 0.15rem 0.4rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius);
 }
 
 .deal-card-meta {
@@ -4820,9 +4821,10 @@ button svg,
 
 .coupon-place-heading {
   font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
   color: var(--text-muted);
   margin: 0;
   padding-bottom: 0.3rem;
@@ -4838,7 +4840,7 @@ button svg,
 .coupon-card {
   position: relative;
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   padding: 0.55rem 0.85rem;
   background: var(--surface);
   display: flex;
@@ -4861,7 +4863,7 @@ button svg,
   font-size: 0.78rem;
   font-weight: 700;
   padding: 0.18rem 0.45rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius);
   white-space: nowrap;
   border: 1px solid color-mix(in srgb, #FFCE1B 60%, transparent);
 }
@@ -4885,7 +4887,7 @@ button svg,
   font-size: 0.78rem;
   background: var(--surface-muted);
   padding: 0.1rem 0.35rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
 }
 
@@ -4915,7 +4917,7 @@ button svg,
   background: var(--surface-muted);
   border: 1px solid var(--border);
   padding: 0.1rem 0.45rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius);
   font-weight: 500;
 }
 
@@ -4924,7 +4926,7 @@ button svg,
   display: inline-block;
   background: color-mix(in srgb, currentColor 18%, transparent);
   padding: 0 0.35rem;
-  border-radius: 0.9rem;
+  border-radius: var(--radius);
   font-size: 0.72rem;
   margin-left: 0.3rem;
   font-weight: 700;
@@ -4951,7 +4953,7 @@ button svg,
 
 .cost-analysis-card {
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   padding: 0.65rem 0.85rem;
   background: var(--surface);
   display: flex;
@@ -4995,7 +4997,7 @@ button svg,
 
 .cost-search-row {
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   padding: 0.55rem 0.85rem;
   background: var(--surface);
   display: flex;
@@ -5060,14 +5062,14 @@ button svg,
   top: 0;
   font-size: 1.1rem;
   line-height: 1.4;
-  color: var(--page-accent, var(--text-strong));
+  color: var(--text-muted);
 }
 
 .personal-games-link {
   align-self: flex-start;
   font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--page-accent, var(--text-strong));
+  font-weight: 600;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -5114,7 +5116,7 @@ button svg,
   font-size: 0.82rem;
   background: var(--surface-muted);
   border: 1px solid var(--border);
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   padding: 0.1em 0.35em;
 }
 
@@ -5140,7 +5142,7 @@ button svg,
   min-width: 160px;
   padding: 0.45rem 0.7rem;
   border: 1px solid var(--border);
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
   font-size: 0.9rem;
@@ -5148,8 +5150,8 @@ button svg,
 
 .mc-name-input:focus {
   outline: none;
-  border-color: #9333ea;
-  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--focus-ring);
 }
 
 .mc-name-select {
@@ -5163,8 +5165,8 @@ button svg,
 
 .mc-start-btn {
   white-space: nowrap;
-  background: #9333ea;
-  border-color: #9333ea;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .mc-start-btn:disabled {
@@ -5176,13 +5178,13 @@ button svg,
   margin: 0;
   font-size: 0.85rem;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.4rem;
+  border-radius: var(--radius);
 }
 
 .mc-status--ok {
-  background: rgba(147, 51, 234, 0.08);
-  color: #9333ea;
-  border: 1px solid rgba(147, 51, 234, 0.22);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .mc-status--err {
@@ -5211,7 +5213,7 @@ button svg,
 .mc-refresh-btn {
   background: none;
   border: 1px solid var(--border);
-  border-radius: 0.35rem;
+  border-radius: var(--radius);
   color: var(--text-muted);
   font-size: 0.8rem;
   padding: 0.25rem 0.6rem;
@@ -5220,8 +5222,8 @@ button svg,
 }
 
 .mc-refresh-btn:hover:not(:disabled) {
-  color: #9333ea;
-  border-color: #9333ea;
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .mc-refresh-btn:disabled {
@@ -5243,7 +5245,7 @@ button svg,
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.25rem 0.65rem;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
 }
 
 .mc-srv-badge--on {
@@ -5296,7 +5298,7 @@ button svg,
   font-size: 0.82rem;
   background: var(--surface-muted);
   border: 1px solid var(--border);
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   padding: 0.1em 0.4em;
   word-break: break-all;
 }
@@ -5341,10 +5343,11 @@ button svg,
 .mc-lb-title {
   margin: 0 0 0.2rem;
   font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #9333ea;
+  font-weight: 500;
+  text-transform: lowercase;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+  color: var(--accent);
 }
 
 .mc-lb-row {
@@ -5352,7 +5355,7 @@ button svg,
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.5rem;
-  border-radius: 0.35rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   font-size: 0.85rem;
 }
@@ -5363,7 +5366,7 @@ button svg,
   min-width: 2rem;
   text-align: center;
   padding: 0.1em 0.3em;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
 }
 
 .mc-lb-rank--1 { background: rgba(234, 179, 8, 0.15);  color: #a16207; }
@@ -5424,7 +5427,7 @@ button svg,
   scroll-snap-align: start;
   flex: 0 0 180px;
   position: relative;
-  border-radius: 10px;
+  border-radius: var(--radius);
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background: var(--surface-2, #2a2a2a);
@@ -5531,14 +5534,16 @@ button svg,
 /* ── Home page sections ───────────────────────────────────────────────────
    The three public sections live on the home page as collapsible blocks
    rather than separate routes. */
+/* Each section is an open frame on the paper: its eyebrow and index ride the
+   top border, and the cards inside are the white frames. */
 .home-section {
-  margin-top: 1rem;
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--page-accent, var(--accent));
-  border-radius: 0.9rem;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--page-accent, var(--accent)) 7%, var(--surface)), var(--surface) 55%);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+  --frame-fill: var(--bg);
+  --frame-behind: var(--bg);
+  position: relative;
+  margin-top: 1.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--frame-fill);
 }
 
 .home-section-header {
@@ -5547,14 +5552,16 @@ button svg,
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
-  padding: 0.85rem 1rem;
+  padding: 1rem 0.75rem 0.75rem;
 }
 
 .home-section-toggle {
   flex: 1 1 auto;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.6rem;
+  min-height: 2.5rem;
   padding: 0;
   border: 0;
   background: none;
@@ -5564,10 +5571,21 @@ button svg,
   cursor: pointer;
 }
 
-.home-section-caret {
+.home-section-chevron {
+  flex: none;
   color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1;
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.home-section-toggle[aria-expanded='false'] .home-section-chevron {
+  transform: rotate(-90deg);
+}
+
+@media (hover: hover) {
+  .home-section-toggle:hover .home-section-chevron,
+  .home-section-toggle:hover .home-section-title {
+    color: var(--accent);
+  }
 }
 
 .home-section-titles {
@@ -5575,16 +5593,38 @@ button svg,
   gap: 0.1rem;
 }
 
+.home-section-titles .eyebrow,
+.home-section-index {
+  position: absolute;
+  top: 0;
+  padding: 0 0.35rem;
+  transform: translateY(-50%);
+  background: var(--frame-fill);
+}
+
+.home-section-titles .eyebrow {
+  left: 0.5rem;
+  color: var(--text-strong);
+}
+
+.home-section-index {
+  right: 0.5rem;
+  color: var(--text-muted);
+  font: 400 0.6875rem / 1.4 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 .home-section-title {
   color: var(--text-strong);
-  font-size: clamp(1.4rem, 4.5vw, 2rem);
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.02em;
+  transition: color var(--dur) var(--ease);
 }
 
 .home-section-panel {
-  padding: 0 1rem 1rem;
+  padding: 0 0.75rem 0.75rem;
 }
 
 /* Collapsed panels stay in the DOM so their content is still crawlable. */
@@ -5616,7 +5656,7 @@ button svg,
   margin: 0.6rem 0 0;
   padding: 0.5rem 0.65rem;
   border: 1px solid var(--border-strong);
-  border-radius: 0.5rem;
+  border-radius: var(--radius);
   background: var(--surface-muted);
   color: var(--text-strong);
   font-size: 0.82rem;
@@ -5637,7 +5677,6 @@ button svg,
   --seafoam: #2a9d8f;
   --coral: #e76f51;
   --sand: #e9c46a;
-  --accent: var(--robin-egg);
 }
 
 :root[data-theme='dark'] .home-page {
@@ -5654,25 +5693,27 @@ button svg,
   grid-template-columns: 3fr 1fr;
   align-items: stretch;
   gap: 1.15rem;
+  position: relative;
   margin-top: 1rem;
-  padding: 1.35rem 1.25rem 1.4rem;
+  padding: 1.5rem 1rem 1rem;
   border: 1px solid var(--border);
-  border-top: 3px solid var(--robin-egg);
-  border-radius: 0.9rem;
-  /* Sea-to-sand wash, kept faint so text contrast is unaffected. */
-  background:
-    radial-gradient(
-      120% 90% at 0% 0%,
-      color-mix(in srgb, var(--robin-egg) 16%, transparent),
-      transparent 58%
-    ),
-    radial-gradient(
-      90% 80% at 100% 100%,
-      color-mix(in srgb, var(--sand) 20%, transparent),
-      transparent 60%
-    ),
-    var(--surface);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* The role rides the hero's top border, like every other frame label. */
+.home-hero-eyebrow {
+  position: absolute;
+  top: 0;
+  left: 0.5rem;
+  margin: 0;
+  padding: 0 0.35rem;
+  transform: translateY(-50%);
+  background: linear-gradient(var(--bg) 50%, var(--surface) 50%);
+  color: var(--text-strong);
+  font: 500 0.6875rem / 1.4 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
 }
 
 .home-hero-copy {
@@ -5703,7 +5744,7 @@ button svg,
      "Currently" line beside it. `min()` keeps it from overflowing the narrower
      aside column on a small laptop, and the aspect ratio keeps it circular when
      that cap kicks in. */
-  width: min(15rem, 100%);
+  width: min(11rem, 100%);
   aspect-ratio: 1;
   height: auto;
   border-radius: 50%;
@@ -5712,9 +5753,7 @@ button svg,
      centred square crop lands on the tie. 4% puts the face in the middle of
      the circle with a little headroom — compared against 0/4/8/14%. */
   object-position: 50% 4%;
-  /* The headshot sits on black, so the ring reads as a horizon line. */
-  border: 3px solid color-mix(in srgb, var(--robin-egg) 55%, var(--surface));
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sand) 35%, transparent);
+  border: 1px solid var(--border-strong);
 }
 
 /* Portrait moves above the copy once the two no longer fit side by side. */
@@ -5722,10 +5761,10 @@ button svg,
 .home-hero-name {
   margin: 0;
   color: var(--text-strong);
-  font-size: clamp(1.9rem, 6vw, 2.9rem);
-  font-weight: 650;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
 }
 
 .home-hero-location {
@@ -5741,7 +5780,7 @@ button svg,
   margin: 0.5rem 0 0;
   max-width: 60ch;
   color: var(--text-strong);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   line-height: 1.6;
 }
 
@@ -5757,15 +5796,13 @@ button svg,
 }
 
 .home-hero-currently-label {
-  padding: 0.1rem 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--seafoam) 40%, var(--border));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--seafoam) 14%, var(--surface));
-  color: var(--beach-ink);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  padding: 0 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--success);
+  font: 500 0.6875rem / 1.6 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
 }
 
 .home-hero-actions {
@@ -5790,50 +5827,43 @@ button svg,
 .home-page .home-hero-resume,
 .home-page .mc-doc-link,
 .home-page .project-visit {
-  --cta-accent: var(--robin-egg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
   min-height: 2.5rem;
   padding: 0.45rem 0.95rem;
-  border: 1px solid color-mix(in srgb, var(--cta-accent) 55%, var(--border-strong));
-  border-radius: 0.55rem;
-  background: color-mix(in srgb, var(--cta-accent) 22%, var(--surface));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: var(--text-strong);
   font: inherit;
-  font-size: 0.88rem;
-  font-weight: 550;
+  font-size: 0.875rem;
+  font-weight: 500;
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
 }
 
-/*
- * The Gaming buttons take that section's coral accent instead of the site blue.
- * Same specificity as the rule above, so this has to stay after it. The tint —
- * rather than a solid coral fill — is what keeps the label readable in both
- * themes; coral is too light to carry white text.
- */
-.home-page .mc-doc-link {
-  --cta-accent: var(--coral);
-}
-
-/* Quieter partner for the secondary choice in a pair. */
-.home-page .home-hero-resume.secondary,
-.home-page .mc-doc-link--quiet {
-  border-color: var(--border-strong);
-  background: var(--surface);
-  font-weight: 500;
+/* The résumé download is the page's one primary action. */
+.home-page .home-hero-resume:not(.secondary) {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
 }
 
 @media (hover: hover) {
-  .home-page .home-hero-resume:hover,
+  .home-page .home-hero-resume.secondary:hover,
   .home-page .mc-doc-link:hover,
   .home-page .project-visit:hover {
-    border-color: var(--cta-accent);
-    background: color-mix(in srgb, var(--cta-accent) 32%, var(--surface));
+    background: var(--surface-2);
+  }
+
+  .home-page .home-hero-resume:not(.secondary):hover {
+    border-color: var(--accent-hover);
+    background: var(--accent-hover);
   }
 }
 
@@ -5857,7 +5887,7 @@ button svg,
   width: 2.5rem;
   height: 2.5rem;
   border: 1px solid var(--border-strong);
-  border-radius: 0.55rem;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--text-strong);
 }
@@ -5869,9 +5899,7 @@ button svg,
 
 @media (hover: hover) {
   .home-hero-links a:hover {
-    border-color: var(--robin-egg);
-    background: color-mix(in srgb, var(--robin-egg) 32%, var(--surface));
-    color: var(--beach-ink);
+    background: var(--surface-2);
   }
 }
 
@@ -5985,9 +6013,6 @@ button svg,
     font-size: clamp(1.6rem, 8vw, 2.1rem);
   }
 
-  .home-hero-eyebrow {
-    font-size: 0.72rem;
-  }
 }
 
 /*
