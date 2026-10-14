@@ -275,8 +275,8 @@ function MoodSleepChart({ days }: { days: Day[] }) {
             data: days.map((day) => day.score),
             borderColor: lineColor,
             borderWidth: 2,
-            // Monotone curves never overshoot a point, so the line stays between Rough and Great.
-            cubicInterpolationMode: 'monotone',
+            // Steps, not slopes: a mood holds as a plateau until the next one logged.
+            stepped: 'middle',
             spanGaps: true,
             // Let a Great or Rough point draw whole instead of halved by the chart edge.
             clip: false,
@@ -295,7 +295,7 @@ function MoodSleepChart({ days }: { days: Day[] }) {
             backgroundColor: `${SLEEP_COLOR}1f`,
             borderWidth: 2,
             fill: true,
-            cubicInterpolationMode: 'monotone',
+            stepped: 'middle',
             spanGaps: true,
             pointRadius: 0,
             pointHoverRadius: 4,

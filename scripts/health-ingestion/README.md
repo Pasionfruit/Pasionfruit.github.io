@@ -29,7 +29,7 @@ cp config.env.example config.env
 
 ### 4. Sheet tabs
 
-**The two Garmin tabs create themselves.** `ingest_garmin.py` and
+**The Garmin tabs create themselves.** `ingest_garmin.py` and
 `ingest_garmin_wellness.py` call `ensure_worksheet`, which adds the tab with its
 header row if it is missing — so deleting a Garmin tab costs a re-run, not a
 hand-rebuilt header. They also backfill the header row on a tab that exists but
@@ -46,6 +46,17 @@ date  activity_type  title  distance_mi  duration_min  avg_hr  max_hr  calories 
 `activity_id` is Garmin's id for the activity and the key the API sync upserts
 on, so two workouts on one day keep a row each. The sync adds the column itself
 if it is missing and keeps it formatted as plain text.
+
+**`garmin_prs`** (row 1) — one row per personal record, written by
+`ingest_garmin.py --api` in the same login as the activities:
+```
+type_id  value  activity_type  activity_id  activity_name  date  pool_unit
+```
+`type_id` is Garmin's PR type and the upsert key, so each record updates in
+place when it is beaten. `value` is raw: seconds for a time (1K, mile, 5K, 10K,
+half, marathon, fastest swim), meters for a distance or climb, a count for
+steps. The site maps ids to labels in `src/admin/garmin/prs.ts`. A failed PR
+fetch is logged as a warning and never fails the activity sync.
 
 **`garmin_wellness`** (row 1) — one row per day, the passive metrics:
 ```

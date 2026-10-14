@@ -73,7 +73,8 @@ export function HourlyChart({ points }: { points: HourlyPoint[] }) {
             backgroundColor: tempColor + '22',
             borderWidth: 2,
             fill: true,
-            tension: 0.35,
+            // Steps, not slopes: each hour's temperature holds as a plateau.
+            stepped: 'middle',
             pointRadius: 0,
             pointHoverRadius: 4,
             pointBackgroundColor: tempColor,

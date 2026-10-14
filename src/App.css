@@ -3886,6 +3886,130 @@ button svg,
   display: inline-flex;
 }
 
+/* Training log: switch between the heatmap and the PR board. */
+.training-log-view {
+  margin-bottom: 0.25rem;
+}
+
+/* ── PR board ─────────────────────────────────────────────────────────────
+   Garmin's personal records as soft tiles: the record, its pace or unit,
+   when it was set, and the next round number to chase. */
+.training-prs {
+  display: grid;
+  gap: 1rem;
+}
+
+.training-prs-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.training-prs-title {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.training-prs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pr-tile {
+  display: grid;
+  align-content: start;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* Fresh records get the success color: good news, not a control. */
+.pr-tile.is-new {
+  border-color: color-mix(in srgb, var(--success) 40%, var(--border));
+}
+
+/* A race distance still to run: quieter, and dashed like an outline to fill in. */
+.pr-tile.is-unset {
+  border-style: dashed;
+  background: var(--surface-2);
+}
+
+.pr-tile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.pr-label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.pr-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0 0.45rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.pr-value {
+  color: var(--text-strong);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pr-tile.is-unset .pr-value {
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.pr-detail,
+.pr-goal {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pr-goal {
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+}
+
+.pr-progress {
+  display: block;
+  height: 6px;
+  margin-top: 0.35rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+.pr-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-blue);
+}
+
 .training-log-page-nav {
   display: none;
 }

@@ -31,7 +31,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     title: 'Health',
     path: '/admin/health',
     icon: 'health',
-    summary: 'Workouts from Garmin, Apple Health, and RingConn, plus the session log',
+    summary: 'Garmin workouts, runs, swims, and rides, plus the training log and PRs',
     accent: '#14b8a6',
     eyebrow: 'Body',
   },

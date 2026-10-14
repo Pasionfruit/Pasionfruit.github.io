@@ -91,6 +91,23 @@ export type GarminHealthRecord = {
   activity_id: string
 }
 
+/**
+ * One of Garmin's personal records, as the sync stores it: raw values keyed by
+ * Garmin's PR type id. src/admin/garmin/prs.ts gives the ids their meaning.
+ */
+export type GarminPrRecord = {
+  type_id: string
+  /** Seconds for a time, meters for a distance or climb, a count for steps or days. */
+  value: string
+  activity_type: string
+  activity_id: string
+  activity_name: string
+  /** YYYY-MM-DD the record was set. */
+  date: string
+  /** 'meter' or 'yard' for swim records; empty otherwise. */
+  pool_unit: string
+}
+
 export type RingconnHealthRecord = {
   date: string
   sleep_score: string

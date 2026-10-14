@@ -12,6 +12,7 @@ const repoMocks = vi.hoisted(() => {
     getPersonalTraining: empty(),
     getGarminHealth: empty(),
     getGarminWellness: empty(),
+    getGarminPrs: empty(),
     getRingconnHealth: empty(),
     getAppleHealth: empty(),
     getJournalEntries: empty(),
@@ -543,9 +544,25 @@ describe('admin routing', () => {
   it('keeps Health to workouts: no Milestones, and Daily wellness lives on Personal', async () => {
     renderAt('/admin/health', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Health Data' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Training' })).toBeTruthy()
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Workouts', 'Runs', 'Swims', 'Bikes'])
     expect(screen.queryByRole('heading', { name: 'Milestones' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Daily wellness' })).toBeNull()
+  })
+
+  it('switches the Training Log between its tiles and the PR board', async () => {
+    const user = userEvent.setup()
+    renderAt('/admin/health', ADMIN_EMAIL)
+
+    const tiles = await screen.findByRole('button', { name: 'Tiles' })
+    const prs = screen.getByRole('button', { name: 'PRs' })
+    expect(tiles.getAttribute('aria-pressed')).toBe('true')
+
+    await user.click(prs)
+
+    expect(prs.getAttribute('aria-pressed')).toBe('true')
+    // No PR tab yet in this fixture, which is what a site sees before the first sync.
+    expect(await screen.findByText('Personal records arrive with the next Garmin sync.')).toBeTruthy()
   })
 
   it('shows Daily wellness on Personal, after Mood, and no separate Breathe or Sleep card', async () => {

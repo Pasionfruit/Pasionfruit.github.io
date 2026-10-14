@@ -62,6 +62,15 @@ import { sounds } from './sounds'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { HomeHero } from './components/HomeHero'
 import { Pager } from './components/Pager'
+import { TrainingPrs } from './admin/garmin/TrainingPrs'
+import {
+  TRAINING_VIEWS,
+  VIEW_CHART,
+  VIEW_COLUMNS,
+  activitiesFor,
+  viewSummary,
+  type TrainingView,
+} from './admin/training/activities'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
@@ -93,17 +102,13 @@ import {
   deleteEvent,
   getEvents,
   getGarminHealth,
-  getRingconnHealth,
-  getAppleHealth,
   getTrainingRecords,
   updateEvent,
   upsertTrainingRecord,
 } from './data/sheets/repositories'
 import type {
-  AppleHealthRecord,
   EventRecord,
   GarminHealthRecord,
-  RingconnHealthRecord,
   TrainingRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
@@ -372,7 +377,7 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
   return (
     <AdminPage meta={adminDashboardsById.health}>
       <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
-      <HealthDataCard title="Health Data" />
+      <TrainingDataCard title="Training" />
       <TrainingLogCard title="Training Log" />
     </AdminPage>
   )
@@ -1447,6 +1452,8 @@ function TrainingLogCard({
   const [yearFilter, setYearFilter] = useState(currentYear)
   const [mobilePage, setMobilePage] = useState(() => Math.floor(currentDate.getMonth() / 3))
   const [desktopPage, setDesktopPage] = useState(() => currentDate.getMonth() >= 6 ? 1 : 0)
+  // The heatmap of days trained, or the personal records board.
+  const [view, setView] = useState<'tiles' | 'prs'>('tiles')
 
   useEffect(() => {
     let isMounted = true
@@ -1584,9 +1591,25 @@ function TrainingLogCard({
 
   return (
     <CollapsibleSectionCard title={title} className="training-log-card">
-      {isLoading ? <p className="sheets-meta">Loading training log...</p> : null}
+      <div className="experience-toggle training-log-view" role="group" aria-label="Training log view">
+        {(['tiles', 'prs'] as const).map((option) => (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={view === option}
+            className={`experience-toggle-btn ${view === option ? 'active' : ''}`}
+            onClick={() => setView(option)}
+          >
+            {option === 'tiles' ? 'Tiles' : 'PRs'}
+          </button>
+        ))}
+      </div>
 
-      {!isLoading ? (
+      {view === 'prs' ? (
+        <TrainingPrs />
+      ) : isLoading ? (
+        <p className="sheets-meta">Loading training log...</p>
+      ) : (
         <>
           <div className="training-log-main">
             <div className="training-log-grid" aria-label="Training activity tiles by month">
@@ -1732,7 +1755,7 @@ function TrainingLogCard({
             </div>
           ) : null}
         </>
-      ) : null}
+      )}
     </CollapsibleSectionCard>
   )
 }
@@ -2417,24 +2440,10 @@ function parseToISO(dateStr: string): string {
   return s.slice(0, 10)
 }
 
-function hMean(vals: number[]): number {
-  const clean = vals.filter(v => isFinite(v) && v > 0)
-  return clean.length ? clean.reduce((a, b) => a + b, 0) / clean.length : 0
-}
-
 function daysAgoISO(n: number): string {
   const d = new Date()
   d.setDate(d.getDate() - n)
   return d.toISOString().slice(0, 10)
-}
-
-type TrendDir = 'up' | 'down' | 'flat'
-
-function trendDir(recent: number, prev: number, higherBetter = true): TrendDir {
-  if (!recent || !prev) return 'flat'
-  const pct = (recent - prev) / prev
-  if (Math.abs(pct) < 0.03) return 'flat'
-  return (pct > 0) === higherBetter ? 'up' : 'down'
 }
 
 // ── HealthLineChart (Chart.js) ─────────────────────────────────────────────
@@ -2499,7 +2508,8 @@ function HealthLineChart({
           backgroundColor:      fillColor,
           borderWidth:          2,
           fill:                 true,
-          tension:              0,
+          // Steps, not slopes: each activity holds a level until the next.
+          stepped:              'middle',
           pointRadius:          points.length > 60 ? 0 : 3,
           pointHoverRadius:     5,
           pointBackgroundColor: color,
@@ -2570,42 +2580,25 @@ function HealthLineChart({
 
 // ── Health source types ────────────────────────────────────────────────────
 
-type HealthSource = 'garmin' | 'ringconn' | 'apple'
-
-const HEALTH_SOURCE_LABELS: Record<HealthSource, string> = {
-  garmin:   'Garmin',
-  ringconn: 'Ringconn',
-  apple:    'Apple Health',
-}
-
-const GARMIN_COLS:   (keyof GarminHealthRecord)[]   = ['date', 'activity_type', 'title', 'distance_mi', 'duration_min', 'avg_hr', 'max_hr', 'calories', 'tss']
-const RINGCONN_COLS: (keyof RingconnHealthRecord)[] = ['date', 'sleep_score', 'sleep_duration_h', 'deep_sleep_h', 'rem_sleep_h', 'resting_hr', 'hrv', 'steps', 'calories']
-const APPLE_COLS:    (keyof AppleHealthRecord)[]    = ['date', 'steps', 'resting_hr', 'hrv_sdnn', 'active_calories', 'sleep_h', 'weight_kg']
-
-// Condensed column sets for narrow screens
-const MOBILE_GARMIN_COLS:   (keyof GarminHealthRecord)[]   = ['date', 'activity_type', 'distance_mi', 'duration_min']
-const MOBILE_RINGCONN_COLS: (keyof RingconnHealthRecord)[] = ['date', 'sleep_score', 'sleep_duration_h', 'hrv']
-const MOBILE_APPLE_COLS:    (keyof AppleHealthRecord)[]    = ['date', 'steps', 'resting_hr', 'hrv_sdnn']
-
 type ChartScale = '1W' | '1M' | '1Y' | 'all'
 const SCALE_DAYS: Record<ChartScale, number> = { '1W': 7, '1M': 30, '1Y': 365, 'all': 0 }
 const SCALE_LABELS: Record<ChartScale, string> = { '1W': '1W', '1M': '1M', '1Y': '1Y', 'all': 'All' }
 
-const CHART_CFG: Record<HealthSource, { label: string; color: string; unit: string; metricKey: string }> = {
-  garmin:   { label: 'Distance per Activity', color: '#FC5200', unit: 'mi',  metricKey: 'distance_mi'  },
-  ringconn: { label: 'Sleep Score',           color: '#8B5CF6', unit: '',    metricKey: 'sleep_score'  },
-  apple:    { label: 'Resting Heart Rate',    color: '#30D158', unit: 'bpm', metricKey: 'resting_hr'   },
-}
-
-function HealthDataCard({ title }: { title: string }) {
+/**
+ * Garmin activities by sport: every workout, or just the runs, swims or rides.
+ * Each view has its own 30-day summary, chart measure and table columns
+ * (src/admin/training/activities.ts).
+ */
+function TrainingDataCard({ title }: { title: string }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [source,     setSource]     = useState<HealthSource>('garmin')
+  const [view,       setView]       = useState<TrainingView>('workouts')
   const [page,       setPage]       = useState(0)
   const [chartScale, setChartScale] = useState<ChartScale>('1M')
   const [isMobile,   setIsMobile]   = useState(() => window.matchMedia('(max-width: 640px)').matches)
 
-  // Reset page and chart scale whenever the active source tab changes
-  useEffect(() => { setPage(0); setChartScale('1M') }, [source])
+  const [rows,      setRows]      = useState<GarminHealthRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError,  setHasError]  = useState(false)
 
   // Track viewport width so chart and columns update on resize
   useEffect(() => {
@@ -2615,107 +2608,35 @@ function HealthDataCard({ title }: { title: string }) {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  const [garminRows,   setGarminRows]   = useState<GarminHealthRecord[]>([])
-  const [ringconnRows, setRingconnRows] = useState<RingconnHealthRecord[]>([])
-  const [appleRows,    setAppleRows]    = useState<AppleHealthRecord[]>([])
-
-  const [garminLoading,   setGarminLoading]   = useState(true)
-  const [ringconnLoading, setRingconnLoading] = useState(true)
-  const [appleLoading,    setAppleLoading]    = useState(true)
-
-  const [garminError,   setGarminError]   = useState(false)
-  const [ringconnError, setRingconnError] = useState(false)
-  const [appleError,    setAppleError]    = useState(false)
-
   useEffect(() => {
     let mounted = true
     getGarminHealth()
-      .then((d) => { if (mounted) setGarminRows(d) })
-      .catch(() => { if (mounted) setGarminError(true) })
-      .finally(() => { if (mounted) setGarminLoading(false) })
+      .then((d) => { if (mounted) setRows(d) })
+      .catch(() => { if (mounted) setHasError(true) })
+      .finally(() => { if (mounted) setIsLoading(false) })
     return () => { mounted = false }
   }, [])
 
-  useEffect(() => {
-    let mounted = true
-    getRingconnHealth()
-      .then((d) => { if (mounted) setRingconnRows(d) })
-      .catch(() => { if (mounted) setRingconnError(true) })
-      .finally(() => { if (mounted) setRingconnLoading(false) })
-    return () => { mounted = false }
-  }, [])
-
-  useEffect(() => {
-    let mounted = true
-    getAppleHealth()
-      .then((d) => { if (mounted) setAppleRows(d) })
-      .catch(() => { if (mounted) setAppleError(true) })
-      .finally(() => { if (mounted) setAppleLoading(false) })
-    return () => { mounted = false }
-  }, [])
-
-  const isLoading  = source === 'garmin' ? garminLoading  : source === 'ringconn' ? ringconnLoading  : appleLoading
-  const hasError   = source === 'garmin' ? garminError    : source === 'ringconn' ? ringconnError    : appleError
-  const allRows    = source === 'garmin' ? garminRows     : source === 'ringconn' ? ringconnRows     : appleRows
-  const fullCols   = source === 'garmin' ? GARMIN_COLS    : source === 'ringconn' ? RINGCONN_COLS    : APPLE_COLS
-  const mobileCols = source === 'garmin' ? MOBILE_GARMIN_COLS : source === 'ringconn' ? MOBILE_RINGCONN_COLS : MOBILE_APPLE_COLS
-  const cols       = isMobile ? mobileCols : fullCols
-  const sortedRows = [...allRows].sort((a, b) => parseToISO(b.date).localeCompare(parseToISO(a.date)))
+  const viewMeta   = TRAINING_VIEWS.find((entry) => entry.id === view) ?? TRAINING_VIEWS[0]
+  const viewRows   = useMemo(() => activitiesFor(view, rows), [view, rows])
+  const columns    = isMobile ? VIEW_COLUMNS[view].filter((column) => column.compact) : VIEW_COLUMNS[view]
+  const sortedRows = useMemo(
+    () => [...viewRows].sort((a, b) => parseToISO(b.date).localeCompare(parseToISO(a.date))),
+    [viewRows],
+  )
   const totalPages = Math.max(1, Math.ceil(sortedRows.length / 10))
   const pageRows   = sortedRows.slice(page * 10, (page + 1) * 10)
-  const lastSync   = sortedRows.length > 0 ? sortedRows[0].date.slice(0, 10) : null
-
-  // ── Well-being overview (cross-source) ──────────────────────────────────
-  const { wbTiles, wbInsight } = useMemo(() => {
-    const n30 = daysAgoISO(30), n7 = daysAgoISO(7), n14 = daysAgoISO(14)
-
-    const g30  = garminRows.filter(r => parseToISO(r.date) >= n30)
-    const r30  = ringconnRows.filter(r => parseToISO(r.date) >= n30)
-    const a30  = appleRows.filter(r => parseToISO(r.date) >= n30)
-    const r7   = ringconnRows.filter(r => parseToISO(r.date) >= n7)
-    const rP7  = ringconnRows.filter(r => { const d = parseToISO(r.date); return d >= n14 && d < n7 })
-
-    const workouts   = g30.length
-    const avgDist    = hMean(g30.map(r => parseFloat(r.distance_mi)))
-    const sleepScore = hMean(r30.map(r => parseFloat(r.sleep_score)))
-    const hrv        = r30.length > 0
-      ? hMean(r30.map(r => parseFloat(r.hrv)))
-      : hMean(a30.map(r => parseFloat(r.hrv_sdnn)))
-
-    const hrvTrend = trendDir(hMean(r7.map(r => parseFloat(r.hrv))), hMean(rP7.map(r => parseFloat(r.hrv))))
-
-    const tiles: { label: string; value: string; trend: TrendDir }[] = [
-      { label: 'Workouts / 30d', value: workouts > 0 ? String(workouts)           : '—', trend: 'flat' },
-      { label: 'Avg Distance',   value: avgDist  > 0 ? `${avgDist.toFixed(1)} mi` : '—', trend: 'flat' },
-    ]
-
-    const parts: string[] = []
-    if      (sleepScore >= 80)                   parts.push('Sleep quality is strong')
-    else if (sleepScore > 0 && sleepScore < 65)  parts.push('Sleep score is below target — prioritize rest')
-    if      (hrv > 0 && hrvTrend === 'up')       parts.push('HRV trending up — recovery adapting well')
-    else if (hrv > 0 && hrvTrend === 'down')     parts.push('HRV dipping — consider an easier week')
-    if      (workouts >= 16)                     parts.push(`${workouts} workouts this month — consistency is high`)
-    else if (workouts > 0 && workouts < 8)       parts.push('Training frequency is low — aim for more sessions')
-
-    return {
-      wbTiles: tiles,
-      wbInsight: parts.slice(0, 2).join('. ') + (parts.length ? '.' : ''),
-    }
-  }, [garminRows, ringconnRows, appleRows])
-
-  const anyData = garminRows.length > 0 || ringconnRows.length > 0 || appleRows.length > 0
-  const allLoading = garminLoading && ringconnLoading && appleLoading
-
-  // ── Chart data for active source ─────────────────────────────────────────
-  const cfg = CHART_CFG[source]
+  const lastSync   = rows.reduce((latest, row) => (parseToISO(row.date) > latest ? parseToISO(row.date) : latest), '')
+  const summary    = useMemo(() => viewSummary(view, rows), [view, rows])
+  const chart      = VIEW_CHART[view]
 
   const chartPoints = useMemo(() => {
     const cutoff = chartScale === 'all' ? '' : daysAgoISO(SCALE_DAYS[chartScale])
-    return [...allRows]
+    return [...viewRows]
       .sort((a, b) => parseToISO(a.date).localeCompare(parseToISO(b.date)))
-      .map(r => ({ date: parseToISO(r.date), value: parseFloat((r as Record<string, string>)[cfg.metricKey] ?? '') }))
+      .map(r => ({ date: parseToISO(r.date), value: chart.value(r) ?? NaN }))
       .filter(p => !isNaN(p.value) && p.value > 0 && (chartScale === 'all' || p.date >= cutoff))
-  }, [allRows, cfg.metricKey, chartScale])
+  }, [viewRows, chart, chartScale])
 
   const canvasMinWidth = useMemo(() => {
     if (isMobile) return '100%'
@@ -2723,6 +2644,11 @@ function HealthDataCard({ title }: { title: string }) {
     if (chartScale === '1Y') return '1000px'
     return `${Math.max(1200, chartPoints.length * 6)}px`
   }, [chartScale, chartPoints.length, isMobile])
+
+  function selectView(next: TrainingView) {
+    setView(next)
+    setPage(0)
+  }
 
   return (
     <article className="info-card section-page-card health-data-card">
@@ -2742,52 +2668,45 @@ function HealthDataCard({ title }: { title: string }) {
       {isCollapsed ? null : (
       <>
 
-      {/* ── Well-being overview ── */}
-      {!allLoading && anyData && (
-        <div className="wellbeing-section">
-          <div className="wellbeing-grid">
-            {wbTiles.map(tile => (
-              <div key={tile.label} className="wellbeing-stat">
-                <span className="wellbeing-stat-value">{tile.value}</span>
-                <span className="wellbeing-stat-meta">
-                  <span className="wellbeing-stat-label">{tile.label}</span>
-                  {tile.trend !== 'flat' && (
-                    <span className={`wellbeing-trend-${tile.trend}`}>
-                      {tile.trend === 'up' ? '↑' : '↓'}
-                    </span>
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
-          {wbInsight && <p className="wellbeing-insight">{wbInsight}</p>}
-        </div>
-      )}
-
-      {/* ── Source tabs ── */}
-      <div className="experience-toggle" role="tablist" aria-label="Health data source">
-        {(Object.keys(HEALTH_SOURCE_LABELS) as HealthSource[]).map((s) => (
+      {/* ── Sport tabs ── */}
+      <div className="experience-toggle" role="tablist" aria-label="Training view">
+        {TRAINING_VIEWS.map((entry) => (
           <button
-            key={s}
+            key={entry.id}
             type="button"
             role="tab"
-            aria-selected={source === s}
-            className={`experience-toggle-btn ${source === s ? 'active' : ''}`}
-            onClick={() => setSource(s)}
+            aria-selected={view === entry.id}
+            className={`experience-toggle-btn ${view === entry.id ? 'active' : ''}`}
+            onClick={() => selectView(entry.id)}
           >
-            {HEALTH_SOURCE_LABELS[s]}
+            {entry.label}
           </button>
         ))}
       </div>
 
       {isLoading ? (
-        <p className="sheets-meta">Loading {HEALTH_SOURCE_LABELS[source]} data…</p>
+        <p className="sheets-meta">Loading training…</p>
       ) : hasError ? (
-        <p className="sheets-meta">Could not load {HEALTH_SOURCE_LABELS[source]} data. Check that the sheet tab exists and the API key is configured.</p>
-      ) : allRows.length === 0 ? (
-        <p className="sheets-meta">No {HEALTH_SOURCE_LABELS[source]} data found. Run the ingestion script and check the sheet tab name matches exactly.</p>
+        <p className="sheets-meta">Could not load Garmin activities. Check that the garmin_health tab exists and the API key is configured.</p>
+      ) : rows.length === 0 ? (
+        <p className="sheets-meta">No Garmin activities yet. They arrive with the next Garmin sync.</p>
       ) : (
         <>
+          {/* ── Last 30 days ── */}
+          <div className="wellbeing-section">
+            <div className="wellbeing-grid">
+              {summary.tiles.map(tile => (
+                <div key={tile.label} className="wellbeing-stat">
+                  <span className="wellbeing-stat-value">{tile.value}</span>
+                  <span className="wellbeing-stat-meta">
+                    <span className="wellbeing-stat-label">{tile.label}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            {summary.note && <p className="wellbeing-insight">{summary.note}</p>}
+          </div>
+
           {/* ── Chart ── */}
           <div className="health-chart-container">
             <div className="health-chart-controls">
@@ -2805,47 +2724,47 @@ function HealthDataCard({ title }: { title: string }) {
             </div>
 
             {chartPoints.length < 2 ? (
-              <div className="health-chart-empty">No data for this time range</div>
+              <div className="health-chart-empty">No {viewMeta.noun} in this time range</div>
             ) : (
               <HealthLineChart
                 points={chartPoints}
-                color={cfg.color}
-                unit={cfg.unit}
+                color={chart.color}
+                unit={chart.unit}
                 minWidth={canvasMinWidth}
                 scale={chartScale}
               />
             )}
 
-            <p className="health-chart-label">{cfg.label} · {chartPoints.length} {chartPoints.length === 1 ? 'entry' : 'entries'}</p>
+            <p className="health-chart-label">{chart.label} · {chartPoints.length} {chartPoints.length === 1 ? 'entry' : 'entries'}</p>
           </div>
 
           <p className="sheets-meta">
-            {allRows.length} records · last synced {lastSync}
+            {viewRows.length} {viewMeta.noun} · last synced {lastSync}
           </p>
 
-          {/* ── Raw data table ── */}
-          <div className="health-data-table-scroll">
-            <table className="health-data-table">
-              <thead>
-                <tr>
-                  {cols.map((col) => (
-                    <th key={col}>{col.replace(/_/g, ' ')}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {pageRows.map((row, i) => (
-                  <tr key={i}>
-                    {cols.map((col) => {
-                      const raw  = (row as Record<string, string>)[col] ?? ''
-                      const cell = col === 'date' ? raw.slice(0, 10) : raw
-                      return <td key={col}>{cell || '—'}</td>
-                    })}
+          {/* ── Activity table ── */}
+          {viewRows.length > 0 ? (
+            <div className="health-data-table-scroll">
+              <table className="health-data-table">
+                <thead>
+                  <tr>
+                    {columns.map((column) => (
+                      <th key={column.label}>{column.label}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {pageRows.map((row) => (
+                    <tr key={row.activity_id || `${row.date}-${row.title}`}>
+                      {columns.map((column) => (
+                        <td key={column.label}>{column.value(row) || '—'}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
 
           {totalPages > 1 && (
             <div className="health-table-pagination">

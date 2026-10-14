@@ -78,6 +78,7 @@ export async function fetchSheetTable<T>(tableName: string): Promise<T[]> {
      * endurance_score out to U where an A:T range silently dropped it.
      */
     garmin_wellness:   'garmin_wellness!A1:U10000',
+    garmin_prs:        'garmin_prs!A1:G200',
     ringconn_health:   'ringconn_health!A1:L10000',
     apple_health:      'apple_health!A1:I10000',
     recipes:           'recipes!A1:H10000',

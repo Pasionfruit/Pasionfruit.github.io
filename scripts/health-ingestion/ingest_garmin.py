@@ -12,8 +12,9 @@ Two modes:
     Requires GARMIN_EMAIL and GARMIN_PASSWORD in config.env.
     Omit --since to default to the last 30 days.
 
-Sheet target: garmin_health
-Headers: date, activity_type, title, distance_mi, duration_min, avg_hr, max_hr, calories, tss, activity_id
+Sheet targets:
+  garmin_health — date, activity_type, title, distance_mi, duration_min, avg_hr, max_hr, calories, tss, activity_id
+  garmin_prs    — type_id, value, activity_type, activity_id, activity_name, date, pool_unit  (API mode only)
 
 Notes:
   - CSV mode: Distance is read as-is from the export. Make sure your Garmin Connect
@@ -25,6 +26,12 @@ Notes:
     fills it in, rather than appending duplicates.
   - CSV mode upserts on date, because the export carries no activity id. With
     several activities on one day, only the last one in the file wins.
+  - API mode also copies Garmin's personal records (fastest 1K / mile / 5K /
+    10K / half / marathon, longest run / ride / swim, step bests) into
+    garmin_prs, in the same login: Garmin rate-limits logins, so a second
+    script would cost a second one. Values are stored raw (seconds for times,
+    meters for distances) and keyed by Garmin's PR type id; the site owns the
+    labels (src/admin/garmin/prs.ts), so a new record type needs no change here.
 """
 
 import argparse
@@ -62,6 +69,11 @@ SHEET_NAME = "garmin_health"
 HEADERS = [
     "date", "activity_type", "title", "distance_mi",
     "duration_min", "avg_hr", "max_hr", "calories", "tss", "activity_id",
+]
+
+PRS_SHEET_NAME = "garmin_prs"
+PRS_HEADERS = [
+    "type_id", "value", "activity_type", "activity_id", "activity_name", "date", "pool_unit",
 ]
 
 _COL_MAP = {
@@ -157,8 +169,8 @@ def parse_garmin_csv(filepath: str) -> list[dict]:
 
 # ── API mode ──────────────────────────────────────────────────────────────────
 
-def fetch_garmin_api(since_date: str) -> list[dict]:
-    """Pull activities from Garmin Connect and return sheet-ready rows."""
+def login_garmin():
+    """One Garmin Connect session, shared by the activity and PR fetches."""
     try:
         from garminconnect import Garmin  # type: ignore[import]
     except ImportError:
@@ -175,7 +187,11 @@ def fetch_garmin_api(since_date: str) -> list[dict]:
     print(f"  Logging into Garmin Connect as {email} …")
     api = Garmin(email, password)
     api.login()
+    return api
 
+
+def fetch_garmin_api(api, since_date: str) -> list[dict]:
+    """Pull activities from Garmin Connect and return sheet-ready rows."""
     today = datetime.now().strftime("%Y-%m-%d")
     print(f"  Fetching activities {since_date} → {today} …")
     activities = api.get_activities_by_date(startdate=since_date, enddate=today)
@@ -200,6 +216,39 @@ def fetch_garmin_api(since_date: str) -> list[dict]:
     return rows
 
 
+def fetch_garmin_prs(api) -> list[dict]:
+    """Garmin's personal records as sheet rows, one per PR type."""
+    print("  Fetching personal records …")
+    records = api.get_personal_record() or []
+
+    rows = []
+    for r in records:
+        type_id = r.get("typeId")
+        value   = r.get("value")
+        if type_id is None or value is None:
+            continue
+        # Activity records carry the activity's local start; day-based ones
+        # (steps, streaks) only the record's own date.
+        when = (
+            r.get("activityStartDateTimeLocalFormatted")
+            or r.get("prStartTimeLocalFormatted")
+            or r.get("actStartDateTimeInGMTFormatted")
+            or ""
+        )
+        activity_id = r.get("activityId") or ""
+        rows.append({
+            "type_id":       str(type_id),
+            "value":         f"{float(value):.3f}",
+            "activity_type": r.get("activityType") or "",
+            "activity_id":   str(activity_id) if activity_id else "",
+            "activity_name": r.get("activityName") or "",
+            "date":          str(when)[:10],
+            # Swim records are measured in the pool's unit: meters or yards.
+            "pool_unit":     (r.get("poolLengthUnit") or {}).get("key", ""),
+        })
+    return rows
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -217,18 +266,30 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Parse only, do not write to Sheets")
     args = parser.parse_args()
 
+    pr_rows: list[dict] = []
     if args.api:
         since = args.since or (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
         print(f"Fetching from Garmin Connect API (since {since}) …")
-        rows = fetch_garmin_api(since)
+        api = login_garmin()
+        rows = fetch_garmin_api(api, since)
+        # PRs ride along on the same login. They are a bonus, so a failure here
+        # is reported but never costs the activity sync.
+        try:
+            pr_rows = fetch_garmin_prs(api)
+        except Exception as exc:  # noqa: BLE001 - any Garmin error is non-fatal here
+            print(f"  WARNING: personal records not fetched: {exc}")
     else:
         print(f"Parsing {args.file} …")
         rows = parse_garmin_csv(args.file)
 
     print(f"  Found {len(rows)} activities.")
+    if args.api:
+        print(f"  Found {len(pr_rows)} personal records.")
 
     if args.dry_run:
         for r in rows[:5]:
+            print(" ", r)
+        for r in pr_rows[:5]:
             print(" ", r)
         print("  (dry run — not writing to Sheets)")
         return
@@ -241,6 +302,12 @@ def main() -> None:
     else:
         updated, inserted = upsert_rows(ws, rows, key_col="date")
     print(f"  Done: {updated} updated, {inserted} inserted.")
+
+    if pr_rows:
+        pr_ws = ensure_worksheet(ss, PRS_SHEET_NAME, PRS_HEADERS)
+        ensure_text_column(pr_ws, "activity_id")
+        updated, inserted = upsert_rows(pr_ws, pr_rows, key_col="type_id")
+        print(f"  PRs: {updated} updated, {inserted} inserted.")
 
 
 if __name__ == "__main__":

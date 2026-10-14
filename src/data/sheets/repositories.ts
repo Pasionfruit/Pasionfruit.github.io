@@ -7,6 +7,7 @@ import type {
   CouponRecord,
   EventRecord,
   GarminHealthRecord,
+  GarminPrRecord,
   GarminWellnessRecord,
   GroceryListRecord,
   JournalEntryRecord,
@@ -266,6 +267,24 @@ async function loadGarminWellness(): Promise<GarminWellnessRecord[]> {
     }))
     .filter((row) => row.date && hasWellnessMetrics(row))
     .sort((a, b) => b.date.localeCompare(a.date))
+}
+
+/** Garmin's personal records, one per type. Empty until the sync has written the tab. */
+export async function getGarminPrs(): Promise<GarminPrRecord[]> {
+  const rows = await fetchSheetTable<Record<string, unknown>>('garmin_prs')
+  const text = (value: unknown) => String(value ?? '').trim()
+
+  return rows
+    .map((row) => ({
+      type_id: text(row.type_id),
+      value: text(row.value),
+      activity_type: text(row.activity_type),
+      activity_id: text(row.activity_id),
+      activity_name: text(row.activity_name),
+      date: text(row.date).slice(0, 10),
+      pool_unit: text(row.pool_unit),
+    }))
+    .filter((row) => row.type_id && row.value)
 }
 
 export async function getRingconnHealth(): Promise<RingconnHealthRecord[]> {
