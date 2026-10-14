@@ -2800,17 +2800,6 @@ const PASTE_PLACEHOLDER = [
   '| Wed | **Easy swim**<br>• 4×50m free | Legs |',
 ].join('\n')
 
-// Default training split applied by "Reset week", keyed by Date.getDay() (0 = Sunday).
-const WEEKLY_WORKOUT_DEFAULTS: Record<number, WeeklyWorkoutDraft> = {
-  0: { morning: 'Rest: —', evening: 'Rest: —' },
-  1: { morning: 'Chest & Tri', evening: 'Swim' },
-  2: { morning: 'Sprints', evening: 'Back & Bi' },
-  3: { morning: 'Bike', evening: 'Legs' },
-  4: { morning: 'Progressive Run', evening: 'Back & Chest' },
-  5: { morning: 'Arms', evening: 'Swim' },
-  6: { morning: 'Easy Run', evening: 'Mobility' },
-}
-
 function WeeklyWorkoutResetCard({
   title,
   canWrite,
@@ -2873,14 +2862,16 @@ function WeeklyWorkoutResetCard({
       const next: Record<string, WeeklyWorkoutDraft> = {}
       weekDates.forEach((date) => {
         const key = toDateOnlyKey(date.toISOString())
-        next[key] = { ...WEEKLY_WORKOUT_DEFAULTS[date.getDay()] }
+        next[key] = { morning: '', evening: '' }
       })
       return next
     })
+    setPasteMessage('')
+    setSaveMessage('')
   }
 
   /*
-   * Fill the drafts from a pasted Markdown plan. Nothing is saved here: the
+   * Fill the drafts from a pasted plan. Nothing is saved here: the
    * rows land in the editor for a look over, then Save workouts writes them.
    */
   function handleFillFromPaste() {
@@ -2897,7 +2888,9 @@ function WeeklyWorkoutResetCard({
     const filled: string[] = []
     const outside: string[] = []
 
-    for (const day of assignPlanDates(parsed.days, weekDates[0])) {
+    const datedPlan = assignPlanDates(parsed.days, weekDates[0])
+      .sort((left, right) => left.date.getTime() - right.date.getTime())
+    for (const day of datedPlan) {
       const key = toDateOnlyKey(day.date.toISOString())
       if (shown.has(key)) {
         updates[key] = { morning: day.morning, evening: day.evening }
@@ -3025,7 +3018,7 @@ function WeeklyWorkoutResetCard({
           {isEditing && isPasting ? (
             <div className="weekly-paste">
               <label htmlFor="weekly-paste-input">
-                Paste a <code>| Day | Morning | Evening |</code> table. Days fill from today forward.
+                Paste a Day / Morning / Afternoon or Evening table, or mobile day cards with workout labels. Days fill from today forward.
               </label>
               <textarea
                 id="weekly-paste-input"

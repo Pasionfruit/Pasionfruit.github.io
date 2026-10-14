@@ -74,8 +74,77 @@ function cleanCell(cell: string | undefined): string {
     .join('\n')
 }
 
+/** Copied tables may quote multiline cells or put continuation lines below a row. */
+function tabRows(text: string): string[][] {
+  const rows: string[][] = []
+  let cells: string[] = []
+  let cell = ''
+  let quoted = false
+  const addRow = (row: string[]) => {
+    if (row.length > 1) {
+      rows.push(row)
+    } else if (row[0] && rows.length > 0) {
+      const previous = rows[rows.length - 1]
+      previous[previous.length - 1] += `\n${row[0]}`
+    }
+  }
+  const input = text.replace(/\r\n?/g, '\n')
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index]
+    if (char === '"' && (quoted || cell === '')) {
+      if (quoted && input[index + 1] === '"') {
+        cell += '"'
+        index += 1
+      } else {
+        quoted = !quoted
+      }
+    } else if (!quoted && (char === '\t' || char === '\n')) {
+      cells.push(cell.trim())
+      cell = ''
+      if (char === '\n') {
+        addRow(cells)
+        cells = []
+      }
+    } else {
+      cell += char
+    }
+  }
+  cells.push(cell.trim())
+  addRow(cells)
+  return rows
+}
+
+/** Mobile cards can copy as a day followed by Morning / Evening labels. */
+function stackedRows(text: string): string[][] {
+  const rows: string[][] = []
+  let cells: string[] | undefined
+  let column: 1 | 2 | undefined
+  let hasLabel = false
+  for (const line of text.split(/\r?\n/)) {
+    const plain = line.replace(/\*\*/g, '').replace(/^#{1,6}\s+/, '').trim()
+    if (/^(?:sun(?:day)?|mon(?:day)?|tue(?:s(?:day)?)?|wed(?:nesday)?|thu(?:rs(?:day)?)?|fri(?:day)?|sat(?:urday)?)(?:\s+\d.*)?[:\s]*$/i.test(plain)) {
+      if (cells && hasLabel) rows.push(cells)
+      cells = [plain, '', '']
+      column = undefined
+      hasLabel = false
+      continue
+    }
+    if (!cells) continue
+    const label = /^(morning(?: workout)?|am|afternoon(?: workout)?|evening(?: workout)?|night|pm)(?:\s*[:–—-]\s*(.*)|\s*)$/i.exec(plain)
+    if (label) {
+      column = /^(morning|am)/i.test(label[1]) ? 1 : 2
+      hasLabel = true
+      cells[column] = label[2] ?? ''
+    } else if (column && line.trim()) {
+      cells[column] += `${cells[column] ? '\n' : ''}${line.trim()}`
+    }
+  }
+  if (cells && hasLabel) rows.push(cells)
+  return rows
+}
+
 /**
- * Read a Markdown table of `Day | Morning | Evening` rows.
+ * Read Markdown, tab-separated tables, or labeled mobile day cards.
  *
  * The header is optional and only used to find the columns, so the order can
  * differ ("Day | Evening | Morning") or be absent entirely, in which case the
@@ -83,11 +152,12 @@ function cleanCell(cell: string | undefined): string {
  * are reported back rather than dropped silently.
  */
 export function parseWorkoutTable(text: string): ParsedPlan {
-  const rows = text
-    .split(/\r?\n/)
-    .filter((line) => line.includes('|'))
-    .map(splitRow)
-    .filter((cells) => !isSeparatorRow(cells))
+  const rows = (text.includes('\t')
+    ? tabRows(text)
+    : text.includes('|')
+      ? text.split(/\r?\n/).filter((line) => line.includes('|')).map(splitRow)
+      : stackedRows(text)
+  ).filter((cells) => !isSeparatorRow(cells))
 
   let columns = { day: 0, morning: 1, evening: 2 }
   let body = rows
@@ -101,7 +171,7 @@ export function parseWorkoutTable(text: string): ParsedPlan {
     columns = {
       day: find(/\bday\b/, 0),
       morning: find(/morning|\bam\b/, 1),
-      evening: find(/evening|night|\bpm\b/, 2),
+      evening: find(/afternoon|evening|night|\bpm\b/, 2),
     }
     body = rows.slice(1)
   }
@@ -122,7 +192,7 @@ export function parseWorkoutTable(text: string): ParsedPlan {
     return {
       days,
       skipped,
-      error: 'No workout rows found. Paste a table with rows like "| Wed | Easy swim | Legs |".',
+      error: 'No workout rows found. Paste a Day / Morning / Afternoon or Evening table, or mobile day cards with workout labels.',
     }
   }
 
@@ -130,21 +200,22 @@ export function parseWorkoutTable(text: string): ParsedPlan {
 }
 
 /**
- * Give each pasted day a date, in the order pasted.
+ * Give each pasted weekday its next date, counting today.
  *
- * The first row lands on its next occurrence counting today; every later row on
- * the next occurrence after the row before it. So a Wed–Sun plan pasted on a
- * Tuesday covers tomorrow through Sunday, and a Saturday that follows a Friday
- * is the coming Saturday, not last weekend's.
+ * A Monday–Sunday plan pasted midweek still fills the upcoming seven days.
+ * Repeated weekdays advance to the following week for each occurrence.
  */
 export function assignPlanDates(days: PlanDay[], from: Date): Array<PlanDay & { date: Date }> {
-  const cursor = new Date(from)
-  cursor.setHours(0, 0, 0, 0)
+  const start = new Date(from)
+  start.setHours(0, 0, 0, 0)
+  const occurrences = new Map<number, number>()
 
-  return days.map((day, index) => {
-    let offset = (day.weekday - cursor.getDay() + 7) % 7
-    if (index > 0 && offset === 0) offset = 7
-    cursor.setDate(cursor.getDate() + offset)
-    return { ...day, date: new Date(cursor) }
+  return days.map((day) => {
+    const occurrence = occurrences.get(day.weekday) ?? 0
+    const offset = (day.weekday - start.getDay() + 7) % 7 + occurrence * 7
+    const date = new Date(start)
+    date.setDate(start.getDate() + offset)
+    occurrences.set(day.weekday, occurrence + 1)
+    return { ...day, date }
   })
 }

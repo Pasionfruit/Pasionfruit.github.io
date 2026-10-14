@@ -44,11 +44,16 @@ The Calendar dashboard was merged into Home rather than getting its own tab, so
 Todoist manager (`/tasks`) and `/weekly-reset` are linked from the bottom of the
 Home dashboard.
 
-`/weekly-reset` edits the workouts for today and the six days after it. In edit
-mode, **Paste plan** takes a Markdown `| Day | Morning | Evening |` table (cells
-may use `<br>`, `**bold**` and `•` bullets): each day lands on its next
-occurrence from today, in the order pasted, and the rows fill the editor for a
-look over before **Save workouts** writes them.
+`/weekly-reset` edits the workouts for today and the six days after it.
+**Paste plan**, beside the edit pencil, opens the editor and accepts Markdown
+`| Day | Morning | Evening |` tables, tab-separated copied tables, and stacked
+mobile day cards with Morning / Evening (or AM / PM) labels. Afternoon is also
+accepted for the second workout. Multiline cells may use quoted text, plain
+bullet lines below the row, or `<br>`, along with `**bold**` text. Each weekday
+lands on its next occurrence from today, so Monday–Sunday plans fill all seven
+upcoming dates even when pasted midweek. The rows fill the editor for review before
+**Save workouts** writes them. **Reset week** blanks both workouts on all seven
+displayed dates; **Save workouts** saves those cleared values.
 
 Dashboards use `AdminPage` rather than the public `PageFrame` — no hero card, no
 back link, and no intro paragraph, since the icon bar is always on screen. Below

@@ -754,6 +754,46 @@ describe('site sections and dashboards', () => {
     })
   })
 
+  it('clears workouts on all seven dates and saves the empty values', async () => {
+    const user = userEvent.setup()
+    const dates = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date()
+      date.setHours(0, 0, 0, 0)
+      date.setDate(date.getDate() + index)
+      return date
+    })
+    const sheetDate = (date: Date) => `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+    repoMocks.getTrainingRecords.mockResolvedValue(dates.map((date, index) => ({
+      training_id: `training-${index}`,
+      date: sheetDate(date),
+      morning_workout: 'Swim',
+      evening_workout: 'Legs',
+      completed_morning: false,
+      completed_evening: false,
+    })))
+    repoMocks.upsertTrainingRecord.mockClear()
+    renderAdminPage('/weekly-reset')
+
+    const heading = await screen.findByRole('heading', { name: 'Workouts for the Week' })
+    const card = heading.closest('article')!
+    await within(card).findAllByText('Swim')
+    await user.click(within(card).getByTitle('Edit values'))
+    await user.click(within(card).getByRole('button', { name: 'Reset week' }))
+
+    const inputs = within(card).getAllByRole('textbox') as HTMLTextAreaElement[]
+    expect(inputs).toHaveLength(14)
+    expect(inputs.every((input) => input.value === '')).toBe(true)
+    expect(repoMocks.upsertTrainingRecord).not.toHaveBeenCalled()
+
+    await user.click(within(card).getByRole('button', { name: 'Save workouts' }))
+    await waitFor(() => expect(repoMocks.upsertTrainingRecord).toHaveBeenCalledTimes(7))
+    for (const date of dates) {
+      expect(repoMocks.upsertTrainingRecord).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        date: sheetDate(date), morningWorkout: '', eveningWorkout: '',
+      })
+    }
+  })
+
   it('fills the week from a pasted Markdown plan, then saves the filled days', async () => {
     const user = userEvent.setup()
     const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -772,7 +812,6 @@ describe('site sections and dashboards', () => {
       throw new Error('Workouts for the Week card not found')
     }
 
-    await user.click(within(card).getByTitle('Edit values'))
     await user.click(within(card).getByRole('button', { name: 'Paste plan' }))
     await user.click(within(card).getByLabelText(/Paste a/))
     await user.paste(
@@ -805,6 +844,42 @@ describe('site sections and dashboards', () => {
         eveningWorkout: 'Chest & Back',
       })
     })
+  })
+
+  it('fills workouts from a mobile table opened directly from the header', async () => {
+    const user = userEvent.setup()
+    repoMocks.getTrainingRecords.mockResolvedValue([])
+    repoMocks.upsertTrainingRecord.mockClear()
+    renderAdminPage('/weekly-reset')
+    const heading = await screen.findByRole('heading', { name: 'Workouts for the Week' })
+    const card = heading.closest('article')!
+    await waitFor(() => expect(within(card).queryByText('Loading workouts...')).toBeNull())
+    await user.click(within(card).getByRole('button', { name: 'Paste plan' }))
+    await user.click(within(card).getByLabelText(/Paste a/))
+    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    await user.paste('Day\tMorning\tAfternoon\n' + weekdays.map((weekday) =>
+      `${weekday}\tLegs\tSwim ${weekday}\n• 100 m easy\n• Rest: 20–30 sec`,
+    ).join('\n'))
+    await user.click(within(card).getByRole('button', { name: 'Fill table' }))
+
+    for (const weekday of weekdays) {
+      expect((within(card).getByLabelText(`${weekday} morning workout`) as HTMLTextAreaElement).value).toBe('Legs')
+      expect((within(card).getByLabelText(`${weekday} evening workout`) as HTMLTextAreaElement).value)
+        .toBe(`Swim ${weekday}\n• 100 m easy\n• Rest: 20–30 sec`)
+    }
+    expect(within(card).getByRole('status').textContent).toContain('Review, then Save workouts.')
+    await user.click(within(card).getByRole('button', { name: 'Save workouts' }))
+    await waitFor(() => expect(repoMocks.upsertTrainingRecord).toHaveBeenCalledTimes(7))
+    for (let index = 0; index < 7; index += 1) {
+      const date = new Date()
+      date.setDate(date.getDate() + index)
+      const weekday = date.toLocaleDateString('en-US', { weekday: 'long' })
+      expect(repoMocks.upsertTrainingRecord).toHaveBeenCalledWith(expect.stringContaining('.'), {
+        date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
+        morningWorkout: 'Legs',
+        eveningWorkout: `Swim ${weekday}\n• 100 m easy\n• Rest: 20–30 sec`,
+      })
+    }
   })
 
 })

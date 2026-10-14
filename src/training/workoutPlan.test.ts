@@ -56,6 +56,106 @@ describe('parseWorkoutTable', () => {
     expect(parseWorkoutTable('swim on wednesday').error).toMatch(/No workout rows found/)
     expect(parseWorkoutTable('| Day | Morning | Evening |\n|---|---|---|').error).toMatch(/No workout rows found/)
   })
+
+  it('reads a rendered mobile table copied with tabs and reordered headers', () => {
+    expect(parseWorkoutTable('Evening\tDay\tMorning\r\nLegs\tWednesday\tSwim\r\nRest\tThu\tRun').days).toEqual([
+      { weekday: 3, morning: 'Swim', evening: 'Legs' },
+      { weekday: 4, morning: 'Run', evening: 'Rest' },
+    ])
+  })
+
+  it('preserves quoted multiline cells and empty cells in copied tables', () => {
+    expect(parseWorkoutTable('Day\tMorning\tEvening\nWed\t"Easy swim\n• 4×50m free"\t\nThu\t\tLegs').days).toEqual([
+      { weekday: 3, morning: 'Easy swim\n• 4×50m free', evening: '' },
+      { weekday: 4, morning: '', evening: 'Legs' },
+    ])
+  })
+
+  it('preserves every workout and bullet in the supplied mobile table', () => {
+    const plan = `Day\tMorning\tAfternoon
+Monday\tLegs\tTechnique swim: 700 m
+• 100 m breast
+• 4 × 25 m free — controlled breathing
+• 4 × 50 m free
+• 4 × 50 m pull buoy
+• 100 m easy choice
+• Rest: 20–30 sec between repeats
+Tuesday\tChest & Tri & Shoulders\tQuality run: 35 min
+• 10 min easy
+• 5 × (1 min brisk + 2 min easy jog/walk)
+• 10 min easy
+• Brisk: 6–7/10 effort
+• Completed 39-min 5K replaces this session
+Wednesday\tBack & Bi & Forearms\tEasy swim: 800 m
+• 100 m breast
+• 4 × 50 m free
+• 2 × 50 m breast
+• 4 × 50 m free
+• 2 × 50 m pull buoy
+• 100 m easy choice
+• Rest: 20–30 sec between repeats
+Thursday\tChest & Back\tEasy run: 30 min
+• 5 min easy walk/jog
+• 20 min conversational run/walk
+• 5 min easy walk/jog
+• Walk breaks as needed
+Friday\tArms\tLong swim: 900 m
+• 100 m breast
+• 6 × 100 m — free or 50 m free + 50 m breast
+• 2 × 50 m pull buoy
+• 100 m easy choice
+• Rest: 30–45 sec between repeats
+• Split 100 m repeats into 2 × 50 m if form deteriorates
+Saturday\tRest\tLong run: 65 min
+• 5 min easy walk
+• 55 min conversational run/walk
+• 5 min easy walk
+• Walk breaks as needed
+• Cap total at last week’s duration + 5 min
+Sunday\tRest\tLong bike: 75 min
+• 10 min easy
+• 55 min conversational effort
+• 10 min easy
+• Pause as needed
+• Rest instead if fatigue or soreness persists`
+    const { days, skipped, error } = parseWorkoutTable(plan)
+
+    expect(error).toBeUndefined()
+    expect(skipped).toEqual([])
+    expect(days.map((entry) => entry.weekday)).toEqual([1, 2, 3, 4, 5, 6, 0])
+    expect(days.map((entry) => entry.morning)).toEqual([
+      'Legs', 'Chest & Tri & Shoulders', 'Back & Bi & Forearms', 'Chest & Back', 'Arms', 'Rest', 'Rest',
+    ])
+    expect(days.map((entry) => entry.evening.split('\n')[0])).toEqual([
+      'Technique swim: 700 m', 'Quality run: 35 min', 'Easy swim: 800 m', 'Easy run: 30 min',
+      'Long swim: 900 m', 'Long run: 65 min', 'Long bike: 75 min',
+    ])
+    expect(days.map((entry) => entry.evening.split('\n').length - 1)).toEqual([6, 5, 7, 4, 6, 5, 5])
+    expect(days[0].evening).toBe('Technique swim: 700 m\n• 100 m breast\n• 4 × 25 m free — controlled breathing\n• 4 × 50 m free\n• 4 × 50 m pull buoy\n• 100 m easy choice\n• Rest: 20–30 sec between repeats')
+    expect(days[6].evening).toBe('Long bike: 75 min\n• 10 min easy\n• 55 min conversational effort\n• 10 min easy\n• Pause as needed\n• Rest instead if fatigue or soreness persists')
+  })
+
+  it('finds the Afternoon column even when copied columns are reordered', () => {
+    expect(parseWorkoutTable('Afternoon\tMorning\tDay\nSwim\tLegs\tMon').days).toEqual([
+      { weekday: 1, morning: 'Legs', evening: 'Swim' },
+    ])
+  })
+
+  it('reads stacked mobile cards with multiline workouts and AM/PM labels', () => {
+    const plan = [
+      '**Wednesday**', '**Morning:** Easy swim', '• 4×50m free', '**Evening:** Legs',
+      'Thursday', 'Morning workout', 'Morning run', '• 5k', 'Evening workout', 'Rest',
+      'Fri', 'AM: Bike', 'PM:',
+    ].join('\n')
+    expect(parseWorkoutTable(plan)).toEqual({
+      days: [
+        { weekday: 3, morning: 'Easy swim\n• 4×50m free', evening: 'Legs' },
+        { weekday: 4, morning: 'Morning run\n• 5k', evening: 'Rest' },
+        { weekday: 5, morning: 'Bike', evening: '' },
+      ],
+      skipped: [],
+    })
+  })
 })
 
 describe('weekdayIndex', () => {
@@ -68,6 +168,15 @@ describe('weekdayIndex', () => {
 })
 
 describe('assignPlanDates', () => {
+  it('fits a Monday–Sunday plan into the next seven days when pasted on Tuesday', () => {
+    const days = [1, 2, 3, 4, 5, 6, 0].map((weekday) => ({ weekday, morning: '', evening: '' }))
+    const dated = assignPlanDates(days, day(2026, 10, 6))
+    expect(dated.map((entry) => entry.date)).toEqual([
+      day(2026, 10, 12), day(2026, 10, 6), day(2026, 10, 7), day(2026, 10, 8),
+      day(2026, 10, 9), day(2026, 10, 10), day(2026, 10, 11),
+    ])
+  })
+
   it('puts a Wed–Sun plan pasted on a Tuesday on the coming Wed–Sun', () => {
     const { days } = parseWorkoutTable(PASTED_PLAN)
     const dated = assignPlanDates(days, day(2026, 10, 6))
