@@ -764,6 +764,7 @@ function HomePage() {
         id="personal-sites"
         isOpen={openSections.includes('personal-sites')}
         onToggle={() => toggleSection('personal-sites')}
+        gridClassName="projects-grid"
       >
         {personalSiteEntries.map((entry) => (
           <PersonalSiteCard key={entry.url} entry={entry} />
@@ -1121,12 +1122,17 @@ function PersonalSiteCard({ entry }: { entry: PersonalSiteEntry }) {
             />
           ) : null}
           <h3>{entry.name}</h3>
+          <p className="project-tagline">{entry.tagline}</p>
         </div>
-        <span className="admin-pill">{STATUS_LABELS[entry.status]}</span>
+        {/* The card's action sits in its first row; the status rides the top border. */}
+        <a href={entry.url} target="_blank" rel="noreferrer" className="project-visit">
+          <ExternalLink size={15} strokeWidth={1.8} aria-hidden="true" />
+          <span>Try it</span>
+        </a>
+        <span className="admin-pill project-status">{STATUS_LABELS[entry.status]}</span>
       </div>
 
-      <p className="project-tagline">{entry.tagline}</p>
-      <p>{entry.description}</p>
+      <p className="project-description">{entry.description}</p>
 
       <div className="project-stack">
         {entry.stack.map((tool) => (
@@ -1135,11 +1141,6 @@ function PersonalSiteCard({ entry }: { entry: PersonalSiteEntry }) {
           </span>
         ))}
       </div>
-
-      <a href={entry.url} target="_blank" rel="noreferrer" className="project-visit">
-        <ExternalLink size={15} strokeWidth={1.8} aria-hidden="true" />
-        <span>Try it</span>
-      </a>
     </article>
   )
 }
