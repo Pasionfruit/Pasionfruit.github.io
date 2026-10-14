@@ -32,7 +32,7 @@ export async function getNewsArticle(idToken: string, url: string, signal?: Abor
   return data
 }
 
-export async function getNews(idToken: string, query: NewsQuery): Promise<NewsItem[]> {
+export async function getNews(idToken: string, query: NewsQuery, signal?: AbortSignal): Promise<NewsItem[]> {
   const params = new URLSearchParams()
   if ('feed' in query) {
     params.set('feed', query.feed)
@@ -43,10 +43,16 @@ export async function getNews(idToken: string, query: NewsQuery): Promise<NewsIt
 
   const response = await fetch(`${NEWS_BASE_URL}/news?${params}`, {
     headers: { Authorization: `Bearer ${idToken}` },
+    signal,
   })
 
   const data = (await response.json().catch(() => null)) as { items?: NewsItem[]; error?: string } | null
   if (!response.ok) {
+    // Older deployed news Workers predate the dedicated technology feed.
+    // Their place search still supplies technology headlines until redeployed.
+    if (response.status === 400 && 'feed' in query && query.feed === 'tech' && /Ask for.*\?feed=/i.test(data?.error ?? '')) {
+      return getNews(idToken, { place: 'technology' }, signal)
+    }
     throw new Error(data?.error || `News request failed: ${response.status}`)
   }
   return data?.items ?? []

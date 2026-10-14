@@ -5,6 +5,12 @@ The dashboard shows four headlines per feed in a scrolling list, keeping all
 a high-level summary request ready to send. Users can also ask Ace to summarize
 a public HTTPS article link directly.
 
+The **TL;DR** card at the top of News generates a briefing with one click. Ace
+summarizes the latest four headlines in each category, one category at a time,
+and shows its source headlines beside the result. This is a headline briefing;
+individual article summaries still read the article text. An unavailable location
+or failed feed is labeled without preventing the other categories from finishing.
+
 ## Deploy
 
 Deploy this Worker alongside the site update for article summaries to work:
@@ -28,6 +34,8 @@ whatever the User-Agent, so it cannot be read from a Worker. Instead:
   International.
 - **Tech** blends Ars Technica, TechCrunch, Wired and BBC Technology. These are
   RSS feeds; the parser reads `<item>` only, so Atom-only outlets are left out.
+  The browser falls back to a technology search if an older Worker rejects
+  `?feed=tech`; deploying this Worker restores the dedicated publisher feeds.
 - **Local** and **City** are Bing News RSS searches for the place, limited to
   the past week. Bing's click-tracking links are unwrapped to the publisher URL.
 
@@ -56,3 +64,8 @@ to summarize only supplied text in 2–3 bullets under 120 words, cite the sourc
 and label excerpts. Blocked, paywalled or unreadable pages ask the user to paste
 the article text instead. Only the latest article's full text is replayed to
 Ace; older requests and summaries remain in conversation history.
+
+News requests use a 4,096-token context, a compute batch of 64, and at most 512
+output tokens. Article prompts are capped at 9,000 source characters and exclude
+the personal context and previous conversation. Allocation failures retry once
+with a batch of 16 before showing a readable host-memory error.

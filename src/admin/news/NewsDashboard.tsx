@@ -5,6 +5,7 @@ import { adminDashboardsById } from '../../siteContent'
 import { getNews, type NewsItem } from '../../data/news/client'
 import { useNewsPlaces } from './useNewsPlaces'
 import { askAceAboutNews } from '../ace/newsSummary'
+import { NewsDigest } from './NewsDigest'
 
 function timeAgo(iso: string, now: number) {
   const time = new Date(iso).getTime()
@@ -146,11 +147,13 @@ function NewsCard({
  */
 export function NewsDashboard({ idToken }: { idToken: string }) {
   const meta = adminDashboardsById.news
-  const { status, places, error } = useNewsPlaces()
+  const location = useNewsPlaces()
+  const { status, places, error } = location
   const waiting = status === 'error' ? error : 'Finding your location…'
 
   return (
     <AdminPage meta={meta}>
+      <NewsDigest idToken={idToken} location={location} />
       <div className="news-grid">
         <NewsCard
           title="Local"

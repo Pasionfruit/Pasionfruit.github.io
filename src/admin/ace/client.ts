@@ -28,8 +28,17 @@ export type AceConfig = {
 /** Ollama unloads an idle model; holding it resident keeps chat turns snappy. */
 const KEEP_ALIVE = '30m'
 
-/** Qwen3 handles this comfortably and it fits an 8 GB card alongside the weights. */
-const CONTEXT_TOKENS = 16384
+/** Leave room for model weights and compute buffers on the host's 8 GB GPU. */
+const CONTEXT_TOKENS = 8192
+const MEMORY_ERROR = /out.of.memory|failed to allocate|unable to allocate|cannot allocate|CUDA.*alloc/i
+
+function errorMessage(body: string) {
+  try {
+    return String(JSON.parse(body).error || body)
+  } catch {
+    return body
+  }
+}
 
 export function getAceConfig(): AceConfig | null {
   const baseUrl = import.meta.env.VITE_ACE_BASE_URL?.trim()
@@ -66,7 +75,7 @@ async function readError(response: Response) {
     return `That model is not pulled on the host yet. Run "ollama pull ${getAceConfig()?.model ?? 'qwen3:8b'}".`
   }
 
-  return body.slice(0, 300) || `Ace returned ${response.status}.`
+  return errorMessage(body) || `Ace returned ${response.status}.`
 }
 
 type ChatOptions = {
@@ -79,6 +88,8 @@ type ChatOptions = {
   /** JSON schema; when set the model is constrained to emit matching JSON. */
   format?: unknown
   temperature?: number
+  /** News needs its sources, not the larger personal-assistant context window. */
+  purpose?: 'news'
 }
 
 /**
@@ -86,7 +97,7 @@ type ChatOptions = {
  * line — so the body is decoded incrementally rather than awaited whole, which
  * is what makes a local 8B model feel responsive despite its token rate.
  */
-export async function aceChat({
+async function streamChat({
   config,
   idToken,
   messages,
@@ -94,7 +105,9 @@ export async function aceChat({
   onProgress,
   format,
   temperature = 0.4,
-}: ChatOptions): Promise<string> {
+  purpose,
+  batchSize,
+}: ChatOptions & { batchSize?: number }): Promise<string> {
   const response = await fetch(`${config.baseUrl}/api/chat`, {
     method: 'POST',
     headers: {
@@ -110,7 +123,13 @@ export async function aceChat({
       stream: true,
       keep_alive: KEEP_ALIVE,
       ...(format ? { format } : {}),
-      options: { temperature, num_ctx: CONTEXT_TOKENS },
+      ...(purpose === 'news' ? { think: false } : {}),
+      options: {
+        temperature,
+        num_ctx: purpose === 'news' ? 4096 : CONTEXT_TOKENS,
+        num_batch: batchSize ?? (purpose === 'news' ? 64 : 128),
+        ...(purpose === 'news' ? { num_predict: 512 } : {}),
+      },
     }),
   })
 
@@ -123,43 +142,64 @@ export async function aceChat({
   let buffer = ''
   let text = ''
 
-  for (;;) {
-    const { done, value } = await reader.read()
-    if (done) {
-      break
+  const consume = (line: string) => {
+    if (!line.trim()) return
+    let parsed: { message?: { content?: string }; error?: string }
+    try {
+      parsed = JSON.parse(line)
+    } catch {
+      return
     }
-
-    buffer += decoder.decode(value, { stream: true })
-
-    // The final line of a chunk is usually a partial object; leave it buffered.
-    const lines = buffer.split('\n')
-    buffer = lines.pop() ?? ''
-
-    for (const line of lines) {
-      const trimmed = line.trim()
-      if (!trimmed) {
-        continue
-      }
-
-      let parsed: { message?: { content?: string }; error?: string }
-      try {
-        parsed = JSON.parse(trimmed)
-      } catch {
-        continue
-      }
-
-      if (parsed.error) {
-        throw new Error(parsed.error)
-      }
-
-      if (parsed.message?.content) {
-        text += parsed.message.content
-        onProgress?.(stripThinking(text))
-      }
+    if (parsed.error) throw new Error(parsed.error)
+    if (parsed.message?.content) {
+      text += parsed.message.content
+      onProgress?.(stripThinking(text))
     }
   }
 
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) {
+        buffer += decoder.decode()
+        consume(buffer)
+        break
+      }
+
+      buffer += decoder.decode(value, { stream: true })
+
+      // The final line of a chunk is usually a partial object; leave it buffered.
+      const lines = buffer.split('\n')
+      buffer = lines.pop() ?? ''
+
+      for (const line of lines) {
+        consume(line)
+      }
+    }
+  } finally {
+    await reader.cancel().catch(() => {})
+    reader.releaseLock()
+  }
+
   return stripThinking(text)
+}
+
+/** Retry allocation failures once with a smaller compute batch, never in a loop. */
+export async function aceChat(options: ChatOptions): Promise<string> {
+  try {
+    return await streamChat(options)
+  } catch (caught) {
+    if (options.signal?.aborted || !MEMORY_ERROR.test(caught instanceof Error ? caught.message : String(caught))) throw caught
+    options.onProgress?.('')
+    try {
+      return await streamChat({ ...options, batchSize: 16 })
+    } catch (retryError) {
+      if (!options.signal?.aborted && MEMORY_ERROR.test(retryError instanceof Error ? retryError.message : String(retryError))) {
+        throw new Error('Ace ran out of memory on the host, even after retrying with a smaller batch. Close other GPU-heavy apps or restart Ollama, then try again.', { cause: retryError })
+      }
+      throw retryError
+    }
+  }
 }
 
 /**

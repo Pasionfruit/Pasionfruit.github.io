@@ -1,5 +1,11 @@
 # Assistant Ace — setup
 
+News summaries use a 4K context and smaller compute batches to leave room for
+the model on the RTX 4060. Regular assistant turns use 8K. A CUDA/host buffer
+allocation failure retries once with a smaller batch, then asks you to close
+GPU-heavy applications or restart Ollama. Larger context windows use more memory:
+[Ollama context length](https://docs.ollama.com/context-length).
+
 Everything needed to bring Ace — the floating button on every admin page — to
 life. The front
 end is already built and tested; nothing here touches application code.

@@ -88,7 +88,7 @@ describe('NewsDashboard', () => {
     render(<NewsDashboard idToken="token" />)
 
     const headings = screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)
-    expect(headings).toEqual(['Local', 'City', 'Nation', 'International', 'Tech'])
+    expect(headings).toEqual(['TL;DR', 'Local', 'City', 'Nation', 'International', 'Tech'])
 
     expect(await screen.findByText('Leon County story')).toBeTruthy()
     expect(await screen.findByText('Tallahassee story')).toBeTruthy()
