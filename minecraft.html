@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Minecraft Server Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Control Dashboard | Pasionfruit</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -30,13 +30,13 @@
     </script>
     <script type="module" src="/src/minecraft/main.ts"></script>
   </head>
-  <body>
+  <body class="app-shell minecraft-page">
     <header class="topbar">
       <a href="/" class="brand" aria-label="Go to home page">
         <span class="brand-mark">PF</span>
         <span class="brand-copy">
           <strong>Pasionfruit</strong>
-          <small>Minecraft Dashboard</small>
+          <small>Living with Passion</small>
         </span>
       </a>
       <nav aria-label="Site">
@@ -44,57 +44,64 @@
       </nav>
     </header>
 
-    <main class="dashboard">
-      <p id="connectivity-banner" class="connectivity-banner" role="status" aria-live="polite" hidden>
-        Server manager unavailable
-      </p>
+    <main class="page-shell">
+      <div class="admin-page minecraft-dashboard">
+        <header class="admin-page-head">
+          <p class="eyebrow">Gaming</p>
+          <h1>Control Dashboard</h1>
+        </header>
 
-      <section class="card server-card" aria-labelledby="server-heading">
-        <h1 id="server-heading">Minecraft Server</h1>
+        <p id="connectivity-banner" class="connectivity-banner" role="status" aria-live="polite" hidden>
+          Server manager unavailable
+        </p>
 
-        <dl class="server-summary">
-          <div class="server-summary-item">
-            <dt>Status</dt>
-            <dd id="server-status">—</dd>
+        <section class="info-card server-card" aria-labelledby="server-heading">
+          <h2 id="server-heading" class="dashboard-card-title">Minecraft Server</h2>
+
+          <dl class="server-summary">
+            <div class="server-summary-item">
+              <dt>Status</dt>
+              <dd id="server-status">—</dd>
+            </div>
+            <div class="server-summary-item">
+              <dt>Players</dt>
+              <dd id="server-players">— / —</dd>
+            </div>
+            <div class="server-summary-item">
+              <dt>Server Version</dt>
+              <dd id="server-version">—</dd>
+            </div>
+          </dl>
+
+          <div class="server-controls">
+            <button type="button" id="btn-start" class="primary-action" disabled>Start Server</button>
+            <button type="button" id="btn-restart" class="secondary-action" disabled>Restart Server</button>
+            <button type="button" id="btn-stop" class="secondary-action danger" disabled>Stop Server</button>
           </div>
-          <div class="server-summary-item">
-            <dt>Players</dt>
-            <dd id="server-players">— / —</dd>
-          </div>
-          <div class="server-summary-item">
-            <dt>Server Version</dt>
-            <dd id="server-version">—</dd>
-          </div>
-        </dl>
 
-        <div class="server-controls">
-          <button type="button" id="btn-start" class="primary-action" disabled>Start Server</button>
-          <button type="button" id="btn-restart" class="secondary-action" disabled>Restart Server</button>
-          <button type="button" id="btn-stop" class="secondary-action danger" disabled>Stop Server</button>
-        </div>
+          <p id="action-message" class="action-message" role="status" aria-live="polite"></p>
+        </section>
 
-        <p id="action-message" class="action-message" role="status" aria-live="polite"></p>
-      </section>
+        <section class="metrics" aria-label="Server metrics">
+          <article class="info-card metric-card">
+            <h2 class="dashboard-card-title">CPU Usage</h2>
+            <p id="metric-cpu" class="metric-value">—</p>
+          </article>
+          <article class="info-card metric-card">
+            <h2 class="dashboard-card-title">RAM Usage</h2>
+            <p id="metric-ram" class="metric-value">—</p>
+          </article>
+          <article class="info-card metric-card">
+            <h2 class="dashboard-card-title">Uptime</h2>
+            <p id="metric-uptime" class="metric-value">—</p>
+          </article>
+        </section>
 
-      <section class="metrics" aria-label="Server metrics">
-        <article class="card metric-card">
-          <h2>CPU Usage</h2>
-          <p id="metric-cpu">—</p>
-        </article>
-        <article class="card metric-card">
-          <h2>RAM Usage</h2>
-          <p id="metric-ram">—</p>
-        </article>
-        <article class="card metric-card">
-          <h2>Uptime</h2>
-          <p id="metric-uptime">—</p>
-        </article>
-      </section>
-
-      <section class="card console-card" aria-labelledby="console-heading">
-        <h2 id="console-heading">Console</h2>
-        <pre id="console-window" class="console-window" tabindex="0" aria-label="Latest server log lines"></pre>
-      </section>
+        <section class="info-card console-card" aria-labelledby="console-heading">
+          <h2 id="console-heading" class="dashboard-card-title">Console</h2>
+          <pre id="console-window" class="console-window" tabindex="0" aria-label="Latest server log lines"></pre>
+        </section>
+      </div>
     </main>
   </body>
 </html>

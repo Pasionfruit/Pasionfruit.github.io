@@ -1,5 +1,8 @@
 // Minecraft server control dashboard — UI wiring only.
 // All backend access goes through the centralized API module (./api).
+import '../index.css'
+import '../App.css'
+import '../admin/admin.css'
 import './minecraft.css'
 import {
   ApiError,
