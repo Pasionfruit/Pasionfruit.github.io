@@ -2972,6 +2972,22 @@ function WeeklyWorkoutResetCard({
           {canWrite ? (
             <button
               type="button"
+              className="secondary-action weekly-paste-btn"
+              aria-expanded={isExpanded && isEditing && isPasting}
+              onClick={() => {
+                setIsExpanded(true)
+                setIsEditing(true)
+                setIsPasting((value) => !value)
+                setPasteMessage('')
+              }}
+              disabled={!idToken || isWriting}
+            >
+              Paste plan
+            </button>
+          ) : null}
+          {canWrite ? (
+            <button
+              type="button"
               className={`section-edit-btn ${isEditing ? 'active' : ''}`}
               aria-pressed={isEditing}
               title="Edit values"
@@ -3115,18 +3131,6 @@ function WeeklyWorkoutResetCard({
                 disabled={!canWrite || !idToken || isWriting}
               >
                 Reset week
-              </button>
-              <button
-                type="button"
-                className="secondary-action"
-                aria-expanded={isPasting}
-                onClick={() => {
-                  setIsPasting((value) => !value)
-                  setPasteMessage('')
-                }}
-                disabled={!canWrite || !idToken || isWriting}
-              >
-                Paste plan
               </button>
               <button
                 type="button"

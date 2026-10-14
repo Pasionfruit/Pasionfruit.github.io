@@ -2588,6 +2588,12 @@
   gap: 0.35rem;
 }
 
+.weekly-paste-btn {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
 .section-edit-btn {
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
