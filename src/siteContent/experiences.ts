@@ -27,7 +27,7 @@ export const experiencesSectionPage: PageContent = {
     },
     {
       title: 'Technical Skills',
-      body: `• Actuarial & Analytics\n  -   - Excel/Google Sheets (pivot tables, VLOOKUP, scenario modeling), SQL (PostgreSQL, MySQL), Python (pandas, numpy, scipy, statsmodels)\n• Data Engineering & Cloud\n    -   - ETL/ELT pipelines, data validation, BI data modeling, PostgreSQL, Delta Lake\n• Programming & Tools\n    -   - Python, SQL, TypeScript, C++, JavaScript, Jupyter, Git, Selenium, Playwright, Pytest, Gemini Notebook LM, Github Copilot\n`,
+      body: `• Analytics\n  -   - Excel/Google Sheets (pivot tables, VLOOKUP, scenario modeling), SQL (PostgreSQL, MySQL), Python (pandas, numpy, scipy, statsmodels)\n• Data Engineering & Cloud\n    -   - ETL/ELT pipelines, data validation, BI data modeling, PostgreSQL, Delta Lake\n• Programming & Tools\n    -   - Python, SQL, TypeScript, C++, JavaScript, Jupyter, Git, Selenium, Playwright, Pytest, Gemini Notebook LM, Github Copilot\n`,
     },
     {
       title: 'Professional Experience',

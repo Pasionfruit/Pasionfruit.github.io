@@ -1984,6 +1984,74 @@
   font-style: italic;
 }
 
+/* GitHub activity under Education: the Training Log's calendar, in GitHub greens. */
+.github-activity {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.github-activity-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.github-activity-title {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.github-activity-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.github-activity-link:hover {
+  text-decoration: underline;
+}
+
+/* Two classes, to outweigh the generic `.info-card p` margins. */
+.github-activity .github-activity-summary,
+.github-activity .heatmap-legend {
+  margin: 0;
+  white-space: normal;
+}
+
+.github-activity-summary {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.github-activity-summary strong {
+  color: var(--text-strong);
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.heatmap-legend .training-log-tile {
+  width: 10px;
+  height: 10px;
+}
+
 .experience-points {
   margin: 0.4rem 0 0;
   padding-left: 1.05rem;
@@ -3809,6 +3877,9 @@ button svg,
   display: grid;
   gap: 0.4rem;
   min-width: 0;
+  /* The grid sizes itself off its own width, not the screen's, so it pages by
+     quarter in a narrow column (Education) as well as on a phone. */
+  container-type: inline-size;
 }
 
 /*
@@ -4083,59 +4154,63 @@ button svg,
   border-color: #3f9662;
 }
 
-@media (max-width: 640px) {
+/* GitHub activity: levels 0–4, as GitHub grades a day's contributions. */
+.heatmap--github .training-log-tile.level-1 { background: #c6e9cf; border-color: #b3dcbf; }
+.heatmap--github .training-log-tile.level-2 { background: #8fd3a3; border-color: #7cc492; }
+.heatmap--github .training-log-tile.level-3 { background: #4fae6c; border-color: #44a061; }
+.heatmap--github .training-log-tile.level-4 { background: #2b7a45; border-color: #24693b; }
+
+:root[data-theme='dark'] .heatmap--github .training-log-tile.level-1 { background: #1f4a31; border-color: #295c3e; }
+:root[data-theme='dark'] .heatmap--github .training-log-tile.level-2 { background: #2f6f4a; border-color: #3d8559; }
+:root[data-theme='dark'] .heatmap--github .training-log-tile.level-3 { background: #49ad70; border-color: #3f9662; }
+:root[data-theme='dark'] .heatmap--github .training-log-tile.level-4 { background: #7ed3a0; border-color: #6cc290; }
+
+/* A narrow heatmap pages by quarter and wraps its tiles. */
+@container (max-width: 50rem) {
   .training-log-year-picker {
     flex-direction: row;
     flex-wrap: wrap;
     align-self: auto;
     overflow-y: unset;
   }
-
   .training-log-desktop-page-nav {
     display: none;
   }
-
   .training-log-page-nav {
     display: inline-flex;
   }
-
   .training-log-month-col.training-log-month-col--desktop-hidden {
     display: flex;
   }
-
   .training-log-month-col.training-log-month-col--hidden {
     display: none;
   }
-
   .training-log-grid-panel {
     grid-template-columns: repeat(3, 1fr);
     overflow-x: unset;
   }
-
   .training-log-month-col {
     width: 100%;
   }
-
   .training-log-row-tiles {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 0.2rem;
   }
-
   .training-log-tile {
     width: 12px;
     height: 12px;
   }
-
   .training-log-month-label {
     font-size: 0.72rem;
   }
+}
 
+@media (max-width: 640px) {
   .study-complete-cell {
     min-width: 0;
   }
-
   .study-today-table th,
   .study-today-table td {
     font-size: 0.8rem;
@@ -4143,14 +4218,12 @@ button svg,
     overflow-wrap: anywhere;
     word-break: break-word;
   }
-
   .meal-plan-table-shell {
     max-height: none;
     overflow: visible;
     border: 0;
     background: transparent;
   }
-
   .meal-plan-table,
   .meal-plan-table thead,
   .meal-plan-table tbody,
@@ -4159,23 +4232,19 @@ button svg,
   .meal-plan-table td {
     display: block;
   }
-
   .meal-plan-table thead {
     display: none;
   }
-
   .meal-plan-table tbody {
     display: grid;
     gap: 0.6rem;
   }
-
   .meal-plan-table tr {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--surface);
     padding: 0.25rem;
   }
-
   .meal-plan-table td {
     border-bottom: 1px solid var(--border);
     padding: 0.55rem 0.6rem;
@@ -4183,11 +4252,9 @@ button svg,
     overflow-wrap: anywhere;
     word-break: break-word;
   }
-
   .meal-plan-table tr td:last-child {
     border-bottom: 0;
   }
-
   .meal-plan-table td::before {
     content: attr(data-label);
     display: block;
@@ -4196,7 +4263,6 @@ button svg,
     font-size: 0.72rem;
     letter-spacing: 0.01em;
   }
-
   .meal-plan-table td[data-label='Actions']::before {
     margin-bottom: 0.4rem;
   }

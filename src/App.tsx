@@ -61,7 +61,9 @@ import './admin/admin.css'
 import { sounds } from './sounds'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { HomeHero } from './components/HomeHero'
-import { Pager } from './components/Pager'
+import { MonthTileHeatmap, type HeatmapDay } from './components/MonthTileHeatmap'
+import { GitHubActivity } from './components/GitHubActivity'
+import { profile } from './siteContent/profile'
 import { TrainingPrs } from './admin/garmin/TrainingPrs'
 import {
   TRAINING_VIEWS,
@@ -1450,8 +1452,6 @@ function TrainingLogCard({
   const [rows, setRows] = useState<TrainingRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [yearFilter, setYearFilter] = useState(currentYear)
-  const [mobilePage, setMobilePage] = useState(() => Math.floor(currentDate.getMonth() / 3))
-  const [desktopPage, setDesktopPage] = useState(() => currentDate.getMonth() >= 6 ? 1 : 0)
   // The heatmap of days trained, or the personal records board.
   const [view, setView] = useState<'tiles' | 'prs'>('tiles')
 
@@ -1529,58 +1529,36 @@ function TrainingLogCard({
       })
   }, [rows, yearFilter])
 
-  const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-  const monthGroups = useMemo(() => {
-    const year = Number(yearFilter)
+  const recordsByDay = useMemo(() => {
     const byDate = new Map<string, TrainingRecord>()
-
     for (const row of filteredRows) {
       const key = toDateOnlyKey(row.date)
       if (key) {
         byDate.set(key, row)
       }
     }
+    return byDate
+  }, [filteredRows])
 
-    const now = new Date()
-    const isCurrentYear = year === now.getFullYear()
-
-    return MONTH_LABELS.map((label, monthIndex) => {
-      // How many empty Mon-anchored cells precede day 1 (Mon=0 … Sun=6)
-      const firstDayOffset = (new Date(year, monthIndex, 1).getDay() + 6) % 7
-      const daysInMonth = new Date(year, monthIndex + 1, 0).getDate()
-
-      // Days beyond today have not happened yet, so they get no tile at all.
-      const lastDay =
-        isCurrentYear && monthIndex > now.getMonth()
-          ? 0
-          : isCurrentYear && monthIndex === now.getMonth()
-            ? now.getDate()
-            : daysInMonth
-
-      /*
-       * One tile per day, whether or not anything was recorded. Garmin only
-       * returns rows for days with an activity, so without this padding the
-       * grid renders as scattered dots instead of a contribution calendar.
-       */
-      const rows: TrainingRecord[] = []
-      for (let day = 1; day <= lastDay; day += 1) {
-        const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-        rows.push(
-          byDate.get(key) ?? {
-            training_id: key,
-            date: key,
-            morning_workout: '',
-            evening_workout: '',
-            completed_morning: false,
-            completed_evening: false,
-          },
-        )
+  /*
+   * One tile per day, whether or not anything was recorded. Garmin only
+   * returns rows for days with an activity, so a day without one is an empty
+   * tile keyed by its date rather than a gap in the calendar.
+   */
+  const trainingDayInfo = useCallback(
+    (key: string): HeatmapDay => {
+      const row = recordsByDay.get(key)
+      const activities = row ? [row.morning_workout, row.evening_workout].filter(Boolean) : []
+      return {
+        level: row ? getTrainingTileLevel(row) : 0,
+        label: activities.length
+          ? `${formatSheetDate(key)} — ${activities.join(', ')}`
+          : `${formatSheetDate(key)} — no activity`,
+        data: { 'data-training-id': row?.training_id ?? key },
       }
-
-      return { monthIndex, label, rows, firstDayOffset }
-    })
-  }, [filteredRows, yearFilter])
+    },
+    [recordsByDay],
+  )
 
   const todayDate = new Date()
   const todayKey = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`
@@ -1612,112 +1590,15 @@ function TrainingLogCard({
       ) : (
         <>
           <div className="training-log-main">
-            <div className="training-log-grid" aria-label="Training activity tiles by month">
-              <Pager
-                className="training-log-desktop-page-nav"
-                label={desktopPage === 0 ? 'Jan – Jun' : 'Jul – Dec'}
-                prevLabel="First half of the year"
-                nextLabel="Second half of the year"
-                onPrev={() => setDesktopPage(0)}
-                onNext={() => setDesktopPage(1)}
-                prevDisabled={desktopPage === 0}
-                nextDisabled={desktopPage === 1}
-              />
-
-              <Pager
-                className="training-log-page-nav"
-                label={['Jan – Mar', 'Apr – Jun', 'Jul – Sep', 'Oct – Dec'][mobilePage]}
-                prevLabel="Previous quarter"
-                nextLabel="Next quarter"
-                onPrev={() => setMobilePage((p) => Math.max(0, p - 1))}
-                onNext={() => setMobilePage((p) => Math.min(3, p + 1))}
-                prevDisabled={mobilePage === 0}
-                nextDisabled={mobilePage === 3}
-              />
-
-              <div className="training-log-tiles-row">
-                <div className="training-log-grid-panel">
-                  {monthGroups.map((group) => {
-                    const mobilePg = Math.floor(group.monthIndex / 3)
-                    const desktopPg = Math.floor(group.monthIndex / 6)
-                    return (
-                      <div
-                        /*
-                         * Keyed by year as well as month so switching years
-                         * remounts the column. Keyed by month alone, React
-                         * reconciled the new year's days against the old ones
-                         * and left the previous year's activity tiles behind.
-                         */
-                        key={`${yearFilter}-${group.monthIndex}`}
-                        className={[
-                          'training-log-month-col',
-                          mobilePg !== mobilePage ? 'training-log-month-col--hidden' : '',
-                          desktopPg !== desktopPage ? 'training-log-month-col--desktop-hidden' : '',
-                        ].filter(Boolean).join(' ')}
-                      >
-                        <div className="training-log-month-label" aria-label={`Month ${group.label}`}>{group.label}</div>
-                        <div
-                          className="training-log-row-tiles"
-                          role="list"
-                          aria-label={`${group.label} training activity`}
-                        >
-                          {group.rows.map((row, dayIndex) => {
-                            const tileLevel = getTrainingTileLevel(row)
-                            const activities = [row.morning_workout, row.evening_workout].filter(Boolean)
-                            const label = activities.length
-                              ? `${formatSheetDate(row.date)} — ${activities.join(', ')}`
-                              : `${formatSheetDate(row.date)} — no activity`
-                            const parsedDate = parseTrainingDate(row.date)
-                            const gridColumn = parsedDate ? (parsedDate.getDay() + 6) % 7 + 1 : undefined
-                            const gridRow = parsedDate
-                              ? Math.floor((parsedDate.getDate() - 1 + group.firstDayOffset) / 7) + 1
-                              : undefined
-
-                            return (
-                              <div
-                                /*
-                                 * Keyed by day slot, not by record id. The list
-                                 * is one fixed slot per day of the month, and a
-                                 * day's row swaps between a padded placeholder
-                                 * and a real record — keying on the id made
-                                 * React treat that as two different children
-                                 * and leave both tiles in the grid.
-                                 */
-                                key={dayIndex}
-                                role="listitem"
-                                className={`training-log-tile level-${tileLevel}`}
-                                style={{ gridColumn, gridRow }}
-                                aria-label={label}
-                                title={label}
-                                data-training-id={row.training_id}
-                                data-level={String(tileLevel)}
-                              />
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                <div className="training-log-year-picker" role="listbox" aria-label="Select year">
-                  {selectableYears.map((year) => (
-                    <button
-                      key={year}
-                      type="button"
-                      role="option"
-                      aria-selected={yearFilter === String(year)}
-                      className={`training-log-year-btn${yearFilter === String(year) ? ' active' : ''}`}
-                      onClick={() => setYearFilter(String(year))}
-                    >
-                      {year}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <p className="sheets-meta">Light: one workout completed or rest day. Dark: both workouts completed.</p>
-            </div>
+            <MonthTileHeatmap
+              year={Number(yearFilter)}
+              years={selectableYears}
+              onYearChange={(year) => setYearFilter(String(year))}
+              dayInfo={trainingDayInfo}
+              label="Training activity tiles by month"
+              tileNoun="training activity"
+            />
+            <p className="sheets-meta">Light: one workout completed or rest day. Dark: both workouts completed.</p>
           </div>
 
           {showToday ? (
@@ -2126,14 +2007,18 @@ function NextEventCountdownCard({
 
 function EducationList() {
   return (
-    <ul className="experience-list">
-      {educationEntries.map((entry) => (
-        <EducationRow
-          key={`${entry.degree}-${entry.institution}`}
-          entry={entry}
-        />
-      ))}
-    </ul>
+    <>
+      <ul className="experience-list">
+        {educationEntries.map((entry) => (
+          <EducationRow
+            key={`${entry.degree}-${entry.institution}`}
+            entry={entry}
+          />
+        ))}
+      </ul>
+      {/* What I keep learning after the degree, in the Training Log's calendar. */}
+      <GitHubActivity username={profile.github} />
+    </>
   )
 }
 
