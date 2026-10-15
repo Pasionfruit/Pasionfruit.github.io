@@ -21,6 +21,7 @@ import {
   RefreshCw,
   RotateCcw,
   SquareCheck,
+  TvMinimalPlay,
   type LucideIcon,
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
@@ -82,6 +83,7 @@ import { GmailSummaryCard } from './admin/GmailSummaryCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
 import { NewsDashboard } from './admin/news/NewsDashboard'
+import { YouTubeDashboard } from './admin/youtube/YouTubeDashboard'
 import { WorkoutText } from './training/WorkoutText'
 import { assignPlanDates, parseWorkoutTable } from './training/workoutPlan'
 import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
@@ -283,6 +285,7 @@ function App() {
             />
             <Route path="training" element={<Navigate replace to="/admin/health" />} />
             <Route path="news" element={<NewsDashboard idToken={googleIdToken} />} />
+            <Route path="youtube" element={<YouTubeDashboard idToken={googleIdToken} />} />
           </Route>
 
           <Route
@@ -391,6 +394,7 @@ const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   personal: NotebookPen,
   health: Activity,
   news: Newspaper,
+  youtube: TvMinimalPlay,
 }
 
 function AdminNav() {

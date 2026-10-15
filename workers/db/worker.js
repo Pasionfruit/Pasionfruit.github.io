@@ -12,10 +12,12 @@
  * Script checks one. Both live here rather than in the Ace gateway because the
  * site already calls this Worker for data on every page.
  * Secrets: ADMIN_EMAIL, GOOGLE_CLIENT_ID, SESSION_SECRET (same values as
- * workers/ace).
+ * workers/ace), and MINITE_INGEST_KEY, the desktop's write-only key for
+ * `youtube_videos` (the same value as ingest_key in MiniteThoughts'
+ * config/site.toml).
  */
 
-import { createHttp, mintSessionRoute, verifyAdmin, verifyRoute } from '../shared/admin.js'
+import { bearerToken, createHttp, mintSessionRoute, verifyAdmin, verifyRoute } from '../shared/admin.js'
 
 const { json, deny, preflight } = createHttp({ methods: 'GET, POST, PUT, DELETE, OPTIONS' })
 
@@ -60,8 +62,38 @@ const TABLES = {
     columns: ['event_id', 'event_name', 'event_date'],
     read: 'public',
   },
+  // One row per published Minite Thoughts video: the latest analytics
+  // snapshot as JSON, for the YouTube dashboard. Written from the desktop by
+  // `minite results` with MINITE_INGEST_KEY, which can write this table and
+  // nothing else; read by the admin only.
+  youtube_videos: {
+    key: 'video_id',
+    columns: ['video_id', 'title', 'published_at', 'fetched_at', 'snapshot'],
+    read: 'admin',
+    ingestKey: 'MINITE_INGEST_KEY',
+  },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
+}
+
+/**
+ * Does this request carry the table's ingest key? Only for creating or
+ * replacing rows: an ingest key never reads, deletes, or touches another table.
+ */
+function isIngest(request, env, table) {
+  const secret = table.ingestKey ? env[table.ingestKey] : ''
+  if (!secret || (request.method !== 'POST' && request.method !== 'PUT')) return false
+  return sameSecret(bearerToken(request), secret)
+}
+
+/** Constant-time string comparison, so the key cannot be guessed a byte at a time. */
+function sameSecret(given, expected) {
+  const a = new TextEncoder().encode(given)
+  const b = new TextEncoder().encode(expected)
+  if (a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i += 1) diff |= a[i] ^ b[i]
+  return diff === 0
 }
 
 function keyColumns(table) {
@@ -114,7 +146,7 @@ export default {
       return json({ rows: results ?? [] }, request, env)
     }
 
-    const auth = await verifyAdmin(request, env)
+    const auth = isIngest(request, env, table) ? { ok: true } : await verifyAdmin(request, env)
     if (!auth.ok) return deny(403, auth.reason, request, env)
 
     let body = {}

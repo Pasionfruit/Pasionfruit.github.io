@@ -66,7 +66,7 @@ export function createHttp({ methods = 'GET, POST, OPTIONS' } = {}) {
   return { corsHeaders, json, deny, preflight }
 }
 
-function bearerToken(request) {
+export function bearerToken(request) {
   const header = request.headers.get('Authorization') ?? ''
   return header.startsWith('Bearer ') ? header.slice(7).trim() : ''
 }

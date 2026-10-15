@@ -44,6 +44,15 @@ export const adminDashboards: AdminDashboardMeta[] = [
     accent: '#f59e0b',
     eyebrow: 'Headlines',
   },
+  {
+    id: 'youtube',
+    title: 'YouTube',
+    path: '/admin/youtube',
+    icon: 'youtube',
+    summary: 'Minite Thoughts: views, where viewers leave and why, traffic sources, and comments',
+    accent: '#ef4444',
+    eyebrow: 'Channel',
+  },
 ]
 
 export const adminDashboardsById: Record<AdminDashboardId, AdminDashboardMeta> =
