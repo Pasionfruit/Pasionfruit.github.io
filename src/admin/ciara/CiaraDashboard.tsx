@@ -5,7 +5,8 @@ import { CursorGlyph, CursorSwitch, type CursorKind } from './Cursors'
 import { RelationshipClock } from './RelationshipClock'
 import { Monthiversary } from './Monthiversary'
 import { monthiversaryOn, TOGETHER_SINCE } from './elapsed'
-import { StickyNotes } from './StickyNotes'
+import { StickyNote, StickyStatus } from './StickyNotes'
+import { useStickyNotes } from './useStickyNotes'
 import { Timeline } from './Timeline'
 import './ciara.css'
 
@@ -50,6 +51,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
   const [mouthOpen, setMouthOpen] = useState(false)
   // Checked once, when the page opens. Null on any day that is not a monthiversary.
   const [monthiversary, setMonthiversary] = useState<number | null>(() => monthiversaryOn(TOGETHER_SINCE, new Date()))
+  const notes = useStickyNotes(idToken)
 
   useEffect(() => {
     const watcher = cursor === 'feather' ? midnightRef : cursor === 'laser' ? inkyRef : pirouetteRef
@@ -106,6 +108,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
   return (
     <div className="ciara-page">
       <div className="ciara-topbar">
+        <StickyStatus status={notes.status} error={notes.error} />
         <CursorSwitch value={cursor} onChange={chooseCursor} />
       </div>
 
@@ -133,6 +136,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
             </figure>
           </div>
         </div>
+        <StickyNote color="blue" notes={notes} className="ciara-note-blue" />
       </header>
 
       <main className="ciara-body">
@@ -152,11 +156,13 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
           <RelationshipClock />
         </div>
 
+        <StickyNote color="yellow" notes={notes} className="ciara-note-yellow" />
+
         <div className="ciara-perch ciara-perch-timeline">
           <Timeline idToken={idToken} />
         </div>
 
-        <StickyNotes idToken={idToken} />
+        <StickyNote color="pink" notes={notes} className="ciara-note-pink" />
       </main>
 
       {monthiversary !== null ? (

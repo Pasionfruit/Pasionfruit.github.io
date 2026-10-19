@@ -1,70 +1,39 @@
-import { useEffect, useState } from 'react'
-import { listStickyNotes, saveStickyNote, STICKY_COLORS, type StickyColor } from '../../data/notes/client'
+import type { StickyColor } from '../../data/notes/client'
+import type { StickyNotesState, StickyStatus } from './useStickyNotes'
 
-type Status = 'loading' | 'idle' | 'saving' | 'saved' | 'error'
-
-const EMPTY: Record<StickyColor, string> = { yellow: '', blue: '', pink: '' }
-
-/** Three editable sticky notes. Each one saves when you click away from it. */
-export function StickyNotes({ idToken }: { idToken: string }) {
-  const [texts, setTexts] = useState<Record<StickyColor, string>>(EMPTY)
-  const [status, setStatus] = useState<Status>('loading')
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    let cancelled = false
-    listStickyNotes(idToken)
-      .then((saved) => {
-        if (cancelled) return
-        setTexts((current) => ({ ...current, ...saved }))
-        setStatus('idle')
-      })
-      .catch((caught: unknown) => {
-        if (cancelled) return
-        setError(caught instanceof Error ? caught.message : 'The notes could not be loaded.')
-        setStatus('error')
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [idToken])
-
-  async function save(color: StickyColor) {
-    setStatus('saving')
-    setError('')
-    try {
-      await saveStickyNote(idToken, color, texts[color])
-      setStatus('saved')
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'The note could not be saved.')
-      setStatus('error')
-    }
-  }
-
+/** One sticky note. Its text is shared through the hook, and it saves when you click away. */
+export function StickyNote({
+  color,
+  notes,
+  className = '',
+}: {
+  color: StickyColor
+  notes: StickyNotesState
+  className?: string
+}) {
   return (
-    <section className="ciara-notes" aria-label="Sticky notes">
-      <div className="ciara-notes-row">
-        {STICKY_COLORS.map((color) => (
-          <label key={color} className={`ciara-sticky ciara-sticky-${color}`}>
-            <span className="ciara-sticky-tape" aria-hidden="true" />
-            <span className="ciara-sticky-label">{color} note</span>
-            <textarea
-              value={texts[color]}
-              maxLength={500}
-              placeholder="Write something…"
-              disabled={status === 'loading'}
-              onChange={(event) => setTexts((current) => ({ ...current, [color]: event.target.value }))}
-              onBlur={() => void save(color)}
-            />
-          </label>
-        ))}
-      </div>
-      <p className="ciara-notes-status" role="status" aria-live="polite">
-        {status === 'loading' ? 'Loading notes…' : null}
-        {status === 'saving' ? 'Saving…' : null}
-        {status === 'saved' ? 'Saved' : null}
-        {status === 'error' ? error : null}
-      </p>
-    </section>
+    <label className={`ciara-sticky ciara-sticky-${color} ${className}`}>
+      <span className="ciara-sticky-tape" aria-hidden="true" />
+      <span className="ciara-sticky-label">{color} note</span>
+      <textarea
+        value={notes.texts[color]}
+        maxLength={500}
+        placeholder="Write something…"
+        disabled={notes.status === 'loading'}
+        onChange={(event) => notes.setText(color, event.target.value)}
+        onBlur={() => void notes.save(color, notes.texts[color])}
+      />
+    </label>
+  )
+}
+
+/** Save progress for all the notes, shown in the top bar. */
+export function StickyStatus({ status, error }: { status: StickyStatus; error: string }) {
+  const message =
+    status === 'loading' ? 'Loading notes…' : status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : status === 'error' ? error : ''
+  return (
+    <p className="ciara-notes-status" role="status" aria-live="polite">
+      {message}
+    </p>
   )
 }

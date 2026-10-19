@@ -173,7 +173,7 @@
 .ciara-frog {
   position: absolute;
   bottom: 40px;
-  width: 46px;
+  width: 56px;
   height: auto;
   animation: ciara-bob 2.6s ease-in-out infinite;
 }
@@ -184,8 +184,8 @@
 
 .ciara-frog-b {
   left: 46%;
-  width: 38px;
   bottom: 52px;
+  width: 46px;
   animation-delay: -0.9s;
 }
 
@@ -218,7 +218,7 @@
 .ciara-axo-ken {
   position: absolute;
   bottom: 2px;
-  width: 110px;
+  width: 120px;
 }
 
 .ciara-axo-barbie {
@@ -679,49 +679,7 @@
   to { transform: translate3d(var(--drift), 115vh, 0) rotate(720deg); }
 }
 
-/* ── Sticky notes ─────────────────────────────────────────────────────── */
-
-.ciara-notes {
-  margin-top: 2.4rem;
-}
-
-/* Wide screens: the timeline and clock stay in the main column, and the notes
-   run down a side column, level with the clock card. */
-@media (min-width: 900px) {
-  .ciara-body {
-    grid-template-columns: minmax(0, 1fr) 250px;
-    column-gap: 2rem;
-    align-items: start;
-  }
-
-  .ciara-notes {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    margin-top: 8rem;
-  }
-
-  .ciara-notes-row {
-    grid-template-columns: 1fr;
-  }
-
-  .ciara-sticky:nth-child(n) {
-    transform: none;
-  }
-
-  .ciara-sticky:nth-child(1) { transform: rotate(-1.2deg); }
-  .ciara-sticky:nth-child(2) { transform: rotate(0.8deg); }
-  .ciara-sticky:nth-child(3) { transform: rotate(-0.5deg); }
-}
-
-.ciara-perch-timeline {
-  margin-top: 2.4rem;
-}
-
-.ciara-notes-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
+/* ── Sticky notes, scattered around the page ─────────────────────────── */
 
 .ciara-sticky {
   position: relative;
@@ -731,10 +689,6 @@
   border-radius: 6px 6px 22px 6px;
   box-shadow: 0 8px 14px rgba(91, 59, 82, 0.14);
 }
-
-.ciara-sticky:nth-child(1) { transform: rotate(-1.6deg); }
-.ciara-sticky:nth-child(2) { transform: rotate(1deg); }
-.ciara-sticky:nth-child(3) { transform: rotate(-0.6deg); }
 
 .ciara-sticky-yellow { background: #fff3a3; }
 .ciara-sticky-blue { background: #bfe6ff; }
@@ -762,7 +716,7 @@
 
 .ciara-sticky textarea {
   width: 100%;
-  min-height: 7rem;
+  min-height: 6.5rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -781,28 +735,73 @@
   color: rgba(91, 59, 82, 0.45);
 }
 
+/* Each note sits in its own spot, tilted a little, and stacks on narrow screens. */
+.ciara-note-yellow {
+  margin-top: 2.4rem;
+  transform: rotate(-1.4deg);
+}
+
+.ciara-note-blue {
+  margin-top: 1.6rem;
+  transform: rotate(1.2deg);
+}
+
+.ciara-note-pink {
+  margin-top: 2.4rem;
+  transform: rotate(-0.8deg);
+}
+
+.ciara-hero {
+  position: relative;
+}
+
+.ciara-topbar {
+  align-items: center;
+  gap: 0.8rem;
+}
+
 .ciara-notes-status {
   min-height: 1.2rem;
-  margin: 0.6rem 0 0;
+  margin: 0;
   color: var(--ciara-muted);
   font-size: 0.85rem;
-  text-align: center;
+  text-align: right;
 }
 
-@media (max-width: 899px) {
-  .ciara-notes-row {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+/* Wide screens: the yellow note sits right of the clock, the pink one right of
+   the timeline, and the blue one is pinned to the top right of the scene. */
+@media (min-width: 900px) {
+  .ciara-body {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    column-gap: 2rem;
+    align-items: start;
   }
 
-  .ciara-sticky:nth-child(n) {
-    transform: none;
+  .ciara-note-yellow {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    margin-top: 8rem;
+  }
+
+  .ciara-note-pink {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    margin-top: 2.4rem;
+  }
+
+  .ciara-note-blue {
+    position: absolute;
+    top: 15rem;
+    right: 1rem;
+    width: 210px;
+    margin: 0;
   }
 }
 
-@media (max-width: 640px) {
-  .ciara-notes-row {
-    grid-template-columns: 1fr;
-  }
+.ciara-perch-timeline {
+  margin-top: 2.4rem;
 }
 
 /* ── Pointer switch, top right ────────────────────────────────────────── */
@@ -904,6 +903,6 @@
 
   .ciara-axo-barbie,
   .ciara-axo-ken {
-    width: 90px;
+    width: 100px;
   }
 }

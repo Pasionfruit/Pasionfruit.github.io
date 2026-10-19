@@ -2,10 +2,11 @@
    extra loads, and hidden from screen readers (the page's text says what matters).
    Each one is inked like a sketch: a dark outline, a shadow tone and a highlight. */
 
+import type { CSSProperties } from 'react'
+import { AXOLOTL_PALETTES, AXOLOTL_SPRITE, FROG_PALETTE, FROG_SPRITE } from './pixelSprites'
+
 const INK = '#3b2a3f'
 const BLUSH = '#ffa8c6'
-
-type Colors = Record<string, string>
 
 export function Flower({ petal = '#ffb3d1', center = '#ffd966', size = 28, className = '' }: {
   petal?: string
@@ -58,106 +59,68 @@ export function FlowerGarland() {
   )
 }
 
-/** A frog sitting up, front view, with its eyes peeking over the top of its head. */
-export function Frog({ className = '' }: { className?: string }) {
-  const body = '#86d99a'
+/** Draws a pixel sprite as one rectangle per run of same-coloured pixels, so it stays crisp at any size. */
+function PixelSprite({
+  rows,
+  palette,
+  scale,
+  className = '',
+  style,
+}: {
+  rows: readonly string[]
+  palette: Record<string, string>
+  scale: number
+  className?: string
+  style?: CSSProperties
+}) {
+  const width = rows[0].length
+  const height = rows.length
+  const runs: { x: number; y: number; length: number; fill: string }[] = []
+
+  rows.forEach((row, y) => {
+    let x = 0
+    while (x < width) {
+      const ch = row[x]
+      let end = x + 1
+      while (end < width && row[end] === ch) end += 1
+      const fill = palette[ch]
+      if (ch !== '.' && fill) runs.push({ x, y, length: end - x, fill })
+      x = end
+    }
+  })
+
   return (
-    <svg className={className} width="64" height="56" viewBox="0 0 64 56" aria-hidden="true">
-      <g strokeLinejoin="round" strokeLinecap="round">
-        {/* folded back legs and feet */}
-        <ellipse cx="14" cy="44" rx="9" ry="7" fill={body} stroke={INK} strokeWidth="2" />
-        <ellipse cx="50" cy="44" rx="9" ry="7" fill={body} stroke={INK} strokeWidth="2" />
-        <ellipse cx="9" cy="50" rx="5.5" ry="2.6" fill={body} stroke={INK} strokeWidth="1.6" />
-        <ellipse cx="55" cy="50" rx="5.5" ry="2.6" fill={body} stroke={INK} strokeWidth="1.6" />
-        {/* body */}
-        <path
-          d="M10 40 C 10 28 20 26 32 26 C 44 26 54 28 54 40 C 54 50 44 52 32 52 C 20 52 10 50 10 40 Z"
-          fill={body}
-          stroke={INK}
-          strokeWidth="2"
-        />
-        <path d="M18 34 C 22 30 26 30 28 32" fill="none" stroke="#b5ecc2" strokeWidth="2" />
-        <ellipse cx="32" cy="43" rx="11" ry="6" fill="#d4f5dd" />
-        <circle cx="25" cy="34" r="1.6" fill="#5fbf78" />
-        <circle cx="39" cy="36" r="1.3" fill="#5fbf78" />
-        {/* eyes */}
-        <circle cx="21" cy="22" r="8" fill={body} stroke={INK} strokeWidth="2" />
-        <circle cx="43" cy="22" r="8" fill={body} stroke={INK} strokeWidth="2" />
-        <circle cx="21" cy="21" r="5" fill="#fff" stroke={INK} strokeWidth="1.2" />
-        <circle cx="43" cy="21" r="5" fill="#fff" stroke={INK} strokeWidth="1.2" />
-        <circle cx="22" cy="21.5" r="2.6" fill={INK} />
-        <circle cx="44" cy="21.5" r="2.6" fill={INK} />
-        <circle cx="22.9" cy="20.5" r="0.9" fill="#fff" />
-        <circle cx="44.9" cy="20.5" r="0.9" fill="#fff" />
-        {/* cheeks and smile */}
-        <ellipse cx="16" cy="36" rx="3.2" ry="2" fill={BLUSH} opacity="0.8" />
-        <ellipse cx="48" cy="36" rx="3.2" ry="2" fill={BLUSH} opacity="0.8" />
-        <path d="M24 38 Q32 44 40 38" fill="none" stroke={INK} strokeWidth="1.6" />
-      </g>
+    <svg
+      className={className}
+      width={width * scale}
+      height={height * scale}
+      viewBox={`0 0 ${width} ${height}`}
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+      style={style}
+    >
+      {runs.map((run) => (
+        <rect key={`${run.x}-${run.y}`} x={run.x} y={run.y} width={run.length} height={1} fill={run.fill} />
+      ))}
     </svg>
   )
 }
 
-const AXOLOTL_COLORS: Record<'pink' | 'blue', Colors> = {
-  pink: { body: '#ffc2de', gill: '#ff7fbb', belly: '#ffe6f1', cheek: '#ff9ec7' },
-  blue: { body: '#b8e3ff', gill: '#5fb4f0', belly: '#e6f5ff', cheek: '#8fd0ff' },
+/** A Minecraft frog: blocky, with big square eyes and a wide mouth. */
+export function Frog({ className = '' }: { className?: string }) {
+  return <PixelSprite rows={FROG_SPRITE} palette={FROG_PALETTE} scale={4} className={className} />
 }
 
-/** An axolotl facing right: frilly gills, a short tail, and a big smile. `flip` mirrors it. */
+/** A Minecraft axolotl facing right, in pink or blue. `flip` mirrors it to face left. */
 export function Axolotl({ color, flip = false, className = '' }: { color: 'pink' | 'blue'; flip?: boolean; className?: string }) {
-  const c = AXOLOTL_COLORS[color]
   return (
-    <svg
+    <PixelSprite
+      rows={AXOLOTL_SPRITE}
+      palette={AXOLOTL_PALETTES[color]}
+      scale={5}
       className={className}
-      width="110"
-      height="62"
-      viewBox="0 0 110 62"
-      aria-hidden="true"
-      style={{ transform: flip ? 'scaleX(-1)' : undefined }}
-    >
-      <g strokeLinejoin="round" strokeLinecap="round">
-        {/* tail fin */}
-        <path d="M22 34 C 12 24 4 30 6 40 C 8 50 16 48 24 40 Z" fill={c.body} stroke={INK} strokeWidth="1.8" />
-        {/* back and front legs with toes */}
-        <ellipse cx="44" cy="49" rx="6" ry="3.4" fill={c.body} stroke={INK} strokeWidth="1.6" />
-        <ellipse cx="72" cy="49" rx="6" ry="3.4" fill={c.body} stroke={INK} strokeWidth="1.6" />
-        {/* body */}
-        <path
-          d="M22 36 C 26 26 50 24 70 28 C 80 30 86 34 84 40 C 82 48 62 50 48 48 C 34 48 22 46 22 36 Z"
-          fill={c.body}
-          stroke={INK}
-          strokeWidth="2"
-        />
-        {/* gills: three feathery tufts fanning back from behind the head */}
-        {[
-          'M72 27 Q66 16 57 13',
-          'M73 31 Q66 24 58 22',
-          'M73 36 Q68 32 61 33',
-        ].map((path) => (
-          <g key={path}>
-            <path d={path} fill="none" stroke={INK} strokeWidth="4.2" />
-            <path d={path} fill="none" stroke={c.gill} strokeWidth="2.2" />
-          </g>
-        ))}
-        {/* head */}
-        <path
-          d="M68 28 C 74 20 92 20 100 30 C 106 38 100 48 90 48 C 78 48 66 42 68 28 Z"
-          fill={c.body}
-          stroke={INK}
-          strokeWidth="2"
-        />
-        {/* belly, shaded underneath */}
-        <path d="M30 42 C 44 50 64 49 80 44 C 66 52 40 52 30 42 Z" fill={c.belly} />
-        <path d="M36 30 C 44 27 56 27 64 31" fill="none" stroke="#ffffff" strokeWidth="1.6" opacity="0.6" />
-        {/* eye with a highlight, smile and cheek */}
-        <circle cx="88" cy="34" r="4" fill="#fff" stroke={INK} strokeWidth="1.4" />
-        <circle cx="88.6" cy="34.6" r="2.3" fill={INK} />
-        <circle cx="89.4" cy="33.6" r="0.8" fill="#fff" />
-        <path d="M92 42 Q98 45 102 39" fill="none" stroke={INK} strokeWidth="1.6" />
-        <ellipse cx="94" cy="40" rx="3" ry="2" fill={c.cheek} opacity="0.7" />
-        <circle cx="103" cy="33" r="0.9" fill={INK} />
-      </g>
-    </svg>
+      style={flip ? { transform: 'scaleX(-1)' } : undefined}
+    />
   )
 }
 
