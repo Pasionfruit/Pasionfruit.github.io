@@ -136,30 +136,33 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
         <FlowerGarland />
         <p className="ciara-kicker">our little corner</p>
         <h1 className="ciara-title">{title}</h1>
-
-        <div className="ciara-scene">
-          <Waterfall />
-          <div className="ciara-pond">
-            <LilyPad className="ciara-pad ciara-pad-a" />
-            <LilyPad className="ciara-pad ciara-pad-b" />
-            <LilyPad className="ciara-pad ciara-pad-c" />
-            <Frog className="ciara-frog ciara-frog-a" />
-            <Frog className="ciara-frog ciara-frog-b" />
-            <Frog className="ciara-frog ciara-frog-c" />
-            <figure className="ciara-critter ciara-axo-barbie">
-              <Axolotl color="pink" />
-              <figcaption>Barbie</figcaption>
-            </figure>
-            <figure className="ciara-critter ciara-axo-ken">
-              <Axolotl color="blue" flip />
-              <figcaption>Ken</figcaption>
-            </figure>
-          </div>
-        </div>
       </header>
 
-      <main className="ciara-body">
-        <div className="ciara-perch">
+      {/* The waterfall scene and the clock sit side by side on wide screens. */}
+      <div className="ciara-top-row">
+        <div className="ciara-scene-wrap">
+          <div className="ciara-scene">
+            <Waterfall />
+            <div className="ciara-pond">
+              <LilyPad className="ciara-pad ciara-pad-a" />
+              <LilyPad className="ciara-pad ciara-pad-b" />
+              <LilyPad className="ciara-pad ciara-pad-c" />
+              <Frog className="ciara-frog ciara-frog-a" />
+              <Frog className="ciara-frog ciara-frog-b" />
+              <Frog className="ciara-frog ciara-frog-c" />
+              <figure className="ciara-critter ciara-axo-barbie">
+                <Axolotl color="pink" />
+                <figcaption>Barbie</figcaption>
+              </figure>
+              <figure className="ciara-critter ciara-axo-ken">
+                <Axolotl color="blue" flip />
+                <figcaption>Ken</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+
+        <div className="ciara-perch ciara-perch-clock">
           <figure ref={midnightRef} className="ciara-critter ciara-cat ciara-cat-midnight">
             <Cat coat="black" eyes="yellow" gaze={cursor === 'feather' ? gaze : NO_GAZE} tailWiggle={tailWiggle} />
             <figcaption>Midnight</figcaption>
@@ -185,7 +188,9 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
           </figure>
           <RelationshipClock />
         </div>
+      </div>
 
+      <main className="ciara-body">
         <div className="ciara-perch ciara-perch-timeline">
           <Timeline idToken={idToken} />
         </div>

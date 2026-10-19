@@ -244,6 +244,53 @@
   margin-top: 8rem;
 }
 
+/* The row where the waterfall and the clock sit. The clock's padding-top leaves
+   room for the cats perched on it, so the scene and the card line up at the top. */
+.ciara-top-row {
+  display: grid;
+  gap: 1.6rem;
+  margin-top: 0.4rem;
+  align-items: stretch;
+}
+
+.ciara-scene-wrap {
+  display: flex;
+  min-width: 0;
+}
+
+.ciara-top-row .ciara-scene {
+  flex: 1;
+  height: auto;
+  min-height: 260px;
+}
+
+.ciara-perch-clock {
+  margin-top: 0;
+  padding-top: 7.6rem;
+}
+
+@media (min-width: 900px) {
+  .ciara-top-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  /* The scene starts at the same height as the clock card, so both boxes share a top and a bottom. */
+  .ciara-scene-wrap {
+    padding-top: 7.6rem;
+  }
+
+  /* The clock card takes the full height of its row, to match the scene. */
+  .ciara-perch-clock {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ciara-perch-clock .ciara-clock {
+    flex: 1;
+  }
+}
+
 /* A cat sits on the top edge of its card, its name floating above its head. */
 .ciara-cat {
   position: absolute;
