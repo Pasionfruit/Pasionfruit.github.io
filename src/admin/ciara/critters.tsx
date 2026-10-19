@@ -173,11 +173,16 @@ export function Cat({
   eyes = 'yellow',
   className = '',
   closedEyes = false,
+  gaze = { x: 0, y: 0 },
+  mouthOpen = false,
 }: {
   coat?: 'black' | 'white'
   eyes?: keyof typeof CAT_EYES
   className?: string
   closedEyes?: boolean
+  /** How far the pupils sit toward whatever she is looking at, in SVG units. */
+  gaze?: { x: number; y: number }
+  mouthOpen?: boolean
 }) {
   const reversed = coat === 'white'
   const fur = reversed ? '#fffaf5' : '#2b2330'
@@ -236,20 +241,40 @@ export function Cat({
           <>
             <path d="M27 38 Q33 31 39 38 Q33 44 27 38 Z" fill="#fff" stroke={INK} strokeWidth="1.4" />
             <path d="M45 38 Q51 31 57 38 Q51 44 45 38 Z" fill="#fff" stroke={INK} strokeWidth="1.4" />
-            <circle cx="33" cy="38" r="3.6" fill={eyeColor} />
-            <circle cx="51" cy="38" r="3.6" fill={eyeColor} />
-            <ellipse cx="33" cy="38" rx="1" ry="2.8" fill={INK} />
-            <ellipse cx="51" cy="38" rx="1" ry="2.8" fill={INK} />
-            <circle cx="34.2" cy="36.6" r="0.9" fill="#fff" />
-            <circle cx="52.2" cy="36.6" r="0.9" fill="#fff" />
+            <g transform={`translate(${gaze.x} ${gaze.y})`}>
+              <circle cx="33" cy="38" r="3.6" fill={eyeColor} />
+              <circle cx="51" cy="38" r="3.6" fill={eyeColor} />
+              <ellipse cx="33" cy="38" rx="1" ry="2.8" fill={INK} />
+              <ellipse cx="51" cy="38" rx="1" ry="2.8" fill={INK} />
+              <circle cx="34.2" cy="36.6" r="0.9" fill="#fff" />
+              <circle cx="52.2" cy="36.6" r="0.9" fill="#fff" />
+            </g>
           </>
         )}
 
         {/* nose, mouth and whiskers */}
         <path d="M40 44 L44 44 L42 47 Z" fill={BLUSH} stroke={INK} strokeWidth="1.2" />
-        <path d="M42 47 Q40 50 37 49 M42 47 Q44 50 47 49" fill="none" stroke={INK} strokeWidth="1.2" />
+        {mouthOpen ? (
+          <>
+            <path d="M37 48 Q42 58 47 48 Z" fill="#7a2e4f" stroke={INK} strokeWidth="1.2" />
+            <path d="M39 53 Q42 50 45 53 Q42 56 39 53 Z" fill="#ff8fb8" />
+          </>
+        ) : (
+          <path d="M42 47 Q40 50 37 49 M42 47 Q44 50 47 49" fill="none" stroke={INK} strokeWidth="1.2" />
+        )}
         <path d="M22 46 L8 44 M22 50 L8 52 M62 46 L76 44 M62 50 L76 52" stroke="#8a7f99" strokeWidth="1" />
       </g>
+    </svg>
+  )
+}
+
+/** A lily pad on the pond, with its little notch. */
+export function LilyPad({ className = '' }: { className?: string }) {
+  return (
+    <svg className={className} width="72" height="30" viewBox="0 0 72 30" aria-hidden="true">
+      <ellipse cx="36" cy="16" rx="34" ry="12" fill="#86d99a" stroke="#3f9e6a" strokeWidth="1.6" />
+      <path d="M36 16 L 66 9 L 66 23 Z" fill="#9ddcf7" />
+      <path d="M36 16 L 14 11 M36 16 L 14 21 M36 16 L 22 7" fill="none" stroke="#5fbf78" strokeWidth="1" opacity="0.6" />
     </svg>
   )
 }

@@ -1,11 +1,71 @@
+import { useEffect, useRef, useState } from 'react'
 import { adminDashboardsById } from '../../siteContent'
-import { Axolotl, Cat, Frog, FlowerGarland, Waterfall } from './critters'
+import { Axolotl, Cat, Frog, FlowerGarland, LilyPad, Waterfall } from './critters'
 import { RelationshipClock } from './RelationshipClock'
 import { Timeline } from './Timeline'
 import './ciara.css'
 
+type Point = { x: number; y: number }
+
+/** The most her pupils can shift, in SVG units. */
+const MAX_GAZE = 1.6
+
 export function CiaraDashboard({ idToken }: { idToken: string }) {
   const { title } = adminDashboardsById.ciara
+
+  const inkyRef = useRef<HTMLElement>(null)
+  // The pointer is the red dot Inky chases. Null when it is off the page or on a touch screen.
+  const [pointer, setPointer] = useState<Point | null>(null)
+  const [gaze, setGaze] = useState<Point>({ x: 0, y: 0 })
+  const [mouthOpen, setMouthOpen] = useState(false)
+
+  useEffect(() => {
+    const move = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return
+      const { clientX: x, clientY: y } = event
+      setPointer({ x, y })
+
+      const inky = inkyRef.current?.getBoundingClientRect()
+      if (!inky) return
+
+      // Her pupils point from roughly her head toward the dot, and never far.
+      const headX = inky.left + inky.width / 2
+      const headY = inky.top + 50
+      const dx = x - headX
+      const dy = y - headY
+      const distance = Math.hypot(dx, dy) || 1
+      const strength = Math.min(distance / 120, 1) * MAX_GAZE
+      setGaze({ x: (dx / distance) * strength, y: (dy / distance) * strength })
+    }
+    const leave = () => setPointer(null)
+
+    window.addEventListener('pointermove', move)
+    document.documentElement.addEventListener('pointerleave', leave)
+    return () => {
+      window.removeEventListener('pointermove', move)
+      document.documentElement.removeEventListener('pointerleave', leave)
+    }
+  }, [])
+
+  // Every few seconds Inky opens her mouth for a moment, then shuts it again.
+  useEffect(() => {
+    let openTimer = 0
+    let closeTimer = 0
+    const schedule = () => {
+      openTimer = window.setTimeout(() => {
+        setMouthOpen(true)
+        closeTimer = window.setTimeout(() => {
+          setMouthOpen(false)
+          schedule()
+        }, 900)
+      }, 3500 + Math.random() * 5000)
+    }
+    schedule()
+    return () => {
+      window.clearTimeout(openTimer)
+      window.clearTimeout(closeTimer)
+    }
+  }, [])
 
   return (
     <div className="ciara-page">
@@ -17,6 +77,9 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
         <div className="ciara-scene">
           <Waterfall />
           <div className="ciara-pond">
+            <LilyPad className="ciara-pad ciara-pad-a" />
+            <LilyPad className="ciara-pad ciara-pad-b" />
+            <LilyPad className="ciara-pad ciara-pad-c" />
             <Frog className="ciara-frog ciara-frog-a" />
             <Frog className="ciara-frog ciara-frog-b" />
             <Frog className="ciara-frog ciara-frog-c" />
@@ -38,8 +101,8 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
             <Cat coat="black" eyes="yellow" />
             <figcaption>Midnight</figcaption>
           </figure>
-          <figure className="ciara-critter ciara-cat ciara-cat-inky">
-            <Cat coat="black" eyes="green" closedEyes />
+          <figure ref={inkyRef} className="ciara-critter ciara-cat ciara-cat-inky">
+            <Cat coat="black" eyes="green" gaze={gaze} mouthOpen={mouthOpen} />
             <figcaption>Inky</figcaption>
           </figure>
           <RelationshipClock />
@@ -53,6 +116,10 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
           <Timeline idToken={idToken} />
         </div>
       </main>
+
+      {pointer ? (
+        <span className="ciara-cursor-dot" style={{ left: pointer.x, top: pointer.y }} aria-hidden="true" />
+      ) : null}
     </div>
   )
 }

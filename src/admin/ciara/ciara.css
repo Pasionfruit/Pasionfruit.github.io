@@ -1,7 +1,7 @@
 /* The WW+TG page: soft, flowery and a little bit silly. Everything is scoped to
    .ciara-page so none of it leaks into the other dashboards. */
 
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@500;600;700&display=swap');
 
 .ciara-page {
   --ciara-pink: #ff8fb8;
@@ -74,9 +74,9 @@
 .ciara-title {
   margin: 0.1rem 0 0.8rem;
   color: var(--ciara-rose);
-  font-family: 'Pacifico', cursive;
+  font-family: 'Fredoka', 'Quicksand', sans-serif;
   font-size: clamp(2.8rem, 12vw, 4.4rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.1;
   text-shadow: 0 3px 0 #ffe0ec;
 }
@@ -208,7 +208,7 @@
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.9);
   color: var(--ciara-rose);
-  font-family: 'Pacifico', cursive;
+  font-family: 'Fredoka', 'Quicksand', sans-serif;
   font-size: 0.85rem;
   line-height: 1.5;
   white-space: nowrap;
@@ -266,7 +266,7 @@
 }
 
 .ciara-cat-inky {
-  right: 1.4rem;
+  left: 0;
 }
 
 .ciara-cat-pirouette {
@@ -294,9 +294,9 @@
 .ciara-card-head h2 {
   margin: 0;
   color: var(--ciara-rose);
-  font-family: 'Pacifico', cursive;
+  font-family: 'Fredoka', 'Quicksand', sans-serif;
   font-size: 1.9rem;
-  font-weight: 400;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -337,7 +337,7 @@
 .ciara-clock-unit dd {
   margin: 0;
   color: var(--ciara-rose);
-  font-family: 'Pacifico', cursive;
+  font-family: 'Fredoka', 'Quicksand', sans-serif;
   font-size: clamp(1.5rem, 5.5vw, 2.1rem);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
@@ -478,9 +478,9 @@
   background: #fff;
   border: 2px solid var(--ciara-line);
   color: var(--ciara-rose);
-  font-family: 'Pacifico', cursive;
+  font-family: 'Fredoka', 'Quicksand', sans-serif;
   font-size: 0.95rem;
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .timeline-entries {
@@ -545,6 +545,55 @@
 .timeline-remove {
   font-size: 0.8rem;
   padding: 0.2rem 0.8rem;
+}
+
+/* ── The red dot: the pointer, which Inky chases ─────────────────────── */
+
+.ciara-cursor-dot {
+  position: fixed;
+  z-index: 9999;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, #ff8a80 0 20%, #e53935 55%, #b71c1c 100%);
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2), 0 0 12px rgba(229, 57, 53, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* On a mouse, the page's own cursor gives way to the dot. */
+@media (pointer: fine) {
+  .ciara-page,
+  .ciara-page * {
+    cursor: none;
+  }
+}
+
+/* ── Lily pads under the frogs ────────────────────────────────────────── */
+
+.ciara-pad {
+  position: absolute;
+  width: 72px;
+  height: auto;
+  animation: ciara-bob 4s ease-in-out infinite;
+}
+
+.ciara-pad-a {
+  left: 6%;
+  bottom: 30px;
+}
+
+.ciara-pad-b {
+  left: 40%;
+  bottom: 44px;
+  width: 56px;
+  animation-delay: -1.3s;
+}
+
+.ciara-pad-c {
+  right: 4%;
+  bottom: 26px;
+  animation-delay: -2.1s;
 }
 
 /* ── Motion, for the things that move ─────────────────────────────────── */
