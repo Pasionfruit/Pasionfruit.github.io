@@ -45,13 +45,13 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Headlines',
   },
   {
-    id: 'youtube',
-    title: 'YouTube',
-    path: '/admin/youtube',
-    icon: 'youtube',
-    summary: 'Minite Thoughts: views, where viewers leave and why, traffic sources, and comments',
+    id: 'ciara',
+    title: 'Ciara',
+    path: '/admin/ciara',
+    icon: 'ciara',
+    summary: "Ciara's page",
     accent: '#ef4444',
-    eyebrow: 'Channel',
+    eyebrow: 'Ciara',
   },
 ]
 

@@ -35,7 +35,7 @@ dashboard.
 | Personal | `/admin/personal` | Verse of the day, journal entries with gratitude prompts, mood tracker |
 | Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log |
 | News | `/admin/news` | Local, city, national, and international headlines |
-| YouTube | `/admin/youtube` | Minite Thoughts: views, retention with each drop pinned to the line and scene, traffic, comments |
+| Ciara | `/admin/ciara` | Ciara's page (placeholder for now) |
 
 `/admin/journal` and `/admin/training` redirect to their renamed routes. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.
@@ -96,23 +96,6 @@ Google News RSS sends no CORS headers, so the feeds are read by
 secrets: it checks the caller's bearer with the db Worker's `/auth/verify` over a
 service binding, so `SESSION_SECRET` is not copied to a fourth place. Deploy the
 db Worker before it (`cd workers/news && npx wrangler deploy`).
-
-### YouTube
-
-`/admin/youtube` shows how each Minite Thoughts video is doing: live views, likes
-and comments, then (a day or two behind) watch time, the retention curve,
-views by day, traffic sources and devices. Each drop in retention is pinned to
-the caption line, scene and chapter on screen when viewers left, and each
-promise in the video's brief shows how many viewers were still there for it.
-
-The analysis happens on the desktop, not here: `minite results` in the
-MiniteThoughts repo has the YouTube sign-in and the take's timeline, and pushes
-one JSON snapshot per video to the `youtube_videos` table of `pasion-db`
-(created by [workers/db/youtube.sql](workers/db/youtube.sql)). The db Worker
-lets only the admin read it. The desktop writes with `MINITE_INGEST_KEY`, a key
-that can create or replace rows in that one table and do nothing else (no
-reads, no deletes, no other tables); it must match `ingest_key` in
-MiniteThoughts' gitignored `config/site.toml`.
 
 ### Countdown events
 
