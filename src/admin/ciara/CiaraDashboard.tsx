@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { adminDashboardsById } from '../../siteContent'
 import { Axolotl, Cat, Frog, FlowerGarland, LilyPad, Waterfall } from './critters'
 import { RelationshipClock } from './RelationshipClock'
+import { Monthiversary } from './Monthiversary'
+import { monthiversaryOn, TOGETHER_SINCE } from './elapsed'
+import { StickyNotes } from './StickyNotes'
 import { Timeline } from './Timeline'
 import './ciara.css'
 
@@ -18,6 +21,8 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
   const [pointer, setPointer] = useState<Point | null>(null)
   const [gaze, setGaze] = useState<Point>({ x: 0, y: 0 })
   const [mouthOpen, setMouthOpen] = useState(false)
+  // Checked once, when the page opens. Null on any day that is not a monthiversary.
+  const [monthiversary, setMonthiversary] = useState<number | null>(() => monthiversaryOn(TOGETHER_SINCE, new Date()))
 
   useEffect(() => {
     const move = (event: PointerEvent) => {
@@ -108,6 +113,8 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
           <RelationshipClock />
         </div>
 
+        <StickyNotes idToken={idToken} />
+
         <div className="ciara-perch">
           <figure className="ciara-critter ciara-cat ciara-cat-pirouette">
             <Cat coat="white" eyes="blue" chubby />
@@ -116,6 +123,10 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
           <Timeline idToken={idToken} />
         </div>
       </main>
+
+      {monthiversary !== null ? (
+        <Monthiversary months={monthiversary} onClose={() => setMonthiversary(null)} />
+      ) : null}
 
       {pointer ? (
         <span className="ciara-cursor-dot" style={{ left: pointer.x, top: pointer.y }} aria-hidden="true" />

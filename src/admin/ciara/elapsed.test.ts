@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { elapsedSince, TOGETHER_SINCE } from './elapsed'
+import { elapsedSince, monthiversaryOn, TOGETHER_SINCE } from './elapsed'
 
 describe('elapsedSince', () => {
   it('starts at 11:00 PM on 19 November 2022', () => {
@@ -41,5 +41,20 @@ describe('elapsedSince', () => {
     expect(elapsedSince(new Date(2024, 0, 31, 0, 0, 0), new Date(2024, 2, 1, 0, 0, 0))).toEqual({
       years: 0, months: 1, days: 1, hours: 0, minutes: 0, seconds: 0,
     })
+  })
+})
+
+describe('monthiversaryOn', () => {
+  it('is a monthiversary within half a day of the 11:00 PM anniversary', () => {
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2022, 11, 19, 23, 0, 0))).toBe(1)
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2026, 9, 19, 23, 0, 0))).toBe(47)
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2026, 9, 19, 12, 0, 0))).toBe(47)
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2026, 9, 20, 10, 0, 0))).toBe(47)
+  })
+
+  it('is not a monthiversary more than half a day away', () => {
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2026, 9, 19, 10, 43, 0))).toBeNull()
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2026, 9, 18, 23, 0, 0))).toBeNull()
+    expect(monthiversaryOn(TOGETHER_SINCE, new Date(2022, 10, 19, 23, 0, 0))).toBeNull()
   })
 })

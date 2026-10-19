@@ -14,6 +14,20 @@ const DAY_MS = 86_400_000
 const HOUR_MS = 3_600_000
 const MINUTE_MS = 60_000
 
+/** A local date's wall-clock fields as one number, so DST shifts never move the count. */
+function wallMs(date: Date) {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds())
+}
+
+/** The start's wall-clock time, moved forward `months` months, clamped to the month's length. */
+function anniversaryMs(start: Date, months: number) {
+  const first = new Date(Date.UTC(start.getFullYear(), start.getMonth() + months, 1))
+  const year = first.getUTCFullYear()
+  const month = first.getUTCMonth()
+  const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
+  return Date.UTC(year, month, Math.min(start.getDate(), lastDay), start.getHours(), start.getMinutes(), start.getSeconds())
+}
+
 /**
  * Calendar-accurate time from `start` to `now`, counted the way a person would
  * say it: 3 years, 10 months, 29 days, not a flat count of days.
@@ -24,23 +38,12 @@ const MINUTE_MS = 60_000
  * are used throughout, so a daylight-saving change does not shift the count.
  */
 export function elapsedSince(start: Date, now: Date): ElapsedParts {
-  const [sy, sm, sd] = [start.getFullYear(), start.getMonth(), start.getDate()]
-  const [sh, smin, ss] = [start.getHours(), start.getMinutes(), start.getSeconds()]
-  const nowMs = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds())
+  const nowMs = wallMs(now)
 
-  // The start's wall-clock time, moved forward `months` months.
-  const anchorAfter = (months: number) => {
-    const first = new Date(Date.UTC(sy, sm + months, 1))
-    const year = first.getUTCFullYear()
-    const month = first.getUTCMonth()
-    const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
-    return Date.UTC(year, month, Math.min(sd, lastDay), sh, smin, ss)
-  }
+  let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+  while (months > 0 && anniversaryMs(start, months) > nowMs) months -= 1
 
-  let months = (now.getFullYear() - sy) * 12 + (now.getMonth() - sm)
-  while (months > 0 && anchorAfter(months) > nowMs) months -= 1
-
-  let remainder = nowMs - anchorAfter(months)
+  let remainder = nowMs - anniversaryMs(start, months)
   const days = Math.floor(remainder / DAY_MS)
   remainder -= days * DAY_MS
   const hours = Math.floor(remainder / HOUR_MS)
@@ -56,4 +59,19 @@ export function elapsedSince(start: Date, now: Date): ElapsedParts {
     minutes,
     seconds: Math.floor(remainder / 1000),
   }
+}
+
+/**
+ * The number of months if `now` is a monthiversary, rounded to the whole day:
+ * within half a day of a monthly anniversary of `start`. Otherwise null.
+ */
+export function monthiversaryOn(start: Date, now: Date): number | null {
+  const nowMs = wallMs(now)
+  const months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+  for (const candidate of [months, months + 1]) {
+    if (candidate >= 1 && Math.abs(nowMs - anniversaryMs(start, candidate)) <= DAY_MS / 2) {
+      return candidate
+    }
+  }
+  return null
 }

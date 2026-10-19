@@ -602,6 +602,169 @@
   animation-delay: -2.1s;
 }
 
+/* ── Monthiversary popup and confetti ─────────────────────────────────── */
+
+.ciara-monthiversary {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(91, 59, 82, 0.28);
+}
+
+.ciara-mv-card {
+  position: relative;
+  z-index: 1;
+  max-width: 340px;
+  padding: 1.6rem 1.8rem 1.8rem;
+  border: 3px solid #fff;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 8px 0 var(--ciara-line);
+  text-align: center;
+}
+
+.ciara-mv-kicker {
+  margin: 0;
+  color: var(--ciara-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ciara-mv-card h2 {
+  margin: 0.3rem 0 0;
+  color: var(--ciara-rose);
+  font-family: 'Fredoka', 'Quicksand', sans-serif;
+  font-size: clamp(2rem, 8vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.ciara-mv-note {
+  margin: 0.5rem 0 1.1rem;
+  color: var(--ciara-ink);
+}
+
+.ciara-mv-card .primary-action {
+  padding: 0.55rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ciara-pink);
+  color: #fff;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #e0609a;
+}
+
+.ciara-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ciara-confetti-piece {
+  position: absolute;
+  top: -12px;
+  animation: ciara-confetti-fall linear infinite;
+}
+
+@keyframes ciara-confetti-fall {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); }
+  to { transform: translate3d(var(--drift), 115vh, 0) rotate(720deg); }
+}
+
+/* ── Sticky notes ─────────────────────────────────────────────────────── */
+
+.ciara-notes {
+  margin-top: 2.4rem;
+}
+
+.ciara-notes-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.ciara-sticky {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.5rem 0.9rem 0.8rem;
+  border-radius: 6px 6px 22px 6px;
+  box-shadow: 0 8px 14px rgba(91, 59, 82, 0.14);
+}
+
+.ciara-sticky:nth-child(1) { transform: rotate(-1.6deg); }
+.ciara-sticky:nth-child(2) { transform: rotate(1deg); }
+.ciara-sticky:nth-child(3) { transform: rotate(-0.6deg); }
+
+.ciara-sticky-yellow { background: #fff3a3; }
+.ciara-sticky-blue { background: #bfe6ff; }
+.ciara-sticky-pink { background: #ffd1e6; }
+
+/* A strip of tape holding each note to the page. */
+.ciara-sticky-tape {
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  width: 4.5rem;
+  height: 1.3rem;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px dashed rgba(91, 59, 82, 0.12);
+}
+
+.ciara-sticky-label {
+  color: var(--ciara-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ciara-sticky textarea {
+  width: 100%;
+  min-height: 7rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ciara-ink);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.ciara-sticky textarea:focus {
+  outline: none;
+}
+
+.ciara-sticky textarea::placeholder {
+  color: rgba(91, 59, 82, 0.45);
+}
+
+.ciara-notes-status {
+  min-height: 1.2rem;
+  margin: 0.6rem 0 0;
+  color: var(--ciara-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .ciara-notes-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ciara-sticky:nth-child(n) {
+    transform: none;
+  }
+}
+
 /* ── Motion, for the things that move ─────────────────────────────────── */
 
 @keyframes ciara-flow {
@@ -627,6 +790,10 @@
 @media (prefers-reduced-motion: reduce) {
   .ciara-page * {
     animation: none !important;
+  }
+
+  .ciara-confetti {
+    display: none;
   }
 }
 

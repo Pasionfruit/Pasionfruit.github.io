@@ -81,6 +81,13 @@ const TABLES = {
     columns: ['photo_id', 'taken_at', 'caption', 'created_at'],
     read: 'admin',
   },
+  // The Ciara page's sticky notes: one row per colour (yellow, blue, pink).
+  // Admin-only, both ways.
+  sticky_notes: {
+    key: 'note_id',
+    columns: ['note_id', 'color', 'body', 'updated_at'],
+    read: 'admin',
+  },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
 }
