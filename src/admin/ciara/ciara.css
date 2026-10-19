@@ -1,0 +1,146 @@
+/* The Ciara page: the time-together clock and the photo timeline. Namespaced
+   under ciara-* and timeline-* so nothing leaks into the other dashboards. */
+
+.ciara-clock-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.8rem 0 0;
+}
+
+.ciara-clock-unit {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.7rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+  text-align: center;
+}
+
+.ciara-clock-unit dt {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.ciara-clock-unit dd {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-mono);
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 720px) {
+  .ciara-clock-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.ciara-upload {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  align-items: end;
+  margin-top: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.ciara-field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.ciara-field input[type='text'],
+.ciara-field input[type='datetime-local'] {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  min-width: 0;
+}
+
+.ciara-field-wide {
+  grid-column: 1 / -1;
+}
+
+.ciara-upload .primary-action {
+  justify-self: start;
+}
+
+@media (max-width: 560px) {
+  .ciara-upload {
+    grid-template-columns: 1fr;
+  }
+}
+
+.timeline-list {
+  position: relative;
+  display: grid;
+  gap: 1.2rem;
+  margin: 1rem 0 0;
+  padding: 0 0 0 1.4rem;
+  list-style: none;
+}
+
+/* The spine the dots sit on. */
+.timeline-list::before {
+  content: '';
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: 0.42rem;
+  width: 2px;
+  background: var(--border-strong);
+}
+
+.timeline-item {
+  position: relative;
+}
+
+.timeline-dot {
+  position: absolute;
+  top: 0.35rem;
+  left: -1.4rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.timeline-body {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+}
+
+.timeline-date {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.timeline-photo {
+  width: min(100%, 420px);
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.timeline-caption {
+  margin: 0;
+}
+
+.timeline-remove {
+  font-size: 0.8rem;
+}

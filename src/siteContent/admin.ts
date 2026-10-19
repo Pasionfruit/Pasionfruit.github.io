@@ -46,10 +46,10 @@ export const adminDashboards: AdminDashboardMeta[] = [
   },
   {
     id: 'ciara',
-    title: 'Ciara',
+    title: 'WW+TG',
     path: '/admin/ciara',
     icon: 'ciara',
-    summary: "Ciara's page",
+    summary: 'Time together and a photo timeline',
     accent: '#ef4444',
     eyebrow: 'Ciara',
   },

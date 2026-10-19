@@ -490,8 +490,8 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    // News sits to the right of Health, and Ciara after News.
-    expect(labels).toEqual(['Home', 'Personal', 'Health', 'News', 'Ciara'])
+    // News sits to the right of Health, and WW+TG after News.
+    expect(labels).toEqual(['Home', 'Personal', 'Health', 'News', 'WW+TG'])
   })
 
   it.each([

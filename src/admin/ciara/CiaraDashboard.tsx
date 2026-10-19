@@ -1,18 +1,14 @@
 import { AdminPage } from '../AdminPage'
 import { adminDashboardsById } from '../../siteContent'
+import { RelationshipClock } from './RelationshipClock'
+import { Timeline } from './Timeline'
+import './ciara.css'
 
-/** Ciara's dashboard. A placeholder until her cards are decided. */
-export function CiaraDashboard() {
+export function CiaraDashboard({ idToken }: { idToken: string }) {
   return (
     <AdminPage meta={adminDashboardsById.ciara}>
-      <article className="info-card admin-card">
-        <div className="admin-card-head">
-          <div>
-            <h2>Welcome, Ciara</h2>
-            <p className="sheets-meta">This page is still being set up.</p>
-          </div>
-        </div>
-      </article>
+      <RelationshipClock />
+      <Timeline idToken={idToken} />
     </AdminPage>
   )
 }

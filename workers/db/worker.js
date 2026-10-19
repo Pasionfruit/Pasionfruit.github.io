@@ -7,6 +7,7 @@
  * every write requires regardless.
  *
  * Routes: GET/POST/PUT/DELETE /db/<table>. Only tables declared below exist.
+ * Also GET/POST/DELETE /photos/<id>, the timeline's image bytes in R2 (photos.js).
  * Also POST /auth/session and GET /auth/verify — this Worker is where the
  * browser trades a Google ID token for a long-lived session, and where Apps
  * Script checks one. Both live here rather than in the Ace gateway because the
@@ -18,8 +19,9 @@
  */
 
 import { bearerToken, createHttp, mintSessionRoute, verifyAdmin, verifyRoute } from '../shared/admin.js'
+import { photoRoute } from './photos.js'
 
-const { json, deny, preflight } = createHttp({ methods: 'GET, POST, PUT, DELETE, OPTIONS' })
+const { json, deny, preflight, corsHeaders } = createHttp({ methods: 'GET, POST, PUT, DELETE, OPTIONS' })
 
 /**
  * key: primary key column, or an array for composite keys.
@@ -71,6 +73,13 @@ const TABLES = {
     columns: ['video_id', 'title', 'published_at', 'fetched_at', 'snapshot'],
     read: 'admin',
     ingestKey: 'MINITE_INGEST_KEY',
+  },
+  // The Ciara page's timeline: one row per photo, with the image itself in R2
+  // (see photos.js). Admin-only, both ways.
+  timeline_photos: {
+    key: 'photo_id',
+    columns: ['photo_id', 'taken_at', 'caption', 'created_at'],
+    read: 'admin',
   },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
@@ -126,6 +135,10 @@ export default {
     }
     if (url.pathname === '/auth/verify') {
       return verifyRoute(request, env, { json, deny })
+    }
+
+    if (url.pathname.startsWith('/photos/')) {
+      return photoRoute(request, env, { json, deny, corsHeaders })
     }
 
     const match = /^\/db\/([a-z_]+)$/.exec(url.pathname)

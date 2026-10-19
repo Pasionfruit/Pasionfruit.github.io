@@ -285,7 +285,7 @@ function App() {
             />
             <Route path="training" element={<Navigate replace to="/admin/health" />} />
             <Route path="news" element={<NewsDashboard idToken={googleIdToken} />} />
-            <Route path="ciara" element={<CiaraDashboard />} />
+            <Route path="ciara" element={<CiaraDashboard idToken={googleIdToken} />} />
           </Route>
 
           <Route

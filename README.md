@@ -35,7 +35,7 @@ dashboard.
 | Personal | `/admin/personal` | Verse of the day, journal entries with gratitude prompts, mood tracker |
 | Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log |
 | News | `/admin/news` | Local, city, national, and international headlines |
-| Ciara | `/admin/ciara` | Ciara's page (placeholder for now) |
+| WW+TG | `/admin/ciara` | Time together since 11:00 PM, Nov 19 2022, and a photo timeline |
 
 `/admin/journal` and `/admin/training` redirect to their renamed routes. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.

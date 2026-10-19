@@ -13,3 +13,9 @@ ALLOWED_ORIGINS = "https://abepasion.com,https://www.abepasion.com,http://localh
 binding = "DB"
 database_name = "pasion-db"
 database_id = "f8d1ee38-8bee-4dd2-b62e-d13578b9c4d3"
+
+# The Ciara timeline's photos (workers/db/photos.js). Create the bucket first:
+#   npx wrangler r2 bucket create pasion-photos
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "pasion-photos"
