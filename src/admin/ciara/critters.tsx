@@ -175,6 +175,7 @@ export function Cat({
   closedEyes = false,
   gaze = { x: 0, y: 0 },
   mouthOpen = false,
+  chubby = false,
 }: {
   coat?: 'black' | 'white'
   eyes?: keyof typeof CAT_EYES
@@ -183,6 +184,8 @@ export function Cat({
   /** How far the pupils sit toward whatever she is looking at, in SVG units. */
   gaze?: { x: number; y: number }
   mouthOpen?: boolean
+  /** Widens the body and head, for a round, well-fed look. The tail stays as it is. */
+  chubby?: boolean
 }) {
   const reversed = coat === 'white'
   const fur = reversed ? '#fffaf5' : '#2b2330'
@@ -197,6 +200,8 @@ export function Cat({
         <path d="M58 96 C 78 98 82 82 76 70" fill="none" stroke={fur} strokeWidth="7" />
         {reversed && <path d="M80 84 C 82 80 80 74 76 70" fill="none" stroke={mark} strokeWidth="7" />}
 
+        {/* the body, head and paws, widened for a chubby cat */}
+        <g transform={chubby ? 'translate(42 66) scale(1.16 1.04) translate(-42 -66)' : undefined}>
         {/* body: a pear shape sitting on its haunches */}
         <path d="M26 52 C 16 66 18 96 42 97 C 66 96 68 66 58 52 Z" fill={fur} stroke={INK} strokeWidth="2.2" />
         <path d="M25 70 C 23 82 26 90 33 94" fill="none" stroke={rim} strokeWidth="2" />
@@ -251,6 +256,8 @@ export function Cat({
             </g>
           </>
         )}
+
+        </g>
 
         {/* nose, mouth and whiskers */}
         <path d="M40 44 L44 44 L42 47 Z" fill={BLUSH} stroke={INK} strokeWidth="1.2" />
