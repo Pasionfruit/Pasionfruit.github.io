@@ -265,8 +265,19 @@
 }
 
 .ciara-perch-clock {
+  --clock-pad: 7.6rem;
   margin-top: 0;
-  padding-top: 7.6rem;
+  padding-top: var(--clock-pad);
+}
+
+/* The cats stand on the clock card's top edge: their bottoms sit at the card's top,
+   which is --clock-pad down from the top of the perch. */
+.ciara-perch-clock .ciara-cat {
+  top: calc(var(--clock-pad) - 8rem);
+}
+
+.ciara-perch-clock .ciara-cat-inky {
+  top: calc(var(--clock-pad) - 6.5rem);
 }
 
 @media (min-width: 900px) {
@@ -951,5 +962,152 @@
   .ciara-axo-barbie,
   .ciara-axo-ken {
     width: 100px;
+  }
+}
+
+/* ── Phones ───────────────────────────────────────────────────────────────
+   Everything above is sized for a laptop first. This block shrinks the page
+   below 640px wide, and keeps tap targets big enough to hit with a thumb. */
+
+@media (max-width: 639px) {
+  .ciara-page {
+    padding: 0.75rem 0.6rem 2.5rem;
+    border-radius: 24px;
+  }
+
+  .ciara-topbar {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .ciara-notes-status {
+    text-align: left;
+    min-height: 0;
+  }
+
+  .ciara-cursor-switch {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ciara-switch-option {
+    padding: 0.4rem 0.5rem;
+    min-height: 40px;
+    font-size: 0.8rem;
+    gap: 0.25rem;
+  }
+
+  .ciara-garland {
+    height: 44px;
+  }
+
+  .ciara-title {
+    margin-bottom: 0.4rem;
+  }
+
+  .ciara-scene,
+  .ciara-top-row .ciara-scene {
+    height: 200px;
+    min-height: 200px;
+  }
+
+  .ciara-pond {
+    height: 64px;
+  }
+
+  .ciara-axo-barbie,
+  .ciara-axo-ken {
+    width: 92px;
+  }
+
+  .ciara-axo-barbie {
+    left: 4%;
+  }
+
+  .ciara-axo-ken {
+    right: 4%;
+  }
+
+  .ciara-frog {
+    width: 40px;
+    bottom: 34px;
+  }
+
+  .ciara-frog-b {
+    width: 36px;
+    bottom: 44px;
+  }
+
+  .ciara-frog-a {
+    left: 4%;
+  }
+
+  .ciara-frog-c {
+    right: 30%;
+  }
+
+  .ciara-critter figcaption {
+    font-size: 0.75rem;
+  }
+
+  .ciara-perch-clock {
+    --clock-pad: 7rem;
+    padding-top: var(--clock-pad);
+  }
+
+  .ciara-clock-grid {
+    gap: 0.4rem;
+  }
+
+  .ciara-clock-unit {
+    padding: 0.5rem 0.2rem;
+    border-radius: 18px;
+  }
+
+  .ciara-clock-unit dd {
+    font-size: 1.3rem;
+  }
+
+  .ciara-card {
+    padding: 1rem 0.9rem 1.1rem;
+    border-radius: 24px;
+  }
+
+  .ciara-card-head h2 {
+    font-size: 1.6rem;
+  }
+
+  .ciara-field input[type='text'],
+  .ciara-field input[type='datetime-local'],
+  .ciara-sticky textarea {
+    font-size: 16px;
+  }
+
+  .ciara-page .primary-action,
+  .ciara-page .secondary-action {
+    min-height: 40px;
+  }
+
+  .timeline-year {
+    grid-template-columns: 3.2rem minmax(0, 1fr);
+    gap: 0.6rem;
+  }
+
+  .timeline-year-label {
+    font-size: 0.85rem;
+    padding: 0.1rem 0.4rem;
+  }
+
+  .timeline-photo {
+    width: 100%;
+  }
+
+  .ciara-notes-bottom {
+    gap: 1rem;
+  }
+
+  .ciara-sticky textarea {
+    min-height: 5.5rem;
   }
 }
