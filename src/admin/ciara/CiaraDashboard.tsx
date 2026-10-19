@@ -47,7 +47,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
 
         <div className="ciara-perch">
           <figure className="ciara-critter ciara-cat ciara-cat-pirouette">
-            <Cat coat="tuxedo" eyes="blue" />
+            <Cat coat="white" eyes="blue" />
             <figcaption>Pirouette</figcaption>
           </figure>
           <Timeline idToken={idToken} />
