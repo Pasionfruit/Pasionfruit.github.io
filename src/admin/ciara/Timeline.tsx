@@ -79,8 +79,19 @@ export function Timeline({ idToken }: { idToken: string }) {
     }
   }, [idToken, reloads])
 
-  // Oldest first, so the timeline reads from the start of the story down to today.
-  const ordered = [...photos].sort((a, b) => (a.taken_at || '').localeCompare(b.taken_at || ''))
+  // Oldest first, undated photos last, so the timeline reads from the start of the story down to today.
+  const ordered = [...photos].sort(
+    (a, b) => (a.taken_at ? 0 : 1) - (b.taken_at ? 0 : 1) || (a.taken_at || '').localeCompare(b.taken_at || ''),
+  )
+
+  // Consecutive photos from the same year share one row, and so one line.
+  const years: { year: string; photos: TimelinePhoto[] }[] = []
+  for (const photo of ordered) {
+    const year = /^\d{4}/.test(photo.taken_at) ? photo.taken_at.slice(0, 4) : 'Undated'
+    const last = years[years.length - 1]
+    if (last?.year === year) last.photos.push(photo)
+    else years.push({ year, photos: [photo] })
+  }
 
   async function handleUpload(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -160,21 +171,30 @@ export function Timeline({ idToken }: { idToken: string }) {
         <p className="sheets-meta">No photos yet. Add the first one above.</p>
       ) : null}
 
-      <ol className="timeline-list" aria-label="Photo timeline">
-        {ordered.map((photo) => (
-          <li className="timeline-item" key={photo.photo_id}>
-            <span className="timeline-dot" aria-hidden="true" />
-            <div className="timeline-body">
-              <p className="timeline-date">{formatTaken(photo.taken_at)}</p>
-              <TimelinePhotoImage idToken={idToken} photoId={photo.photo_id} alt={photo.caption || 'Timeline photo'} />
-              {photo.caption ? <p className="timeline-caption">{photo.caption}</p> : null}
-              <button type="button" className="secondary-action timeline-remove" onClick={() => handleDelete(photo.photo_id)}>
-                Remove
-              </button>
+      <div className="timeline" aria-label="Photo timeline">
+        {years.map((group) => (
+          <section className="timeline-year" key={group.year}>
+            <div className="timeline-rail">
+              <span className="timeline-year-label">{group.year}</span>
             </div>
-          </li>
+            <ol className="timeline-entries">
+              {group.photos.map((photo) => (
+                <li className="timeline-item" key={photo.photo_id}>
+                  <span className="timeline-dot" aria-hidden="true" />
+                  <div className="timeline-body">
+                    <p className="timeline-date">{formatTaken(photo.taken_at)}</p>
+                    <TimelinePhotoImage idToken={idToken} photoId={photo.photo_id} alt={photo.caption || 'Timeline photo'} />
+                    {photo.caption ? <p className="timeline-caption">{photo.caption}</p> : null}
+                    <button type="button" className="secondary-action timeline-remove" onClick={() => handleDelete(photo.photo_id)}>
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
         ))}
-      </ol>
+      </div>
     </article>
   )
 }

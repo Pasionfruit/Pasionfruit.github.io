@@ -82,36 +82,68 @@
   }
 }
 
-.timeline-list {
-  position: relative;
+/* Each year is a row: its label and line on the left, its photos on the right. */
+.timeline {
   display: grid;
-  gap: 1.2rem;
   margin: 1rem 0 0;
-  padding: 0 0 0 1.4rem;
-  list-style: none;
+  text-align: left;
 }
 
-/* The spine the dots sit on. */
-.timeline-list::before {
+.timeline-year {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.timeline-rail {
+  position: relative;
+  padding-top: 0.1rem;
+}
+
+/* The line for this year. It runs down into the gap so the next year's line
+   starts from the same spot, and the last year's line stops at its last photo. */
+.timeline-rail::before {
   content: '';
   position: absolute;
-  top: 0.4rem;
-  bottom: 0.4rem;
-  left: 0.42rem;
+  top: 1.3rem;
+  bottom: -1.2rem;
+  left: 0.35rem;
   width: 2px;
   background: var(--border-strong);
 }
 
+.timeline-year:last-child .timeline-rail::before {
+  bottom: 0;
+}
+
+.timeline-year-label {
+  position: relative;
+  display: inline-block;
+  color: var(--text-strong);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.timeline-entries {
+  display: grid;
+  gap: 1.2rem;
+  margin: 0 0 1.2rem;
+  padding: 0;
+  list-style: none;
+}
+
 .timeline-item {
   position: relative;
+  padding-left: 1rem;
 }
 
 .timeline-dot {
   position: absolute;
   top: 0.35rem;
-  left: -1.4rem;
-  width: 0.85rem;
-  height: 0.85rem;
+  left: 0;
+  width: 0.7rem;
+  height: 0.7rem;
   border: 2px solid var(--accent);
   border-radius: 999px;
   background: var(--surface);
