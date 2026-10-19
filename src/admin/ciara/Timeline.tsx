@@ -124,11 +124,11 @@ export function Timeline({ idToken }: { idToken: string }) {
   }
 
   return (
-    <article className="info-card admin-card admin-card-wide ciara-timeline">
-      <div className="admin-card-head">
+    <article className="ciara-card ciara-timeline">
+      <div className="ciara-card-head">
         <div>
-          <h2>Timeline</h2>
-          <p className="sheets-meta">Photos, oldest first.</p>
+          <h2>Our timeline</h2>
+          <p className="ciara-since">Photos, oldest first.</p>
         </div>
       </div>
 

@@ -21,8 +21,8 @@ export function RelationshipClock() {
   const elapsed = elapsedSince(TOGETHER_SINCE, now)
 
   return (
-    <article className="info-card admin-card ciara-clock">
-      <p className="sheets-meta">Together since 11:00 PM, November 19, 2022</p>
+    <article className="ciara-card ciara-clock">
+      <p className="ciara-since">Together since 11:00 PM, November 19, 2022</p>
       <dl className="ciara-clock-grid" aria-label="Time together">
         {UNITS.map((unit) => (
           <div className="ciara-clock-unit" key={unit.key}>

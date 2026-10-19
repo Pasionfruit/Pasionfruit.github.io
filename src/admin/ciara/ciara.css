@@ -1,34 +1,346 @@
-/* The Ciara page: the time-together clock and the photo timeline. Namespaced
-   under ciara-* and timeline-* so nothing leaks into the other dashboards. */
+/* The WW+TG page: soft, flowery and a little bit silly. Everything is scoped to
+   .ciara-page so none of it leaks into the other dashboards. */
+
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;600;700&display=swap');
+
+.ciara-page {
+  --ciara-pink: #ff8fb8;
+  --ciara-rose: #e0609a;
+  --ciara-ink: #5b3b52;
+  --ciara-muted: #9a7088;
+  --ciara-line: #ffd1e3;
+  --ciara-sky: #d9f1ff;
+  --ciara-water: #8fd6f5;
+  --ciara-mint: #d7f5e6;
+  --ciara-lilac: #e4dcff;
+  --ciara-butter: #fff3c4;
+
+  position: relative;
+  padding: 1rem 0.9rem 3rem;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 12% 8%, #ffe3ef 0 60px, transparent 61px),
+    radial-gradient(circle at 92% 30%, #e9e2ff 0 80px, transparent 81px),
+    linear-gradient(180deg, #fff7fb 0%, #f6f2ff 100%);
+  color: var(--ciara-ink);
+  font-family: 'Quicksand', ui-rounded, system-ui, sans-serif;
+  font-weight: 600;
+  overflow: hidden;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+
+.ciara-hero {
+  text-align: center;
+}
+
+.ciara-garland {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  margin: 0 -0.4rem;
+}
+
+.ciara-garland-vine {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ciara-garland-bloom {
+  position: relative;
+  flex: none;
+  filter: drop-shadow(0 2px 0 rgba(224, 96, 154, 0.15));
+}
+
+.ciara-garland-bloom:nth-child(odd) {
+  transform: translateY(-6px);
+}
+
+.ciara-garland-bloom:nth-child(even) {
+  transform: translateY(8px);
+}
+
+.ciara-kicker {
+  margin: 0.4rem 0 0;
+  color: var(--ciara-muted);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.ciara-title {
+  margin: 0.1rem 0 0.8rem;
+  color: var(--ciara-rose);
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(2.8rem, 12vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-shadow: 0 3px 0 #ffe0ec;
+}
+
+/* ── Scene: sky, waterfall, pond ──────────────────────────────────────── */
+
+.ciara-scene {
+  position: relative;
+  height: 230px;
+  border: 3px solid #fff;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #d9f1ff 0%, #f1f9ff 52%, #ffeaf4 100%);
+  box-shadow: 0 6px 0 var(--ciara-line);
+  overflow: hidden;
+}
+
+.ciara-waterfall {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 120px;
+  height: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* A rounded rock the water pours over. */
+.ciara-rock {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 124px;
+  height: 46px;
+  transform: translateX(-50%);
+  border-radius: 0 0 46px 46px / 0 0 30px 30px;
+  background: linear-gradient(180deg, #d8c9e6 0%, #b9a5d1 100%);
+  box-shadow: inset 0 -4px 0 rgba(255, 255, 255, 0.25);
+}
+
+.ciara-stream {
+  position: absolute;
+  top: 40px;
+  width: 16px;
+  height: 150px;
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0 2px, transparent 2px 6px, rgba(255, 255, 255, 0.5) 6px 8px, transparent 8px),
+    linear-gradient(180deg, #f0fbff 0%, #8fd6f5 45%, #63bfee 100%);
+  background-size: 16px 16px, 100% 100%;
+  animation: ciara-flow 0.9s linear infinite;
+}
+
+.ciara-stream-a {
+  left: calc(50% - 22px);
+  height: 150px;
+}
+
+.ciara-stream-b {
+  left: calc(50% - 6px);
+  width: 12px;
+  animation-duration: 1.2s;
+}
+
+.ciara-stream-c {
+  left: calc(50% + 8px);
+  width: 14px;
+  height: 130px;
+  animation-duration: 1.05s;
+}
+
+.ciara-splash {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  width: 110px;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  animation: ciara-ripple 1.8s ease-out infinite;
+}
+
+.ciara-pond {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 0;
+  height: 78px;
+  border-radius: 999px 999px 0 0 / 40px 40px 0 0;
+  background: linear-gradient(180deg, #b8ebff 0%, #7fcdf4 100%);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.6);
+}
+
+.ciara-frog {
+  position: absolute;
+  bottom: 40px;
+  width: 46px;
+  height: auto;
+  animation: ciara-bob 2.6s ease-in-out infinite;
+}
+
+.ciara-frog-a {
+  left: 12%;
+}
+
+.ciara-frog-b {
+  left: 46%;
+  width: 38px;
+  bottom: 52px;
+  animation-delay: -0.9s;
+}
+
+.ciara-frog-c {
+  right: 9%;
+  animation-delay: -1.6s;
+}
+
+/* ── Critters with names underneath ──────────────────────────────────── */
+
+.ciara-critter {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+}
+
+.ciara-critter figcaption {
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ciara-rose);
+  font-family: 'Pacifico', cursive;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.ciara-axo-barbie,
+.ciara-axo-ken {
+  position: absolute;
+  bottom: 2px;
+  width: 110px;
+}
+
+.ciara-axo-barbie {
+  left: 14%;
+  animation: ciara-swim 5s ease-in-out infinite;
+}
+
+.ciara-axo-ken {
+  right: 12%;
+  animation: ciara-swim 6s ease-in-out infinite reverse;
+}
+
+/* ── Body: the cards and the cats sitting on them ─────────────────────── */
+
+.ciara-body {
+  display: grid;
+  gap: 0;
+  margin-top: 0.4rem;
+}
+
+.ciara-perch {
+  position: relative;
+  margin-top: 8rem;
+}
+
+/* A cat sits on the top edge of its card, its name floating above its head. */
+.ciara-cat {
+  position: absolute;
+  top: -8rem;
+  z-index: 2;
+  width: 84px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
+.ciara-cat svg {
+  display: block;
+  width: 84px;
+  height: auto;
+}
+
+.ciara-cat-midnight {
+  left: 1.4rem;
+}
+
+.ciara-cat-inky {
+  right: 1.4rem;
+}
+
+.ciara-cat-pirouette {
+  right: 1.8rem;
+}
+
+.ciara-card {
+  position: relative;
+  padding: 1.3rem 1.2rem 1.5rem;
+  border: 3px solid #fff;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle, #ffe3ef 1.3px, transparent 1.6px) 0 0 / 20px 20px,
+    #ffffff;
+  box-shadow: 0 6px 0 var(--ciara-line);
+}
+
+.ciara-since {
+  margin: 0;
+  color: var(--ciara-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.ciara-card-head h2 {
+  margin: 0;
+  color: var(--ciara-rose);
+  font-family: 'Pacifico', cursive;
+  font-size: 1.9rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.ciara-card-head .ciara-since {
+  margin-top: 0.15rem;
+}
+
+/* ── Clock ────────────────────────────────────────────────────────────── */
 
 .ciara-clock-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin: 0.8rem 0 0;
+  gap: 0.55rem;
+  margin: 0.9rem 0 0;
 }
 
 .ciara-clock-unit {
   display: grid;
-  gap: 0.15rem;
-  padding: 0.7rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-muted);
+  gap: 0.1rem;
+  padding: 0.7rem 0.4rem 0.6rem;
+  border-radius: 24px;
+  background: #ffe0ef;
   text-align: center;
 }
 
+.ciara-clock-unit:nth-child(2) { background: var(--ciara-lilac); }
+.ciara-clock-unit:nth-child(3) { background: var(--ciara-mint); }
+.ciara-clock-unit:nth-child(4) { background: #d4ecff; }
+.ciara-clock-unit:nth-child(5) { background: var(--ciara-butter); }
+.ciara-clock-unit:nth-child(6) { background: #ffd6d6; }
+
 .ciara-clock-unit dt {
-  color: var(--text-muted);
-  font-size: 0.78rem;
+  color: var(--ciara-ink);
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .ciara-clock-unit dd {
   margin: 0;
-  color: var(--text-strong);
-  font-family: var(--font-mono);
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  color: var(--ciara-rose);
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(1.5rem, 5.5vw, 2.1rem);
   font-variant-numeric: tabular-nums;
+  line-height: 1.2;
 }
 
 @media (min-width: 720px) {
@@ -37,43 +349,85 @@
   }
 }
 
+/* ── Timeline form ────────────────────────────────────────────────────── */
+
 .ciara-upload {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
+  gap: 0.65rem;
   align-items: end;
-  margin-top: 0.8rem;
-  padding: 0.8rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-muted);
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: 2px dashed var(--ciara-line);
+  border-radius: 24px;
+  background: #fff8fc;
 }
 
 .ciara-field {
   display: grid;
   gap: 0.3rem;
   min-width: 0;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--ciara-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .ciara-field input[type='text'],
 .ciara-field input[type='datetime-local'] {
-  padding: 0.5rem 0.7rem;
-  border: 1px solid var(--border-strong);
+  padding: 0.5rem 0.8rem;
+  border: 2px solid var(--ciara-line);
   border-radius: 999px;
-  background: var(--surface);
-  color: var(--text);
+  background: #fff;
+  color: var(--ciara-ink);
   font: inherit;
+  font-weight: 600;
   min-width: 0;
+}
+
+.ciara-field input[type='file'] {
+  font: inherit;
+  color: var(--ciara-muted);
+  max-width: 100%;
 }
 
 .ciara-field-wide {
   grid-column: 1 / -1;
 }
 
-.ciara-upload .primary-action {
+.ciara-page .primary-action {
   justify-self: start;
+  padding: 0.55rem 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ciara-pink);
+  color: #fff;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #e0609a;
+}
+
+.ciara-page .primary-action:disabled {
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.ciara-page .secondary-action {
+  border: 2px solid var(--ciara-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ciara-rose);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+}
+
+.ciara-page .sheets-meta {
+  color: var(--ciara-muted);
+  font-weight: 600;
+}
+
+.ciara-page .sheets-error {
+  color: #c2185b;
+  font-weight: 700;
 }
 
 @media (max-width: 560px) {
@@ -82,34 +436,35 @@
   }
 }
 
-/* Each year is a row: its label and line on the left, its photos on the right. */
+/* ── Timeline: a row per year, with its own line ──────────────────────── */
+
 .timeline {
   display: grid;
-  margin: 1rem 0 0;
+  margin-top: 1.1rem;
   text-align: left;
 }
 
 .timeline-year {
   display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  gap: 0.9rem;
 }
 
 .timeline-rail {
   position: relative;
-  padding-top: 0.1rem;
+  padding-top: 0.2rem;
 }
 
-/* The line for this year. It runs down into the gap so the next year's line
-   starts from the same spot, and the last year's line stops at its last photo. */
+/* A dotted line per year, joined to the next year's line through the gap. */
 .timeline-rail::before {
   content: '';
   position: absolute;
-  top: 1.3rem;
+  top: 1.6rem;
   bottom: -1.2rem;
-  left: 0.35rem;
-  width: 2px;
-  background: var(--border-strong);
+  left: 0.5rem;
+  width: 4px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(180deg, var(--ciara-pink) 0 8px, transparent 8px 14px);
 }
 
 .timeline-year:last-child .timeline-rail::before {
@@ -117,62 +472,121 @@
 }
 
 .timeline-year-label {
-  position: relative;
   display: inline-block;
-  color: var(--text-strong);
-  font-family: var(--font-mono);
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid var(--ciara-line);
+  color: var(--ciara-rose);
+  font-family: 'Pacifico', cursive;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .timeline-entries {
   display: grid;
-  gap: 1.2rem;
-  margin: 0 0 1.2rem;
+  gap: 1.3rem;
+  margin: 0 0 1.4rem;
   padding: 0;
   list-style: none;
 }
 
 .timeline-item {
   position: relative;
-  padding-left: 1rem;
+  padding-left: 1.1rem;
 }
 
 .timeline-dot {
   position: absolute;
-  top: 0.35rem;
+  top: 0.4rem;
   left: 0;
-  width: 0.7rem;
-  height: 0.7rem;
-  border: 2px solid var(--accent);
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 3px solid #fff;
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--ciara-pink);
+  box-shadow: 0 0 0 2px var(--ciara-line);
 }
 
 .timeline-body {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.45rem;
   justify-items: start;
 }
 
 .timeline-date {
   margin: 0;
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  color: var(--ciara-muted);
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
+/* Photos as polaroids, tilted a touch in turn. */
 .timeline-photo {
-  width: min(100%, 420px);
+  width: min(100%, 360px);
   height: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-muted);
+  padding: 0.5rem 0.5rem 0.5rem;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(224, 96, 154, 0.18);
+  transform: rotate(-1.2deg);
+}
+
+.timeline-item:nth-child(even) .timeline-photo {
+  transform: rotate(1deg);
 }
 
 .timeline-caption {
   margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .timeline-remove {
   font-size: 0.8rem;
+  padding: 0.2rem 0.8rem;
+}
+
+/* ── Motion, for the things that move ─────────────────────────────────── */
+
+@keyframes ciara-flow {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 16px, 0 0; }
+}
+
+@keyframes ciara-ripple {
+  0% { transform: translateX(-50%) scale(0.5); opacity: 0.9; }
+  100% { transform: translateX(-50%) scale(1.4); opacity: 0; }
+}
+
+@keyframes ciara-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes ciara-swim {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(14px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ciara-page * {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ciara-cat {
+    transform: scale(0.85);
+    transform-origin: bottom center;
+  }
+
+  .ciara-scene {
+    height: 210px;
+  }
+
+  .ciara-axo-barbie,
+  .ciara-axo-ken {
+    width: 90px;
+  }
 }
