@@ -679,7 +679,7 @@
   to { transform: translate3d(var(--drift), 115vh, 0) rotate(720deg); }
 }
 
-/* ── Sticky notes, scattered around the page ─────────────────────────── */
+/* ── Sticky notes, along the bottom of the page ──────────────────────── */
 
 .ciara-sticky {
   position: relative;
@@ -735,24 +735,21 @@
   color: rgba(91, 59, 82, 0.45);
 }
 
-/* Each note sits in its own spot, tilted a little, and stacks on narrow screens. */
-.ciara-note-yellow {
-  margin-top: 2.4rem;
-  transform: rotate(-1.4deg);
+/* The three notes in a row under the timeline, each tilted a little. */
+.ciara-notes-bottom {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 2.6rem;
 }
 
-.ciara-note-blue {
-  margin-top: 1.6rem;
-  transform: rotate(1.2deg);
-}
+.ciara-note-yellow { transform: rotate(-1.2deg); }
+.ciara-note-blue { transform: rotate(0.9deg); }
+.ciara-note-pink { transform: rotate(-0.6deg); }
 
-.ciara-note-pink {
-  margin-top: 2.4rem;
-  transform: rotate(-0.8deg);
-}
-
-.ciara-hero {
-  position: relative;
+@media (min-width: 720px) {
+  .ciara-notes-bottom {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .ciara-topbar {
@@ -768,40 +765,43 @@
   text-align: right;
 }
 
-/* Wide screens: the yellow note sits right of the clock, the pink one right of
-   the timeline, and the blue one is pinned to the top right of the scene. */
-@media (min-width: 900px) {
-  .ciara-body {
-    grid-template-columns: minmax(0, 1fr) 250px;
-    column-gap: 2rem;
-    align-items: start;
-  }
-
-  .ciara-note-yellow {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-    margin-top: 8rem;
-  }
-
-  .ciara-note-pink {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: start;
-    margin-top: 2.4rem;
-  }
-
-  .ciara-note-blue {
-    position: absolute;
-    top: 15rem;
-    right: 1rem;
-    width: 210px;
-    margin: 0;
-  }
-}
-
 .ciara-perch-timeline {
   margin-top: 2.4rem;
+}
+
+/* ── Cat motion: Midnight's tail, Pirouette's paws ───────────────────── */
+
+/* The tail pivots at its base, where it meets the body. */
+.cat-tail {
+  transform-box: view-box;
+  transform-origin: 58px 96px;
+}
+
+.cat-tail.is-wiggling {
+  animation: cat-tail-wiggle 0.5s ease-in-out infinite;
+}
+
+@keyframes cat-tail-wiggle {
+  0%, 100% { transform: rotate(-9deg); }
+  50% { transform: rotate(9deg); }
+}
+
+.cat-paw {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.cat-paw-left {
+  animation: cat-paw-paddle 0.5s ease-in-out infinite;
+}
+
+.cat-paw-right {
+  animation: cat-paw-paddle 0.5s ease-in-out 0.25s infinite;
+}
+
+@keyframes cat-paw-paddle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 /* ── Pointer switch, top right ────────────────────────────────────────── */

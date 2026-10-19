@@ -139,6 +139,8 @@ export function Cat({
   gaze = { x: 0, y: 0 },
   mouthOpen = false,
   chubby = false,
+  tailWiggle = false,
+  pawsPaddling = false,
 }: {
   coat?: 'black' | 'white'
   eyes?: keyof typeof CAT_EYES
@@ -149,7 +151,12 @@ export function Cat({
   mouthOpen?: boolean
   /** Widens the body and head, for a round, well-fed look. The tail stays as it is. */
   chubby?: boolean
+  /** Swishes the tail, for when something is close enough to bat at. */
+  tailWiggle?: boolean
+  /** Paddles the front paws, for when there is a fish to reach for. */
+  pawsPaddling?: boolean
 }) {
+  const paw = (side: 'left' | 'right') => (pawsPaddling ? `cat-paw cat-paw-${side}` : undefined)
   const reversed = coat === 'white'
   const fur = reversed ? '#fffaf5' : '#2b2330'
   const rim = reversed ? '#f0e4ee' : '#4a3d55'
@@ -159,9 +166,11 @@ export function Cat({
     <svg className={className} width="84" height="104" viewBox="0 0 84 104" aria-hidden="true">
       <g strokeLinejoin="round" strokeLinecap="round">
         {/* tail: an ink outline drawn under the fur */}
-        <path d="M58 96 C 78 98 82 82 76 70" fill="none" stroke={INK} strokeWidth="11" />
-        <path d="M58 96 C 78 98 82 82 76 70" fill="none" stroke={fur} strokeWidth="7" />
-        {reversed && <path d="M80 84 C 82 80 80 74 76 70" fill="none" stroke={mark} strokeWidth="7" />}
+        <g className={tailWiggle ? 'cat-tail is-wiggling' : 'cat-tail'}>
+          <path d="M58 96 C 78 98 82 82 76 70" fill="none" stroke={INK} strokeWidth="11" />
+          <path d="M58 96 C 78 98 82 82 76 70" fill="none" stroke={fur} strokeWidth="7" />
+          {reversed && <path d="M80 84 C 82 80 80 74 76 70" fill="none" stroke={mark} strokeWidth="7" />}
+        </g>
 
         {/* the body, head and paws, widened for a chubby cat */}
         <g transform={chubby ? 'translate(42 66) scale(1.16 1.04) translate(-42 -66)' : undefined}>
@@ -173,13 +182,13 @@ export function Cat({
         {/* front paws */}
         {reversed ? (
           <>
-            <ellipse cx="34" cy="95" rx="7" ry="4.5" fill={mark} stroke={INK} strokeWidth="1.6" />
-            <ellipse cx="50" cy="95" rx="7" ry="4.5" fill={mark} stroke={INK} strokeWidth="1.6" />
+            <ellipse className={paw('left')} cx="34" cy="95" rx="7" ry="4.5" fill={mark} stroke={INK} strokeWidth="1.6" />
+            <ellipse className={paw('right')} cx="50" cy="95" rx="7" ry="4.5" fill={mark} stroke={INK} strokeWidth="1.6" />
           </>
         ) : (
           <>
-            <ellipse cx="34" cy="95" rx="7" ry="4.5" fill={fur} stroke={INK} strokeWidth="1.6" />
-            <ellipse cx="50" cy="95" rx="7" ry="4.5" fill={fur} stroke={INK} strokeWidth="1.6" />
+            <ellipse className={paw('left')} cx="34" cy="95" rx="7" ry="4.5" fill={fur} stroke={INK} strokeWidth="1.6" />
+            <ellipse className={paw('right')} cx="50" cy="95" rx="7" ry="4.5" fill={fur} stroke={INK} strokeWidth="1.6" />
           </>
         )}
 

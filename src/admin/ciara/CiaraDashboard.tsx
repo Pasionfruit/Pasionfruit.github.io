@@ -5,6 +5,7 @@ import { CursorGlyph, CursorSwitch, type CursorKind } from './Cursors'
 import { RelationshipClock } from './RelationshipClock'
 import { Monthiversary } from './Monthiversary'
 import { monthiversaryOn, TOGETHER_SINCE } from './elapsed'
+import { meowOnce } from './meow'
 import { StickyNote, StickyStatus } from './StickyNotes'
 import { useStickyNotes } from './useStickyNotes'
 import { Timeline } from './Timeline'
@@ -14,6 +15,8 @@ type Point = { x: number; y: number }
 
 /** The most a cat's pupils can shift, in SVG units. */
 const MAX_GAZE = 1.6
+/** How close the feather has to come to Midnight before her tail wiggles, in pixels. */
+const TAIL_WIGGLE_RANGE = 220
 const NO_GAZE: Point = { x: 0, y: 0 }
 const CURSOR_KEY = 'ciara-cursor'
 
@@ -48,6 +51,8 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
   const [cursor, setCursor] = useState<CursorKind>(readStoredCursor)
   // Only the cat tied to the current pointer looks at it.
   const [gaze, setGaze] = useState<Point>(NO_GAZE)
+  // Midnight's tail wiggles while the feather is close to her.
+  const [tailWiggle, setTailWiggle] = useState(false)
   const [mouthOpen, setMouthOpen] = useState(false)
   // Checked once, when the page opens. Null on any day that is not a monthiversary.
   const [monthiversary, setMonthiversary] = useState<number | null>(() => monthiversaryOn(TOGETHER_SINCE, new Date()))
@@ -64,8 +69,16 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
       const rect = watcher.current?.getBoundingClientRect()
       if (!rect) return
       setGaze(gazeToward(rect.left + rect.width / 2, rect.top + 50, x, y))
+
+      if (cursor === 'feather') {
+        const distance = Math.hypot(x - (rect.left + rect.width / 2), y - (rect.top + rect.height / 2))
+        setTailWiggle(distance < TAIL_WIGGLE_RANGE)
+      }
     }
-    const leave = () => setPointer(null)
+    const leave = () => {
+      setPointer(null)
+      setTailWiggle(false)
+    }
 
     window.addEventListener('pointermove', move)
     document.documentElement.addEventListener('pointerleave', leave)
@@ -78,6 +91,9 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
   function chooseCursor(kind: CursorKind) {
     setCursor(kind)
     setGaze(NO_GAZE)
+    setTailWiggle(false)
+    // Picking the laser is a click, so it is also the moment sound is allowed.
+    if (kind === 'laser') meowOnce()
     try {
       window.localStorage.setItem(CURSOR_KEY, kind)
     } catch {
@@ -85,13 +101,16 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
     }
   }
 
-  // Every few seconds Inky opens her mouth for a moment, then shuts it again.
+  // While the laser is out, Inky opens her mouth and meows every few seconds.
   useEffect(() => {
+    if (cursor !== 'laser') return
+
     let openTimer = 0
     let closeTimer = 0
     const schedule = () => {
       openTimer = window.setTimeout(() => {
         setMouthOpen(true)
+        meowOnce()
         closeTimer = window.setTimeout(() => {
           setMouthOpen(false)
           schedule()
@@ -102,8 +121,9 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
     return () => {
       window.clearTimeout(openTimer)
       window.clearTimeout(closeTimer)
+      setMouthOpen(false)
     }
-  }, [])
+  }, [cursor])
 
   return (
     <div className="ciara-page">
@@ -136,34 +156,46 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
             </figure>
           </div>
         </div>
-        <StickyNote color="blue" notes={notes} className="ciara-note-blue" />
       </header>
 
       <main className="ciara-body">
         <div className="ciara-perch">
           <figure ref={midnightRef} className="ciara-critter ciara-cat ciara-cat-midnight">
-            <Cat coat="black" eyes="yellow" gaze={cursor === 'feather' ? gaze : NO_GAZE} />
+            <Cat coat="black" eyes="yellow" gaze={cursor === 'feather' ? gaze : NO_GAZE} tailWiggle={tailWiggle} />
             <figcaption>Midnight</figcaption>
           </figure>
           <figure ref={inkyRef} className="ciara-critter ciara-cat ciara-cat-inky">
-            <Cat coat="black" eyes="green" gaze={cursor === 'laser' ? gaze : NO_GAZE} mouthOpen={mouthOpen} />
+            <Cat
+              coat="black"
+              eyes="green"
+              gaze={cursor === 'laser' ? gaze : NO_GAZE}
+              mouthOpen={cursor === 'laser' && mouthOpen}
+            />
             <figcaption>Inky</figcaption>
           </figure>
           <figure ref={pirouetteRef} className="ciara-critter ciara-cat ciara-cat-pirouette">
-            <Cat coat="white" eyes="blue" chubby gaze={cursor === 'fish' ? gaze : NO_GAZE} />
+            <Cat
+              coat="white"
+              eyes="blue"
+              chubby
+              gaze={cursor === 'fish' ? gaze : NO_GAZE}
+              pawsPaddling={cursor === 'fish'}
+            />
             <figcaption>Pirouette</figcaption>
           </figure>
           <RelationshipClock />
         </div>
 
-        <StickyNote color="yellow" notes={notes} className="ciara-note-yellow" />
-
         <div className="ciara-perch ciara-perch-timeline">
           <Timeline idToken={idToken} />
         </div>
-
-        <StickyNote color="pink" notes={notes} className="ciara-note-pink" />
       </main>
+
+      <section className="ciara-notes-bottom" aria-label="Sticky notes">
+        <StickyNote color="yellow" notes={notes} className="ciara-note-yellow" />
+        <StickyNote color="blue" notes={notes} className="ciara-note-blue" />
+        <StickyNote color="pink" notes={notes} className="ciara-note-pink" />
+      </section>
 
       {monthiversary !== null ? (
         <Monthiversary months={monthiversary} onClose={() => setMonthiversary(null)} />
