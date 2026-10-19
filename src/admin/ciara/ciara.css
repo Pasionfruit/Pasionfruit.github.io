@@ -265,9 +265,10 @@
   left: 1.4rem;
 }
 
+/* Inky sits just right of Midnight, on the clock card. */
 .ciara-cat-inky {
   top: -6.5rem;
-  right: 1.4rem;
+  left: 118px;
   width: 64px;
 }
 
@@ -275,8 +276,9 @@
   width: 64px;
 }
 
+/* Pirouette takes the spot on the right of the clock card. */
 .ciara-cat-pirouette {
-  right: 1.8rem;
+  right: 1.4rem;
 }
 
 .ciara-card {
@@ -683,6 +685,38 @@
   margin-top: 2.4rem;
 }
 
+/* Wide screens: the timeline and clock stay in the main column, and the notes
+   run down a side column, level with the clock card. */
+@media (min-width: 900px) {
+  .ciara-body {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    column-gap: 2rem;
+    align-items: start;
+  }
+
+  .ciara-notes {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-top: 8rem;
+  }
+
+  .ciara-notes-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ciara-sticky:nth-child(n) {
+    transform: none;
+  }
+
+  .ciara-sticky:nth-child(1) { transform: rotate(-1.2deg); }
+  .ciara-sticky:nth-child(2) { transform: rotate(0.8deg); }
+  .ciara-sticky:nth-child(3) { transform: rotate(-0.5deg); }
+}
+
+.ciara-perch-timeline {
+  margin-top: 2.4rem;
+}
+
 .ciara-notes-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -755,14 +789,75 @@
   text-align: center;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 899px) {
   .ciara-notes-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .ciara-sticky:nth-child(n) {
     transform: none;
   }
+}
+
+@media (max-width: 640px) {
+  .ciara-notes-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Pointer switch, top right ────────────────────────────────────────── */
+
+.ciara-topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.2rem;
+}
+
+.ciara-cursor-switch {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 0 var(--ciara-line);
+}
+
+.ciara-switch-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ciara-ink);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ciara-switch-option[aria-pressed='true'] {
+  background: var(--ciara-pink);
+  color: #fff;
+}
+
+.ciara-switch-laser {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #e53935;
+}
+
+/* The pointer glyphs for feather and fish. */
+.ciara-cursor-glyph {
+  position: fixed;
+  z-index: 9999;
+  line-height: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px rgba(91, 59, 82, 0.2));
 }
 
 /* ── Motion, for the things that move ─────────────────────────────────── */
