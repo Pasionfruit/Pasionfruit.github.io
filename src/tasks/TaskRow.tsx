@@ -129,7 +129,7 @@ function TaskEditForm({
 export type TaskRowProps = {
   task: TodoistTask
   /** Every task's subtasks in this list, so the tree renders to any depth. */
-  childrenOf: Map<string, TodoistTask[]>
+  childrenOf?: Map<string, TodoistTask[]>
   projectName?: string
   canEdit: boolean
   isWriting: boolean
@@ -182,7 +182,7 @@ export function TaskRow({
   const overdue = isOverdue(task)
   const timeLabel = dueTimeLabel(task)
   const priorityValue = normalizePriority(task.priority)
-  const subtasks = childrenOf.get(task.id) ?? []
+  const subtasks = childrenOf?.get(task.id) ?? []
   const hasSubtasks = subtasks.length > 0
   const isCollapsed = collapsedIds?.has(task.id) ?? false
 
