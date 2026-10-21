@@ -125,6 +125,14 @@ export function TaskList({
     [childrenOf],
   )
 
+  /** Files a task into a project as a top-level task, the way a move from the Inbox would. */
+  const handleMoveToProject = useCallback(
+    (taskId: string, projectId: string) => {
+      void store.move(taskId, { parentId: null, projectId, sectionId: null })
+    },
+    [store],
+  )
+
   const dragEnabled = canEdit
   const { containerRef, draggingId, drop, isDragging, handlers } = useTaskDrag({
     enabled: dragEnabled,
@@ -177,6 +185,8 @@ export function TaskList({
               onSave={store.save}
               onReschedule={store.reschedule}
               onDelete={store.remove}
+              projects={store.projects}
+              onMoveToProject={handleMoveToProject}
             />
           </Fragment>
         )

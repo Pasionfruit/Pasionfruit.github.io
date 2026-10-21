@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { ChevronDown, ChevronRight, GripVertical, RotateCw } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
-import type { TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
+import type { TodoistProject, TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
 
 function normalizePriority(value: number) {
   if (!Number.isFinite(value)) {
@@ -22,12 +22,16 @@ function TaskEditForm({
   onSave,
   onCancel,
   onDelete,
+  projects,
+  onMoveToProject,
 }: {
   task: TodoistTask
   isWriting: boolean
   onSave: (taskId: string, update: TodoistTaskUpdate) => void
   onCancel: () => void
   onDelete: (taskId: string) => void
+  projects: TodoistProject[]
+  onMoveToProject?: (taskId: string, projectId: string) => void
 }) {
   const [content, setContent] = useState(task.content)
   const [description, setDescription] = useState(task.description ?? '')
@@ -88,6 +92,24 @@ function TaskEditForm({
           <option value={4}>P4</option>
         </select>
       </div>
+
+      {projects.length > 0 && onMoveToProject ? (
+        <div className="task-edit-row">
+          <select
+            className="task-input"
+            value={task.project_id ?? ''}
+            disabled={isWriting}
+            onChange={(event) => onMoveToProject(task.id, event.target.value)}
+            aria-label="Project"
+          >
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.is_inbox_project ? `${project.name} (Inbox)` : project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
 
       <div className="task-edit-row">
         <button type="button" className="task-btn" disabled={isWriting} onClick={() => setDueDate(todayKey())}>
@@ -153,6 +175,9 @@ export type TaskRowProps = {
   onSave: (taskId: string, update: TodoistTaskUpdate) => void
   onReschedule: (taskId: string, dueDate: string) => void
   onDelete: (taskId: string) => void
+  /** Projects the editor can file the task into; the Inbox is one of them. */
+  projects?: TodoistProject[]
+  onMoveToProject?: (taskId: string, projectId: string) => void
 }
 
 export function TaskRow({
@@ -177,6 +202,8 @@ export function TaskRow({
   onSave,
   onReschedule,
   onDelete,
+  projects = [],
+  onMoveToProject,
 }: TaskRowProps) {
   const isEditing = editingTaskId === task.id
   const isDragging = draggingId === task.id
@@ -296,6 +323,8 @@ export function TaskRow({
           onSave={onSave}
           onCancel={() => onEditToggle(null)}
           onDelete={onDelete}
+          projects={projects}
+          onMoveToProject={onMoveToProject}
         />
       ) : null}
 
@@ -325,6 +354,8 @@ export function TaskRow({
                 onSave={onSave}
                 onReschedule={onReschedule}
                 onDelete={onDelete}
+                projects={projects}
+                onMoveToProject={onMoveToProject}
               />
             </Fragment>
           ))}
