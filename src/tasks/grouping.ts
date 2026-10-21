@@ -50,3 +50,18 @@ export function sortByPriorityThenDue(tasks: TodoistTask[]): TodoistTask[] {
     return dueSortValue(a) - dueSortValue(b)
   })
 }
+
+/**
+ * The section a task belongs to on the Projects view. A subtask follows its
+ * parent, so it stays under the parent's section even when Todoist leaves its
+ * own section empty. Parents missing from `byId` count as absent.
+ */
+export function inheritedSectionId(task: TodoistTask, byId: Map<string, TodoistTask>): string | null {
+  let current = task
+  const seen = new Set<string>()
+  while (current.parent_id && byId.has(current.parent_id) && !seen.has(current.id)) {
+    seen.add(current.id)
+    current = byId.get(current.parent_id) as TodoistTask
+  }
+  return current.section_id ?? null
+}

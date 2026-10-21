@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react'
 import { AddTaskForm, TaskList } from '../TaskList'
-import { sortByPriorityThenDue } from '../grouping'
+import { inheritedSectionId, sortByPriorityThenDue } from '../grouping'
 import { isSectionHidden, orderSections, rowsForOrder } from '../sectionLayout'
 import type { TaskLayoutStore } from '../useTaskLayout'
 import type { TodoistSection, TodoistTask } from '../../data/todoist/types'
@@ -70,9 +70,15 @@ export function ProjectsView({
     () => (activeProjectId ? tasksByProject.get(activeProjectId) ?? [] : []),
     [tasksByProject, activeProjectId],
   )
+  // Subtasks follow their parent into its section, whatever Todoist reports for their own section.
+  const sectionById = useMemo(() => {
+    const byId = new Map(store.tasks.map((task) => [task.id, task]))
+    return new Map(projectTasks.map((task) => [task.id, inheritedSectionId(task, byId)]))
+  }, [store.tasks, projectTasks])
+
   const looseTasks = useMemo(
-    () => sortByPriorityThenDue(projectTasks.filter((task) => !task.section_id)),
-    [projectTasks],
+    () => sortByPriorityThenDue(projectTasks.filter((task) => !sectionById.get(task.id))),
+    [projectTasks, sectionById],
   )
 
   if (store.projects.length === 0) {
@@ -158,7 +164,7 @@ export function ProjectsView({
 
         {visibleSections.map((section, index) => {
           const sectionTasks = sortByPriorityThenDue(
-            projectTasks.filter((task) => task.section_id === section.id),
+            projectTasks.filter((task) => sectionById.get(task.id) === section.id),
           )
 
           return (
