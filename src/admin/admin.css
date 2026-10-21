@@ -2359,3 +2359,17 @@
   }
 
 }
+
+/* Mood range selector: 7 / 14 / 30 days, above the chart. */
+.mood-range {
+  display: inline-flex;
+  margin: 0.4rem 0 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mood-range .experience-toggle-btn {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+}

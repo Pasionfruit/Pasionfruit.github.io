@@ -23,7 +23,10 @@ function localDayKey(date: Date) {
   return `${date.getFullYear()}-${month}-${day}`
 }
 
-const WINDOW_DAYS = 30
+/** The windows the card can show, in days. */
+const RANGES = [7, 14, 30] as const
+type MoodRange = (typeof RANGES)[number]
+const DEFAULT_RANGE: MoodRange = 30
 
 /** Chart palette, kept apart from the UI accent: sleep is a data series. */
 const SLEEP_COLOR = '#6366f1'
@@ -78,14 +81,15 @@ export function MoodTrackerCard({
   isLoading: boolean
 }) {
   const sleepByDay = useSleepByDay()
+  const [range, setRange] = useState<MoodRange>(DEFAULT_RANGE)
 
   const { days, counts, average, logged, trend, sleepLogged, sleepAverage } = useMemo(() => {
     const byDate = new Map(entries.map((entry) => [entry.entry_date, entry]))
     const today = new Date()
 
-    const days: Day[] = Array.from({ length: WINDOW_DAYS }, (_, offset) => {
+    const days: Day[] = Array.from({ length: range }, (_, offset) => {
       const date = new Date(today)
-      date.setDate(today.getDate() - (WINDOW_DAYS - 1 - offset))
+      date.setDate(today.getDate() - (range - 1 - offset))
       const key = localDayKey(date)
       const entry = byDate.get(key)
       return {
@@ -120,7 +124,7 @@ export function MoodTrackerCard({
     }
 
     // Trend: the newest half of the window against the half before it.
-    const half = WINDOW_DAYS / 2
+    const half = range / 2
     const earlier = days.slice(0, half).filter((day) => day.score !== null)
     const recent = days.slice(half).filter((day) => day.score !== null)
 
@@ -144,7 +148,7 @@ export function MoodTrackerCard({
       sleepLogged,
       sleepAverage: sleepLogged > 0 ? sleepTotal / sleepLogged : 0,
     }
-  }, [entries, sleepByDay])
+  }, [entries, sleepByDay, range])
 
   const hasChart = logged > 0 || sleepLogged > 0
 
@@ -154,15 +158,30 @@ export function MoodTrackerCard({
         <h3>{title}</h3>
         {!isLoading && logged > 0 ? (
           <span className="admin-pill">
-            {logged}/{WINDOW_DAYS} days · avg {average.toFixed(1)}
+            {logged}/{range} days · avg {average.toFixed(1)}
           </span>
         ) : null}
+      </div>
+
+      <div className="experience-toggle mood-range" role="tablist" aria-label="Mood range">
+        {RANGES.map((days) => (
+          <button
+            key={days}
+            type="button"
+            role="tab"
+            aria-selected={range === days}
+            className={`experience-toggle-btn ${range === days ? 'active' : ''}`}
+            onClick={() => setRange(days)}
+          >
+            {days} days
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
         <p className="sheets-meta">Loading moods…</p>
       ) : !hasChart ? (
-        <p className="sheets-meta">No moods or sleep logged in the last {WINDOW_DAYS} days.</p>
+        <p className="sheets-meta">No moods or sleep logged in the last {range} days.</p>
       ) : (
         <>
           <div className="mood-series-key" aria-hidden="true">
@@ -176,11 +195,11 @@ export function MoodTrackerCard({
             </span>
           </div>
 
-          <MoodSleepChart days={days} />
+          <MoodSleepChart days={days} range={range} />
 
           {/* The same numbers for screen readers, which cannot read the canvas. */}
           <table className="sr-only">
-            <caption>Mood and hours of sleep, last {WINDOW_DAYS} days</caption>
+            <caption>Mood and hours of sleep, last {range} days</caption>
             <thead>
               <tr>
                 <th scope="col">Date</th>
@@ -202,7 +221,7 @@ export function MoodTrackerCard({
           </table>
 
           {logged === 0 ? (
-            <p className="sheets-meta">No moods logged in the last {WINDOW_DAYS} days yet, so this is sleep alone.</p>
+            <p className="sheets-meta">No moods logged in the last {range} days yet, so this is sleep alone.</p>
           ) : (
             <div className="mood-legend">
               {MOOD_SCALE.map((mood) => (
@@ -223,9 +242,9 @@ export function MoodTrackerCard({
                 <TrendingDown size={14} aria-hidden="true" />
               )}
               <span>
-                Mood is trending {trend.direction}: the last {WINDOW_DAYS / 2} days average{' '}
+                Mood is trending {trend.direction}: the last {range / 2} days average{' '}
                 {trend.recentAvg.toFixed(1)}, {trend.direction === 'up' ? 'up from' : 'down from'}{' '}
-                {trend.earlierAvg.toFixed(1)} in the {WINDOW_DAYS / 2} before.
+                {trend.earlierAvg.toFixed(1)} in the {range / 2} before.
               </span>
             </p>
           ) : null}
@@ -235,7 +254,7 @@ export function MoodTrackerCard({
   )
 }
 
-function MoodSleepChart({ days }: { days: Day[] }) {
+function MoodSleepChart({ days, range }: { days: Day[]; range: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const chartRef = useRef<Chart | null>(null)
   const [themeVersion, setThemeVersion] = useState(0)
@@ -369,7 +388,7 @@ function MoodSleepChart({ days }: { days: Day[] }) {
 
   return (
     <div className="mood-chart">
-      <canvas ref={canvasRef} role="img" aria-label={`Mood and hours of sleep over the last ${WINDOW_DAYS} days`} />
+      <canvas ref={canvasRef} role="img" aria-label={`Mood and hours of sleep over the last ${range} days`} />
     </div>
   )
 }

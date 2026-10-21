@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import type { GarminWellnessRecord, JournalEntryRecord } from '../data/sheets/types'
 
 const repoMocks = vi.hoisted(() => ({ getGarminWellness: vi.fn() }))
@@ -69,4 +70,23 @@ describe('MoodTrackerCard', () => {
     expect(await screen.findByText('No moods or sleep logged in the last 30 days.')).toBeTruthy()
     expect(screen.queryByRole('img')).toBeNull()
   })
+
+  it('filters the window to 7, 14, or 30 days', async () => {
+    const user = userEvent.setup()
+    render(<MoodTrackerCard title="Mood" entries={[entry(0, 'Good'), entry(10, 'Tired')]} isLoading={false} />)
+
+    const table = await screen.findByRole('table', { name: /Mood and hours of sleep/ })
+    expect(within(table).getByRole('row', { name: new RegExp(dayKey(10)) })).toBeTruthy()
+
+    await user.click(screen.getByRole('tab', { name: '7 days' }))
+    expect(screen.getByRole('tab', { name: '7 days' }).getAttribute('aria-selected')).toBe('true')
+    expect(within(table).queryByRole('row', { name: new RegExp(dayKey(10)) })).toBeNull()
+    expect(within(table).getByRole('row', { name: new RegExp(dayKey(0)) })).toBeTruthy()
+    expect(screen.getByRole('img', { name: /over the last 7 days/ })).toBeTruthy()
+
+    await user.click(screen.getByRole('tab', { name: '14 days' }))
+    expect(within(table).getByRole('row', { name: new RegExp(dayKey(10)) })).toBeTruthy()
+    expect(screen.getByRole('img', { name: /over the last 14 days/ })).toBeTruthy()
+  })
 })
+
