@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
-import { ChevronDown, ChevronUp, Eye, EyeOff, Pencil } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Eye, EyeOff, Pencil } from 'lucide-react'
 import { AddTaskForm, TaskList } from '../TaskList'
 import { inheritedSectionId, sortByPriorityThenDue } from '../grouping'
+import { applySavedOrder, arrayMove, saveOrder } from '../taskOrder'
 import { isSectionHidden, orderSections, rowsForOrder } from '../sectionLayout'
 import type { TaskLayoutStore } from '../useTaskLayout'
 import type { TodoistProject, TodoistSection, TodoistTask } from '../../data/todoist/types'
@@ -32,7 +33,25 @@ export function ProjectsView({
     return map
   }, [store.tasks])
 
-  const activeProjectId = selectedProjectId ?? store.projects[0]?.id ?? null
+  const [projectOrderVersion, setProjectOrderVersion] = useState(0)
+  const projects = useMemo(
+    () => applySavedOrder(store.projects, PROJECT_ORDER_KEY),
+    // projectOrderVersion re-reads the saved order after a move.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [store.projects, projectOrderVersion],
+  )
+
+  function moveProject(projectId: string, delta: -1 | 1) {
+    const ids = projects.map((project) => project.id)
+    const from = ids.indexOf(projectId)
+    const to = from + delta
+    if (from < 0 || to < 0 || to >= ids.length) return
+    saveOrder(PROJECT_ORDER_KEY, arrayMove(ids, from, to))
+    setProjectOrderVersion((version) => version + 1)
+  }
+
+  const activeProjectId = selectedProjectId ?? projects[0]?.id ?? null
+  const activeIndex = projects.findIndex((project) => project.id === activeProjectId)
   const activeProject = activeProjectId ? store.projectsById.get(activeProjectId) : undefined
 
   // Every section of the project in saved order, hidden ones included.
@@ -83,7 +102,7 @@ export function ProjectsView({
     [projectTasks, sectionById],
   )
 
-  if (store.projects.length === 0) {
+  if (projects.length === 0) {
     return <p className="tasks-empty">No projects found.</p>
   }
 
@@ -91,7 +110,7 @@ export function ProjectsView({
     <div className="tasks-view tasks-projects">
       {/* Desktop: a horizontally scrollable chip rail. */}
       <nav className="tasks-project-rail" aria-label="Projects">
-        {store.projects.map((project) => {
+        {projects.map((project) => {
           const count = (tasksByProject.get(project.id) ?? []).length
           return (
             <button
@@ -122,7 +141,7 @@ export function ProjectsView({
           value={activeProjectId ?? ''}
           onChange={(event) => setSelectedProjectId(event.target.value)}
         >
-          {store.projects.map((project) => {
+          {projects.map((project) => {
             const count = (tasksByProject.get(project.id) ?? []).length
             return (
               <option key={project.id} value={project.id}>
@@ -141,6 +160,9 @@ export function ProjectsView({
             count={projectTasks.length}
             store={store}
             canEdit={canEdit}
+            canMoveLeft={activeIndex > 0}
+            canMoveRight={activeIndex >= 0 && activeIndex < projects.length - 1}
+            onMove={activeProjectId ? (delta) => moveProject(activeProjectId, delta) : undefined}
           />
         </header>
 
@@ -265,11 +287,17 @@ function ProjectName({
   count,
   store,
   canEdit,
+  canMoveLeft,
+  canMoveRight,
+  onMove,
 }: {
   project: TodoistProject | undefined
   count: number
   store: TodoistStore
   canEdit: boolean
+  canMoveLeft: boolean
+  canMoveRight: boolean
+  onMove?: (delta: -1 | 1) => void
 }) {
   const [isRenaming, setIsRenaming] = useState(false)
   const [draft, setDraft] = useState(project?.name ?? '')
@@ -285,6 +313,31 @@ function ProjectName({
         {canEdit && project ? (
           <>
             <div className="tasks-section-controls">
+              {onMove ? (
+                <>
+                  <button
+                    type="button"
+                    className="tasks-section-control"
+                    aria-label={`Move ${project.name} left`}
+                    title="Move left"
+                    disabled={!canMoveLeft || store.isWriting}
+                    onClick={() => onMove(-1)}
+                  >
+                    <ChevronLeft size={14} aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="tasks-section-control"
+                    aria-label={`Move ${project.name} right`}
+                    title="Move right"
+                    disabled={!canMoveRight || store.isWriting}
+                    onClick={() => onMove(1)}
+                  >
+                    <ChevronRight size={14} aria-hidden="true" />
+                  </button>
+                </>
+              ) : null}
+
               <button
                 type="button"
                 className="tasks-section-control"
@@ -372,6 +425,9 @@ function ProjectName({
     </form>
   )
 }
+
+/** Saved left-to-right order of the project rail, on this device. */
+const PROJECT_ORDER_KEY = 'projects'
 
 /** Todoist ships named colors; fall back to the app accent for unknown values. */
 const PROJECT_COLORS: Record<string, string> = {

@@ -78,4 +78,20 @@ describe('renaming a project', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Change color of Home' }))
     expect(screen.getByRole('button', { name: 'berry red (current)' }).getAttribute('aria-pressed')).toBe('true')
   })
+
+  it('moves a project right in the rail and saves the new order', async () => {
+    window.localStorage.clear()
+    mocks.getProjects.mockResolvedValue([
+      { id: 'proj-1', name: 'Home', color: 'charcoal' },
+      { id: 'proj-2', name: 'Work', color: 'blue' },
+    ])
+    await openProjects()
+    const railNames = () =>
+      Array.from(document.querySelectorAll('.tasks-project-chip .tasks-project-name')).map((el) => el.textContent)
+    expect(railNames()).toEqual(['Home', 'Work'])
+
+    await userEvent.click(screen.getByRole('button', { name: 'Move Home right' }))
+    expect(railNames()).toEqual(['Work', 'Home'])
+    expect(JSON.parse(window.localStorage.getItem('todoist-order:projects') ?? '[]')).toEqual(['proj-2', 'proj-1'])
+  })
 })
