@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const calendarMocks = vi.hoisted(() => ({
@@ -79,5 +79,29 @@ describe('CalendarWeekCard collapse', () => {
 
     await user.click(screen.getByRole('tab', { name: 'Calendar' }))
     expect(screen.getByLabelText('Calendar view')).toBeTruthy()
+  })
+
+  it('shows the next 24 hours as a table on the Hourly page', async () => {
+    const user = userEvent.setup()
+    const hours = [
+      { time: '2026-10-21T15:00', temperature: 71.6, precipitation: 0, precipitationProbability: 10 },
+      { time: '2026-10-21T16:00', temperature: 70.2, precipitation: 0.12, precipitationProbability: 60 },
+      { time: '2026-10-22T00:00', temperature: 58.4, precipitation: 0, precipitationProbability: 0 },
+    ]
+    const withForecast: WeatherHook = {
+      ...noWeather,
+      status: 'ready',
+      data: { current: {} as never, hourly: hours, timezone: 'auto' } as unknown as WeatherHook['data'],
+    }
+    render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={withForecast} />)
+
+    await user.click(screen.getByRole('tab', { name: 'Hourly' }))
+
+    const table = screen.getByRole('table')
+    const rows = within(table).getAllByRole('row')
+    expect(rows).toHaveLength(4) // header + three hours
+    expect(within(rows[1]).getByText('72°')).toBeTruthy()
+    expect(within(rows[2]).getByText('60%')).toBeTruthy()
+    expect(within(rows[2]).getByText('0.12 in')).toBeTruthy()
   })
 })

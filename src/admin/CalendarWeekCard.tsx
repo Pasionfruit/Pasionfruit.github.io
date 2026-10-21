@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
-import { HourlyChart } from '../weather/HourlyChart'
+import { HourlyTable } from '../weather/HourlyTable'
 import { RadarMap } from '../weather/RadarMap'
 import type { WeatherHook } from '../weather/useWeather'
 import '../weather/weather.css'
@@ -302,8 +302,8 @@ export function CalendarWeekCard({
           {page === 'hourly' ? (
             weather.data ? (
               <section className="weather-section">
-                <h4 className="weather-section-title">Hourly · temp &amp; precipitation</h4>
-                <HourlyChart points={weather.data.hourly} />
+                <h4 className="weather-section-title">Next 24 hours</h4>
+                <HourlyTable points={weather.data.hourly} />
               </section>
             ) : (
               <p className="sheets-meta">The hourly forecast loads with the weather.</p>

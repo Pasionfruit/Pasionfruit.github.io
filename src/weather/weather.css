@@ -78,12 +78,6 @@
   min-height: 200px;
 }
 
-/* Hourly page: the chart grows the same way. */
-.weather-page--hourly .weather-hourly-chart {
-  height: auto;
-  flex: 1;
-  min-height: 170px;
-}
 
 /* The collapse toggle is a mobile-only affordance. */
 .weather-collapse-btn {
@@ -306,13 +300,8 @@
   color: var(--text-muted);
 }
 
-/* ── Hourly chart ── */
+/* ── Hourly table ── */
 
-.weather-hourly-chart {
-  position: relative;
-  height: 170px;
-  width: 100%;
-}
 
 @media (max-width: 480px) {
   .weather-metrics {
@@ -339,4 +328,60 @@
   color: var(--text-strong);
   white-space: nowrap;
   padding: 0 0.25rem;
+}
+
+/* Next 24 hours as a table: scrolls within the card on a phone. */
+.weather-hourly-scroll {
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.weather-hourly-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-hourly-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.weather-hourly-table td,
+.weather-hourly-table th.hour {
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-strong);
+  text-align: left;
+}
+
+.weather-hourly-table tbody tr:last-child td,
+.weather-hourly-table tbody tr:last-child th {
+  border-bottom: 0;
+}
+
+.weather-hourly-table .num {
+  text-align: right;
+}
+
+.weather-hourly-table .hour {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.weather-hourly-table .hour-day {
+  color: var(--text-muted);
+  margin-right: 0.25rem;
 }
