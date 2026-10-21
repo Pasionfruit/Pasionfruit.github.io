@@ -77,6 +77,8 @@ describe('getForecast', () => {
         temperature_2m: [70, 73, 76, 78],
         precipitation: [0, 0, 0.11, 0.2],
         precipitation_probability: [5, 8, 40, 60],
+        weather_code: [1, 2, 82, 95],
+        is_day: [1, 1, 0, 0],
       },
     })
 
@@ -94,6 +96,8 @@ describe('getForecast', () => {
       temperature: 76,
       precipitation: 0.11,
       precipitationProbability: 40,
+      weatherCode: 82,
+      isDay: false,
     })
   })
 

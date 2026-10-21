@@ -20,6 +20,8 @@ export type HourlyPoint = {
   temperature: number
   precipitation: number
   precipitationProbability: number
+  weatherCode: number
+  isDay: boolean
 }
 
 export type WeatherData = {
@@ -46,6 +48,8 @@ type ForecastResponse = {
     temperature_2m: number[]
     precipitation: number[]
     precipitation_probability: number[]
+    weather_code?: number[]
+    is_day?: number[]
   }
 }
 
@@ -78,7 +82,7 @@ export async function getForecast(coords: Coords): Promise<WeatherData> {
     longitude: String(coords.longitude),
     current:
       'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,uv_index,is_day,wind_speed_10m',
-    hourly: 'temperature_2m,precipitation,precipitation_probability',
+    hourly: 'temperature_2m,precipitation,precipitation_probability,weather_code,is_day',
     temperature_unit: 'fahrenheit',
     wind_speed_unit: 'mph',
     precipitation_unit: 'inch',
@@ -117,6 +121,8 @@ export async function getForecast(coords: Coords): Promise<WeatherData> {
         temperature: data.hourly!.temperature_2m[source],
         precipitation: data.hourly!.precipitation[source],
         precipitationProbability: data.hourly!.precipitation_probability[source] ?? 0,
+        weatherCode: data.hourly!.weather_code?.[source] ?? 0,
+        isDay: (data.hourly!.is_day?.[source] ?? 1) === 1,
       }
     })
 
