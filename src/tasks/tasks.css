@@ -757,3 +757,46 @@
     margin-left: 0;
   }
 }
+
+/* Section order and visibility controls (Projects view, editors only). */
+.tasks-section-controls {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.tasks-section-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.tasks-section-control:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.tasks-hidden-sections {
+  margin-top: 16px;
+}
+
+.tasks-hidden-sections ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.tasks-hidden-sections li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+}

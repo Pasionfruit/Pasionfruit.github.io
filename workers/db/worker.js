@@ -88,6 +88,15 @@ const TABLES = {
     columns: ['note_id', 'color', 'body', 'updated_at'],
     read: 'admin',
   },
+  // The Tasks page's section order and hidden sections, one row per Todoist
+  // section (workers/db/tasks_layout.sql). Admin-only, both ways.
+  tasks_layout: {
+    key: 'item_id',
+    columns: ['item_id', 'project_id', 'position', 'hidden'],
+    ints: ['hidden'],
+    reals: ['position'],
+    read: 'admin',
+  },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
 }

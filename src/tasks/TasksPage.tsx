@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from 'react'
 import { RotateCcw } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTodoistData } from './useTodoistData'
+import { useTaskLayout } from './useTaskLayout'
 import { TodayView } from './views/TodayView'
 import { TomorrowView } from './views/TomorrowView'
 import { UpcomingView } from './views/UpcomingView'
@@ -21,13 +22,16 @@ const VIEWS: { id: TaskView; label: string }[] = [
 export function TasksPage({
   canEdit,
   configured,
+  idToken = '',
 }: {
   canEdit: boolean
   configured: boolean
+  idToken?: string
 }) {
   const [view, setView] = useState<TaskView>('today')
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const store = useTodoistData(configured)
+  const layout = useTaskLayout(idToken, canEdit && configured)
 
   const today = todayKey()
   const tomorrow = tomorrowKey()
@@ -119,7 +123,7 @@ export function TasksPage({
           {view === 'today' ? <TodayView {...viewProps} /> : null}
           {view === 'tomorrow' ? <TomorrowView {...viewProps} /> : null}
           {view === 'upcoming' ? <UpcomingView {...viewProps} /> : null}
-          {view === 'projects' ? <ProjectsView {...viewProps} /> : null}
+          {view === 'projects' ? <ProjectsView {...viewProps} layout={layout} /> : null}
         </>
       ) : null}
     </div>

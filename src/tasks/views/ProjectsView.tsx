@@ -1,10 +1,19 @@
 import { useMemo, useState } from 'react'
+import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react'
 import { AddTaskForm, TaskList } from '../TaskList'
 import { sortByPriorityThenDue } from '../grouping'
-import type { TodoistTask } from '../../data/todoist/types'
+import { isSectionHidden, orderSections, rowsForOrder } from '../sectionLayout'
+import type { TaskLayoutStore } from '../useTaskLayout'
+import type { TodoistSection, TodoistTask } from '../../data/todoist/types'
 import type { ViewProps } from './TodayView'
 
-export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: ViewProps) {
+export function ProjectsView({
+  store,
+  canEdit,
+  editingTaskId,
+  onEditToggle,
+  layout,
+}: ViewProps & { layout: TaskLayoutStore }) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
 
   const tasksByProject = useMemo(() => {
@@ -24,13 +33,38 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
   const activeProjectId = selectedProjectId ?? store.projects[0]?.id ?? null
   const activeProject = activeProjectId ? store.projectsById.get(activeProjectId) : undefined
 
+  // Every section of the project in saved order, hidden ones included.
   const projectSections = useMemo(
     () =>
-      store.sections
-        .filter((section) => section.project_id === activeProjectId)
-        .sort((a, b) => (a.section_order ?? 0) - (b.section_order ?? 0)),
-    [store.sections, activeProjectId],
+      orderSections(
+        store.sections.filter((section) => section.project_id === activeProjectId),
+        layout.layout,
+      ),
+    [store.sections, activeProjectId, layout.layout],
   )
+  const visibleSections = projectSections.filter((section) => !isSectionHidden(section.id, layout.layout))
+  const hiddenSections = projectSections.filter((section) => isSectionHidden(section.id, layout.layout))
+
+  // Swaps a visible section with its visible neighbour, so hidden sections never get jumped over.
+  function moveSection(section: TodoistSection, delta: -1 | 1) {
+    if (!activeProjectId) return
+    const visibleIndex = visibleSections.indexOf(section)
+    const neighbour = visibleSections[visibleIndex + delta]
+    if (!neighbour) return
+
+    const ordered = [...projectSections]
+    const from = ordered.indexOf(section)
+    const to = ordered.indexOf(neighbour)
+    ;[ordered[from], ordered[to]] = [ordered[to], ordered[from]]
+    void layout.saveRows(rowsForOrder(activeProjectId, ordered, layout.layout))
+  }
+
+  function setSectionHidden(section: TodoistSection, hidden: boolean) {
+    if (!activeProjectId) return
+    const rows = rowsForOrder(activeProjectId, projectSections, layout.layout)
+    rows[section.id] = { ...rows[section.id], hidden }
+    void layout.saveRows(rows)
+  }
 
   const projectTasks = useMemo(
     () => (activeProjectId ? tasksByProject.get(activeProjectId) ?? [] : []),
@@ -116,7 +150,13 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
           label="Add task to project"
         />
 
-        {projectSections.map((section) => {
+        {layout.error ? (
+          <p className="sheets-error" role="alert">
+            {layout.error}
+          </p>
+        ) : null}
+
+        {visibleSections.map((section, index) => {
           const sectionTasks = sortByPriorityThenDue(
             projectTasks.filter((task) => task.section_id === section.id),
           )
@@ -128,6 +168,39 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
                   {section.name}
                   <span className="tasks-count">{sectionTasks.length}</span>
                 </h3>
+                {canEdit ? (
+                  <div className="tasks-section-controls">
+                    <button
+                      type="button"
+                      className="tasks-section-control"
+                      onClick={() => moveSection(section, -1)}
+                      disabled={index === 0}
+                      aria-label={`Move ${section.name} up`}
+                      title="Move up"
+                    >
+                      <ChevronUp size={14} aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      className="tasks-section-control"
+                      onClick={() => moveSection(section, 1)}
+                      disabled={index === visibleSections.length - 1}
+                      aria-label={`Move ${section.name} down`}
+                      title="Move down"
+                    >
+                      <ChevronDown size={14} aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      className="tasks-section-control"
+                      onClick={() => setSectionHidden(section, true)}
+                      aria-label={`Hide ${section.name}`}
+                      title="Hide section"
+                    >
+                      <EyeOff size={14} aria-hidden="true" />
+                    </button>
+                  </div>
+                ) : null}
               </header>
               <TaskList
                 tasks={sectionTasks}
@@ -148,6 +221,28 @@ export function ProjectsView({ store, canEdit, editingTaskId, onEditToggle }: Vi
             </section>
           )
         })}
+
+        {canEdit && hiddenSections.length > 0 ? (
+          <details className="tasks-hidden-sections">
+            <summary>Hidden sections ({hiddenSections.length})</summary>
+            <ul>
+              {hiddenSections.map((section) => (
+                <li key={section.id}>
+                  <span>{section.name}</span>
+                  <button
+                    type="button"
+                    className="tasks-section-control"
+                    onClick={() => setSectionHidden(section, false)}
+                    aria-label={`Show ${section.name}`}
+                    title="Show section"
+                  >
+                    <Eye size={14} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ) : null}
       </div>
     </div>
   )

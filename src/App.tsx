@@ -295,6 +295,7 @@ function App() {
                 <TasksPage
                   canEdit={getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL}
                   configured={isTodoistConfigured()}
+                  idToken={googleIdToken}
                 />
               ) : (
                 <Navigate replace to="/" />
