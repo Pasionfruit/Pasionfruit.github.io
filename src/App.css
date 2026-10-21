@@ -1770,7 +1770,8 @@
 
 /* Scrollable body below the pinned header, so the card keeps a static size. */
 .home-todoist-collapsible {
-  display: block;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -6287,6 +6288,8 @@ button svg,
   min-width: 0;
 }
 
-.todoist-add-form {
-  margin-bottom: 0.5rem;
+.home-todoist-collapsible > .todoist-add-form {
+  /* Pinned to the bottom of the card; sits right after the list when the list is short. */
+  margin: auto 0 0;
+  padding-top: 0.6rem;
 }

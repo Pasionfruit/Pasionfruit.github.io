@@ -966,28 +966,6 @@ function TodoistTasksCard({
       </div>
 
       <div className="home-todoist-collapsible">
-          {isAdding && todoistConfigured && canEditTodoist ? (
-            <form className="task-add-form todoist-add-form" onSubmit={(event) => void handleAddTask(event)}>
-              <input
-                className="task-input"
-                value={newContent}
-                autoFocus
-                placeholder="Task name"
-                aria-label="New task name"
-                onChange={(event) => setNewContent(event.target.value)}
-              />
-              <div className="task-edit-actions">
-                <span className="sheets-meta">Due {day === 'tomorrow' ? 'tomorrow' : 'today'}</span>
-                <button type="submit" className="task-btn is-primary" disabled={isWriting || !newContent.trim()}>
-                  Add task
-                </button>
-                <button type="button" className="task-btn" onClick={() => setIsAdding(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          ) : null}
-
           <div className="experience-toggle todoist-day-toggle" role="tablist" aria-label="Tasks by day">
             {(['today', 'tomorrow'] as const).map((id) => (
               <button
@@ -1080,6 +1058,28 @@ function TodoistTasksCard({
 
           {todoistConfigured && !isLoading && rows.length === 0 && !canEditTodoist && !writeError ? (
             <p className="sheets-meta">No tasks due today or overdue.</p>
+          ) : null}
+
+          {isAdding && todoistConfigured && canEditTodoist ? (
+            <form className="task-add-form todoist-add-form" onSubmit={(event) => void handleAddTask(event)}>
+              <input
+                className="task-input"
+                value={newContent}
+                autoFocus
+                placeholder="Task name"
+                aria-label="New task name"
+                onChange={(event) => setNewContent(event.target.value)}
+              />
+              <div className="task-edit-actions">
+                <span className="sheets-meta">Due {day === 'tomorrow' ? 'tomorrow' : 'today'}</span>
+                <button type="submit" className="task-btn is-primary" disabled={isWriting || !newContent.trim()}>
+                  Add task
+                </button>
+                <button type="button" className="task-btn" onClick={() => setIsAdding(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
           ) : null}
 
           {writeError ? <p className="sheets-error">{writeError}</p> : null}
