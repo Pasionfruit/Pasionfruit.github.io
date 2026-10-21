@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, ChevronDown, RefreshCw } from 'lucide-react'
+import { Check, ChevronDown, RefreshCw, RotateCcw } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { getGarminHealth, getTrainingRecords } from '../data/sheets/repositories'
 import type { GarminHealthRecord, TrainingRecord } from '../data/sheets/types'
 import { WorkoutText } from './WorkoutText'
@@ -63,6 +64,9 @@ export function TrainingOfDayCard({ title }: { title: string }) {
       <div className="section-card-header">
         <h3>{title}</h3>
         <div className="section-card-actions">
+          <Link to="/weekly-reset" className="admin-quick-link" aria-label="Weekly reset" title="Weekly reset">
+            <RotateCcw size={15} strokeWidth={1.8} aria-hidden="true" />
+          </Link>
           <button
             type="button"
             className="section-collapse-btn"

@@ -330,58 +330,54 @@
   padding: 0 0.25rem;
 }
 
-/* Next 24 hours as a table: scrolls within the card on a phone. */
+/* Next 24 hours as a grid: hours across, temperature and rain chance below. */
 .weather-hourly-scroll {
-  max-height: 360px;
-  overflow: auto;
+  overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
 .weather-hourly-table {
-  width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
+  min-width: 100%;
+}
+
+.weather-hourly-table th,
+.weather-hourly-table td {
+  padding: 0.45rem 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-strong);
 }
 
 .weather-hourly-table thead th {
-  position: sticky;
-  top: 0;
-  background: var(--surface);
-  color: var(--text-muted);
+  font-size: 0.72rem;
   font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-align: left;
-  padding: 0.5rem 0.65rem;
+  color: var(--text-muted);
   border-bottom: 1px solid var(--border);
 }
 
-.weather-hourly-table td,
-.weather-hourly-table th.hour {
-  padding: 0.45rem 0.65rem;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-strong);
+.weather-hourly-table .row-label {
+  position: sticky;
+  left: 0;
+  background: var(--surface);
   text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
 }
 
-.weather-hourly-table tbody tr:last-child td,
-.weather-hourly-table tbody tr:last-child th {
+.weather-hourly-table tbody tr:last-child th,
+.weather-hourly-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
-.weather-hourly-table .num {
-  text-align: right;
-}
-
-.weather-hourly-table .hour {
-  font-weight: 500;
-  white-space: nowrap;
-}
-
 .weather-hourly-table .hour-day {
-  color: var(--text-muted);
-  margin-right: 0.25rem;
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }

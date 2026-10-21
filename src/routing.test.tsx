@@ -524,21 +524,28 @@ describe('admin routing', () => {
     expect(hrefs).toEqual(['/tasks', '/weekly-reset'])
   })
 
-  it('shows those links as icons in the top right of Tasks of the Day', async () => {
+  it('shows the task manager link on Tasks of the Day, and the weekly reset on Training of the Day', async () => {
     renderAt('/', ADMIN_EMAIL)
 
-    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
-    const header = heading.closest('.section-card-header')
-    if (!header) {
-      throw new Error('Tasks of the Day header not found')
+    const headerOf = async (name: string) => {
+      const heading = await screen.findByRole('heading', { name })
+      const header = heading.closest('.section-card-header')
+      if (!header) {
+        throw new Error(`${name} header not found`)
+      }
+      return header as HTMLElement
     }
 
-    const tasks = within(header as HTMLElement).getByRole('link', { name: 'Full task manager' })
-    const reset = within(header as HTMLElement).getByRole('link', { name: 'Weekly reset' })
-
+    const tasksHeader = await headerOf('Tasks of the Day')
+    const tasks = within(tasksHeader).getByRole('link', { name: 'Full task manager' })
     expect(tasks.textContent).toBe('')
-    expect(reset.textContent).toBe('')
     expect(tasks.getAttribute('title')).toBe('Full task manager')
+    expect(within(tasksHeader).queryByRole('link', { name: 'Weekly reset' })).toBeNull()
+
+    const trainingHeader = await headerOf('Training of the Day')
+    const reset = within(trainingHeader).getByRole('link', { name: 'Weekly reset' })
+    expect(reset.textContent).toBe('')
+    expect(reset.getAttribute('href')).toBe('/weekly-reset')
   })
 
   it('keeps Health to workouts: no Milestones, and Daily wellness lives on Personal', async () => {

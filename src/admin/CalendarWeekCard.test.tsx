@@ -81,7 +81,7 @@ describe('CalendarWeekCard collapse', () => {
     expect(screen.getByLabelText('Calendar view')).toBeTruthy()
   })
 
-  it('shows the next 24 hours as a table on the Hourly page', async () => {
+  it('lays the next 24 hours out as hours across, with temperature and rain chance below', async () => {
     const user = userEvent.setup()
     const hours = [
       { time: '2026-10-21T15:00', temperature: 71.6, precipitation: 0, precipitationProbability: 10 },
@@ -99,9 +99,9 @@ describe('CalendarWeekCard collapse', () => {
 
     const table = screen.getByRole('table')
     const rows = within(table).getAllByRole('row')
-    expect(rows).toHaveLength(4) // header + three hours
+    expect(rows).toHaveLength(3) // hours, then temperature, then rain chance
+    expect(within(table).getAllByRole('columnheader')).toHaveLength(4) // label column + three hours
     expect(within(rows[1]).getByText('72°')).toBeTruthy()
     expect(within(rows[2]).getByText('60%')).toBeTruthy()
-    expect(within(rows[2]).getByText('0.12 in')).toBeTruthy()
   })
 })

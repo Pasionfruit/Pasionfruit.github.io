@@ -11,12 +11,12 @@ function dayText(date: Date) {
 }
 
 /**
- * The next 24 hours as a plain table. The day is named only where it changes,
- * so the hour column stays short; the table scrolls inside the card on a phone.
+ * The next 24 hours as a grid: hours run across the top (the x axis), and the
+ * temperature and rain chance are the rows beneath (the y values). The day is
+ * named only where it changes. The grid scrolls sideways inside the card.
  */
 export function HourlyTable({ points }: { points: HourlyPoint[] }) {
-  // The day name is shown where it differs from the row above.
-  const rows = points.map((point, index) => {
+  const columns = points.map((point, index) => {
     const date = new Date(point.time)
     const valid = !Number.isNaN(date.getTime())
     const day = valid ? dayText(date) : ''
@@ -28,33 +28,39 @@ export function HourlyTable({ points }: { points: HourlyPoint[] }) {
   return (
     <div className="weather-hourly-scroll">
       <table className="weather-hourly-table">
-        <caption className="sr-only">Hourly forecast for the next 24 hours</caption>
+        <caption className="sr-only">Hourly temperature and rain chance for the next 24 hours</caption>
         <thead>
           <tr>
-            <th scope="col">Hour</th>
-            <th scope="col" className="num">Temp</th>
-            <th scope="col" className="num">Rain chance</th>
-            <th scope="col" className="num">Precip</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ point, date, valid, day, showDay }) => (
-            <tr key={point.time}>
-              <th scope="row" className="hour">
+            <th scope="col" className="row-label">
+              <span className="sr-only">Measure</span>
+            </th>
+            {columns.map(({ point, date, valid, day, showDay }) => (
+              <th scope="col" key={point.time} className="hour">
                 {valid ? (
                   <>
-                    {showDay ? <span className="hour-day">{day} </span> : null}
+                    {showDay ? <span className="hour-day">{day}</span> : null}
                     {hourText(date)}
                   </>
                 ) : (
                   '—'
                 )}
               </th>
-              <td className="num">{`${Math.round(point.temperature)}${DEGREE}`}</td>
-              <td className="num">{`${Math.round(point.precipitationProbability)}%`}</td>
-              <td className="num">{`${point.precipitation.toFixed(2)} in`}</td>
-            </tr>
-          ))}
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" className="row-label">Temp</th>
+            {columns.map(({ point }) => (
+              <td key={point.time} className="num">{`${Math.round(point.temperature)}${DEGREE}`}</td>
+            ))}
+          </tr>
+          <tr>
+            <th scope="row" className="row-label">Rain chance</th>
+            {columns.map(({ point }) => (
+              <td key={point.time} className="num">{`${Math.round(point.precipitationProbability)}%`}</td>
+            ))}
+          </tr>
         </tbody>
       </table>
     </div>

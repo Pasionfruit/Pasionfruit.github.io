@@ -913,9 +913,6 @@ function TodoistTasksCard({
           <Link to="/tasks" className="admin-quick-link" aria-label="Full task manager" title="Full task manager">
             <List size={15} strokeWidth={1.8} aria-hidden="true" />
           </Link>
-          <Link to="/weekly-reset" className="admin-quick-link" aria-label="Weekly reset" title="Weekly reset">
-            <RotateCcw size={15} strokeWidth={1.8} aria-hidden="true" />
-          </Link>
           <button
             type="button"
             className="section-collapse-btn home-todoist-collapse-btn"
