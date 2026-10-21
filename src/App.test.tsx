@@ -365,7 +365,6 @@ describe('site sections and dashboards', () => {
       throw new Error('Todoist card not found')
     }
 
-    await user.click(within(card).getByRole('tab', { name: 'Todoist' }))
     expect(await within(card).findByText('Submit dashboard update')).toBeTruthy()
     expect(within(card).getByText('Review overdue notes')).toBeTruthy()
 
@@ -380,8 +379,32 @@ describe('site sections and dashboards', () => {
     })
   })
 
-  it('blocks Todoist editing for non-authorized account', async () => {
+  it('shows tomorrow’s tasks from Tasks of the Day without opening the full list', async () => {
     const user = userEvent.setup()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const pad = (value: number) => String(value).padStart(2, '0')
+    const tomorrowKey = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}`
+    todoistMocks.getActiveTasks.mockResolvedValue([
+      { id: 'tom-1', content: 'Water the plants', priority: 4, is_completed: false, due: { date: tomorrowKey } },
+      { id: 'later-1', content: 'Renew insurance', priority: 4, is_completed: false, due: { date: '2099-01-01' } },
+    ])
+
+    renderAdminTasksPage()
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Tasks of the Day card not found')
+    }
+
+    await user.click(within(card).getByRole('tab', { name: 'Tomorrow' }))
+    expect(await within(card).findByText('Water the plants')).toBeTruthy()
+    expect(within(card).queryByText('Renew insurance')).toBeNull()
+    expect(within(card).queryByText('Submit dashboard update')).toBeNull()
+    expect(todoistMocks.getActiveTasks).toHaveBeenCalled()
+  })
+
+  it('blocks Todoist editing for non-authorized account', async () => {
     renderAdminTasksPage('pixielee1000@gmail.com')
 
     /*
@@ -395,12 +418,10 @@ describe('site sections and dashboards', () => {
       throw new Error('Tasks of the Day card not found')
     }
 
-    await user.click(within(card).getByRole('tab', { name: 'Todoist' }))
     expect(within(card).getByText('Edit access restricted to admin.')).toBeTruthy()
   })
 
   it('shows missing token guidance when Todoist env token is not set', async () => {
-    const user = userEvent.setup()
     vi.unstubAllEnvs()
     vi.stubEnv('VITE_TODOIST_API_TOKEN', '')
     renderAdminTasksPage()
@@ -411,7 +432,6 @@ describe('site sections and dashboards', () => {
       throw new Error('Todoist card not found')
     }
 
-    await user.click(within(card).getByRole('tab', { name: 'Todoist' }))
     expect(
       await within(card).findByText('Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.'),
     ).toBeTruthy()
@@ -420,7 +440,7 @@ describe('site sections and dashboards', () => {
   })
 
   /*
-   * Completion on the training tab is read from Garmin, never ticked by hand.
+   * Completion on the Training of the Day card is read from Garmin, never ticked by hand.
    * Today's plan comes from training_records; today's activities from the
    * garmin_health sheet, keyed by the local date.
    */
@@ -462,12 +482,11 @@ describe('site sections and dashboards', () => {
   async function openTrainingTab() {
     const user = userEvent.setup()
     renderAdminTasksPage()
-    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const heading = await screen.findByRole('heading', { name: 'Training of the Day' })
     const card = heading.closest('article')
     if (!card) {
-      throw new Error('Tasks of the Day card not found')
+      throw new Error('Training of the Day card not found')
     }
-    expect(within(card).getByRole('tab', { name: 'Training', selected: true })).toBeTruthy()
     return { card: card as HTMLElement, user }
   }
 
@@ -512,7 +531,7 @@ describe('site sections and dashboards', () => {
     expect(within(unplanned).getByText('Pool Swim · 35 min')).toBeTruthy()
   })
 
-  it('no longer offers a Studying tab on Tasks of the Day', async () => {
+  it('keeps training out of Tasks of the Day, in its own card', async () => {
     renderAdminTasksPage()
 
     const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
@@ -521,8 +540,9 @@ describe('site sections and dashboards', () => {
       throw new Error('Tasks of the Day card not found')
     }
 
-    expect(within(card).getByRole('tab', { name: 'Training' })).toBeTruthy()
-    expect(within(card).queryByRole('tab', { name: 'Studying' })).toBeNull()
+    expect(within(card).queryByRole('tab', { name: 'Training' })).toBeNull()
+    expect(within(card).queryByRole('tab', { name: 'Todoist' })).toBeNull()
+    expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
   })
 
   /*

@@ -331,3 +331,12 @@
   cursor: pointer;
   accent-color: var(--accent);
 }
+
+/* Current temperature in the top bar, beside the theme toggle. */
+.topbar-temperature {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+  padding: 0 0.25rem;
+}

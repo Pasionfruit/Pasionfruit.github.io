@@ -1,6 +1,9 @@
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
+import { HourlyChart } from '../weather/HourlyChart'
+import { RadarMap } from '../weather/RadarMap'
+import type { WeatherHook } from '../weather/useWeather'
 import { Pager } from '../components/Pager'
 import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
 import type { ConnectionStatus } from './integrations/types'
@@ -130,7 +133,15 @@ function getStatus(idToken: string): ConnectionStatus {
  * so a card folded away on the daily dashboard stays folded. The events still
  * load while collapsed, so the count in the header stays current.
  */
-export function CalendarWeekCard({ title, idToken }: { title: string; idToken: string }) {
+export function CalendarWeekCard({
+  title,
+  idToken,
+  weather,
+}: {
+  title: string
+  idToken: string
+  weather: WeatherHook
+}) {
   const status = getStatus(idToken)
 
   const [month, setMonth] = useState(() => {
@@ -146,6 +157,8 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
   const [isCollapsed, setIsCollapsed] = useState(readStoredCollapsed)
+  // The radar and hourly forecast share the card with the month grid.
+  const [page, setPage] = useState<'month' | 'radar' | 'hourly'>('month')
 
   const monthLabel = month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
 
@@ -259,6 +272,45 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
             </p>
           ))}
 
+          <div className="experience-toggle month-view-pager" role="tablist" aria-label="Month view pages">
+            {(['month', 'radar', 'hourly'] as const).map((id) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={page === id}
+                className={`experience-toggle-btn ${page === id ? 'active' : ''}`}
+                onClick={() => setPage(id)}
+              >
+                {id === 'month' ? 'Calendar' : id === 'radar' ? 'Radar' : 'Hourly'}
+              </button>
+            ))}
+          </div>
+
+          {page === 'radar' ? (
+            weather.coords ? (
+              <section className="weather-section">
+                <h4 className="weather-section-title">Radar</h4>
+                <RadarMap coords={weather.coords} />
+              </section>
+            ) : (
+              <p className="sheets-meta">Location unavailable — radar needs your position.</p>
+            )
+          ) : null}
+
+          {page === 'hourly' ? (
+            weather.data ? (
+              <section className="weather-section">
+                <h4 className="weather-section-title">Hourly · temp &amp; precipitation</h4>
+                <HourlyChart points={weather.data.hourly} />
+              </section>
+            ) : (
+              <p className="sheets-meta">The hourly forecast loads with the weather.</p>
+            )
+          ) : null}
+
+          {page === 'month' ? (
+            <>
           {status.state === 'connected' ? (
             <div className="month-calendar-shell admin-calendar-shell">
               <div className="month-calendar-header">
@@ -384,6 +436,8 @@ export function CalendarWeekCard({ title, idToken }: { title: string; idToken: s
                 ],
               }}
             />
+          ) : null}
+            </>
           ) : null}
         </>
       )}

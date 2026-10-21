@@ -69,7 +69,10 @@ function geolocationMessage(error: GeolocationPositionError): string {
  * silently ignored on failure so it never blanks out weather that already
  * loaded.
  */
-export function useWeather() {
+/** Shared by the top bar, the weather card, and the month view, so one fetch serves all three. */
+export type WeatherHook = ReturnType<typeof useWeather>
+
+export function useWeather(enabled = true) {
   const [state, setState] = useState<WeatherState>({
     status: 'locating',
     coords: null,
@@ -148,6 +151,9 @@ export function useWeather() {
   )
 
   useEffect(() => {
+    // Guests never see weather, so their browser is not asked for a location.
+    if (!enabled) return
+
     // A stored fix paints instantly; either way a fresh position is still
     // requested, quietly if we already have something on screen.
     const stored = readStoredCoords()
@@ -157,7 +163,7 @@ export function useWeather() {
     } else {
       locate()
     }
-  }, [locate, loadForCoords])
+  }, [enabled, locate, loadForCoords])
 
   const refresh = useCallback(() => {
     if (state.coords) {

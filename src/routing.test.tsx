@@ -433,7 +433,7 @@ describe('admin routing', () => {
     expect(screen.getByRole('button', { name: 'Open Ace' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
     expect(screen.getByRole('heading', { name: 'Inbox' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Month View' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Calendar and Weather' })).toBeTruthy()
   })
 
   it('hides the public sections from the admin home page', () => {

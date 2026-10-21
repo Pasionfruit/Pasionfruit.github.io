@@ -18,9 +18,7 @@ import {
   NotebookPen,
   Newspaper,
   Pencil,
-  RefreshCw,
   RotateCcw,
-  SquareCheck,
   UserRound,
   type LucideIcon,
 } from 'lucide-react'
@@ -38,6 +36,7 @@ import {
   NavLink,
   Navigate,
   Outlet,
+  useOutletContext,
   Route,
   Routes,
   useLocation,
@@ -77,6 +76,7 @@ import {
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
 import { WeatherCard } from './weather/WeatherCard'
+import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { GmailSummaryCard } from './admin/GmailSummaryCard'
@@ -85,8 +85,16 @@ import { AceLauncher } from './admin/ace/AceLauncher'
 import { NewsDashboard } from './admin/news/NewsDashboard'
 import { CiaraDashboard } from './admin/ciara/CiaraDashboard'
 import { WorkoutText } from './training/WorkoutText'
+import { TrainingOfDayCard } from './training/TrainingOfDayCard'
+import {
+  describeGarminActivity,
+  byGarminStartOrder,
+  isRestDayWorkout,
+  parseTrainingDate,
+  toDateOnlyKey,
+} from './training/workoutsOfDay'
 import { assignPlanDates, parseWorkoutTable } from './training/workoutPlan'
-import { dueDateKey, formatDayLabel, isOverdue } from './data/todoist/dates'
+import { dueDateKey, formatDayLabel, isOverdue, tomorrowKey } from './data/todoist/dates'
 import {
   adminDashboards,
   adminDashboardsById,
@@ -116,7 +124,7 @@ import type {
   TrainingRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
-import { closeTask, getTasksOfTheDay } from './data/todoist/repositories'
+import { closeTask, getActiveTasks, getTasksOfTheDay } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 import { getServerStatus, startServer } from './minecraft/api'
 
@@ -347,6 +355,7 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
  * any more — it floats over every admin page (see AceLauncher).
  */
 function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+  const weather = useOutletContext<WeatherHook>()
   return (
     /*
      * The admin home renders its own shell rather than going through AdminPage,
@@ -357,14 +366,16 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
       className="admin-page admin-home"
       style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
     >
-      <CalendarWeekCard title="Month View" idToken={googleIdToken} />
+      <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
 
       {/* Reuses the public home-top-row layout: equal columns and a fixed height
           on desktop, so switching tabs inside the tasks card cannot resize the row. */}
       <div className="home-top-row">
         <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
-        <WeatherCard />
+        <WeatherCard weather={weather} />
       </div>
+
+      <TrainingOfDayCard title="Training of the Day" />
 
       <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
@@ -437,6 +448,8 @@ function SiteLayout({
   const brandMark = EMAIL_INITIALS[googleEmail] ?? 'PF'
   const brandName = googleEmail.split('@')[0] || 'Pasionfruit'
   const [menuOpen, setMenuOpen] = useState(false)
+  // One weather fetch for the whole admin area: the top bar, the weather card, and the month view.
+  const weather = useWeather(isAdmin)
   const [theme, setTheme] = useState<ThemeMode>(() => getInitialTheme())
   const [isOnline, setIsOnline] = useState(() =>
     typeof navigator === 'undefined' ? true : navigator.onLine,
@@ -485,6 +498,11 @@ function SiteLayout({
         {isAdmin ? <AdminNav /> : null}
 
         <div className="topbar-actions">
+          {isAdmin && weather.data ? (
+            <span className="topbar-temperature" title="Current temperature">
+              {Math.round(weather.data.current.temperature)}°
+            </span>
+          ) : null}
           <button
             type="button"
             className="theme-toggle"
@@ -560,7 +578,7 @@ function SiteLayout({
             navigating anywhere else remounts a clean boundary automatically —
             no more needing a hard refresh to recover. */}
         <RouteErrorBoundary key={location.pathname}>
-          <Outlet />
+          <Outlet context={weather} />
         </RouteErrorBoundary>
       </main>
 
@@ -813,57 +831,39 @@ function TodoistTasksCard({
   const todoistConfigured = isTodoistConfigured()
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const canEditTodoist = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
-  const canViewOriginalTabs = shouldUseAdminProfile(googleEmail)
-  const [view, setView] = useState<'training' | 'todoist'>('training')
   const [rows, setRows] = useState<TodoistTask[]>([])
-  const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
-  const [garminRows, setGarminRows] = useState<GarminHealthRecord[]>([])
-  const [garminError, setGarminError] = useState('')
-  const [isDailyLoading, setIsDailyLoading] = useState(true)
-  const [isRefreshingDaily, setIsRefreshingDaily] = useState(false)
+  // Tomorrow's tasks load on first selection, so the card's first read stays today-only.
+  const [day, setDay] = useState<'today' | 'tomorrow'>('today')
+  const [tomorrowRows, setTomorrowRows] = useState<TodoistTask[]>([])
+  const [isLoadingTomorrow, setIsLoadingTomorrow] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
 
-  const todayKey = toDateOnlyKey(new Date().toISOString())
-
-  const todaysTrainingRecord = useMemo(
-    () => trainingRows.find((row) => toDateOnlyKey(row.date) === todayKey),
-    [trainingRows, todayKey],
-  )
-
-  /*
-   * Completion is whatever Garmin recorded today, not a box ticked here. The
-   * sheet only advances when the desktop sync runs, so refreshing re-reads it
-   * but cannot make the watch's newest activity appear any sooner.
-   */
-  const todaysWorkouts = useMemo(
-    () =>
-      pairPlanWithGarmin(
-        todaysTrainingRecord,
-        garminRows.filter((row) => String(row.date ?? '').slice(0, 10) === todayKey),
-      ),
-    [todaysTrainingRecord, garminRows, todayKey],
-  )
-
   const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
   const summaryTodayCount = rows.length - summaryOverdueCount
+  const shownRows = day === 'today' ? rows : tomorrowRows
 
-  /** A failed read keeps what is already on screen rather than blanking it. */
-  async function loadDailyData() {
-    const [training, garmin] = await Promise.allSettled([getTrainingRecords(), getGarminHealth()])
-    if (training.status === 'fulfilled') setTrainingRows(training.value)
-    if (garmin.status === 'fulfilled') setGarminRows(garmin.value)
-    setGarminError(garmin.status === 'rejected' ? 'Could not load Garmin activities.' : '')
-    setIsDailyLoading(false)
+  async function loadTomorrow() {
+    setIsLoadingTomorrow(true)
+    try {
+      const all = await getActiveTasks()
+      setTomorrowRows(all.filter((task) => dueDateKey(task) === tomorrowKey()))
+      setWriteError('')
+    } catch (error) {
+      setTomorrowRows([])
+      setWriteError(error instanceof Error ? error.message : 'Unable to load tomorrow’s tasks')
+    } finally {
+      setIsLoadingTomorrow(false)
+    }
   }
 
-  async function handleRefreshDaily() {
-    if (isRefreshingDaily) return
-    setIsRefreshingDaily(true)
-    await loadDailyData()
-    setIsRefreshingDaily(false)
+  function selectDay(next: 'today' | 'tomorrow') {
+    setDay(next)
+    if (next === 'tomorrow' && todoistConfigured) {
+      void loadTomorrow()
+    }
   }
 
   async function loadTasks() {
@@ -880,8 +880,6 @@ function TodoistTasksCard({
   }
 
   useEffect(() => {
-    void loadDailyData()
-
     if (!todoistConfigured) {
       setRows([])
       setIsLoading(false)
@@ -901,7 +899,7 @@ function TodoistTasksCard({
     setWriteError('')
     try {
       await closeTask(task.id)
-      await loadTasks()
+      await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to mark task complete')
     } finally {
@@ -934,126 +932,60 @@ function TodoistTasksCard({
       </div>
 
       <div className="home-todoist-collapsible">
-          <div className="experience-toggle" role="tablist" aria-label="Tasks of the Day filter">
-            {canViewOriginalTabs ? (
+          <div className="experience-toggle todoist-day-toggle" role="tablist" aria-label="Tasks by day">
+            {(['today', 'tomorrow'] as const).map((id) => (
               <button
+                key={id}
                 type="button"
                 role="tab"
-                aria-label="Todoist"
-                aria-selected={view === 'todoist'}
-                className={`experience-toggle-btn ${view === 'todoist' ? 'active' : ''}`}
-                onClick={() => setView('todoist')}
+                aria-selected={day === id}
+                className={`experience-toggle-btn ${day === id ? 'active' : ''}`}
+                onClick={() => selectDay(id)}
               >
-                <SquareCheck size={18} />
+                {id === 'today' ? 'Today' : 'Tomorrow'}
               </button>
-            ) : null}
-            <button
-              type="button"
-              role="tab"
-              aria-label="Training"
-              aria-selected={view === 'training'}
-              className={`experience-toggle-btn ${view === 'training' ? 'active' : ''}`}
-              onClick={() => setView('training')}
-            >
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="miter" aria-hidden="true">
-                <circle cx="12" cy="4" r="2.5"/>
-                <polyline points="5,21 5,9 12,15 19,9 19,21"/>
-              </svg>
-            </button>
+            ))}
           </div>
 
-          {view === 'training' ? (
-            <div className="workout-of-day-heading">
-              <p className="sheets-meta">Workout(s) of the Day</p>
-              <button
-                type="button"
-                className="section-collapse-btn"
-                onClick={() => void handleRefreshDaily()}
-                disabled={isDailyLoading || isRefreshingDaily}
-                aria-label="Refresh from Garmin"
-                title="Refresh from Garmin"
-              >
-                <RefreshCw size={14} aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
+          <p className="sheets-meta">
+            {day === 'today' ? 'Scope: Today + overdue tasks from Todoist.' : 'Scope: Tasks due tomorrow.'}
+          </p>
 
-          {view === 'todoist' ? <p className="sheets-meta">Scope: Today + overdue tasks from Todoist.</p> : null}
-
-          {view === 'training' && isDailyLoading ? (
-            <p className="sheets-meta">Loading tasks...</p>
-          ) : null}
-
-          {view === 'training' && !isDailyLoading ? (
-            todaysWorkouts.planned.length > 0 || todaysWorkouts.unplanned.length > 0 ? (
-              <div className="study-today-shell">
-                <table className="study-today-table">
-                  <thead>
-                    <tr>
-                      <th>Workout</th>
-                      <th>Completed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {todaysWorkouts.planned.map(({ workout, isPlanned, activity }, index) => (
-                      <tr key={index === 0 ? 'morning' : 'evening'}>
-                        <td><WorkoutText value={workout} empty={index === 0 ? 'Morning —' : 'Evening —'} /></td>
-                        <td className="study-complete-cell">
-                          {activity ? (
-                            <span><Check size={12} aria-hidden="true" /> {describeGarminActivity(activity)}</span>
-                          ) : (
-                            <span>{isPlanned ? 'Not yet' : '—'}</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                    {todaysWorkouts.unplanned.map((activity, index) => (
-                      <tr key={activity.activity_id || `unplanned-${index}`}>
-                        <td className="sheets-meta">Unplanned</td>
-                        <td className="study-complete-cell">
-                          <span><Check size={12} aria-hidden="true" /> {describeGarminActivity(activity)}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="sheets-meta">No workout scheduled for today.</p>
-            )
-          ) : null}
-
-          {view === 'training' && !isDailyLoading ? (
-            <p className="sheets-meta">Completed is read from Garmin, which syncs at 9 AM and 9 PM.</p>
-          ) : null}
-
-          {view === 'training' && garminError ? <p className="sheets-error">{garminError}</p> : null}
-
-          {view === 'todoist' && !todoistConfigured ? (
+          {!todoistConfigured ? (
             <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
           ) : null}
 
-          {view === 'todoist' && todoistConfigured && isLoading ? <p className="sheets-meta">Loading Todoist tasks...</p> : null}
+          {todoistConfigured && isLoading ? <p className="sheets-meta">Loading Todoist tasks...</p> : null}
 
-          {view === 'todoist' && !canEditTodoist ? (
+          {!canEditTodoist ? (
             <p className="sheets-meta">
               Edit access restricted to admin.
             </p>
           ) : null}
 
-          {view === 'todoist' && todoistConfigured && !isLoading ? (
+          {todoistConfigured && day === 'tomorrow' && isLoadingTomorrow ? (
+            <p className="sheets-meta">Loading tomorrow’s tasks...</p>
+          ) : null}
+
+          {todoistConfigured && (day === 'today' ? !isLoading : !isLoadingTomorrow) ? (
             <div className="todoist-summary">
               <p className="sheets-meta">
-                {summaryOverdueCount > 0 ? (
-                  <span className="todoist-summary-alert">{summaryOverdueCount} overdue</span>
-                ) : null}
-                {summaryOverdueCount > 0 ? ' · ' : ''}
-                {summaryTodayCount} due today
+                {day === 'today' ? (
+                  <>
+                    {summaryOverdueCount > 0 ? (
+                      <span className="todoist-summary-alert">{summaryOverdueCount} overdue</span>
+                    ) : null}
+                    {summaryOverdueCount > 0 ? ' · ' : ''}
+                    {summaryTodayCount} due today
+                  </>
+                ) : (
+                  <>{tomorrowRows.length} due tomorrow</>
+                )}
               </p>
 
-              {rows.length > 0 ? (
+              {shownRows.length > 0 ? (
                 <div className="todoist-task-list">
-                  {rows.slice(0, SUMMARY_TASK_LIMIT).map((row) => (
+                  {shownRows.slice(0, SUMMARY_TASK_LIMIT).map((row) => (
                     <div
                       key={`summary-${row.id}`}
                       className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}`}
@@ -1078,11 +1010,13 @@ function TodoistTasksCard({
                   ))}
                 </div>
               ) : (
-                <p className="sheets-meta">No tasks due today or overdue.</p>
+                <p className="sheets-meta">
+                  {day === 'today' ? 'No tasks due today or overdue.' : 'Nothing due tomorrow.'}
+                </p>
               )}
 
-              {rows.length > SUMMARY_TASK_LIMIT ? (
-                <p className="sheets-meta">+{rows.length - SUMMARY_TASK_LIMIT} more</p>
+              {shownRows.length > SUMMARY_TASK_LIMIT ? (
+                <p className="sheets-meta">+{shownRows.length - SUMMARY_TASK_LIMIT} more</p>
               ) : null}
 
               <Link to="/tasks" className="todoist-summary-link">
@@ -1091,7 +1025,7 @@ function TodoistTasksCard({
             </div>
           ) : null}
 
-          {view === 'todoist' && todoistConfigured && !isLoading && rows.length === 0 && !canEditTodoist && !writeError ? (
+          {todoistConfigured && !isLoading && rows.length === 0 && !canEditTodoist && !writeError ? (
             <p className="sheets-meta">No tasks due today or overdue.</p>
           ) : null}
 
@@ -1324,37 +1258,6 @@ function toLocalDateTimeInputValue(date: Date) {
   return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
-function parseTrainingDate(value?: string) {
-  if (!value) {
-    return null
-  }
-
-  /*
-   * A bare 'YYYY-MM-DD' is parsed by `new Date()` as UTC midnight, which in any
-   * negative-offset zone lands on the previous day locally — putting every
-   * contribution tile one day early, in the wrong weekday column. Date-only
-   * strings are calendar dates, so build them in local time.
-   */
-  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim())
-  if (dateOnly) {
-    return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
-  }
-
-  const parsed = new Date(value)
-  if (Number.isNaN(parsed.getTime())) {
-    return null
-  }
-
-  return parsed
-}
-
-function isRestDayWorkout(value?: string) {
-  if (!value) {
-    return false
-  }
-
-  return value.trim().toLowerCase() === 'rest day'
-}
 
 /**
  * Collapse Garmin activity rows into one record per day so the contribution
@@ -1386,43 +1289,6 @@ function garminToTrainingRows(rows: GarminHealthRecord[]): TrainingRecord[] {
   })
 }
 
-/** "Pool Swim · 30 min" — how the log and the daily card name an activity. */
-function describeGarminActivity(row: GarminHealthRecord) {
-  const name = (row.title || row.activity_type || 'Activity').trim()
-  const minutes = Number(row.duration_min)
-  return Number.isFinite(minutes) && minutes > 0 ? `${name} · ${Math.round(minutes)} min` : name
-}
-
-/**
- * Orders a day's activities by when they happened. Garmin's activity ids rise
- * over time; rows ingested before the id column existed have none, and keep
- * their sheet order after the ones that do.
- */
-function byGarminStartOrder(a: GarminHealthRecord, b: GarminHealthRecord) {
-  const rank = (row: GarminHealthRecord) => (row.activity_id ? Number(row.activity_id) : Number.POSITIVE_INFINITY)
-  const [rankA, rankB] = [rank(a), rank(b)]
-  return rankA === rankB ? 0 : rankA < rankB ? -1 : 1
-}
-
-type PlannedWorkout = { workout: string; isPlanned: boolean; activity?: GarminHealthRecord }
-
-/**
- * Today's plan beside what Garmin recorded. Activities fill the planned slots
- * in the order they happened; an empty slot or a rest day takes none, so an
- * evening session is not spent on a morning with nothing planned. Activities
- * beyond the plan come back as `unplanned`.
- */
-function pairPlanWithGarmin(plan: TrainingRecord | undefined, activities: GarminHealthRecord[]) {
-  const unclaimed = [...activities].sort(byGarminStartOrder)
-  const planned: PlannedWorkout[] = plan
-    ? [plan.morning_workout ?? '', plan.evening_workout ?? ''].map((workout) => {
-        const isPlanned = Boolean(workout.trim()) && !isRestDayWorkout(workout)
-        return { workout, isPlanned, activity: isPlanned ? unclaimed.shift() : undefined }
-      })
-    : []
-
-  return { planned, unplanned: unclaimed }
-}
 
 function getTrainingTileLevel(row: TrainingRecord) {
   const completedCount = Number(row.completed_morning) + Number(row.completed_evening)
@@ -2297,24 +2163,6 @@ function ExperienceRow({
   )
 }
 
-function toDateOnlyKey(value?: string) {
-  if (!value) {
-    return ''
-  }
-
-  /*
-   * Must parse the same way the grid does. `new Date('2026-08-02')` is UTC
-   * midnight, which in a negative-offset zone is the previous day locally — so
-   * a record keyed here landed one slot earlier than the tile that rendered it,
-   * leaving the real day padded and the record duplicated a day early.
-   */
-  const parsed = parseTrainingDate(value)
-  if (!parsed) {
-    return ''
-  }
-
-  return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`
-}
 
 Chart.register(CategoryScale, LinearScale, LineController, LineElement, PointElement, Filler, Tooltip, TimeScale)
 

@@ -6,6 +6,18 @@ import userEvent from '@testing-library/user-event'
 // Geolocation is absent in jsdom, so the card settles into its error state —
 // enough to exercise the always-present header and the collapse toggle.
 import { WeatherCard } from './WeatherCard'
+import type { WeatherHook } from './useWeather'
+
+const noWeather: WeatherHook = {
+  status: 'error',
+  coords: null,
+  place: '',
+  data: null,
+  aqi: null,
+  error: '',
+  refresh: () => {},
+  retry: () => {},
+}
 
 afterEach(() => {
   cleanup()
@@ -15,7 +27,7 @@ afterEach(() => {
 describe('WeatherCard collapse toggle', () => {
   it('toggles the collapsed state (mobile affordance)', async () => {
     const user = userEvent.setup()
-    render(<WeatherCard />)
+    render(<WeatherCard weather={noWeather} />)
 
     // Starts collapsed so it doesn't dominate a phone screen.
     const expandToggle = screen.getByRole('button', { name: 'Expand weather' })
