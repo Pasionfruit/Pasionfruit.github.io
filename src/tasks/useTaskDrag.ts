@@ -75,6 +75,7 @@ export function useTaskDrag({ enabled, canNestUnder, onDrop }: UseTaskDragOption
         bottom: itemRect.bottom,
         rowTop: rowRect.top,
         rowBottom: rowRect.bottom,
+        rowLeft: rowRect.left,
       }
     })
   }, [])
@@ -159,7 +160,7 @@ export function useTaskDrag({ enabled, canNestUnder, onDrop }: UseTaskDragOption
 
       event.preventDefault()
       const dragId = s.dragId
-      const next = resolveDropTarget(rowBoxes(), event.clientY, dragId, (targetId, targetDepth) =>
+      const next = resolveDropTarget(rowBoxes(), event.clientX, event.clientY, dragId, (targetId, targetDepth) =>
         optionsRef.current.canNestUnder(dragId, targetId, targetDepth),
       )
       if (JSON.stringify(next) !== JSON.stringify(s.drop)) {

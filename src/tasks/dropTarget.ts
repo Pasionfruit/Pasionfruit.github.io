@@ -10,13 +10,22 @@ export type DropRowBox = {
   bottom: number
   rowTop: number
   rowBottom: number
+  /** Left edge of the task's own row. */
+  rowLeft: number
 }
 
-/** The middle share of a task's own row: dropping here nests, the edges insert between top-level rows. */
+/** The middle share of a task's own row, vertically, where a nest can happen. */
 export const NEST_BAND = 0.3
+
+/**
+ * How far right of a row's left edge the pointer must be to nest under it. Without
+ * this, a plain reorder dropped over a task's middle would nest instead.
+ */
+export const NEST_INDENT_PX = 48
 
 export function resolveDropTarget(
   rows: DropRowBox[],
+  x: number,
   y: number,
   draggingId: string,
   canNestUnder: (targetId: string, targetDepth: number) => boolean,
@@ -24,7 +33,8 @@ export function resolveDropTarget(
   for (const row of rows) {
     if (row.id === draggingId || !canNestUnder(row.id, row.depth)) continue
     const inset = (row.rowBottom - row.rowTop) * NEST_BAND
-    if (y > row.rowTop + inset && y < row.rowBottom - inset) {
+    const indented = x >= row.rowLeft + NEST_INDENT_PX
+    if (indented && y > row.rowTop + inset && y < row.rowBottom - inset) {
       return { kind: 'nest', parentId: row.id }
     }
   }
