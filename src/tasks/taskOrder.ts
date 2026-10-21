@@ -4,6 +4,11 @@
 
 const KEY_PREFIX = 'todoist-order:'
 
+/** Saved order key for one parent's subtasks; shared by every list that shows that parent. */
+export function subtaskOrderKey(parentId: string): string {
+  return `subtasks:${parentId}`
+}
+
 export function getSavedOrder(orderKey: string): string[] {
   try {
     const raw = window.localStorage.getItem(KEY_PREFIX + orderKey)

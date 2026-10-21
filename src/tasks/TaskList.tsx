@@ -4,7 +4,7 @@ import { buildTaskTree, descendantIds, MAX_TASK_LEVELS, subtreeHeight } from './
 import { useTaskDrag } from './useTaskDrag'
 import type { DropTarget } from './dropTarget'
 import { getCollapsedIds, setTaskCollapsed } from './collapsedTasks'
-import { applySavedOrder, arrayMove, saveOrder } from './taskOrder'
+import { applySavedOrder, arrayMove, saveOrder, subtaskOrderKey } from './taskOrder'
 import { addDaysToKey, todayKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
 import type { TodoistStore } from './useTodoistData'
@@ -43,6 +43,10 @@ export function TaskList({
     if (orderKey) {
       tree.roots = applySavedOrder(tree.roots, orderKey)
     }
+    // Each parent keeps its own subtask order, saved on this device, whichever list shows it.
+    for (const parentId of [...tree.childrenOf.keys()]) {
+      tree.childrenOf.set(parentId, applySavedOrder(tree.childrenOf.get(parentId) ?? [], subtaskOrderKey(parentId)))
+    }
     return tree
     // orderVersion is intentionally a dependency: it re-applies saved order.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,6 +78,16 @@ export function TaskList({
         return
       }
 
+      if (drop.kind === 'sibling') {
+        const siblingIds = (childrenOf.get(drop.parentId) ?? [])
+          .map((sibling) => sibling.id)
+          .filter((id) => id !== taskId)
+        siblingIds.splice(drop.index, 0, taskId)
+        saveOrder(subtaskOrderKey(drop.parentId), siblingIds)
+        setOrderVersion((version) => version + 1)
+        return
+      }
+
       if (task.parent_id) {
         // Lifting a subtask out: it becomes a top-level task at the drop slot.
         if (orderKey) {
@@ -98,7 +112,7 @@ export function TaskList({
       saveOrder(orderKey, arrayMove(roots.map((root) => root.id), from, to))
       setOrderVersion((version) => version + 1)
     },
-    [taskById, orderKey, roots, store],
+    [taskById, orderKey, roots, childrenOf, store],
   )
 
   // A task may nest under a visible task only if it stays inside the level limit and
@@ -127,6 +141,7 @@ export function TaskList({
   const dragIsTopLevel = dragRootIndex >= 0
   const gapIndex = drop?.kind === 'gap' ? drop.index : null
   const nestTargetId = drop?.kind === 'nest' ? drop.parentId : null
+  const siblingDrop = drop?.kind === 'sibling' ? drop : null
 
   return (
     <div
@@ -154,6 +169,7 @@ export function TaskList({
               rootIndex={index}
               draggingId={draggingId}
               nestTargetId={nestTargetId}
+              siblingDrop={siblingDrop}
               collapsedIds={collapsedIds}
               onToggleCollapsed={toggleCollapsed}
               onEditToggle={onEditToggle}

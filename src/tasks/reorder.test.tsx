@@ -27,18 +27,22 @@ beforeEach(() => {
 })
 afterEach(() => { cleanup(); vi.restoreAllMocks() })
 
-// Fake layout: each top-level row is 60px tall, starting at y=0.
+// Fake layout: every visible task row is 60px tall, stacked in document order. A task's
+// block also covers its visible subtasks, as on screen.
+const ROW = 60
 function fakeLayout() {
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-    const items = Array.from(document.querySelectorAll('.task-item[data-task-id]')) as HTMLElement[]
-    const roots = items.filter((el) => el.dataset.depth === '0')
-    const rootIndex = roots.indexOf(this.closest('.task-item[data-depth="0"]') as HTMLElement)
-    const top = rootIndex >= 0 ? rootIndex * 60 : 0
+    const items = Array.from(document.querySelectorAll<HTMLElement>('.task-item[data-task-id]'))
+    const item = this.closest<HTMLElement>('.task-item[data-task-id]')
+    const index = item ? items.indexOf(item) : -1
+    const top = index >= 0 ? index * ROW : 0
+    const depth = Number(item?.dataset.depth ?? 0)
+    let end = index + 1
+    while (index >= 0 && end < items.length && Number(items[end].dataset.depth) > depth) end += 1
+    const blockBottom = index >= 0 ? top + (end - index) * ROW : 0
     const isRow = this.classList.contains('task-row')
-    const isItem = this.classList.contains('task-item')
-    const h = rootIndex >= 0 ? 60 : 0
-    const y = isRow ? top : top
-    return { top: y, bottom: y + (isItem ? h : h), left: 0, right: 300, width: 300, height: h, x: 0, y, toJSON() { return {} } } as DOMRect
+    const bottom = isRow ? top + ROW : blockBottom
+    return { top, bottom, left: 0, right: 300, width: 300, height: bottom - top, x: 0, y: top, toJSON() { return {} } } as DOMRect
   })
 }
 
@@ -81,6 +85,33 @@ describe('reorder within a section', () => {
     fireEvent.pointerMove(list, { pointerId: 2, clientX: 5, clientY: 90, pointerType: 'mouse' })
     fireEvent.pointerUp(list, { pointerId: 2, clientX: 5, clientY: 90, pointerType: 'mouse' })
     expect(order()).toEqual(['Beta', 'Alpha', 'Gamma'])
+    expect(mocks.moveTask).not.toHaveBeenCalled()
+  })
+
+  it('reorders subtasks among their siblings and saves the order per parent', async () => {
+    window.localStorage.clear()
+    mocks.getActiveTasks.mockResolvedValue([
+      { ...base, id: 'P', content: 'Alpha' },
+      { ...base, id: 'c1', parent_id: 'P', content: 'Child one' },
+      { ...base, id: 'c2', parent_id: 'P', content: 'Child two' },
+      { ...base, id: 'Q', content: 'Beta' },
+    ])
+    fakeLayout()
+    await open()
+    const block = screen.getByText('Alpha').closest('.task-item') as HTMLElement
+    const subtaskTitles = () =>
+      Array.from(block.querySelectorAll('.task-subtasks > .task-item > .task-row .task-title')).map((el) => el.textContent)
+    expect(subtaskTitles()).toEqual(['Child one', 'Child two'])
+
+    const list = screen.getByText('Alpha').closest('.task-list') as HTMLElement
+    const grip = screen.getByText('Child two').closest('.task-item')!.querySelector('.task-drag-handle') as HTMLElement
+    fireEvent.pointerDown(grip, { pointerId: 3, clientX: 0, clientY: 130, pointerType: 'mouse', button: 0 })
+    // Upper half of "Child one": a plain drop between siblings, not a nest.
+    fireEvent.pointerMove(list, { pointerId: 3, clientX: 5, clientY: 70, pointerType: 'mouse' })
+    fireEvent.pointerUp(list, { pointerId: 3, clientX: 5, clientY: 70, pointerType: 'mouse' })
+
+    expect(subtaskTitles()).toEqual(['Child two', 'Child one'])
+    expect(JSON.parse(window.localStorage.getItem('todoist-order:subtasks:P') ?? '[]')).toEqual(['c2', 'c1'])
     expect(mocks.moveTask).not.toHaveBeenCalled()
   })
 })

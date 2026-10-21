@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { ChevronDown, ChevronRight, GripVertical, RotateCw } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
@@ -143,6 +143,8 @@ export type TaskRowProps = {
   /** The task being dragged, and the task a drag would nest under. */
   draggingId?: string | null
   nestTargetId?: string | null
+  /** Where a dragged subtask would land among this task's subtasks, when it is in this block. */
+  siblingDrop?: { parentId: string; index: number } | null
   /** Task ids whose subtasks are folded away. */
   collapsedIds?: Set<string>
   onToggleCollapsed?: (taskId: string) => void
@@ -167,6 +169,7 @@ export function TaskRow({
   rootIndex,
   draggingId = null,
   nestTargetId = null,
+  siblingDrop = null,
   collapsedIds,
   onToggleCollapsed,
   onEditToggle,
@@ -185,6 +188,11 @@ export function TaskRow({
   const subtasks = childrenOf?.get(task.id) ?? []
   const hasSubtasks = subtasks.length > 0
   const isCollapsed = collapsedIds?.has(task.id) ?? false
+  // The drop line falls before the subtask at the slot, counting the dragged subtask out.
+  const visibleSubtasks = subtasks.filter((subtask) => subtask.id !== draggingId)
+  const slot = siblingDrop && siblingDrop.parentId === task.id ? siblingDrop.index : -1
+  const lineBeforeId = slot >= 0 && slot < visibleSubtasks.length ? visibleSubtasks[slot].id : null
+  const lineAtEnd = slot >= 0 && slot >= visibleSubtasks.length
 
   return (
     <div
@@ -294,29 +302,33 @@ export function TaskRow({
       {hasSubtasks && !isCollapsed ? (
         <div className="task-subtasks">
           {subtasks.map((subtask) => (
-            <TaskRow
-              key={subtask.id}
-              task={subtask}
-              childrenOf={childrenOf}
-              collapsedIds={collapsedIds}
-              onToggleCollapsed={onToggleCollapsed}
-              projectName={projectName}
-              canEdit={canEdit}
-              isWriting={isWriting}
-              editingTaskId={editingTaskId}
-              showDate={showDate}
-              showProject={false}
-              depth={depth + 1}
-              canReorder={canReorder}
-              draggingId={draggingId}
-              nestTargetId={nestTargetId}
-              onEditToggle={onEditToggle}
-              onComplete={onComplete}
-              onSave={onSave}
-              onReschedule={onReschedule}
-              onDelete={onDelete}
-            />
+            <Fragment key={subtask.id}>
+              {lineBeforeId === subtask.id ? <div className="task-drop-line" aria-hidden="true" /> : null}
+              <TaskRow
+                task={subtask}
+                childrenOf={childrenOf}
+                collapsedIds={collapsedIds}
+                onToggleCollapsed={onToggleCollapsed}
+                projectName={projectName}
+                canEdit={canEdit}
+                isWriting={isWriting}
+                editingTaskId={editingTaskId}
+                showDate={showDate}
+                showProject={false}
+                depth={depth + 1}
+                canReorder={canReorder}
+                draggingId={draggingId}
+                nestTargetId={nestTargetId}
+                siblingDrop={siblingDrop}
+                onEditToggle={onEditToggle}
+                onComplete={onComplete}
+                onSave={onSave}
+                onReschedule={onReschedule}
+                onDelete={onDelete}
+              />
+            </Fragment>
           ))}
+          {lineAtEnd ? <div className="task-drop-line" aria-hidden="true" /> : null}
         </div>
       ) : null}
     </div>

@@ -76,6 +76,7 @@ export function useTaskDrag({ enabled, canNestUnder, onDrop }: UseTaskDragOption
         rowTop: rowRect.top,
         rowBottom: rowRect.bottom,
         rowLeft: rowRect.left,
+        parentId: item.dataset.parentId ?? null,
       }
     })
   }, [])
