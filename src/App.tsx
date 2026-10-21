@@ -75,7 +75,6 @@ import {
 } from './admin/training/activities'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
-import { WeatherCard } from './weather/WeatherCard'
 import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
@@ -372,10 +371,8 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
           on desktop, so switching tabs inside the tasks card cannot resize the row. */}
       <div className="home-top-row">
         <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
-        <WeatherCard weather={weather} />
+        <TrainingOfDayCard title="Training of the Day" />
       </div>
-
-      <TrainingOfDayCard title="Training of the Day" />
 
       <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
