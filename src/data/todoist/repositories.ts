@@ -4,6 +4,7 @@ import type {
   TodoistProject,
   TodoistSection,
   TodoistTask,
+  TodoistTaskDestination,
   TodoistTaskDraft,
   TodoistTaskUpdate,
 } from './types'
@@ -242,6 +243,23 @@ export async function rescheduleTask(taskId: string, dueDate: string) {
   await todoistRequest<unknown>(`/tasks/${taskId}`, {
     method: 'POST',
     body: JSON.stringify({ due_date: dueDate || null }),
+  })
+}
+
+/**
+ * Moves a task under another task, or out to the top level. The API takes one
+ * of parent_id, section_id or project_id, so the first one set wins.
+ */
+export async function moveTask(taskId: string, destination: TodoistTaskDestination) {
+  const target = destination.parentId
+    ? { parent_id: destination.parentId }
+    : destination.sectionId
+      ? { section_id: destination.sectionId }
+      : { project_id: destination.projectId }
+
+  await todoistRequest<unknown>(`/tasks/${taskId}/move`, {
+    method: 'POST',
+    body: JSON.stringify(target),
   })
 }
 

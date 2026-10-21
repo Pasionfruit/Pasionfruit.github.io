@@ -44,6 +44,17 @@ export type TodoistTaskUpdate = {
   priority: number
 }
 
+/**
+ * Where a task goes. With a parent it becomes that task's subtask (the project
+ * and section are the parent's). Without one it becomes a top-level task in
+ * the given section, or in the project when there is no section.
+ */
+export type TodoistTaskDestination = {
+  parentId: string | null
+  projectId: string | null
+  sectionId: string | null
+}
+
 export type TodoistTaskDraft = {
   content: string
   description?: string

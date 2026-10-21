@@ -1,36 +1,44 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
+import { resolveDropTarget, type DropTarget, type RootRowBox } from './dropTarget'
 
 // How long a touch must rest on a row before it becomes a drag, and how far the
 // finger may drift in that window before we treat it as a scroll instead.
 const LONG_PRESS_MS = 250
 const MOVE_CANCEL_PX = 10
 
-type UseReorderOptions = {
+type UseTaskDragOptions = {
   enabled: boolean
-  count: number
-  onReorder: (from: number, to: number) => void
+  /** A task with subtasks cannot be nested under another, so it only reorders at the top level. */
+  hasChildren: (taskId: string) => boolean
+  onDrop: (drop: DropTarget, taskId: string) => void
 }
 
 /**
- * Hold-and-drag reordering built on pointer events, so mouse, touch, and pen all
- * flow through one path. A drag begins either immediately from a `.task-drag-handle`
- * grip, or after a {@link LONG_PRESS_MS} press-and-hold anywhere on a touch row.
- * The handlers attach to the list container; each reorderable item is tagged with
- * `data-reorder-index`.
+ * Hold-and-drag for a task list, built on pointer events so mouse, touch, and pen
+ * share one path. Any row can be dragged, from its grip or after a long press on
+ * touch. While dragging, a top-level row's middle band takes the task as a subtask,
+ * and the gaps between top-level rows place it there.
+ *
+ * Rows are found by `data-task-id`; top-level rows also carry `data-root-index`.
  */
-export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
+export function useTaskDrag({ enabled, hasChildren, onDrop }: UseTaskDragOptions) {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [dragIndex, setDragIndex] = useState<number | null>(null)
-  const [overIndex, setOverIndex] = useState<number | null>(null)
+  const optionsRef = useRef({ hasChildren, onDrop })
+  useEffect(() => {
+    optionsRef.current = { hasChildren, onDrop }
+  })
+
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const [drop, setDrop] = useState<DropTarget | null>(null)
 
   const state = useRef({
     pointerId: -1,
     startX: 0,
     startY: 0,
-    startIndex: -1,
-    over: -1,
+    dragId: null as string | null,
     dragging: false,
+    drop: null as DropTarget | null,
     timer: null as ReturnType<typeof setTimeout> | null,
   })
 
@@ -44,40 +52,37 @@ export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
   const resetState = useCallback(() => {
     clearTimer()
     state.current.dragging = false
+    state.current.dragId = null
+    state.current.drop = null
     state.current.pointerId = -1
-    state.current.startIndex = -1
-    state.current.over = -1
-    setDragIndex(null)
-    setOverIndex(null)
+    setDraggingId(null)
+    setDrop(null)
   }, [clearTimer])
 
   useEffect(() => resetState, [resetState])
 
-  const itemElements = useCallback((): HTMLElement[] => {
+  const topLevelBoxes = useCallback((): RootRowBox[] => {
     const container = containerRef.current
     if (!container) return []
-    return Array.from(container.querySelectorAll<HTMLElement>('[data-reorder-index]'))
+    return Array.from(container.querySelectorAll<HTMLElement>('.task-item[data-root-index]')).map((item) => {
+      const itemRect = item.getBoundingClientRect()
+      const row = item.querySelector<HTMLElement>(':scope > .task-row')
+      const rowRect = (row ?? item).getBoundingClientRect()
+      return {
+        id: item.dataset.taskId ?? '',
+        top: itemRect.top,
+        bottom: itemRect.bottom,
+        rowTop: rowRect.top,
+        rowBottom: rowRect.bottom,
+      }
+    })
   }, [])
 
-  const insertIndexForY = useCallback(
-    (clientY: number): number => {
-      const els = itemElements()
-      for (let i = 0; i < els.length; i += 1) {
-        const rect = els[i].getBoundingClientRect()
-        if (clientY < rect.top + rect.height / 2) {
-          return i
-        }
-      }
-      return els.length
-    },
-    [itemElements],
-  )
-
-  const beginDrag = useCallback((index: number, pointerId: number) => {
+  const beginDrag = useCallback((taskId: string, pointerId: number) => {
     state.current.dragging = true
-    state.current.over = index
-    setDragIndex(index)
-    setOverIndex(index)
+    state.current.dragId = taskId
+    state.current.drop = null
+    setDraggingId(taskId)
     try {
       containerRef.current?.setPointerCapture(pointerId)
     } catch {
@@ -88,7 +93,7 @@ export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
     }
   }, [])
 
-  // Swallow the click that fires right after a drag so a reorder doesn't also
+  // Swallow the click that fires right after a drag so a drop doesn't also
   // open the row's inline editor.
   const suppressNextClick = useCallback(() => {
     const handler = (event: MouseEvent) => {
@@ -108,28 +113,26 @@ export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
       if (target.closest('input, textarea, select, a, .task-edit')) return
 
       const isGrip = Boolean(target.closest('.task-drag-handle'))
-      // Off the grip, ignore other buttons (checkbox, quick-action) so taps work.
+      // Off the grip, ignore other buttons (checkbox, chevron, quick-action) so taps work.
       if (!isGrip && target.closest('button')) return
 
-      const itemEl = target.closest<HTMLElement>('[data-reorder-index]')
+      const itemEl = target.closest<HTMLElement>('.task-item[data-task-id]')
       if (!itemEl || !containerRef.current?.contains(itemEl)) return
-
-      const index = Number(itemEl.dataset.reorderIndex)
-      if (Number.isNaN(index)) return
+      const taskId = itemEl.dataset.taskId
+      if (!taskId) return
 
       state.current.pointerId = event.pointerId
       state.current.startX = event.clientX
       state.current.startY = event.clientY
-      state.current.startIndex = index
 
       if (isGrip) {
         event.preventDefault()
-        beginDrag(index, event.pointerId)
+        beginDrag(taskId, event.pointerId)
       } else if (event.pointerType === 'touch') {
         clearTimer()
         state.current.timer = setTimeout(() => {
           state.current.timer = null
-          beginDrag(index, event.pointerId)
+          beginDrag(taskId, event.pointerId)
         }, LONG_PRESS_MS)
       }
     },
@@ -141,7 +144,7 @@ export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
       const s = state.current
       if (s.pointerId !== event.pointerId) return
 
-      if (!s.dragging) {
+      if (!s.dragging || s.dragId === null) {
         // Still in the press window — a real move means the user is scrolling.
         if (s.timer) {
           const dx = Math.abs(event.clientX - s.startX)
@@ -154,31 +157,31 @@ export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
       }
 
       event.preventDefault()
-      const over = insertIndexForY(event.clientY)
-      if (over !== s.over) {
-        s.over = over
-        setOverIndex(over)
+      const dragId = s.dragId
+      const next = resolveDropTarget(
+        topLevelBoxes(),
+        event.clientY,
+        dragId,
+        !optionsRef.current.hasChildren(dragId),
+      )
+      if (JSON.stringify(next) !== JSON.stringify(s.drop)) {
+        s.drop = next
+        setDrop(next)
       }
     },
-    [clearTimer, insertIndexForY],
+    [clearTimer, topLevelBoxes],
   )
 
   const endGesture = useCallback(
     (commit: boolean) => {
       const s = state.current
-      if (s.dragging && commit) {
-        const from = s.startIndex
-        const insert = s.over
-        // Insert position → array index once the dragged row is pulled out.
-        const to = insert > from ? insert - 1 : insert
-        if (from >= 0 && to >= 0 && to < count && to !== from) {
-          onReorder(from, to)
-        }
+      if (s.dragging && commit && s.dragId !== null && s.drop) {
+        optionsRef.current.onDrop(s.drop, s.dragId)
         suppressNextClick()
       }
       resetState()
     },
-    [count, onReorder, resetState, suppressNextClick],
+    [resetState, suppressNextClick],
   )
 
   const onPointerUp = useCallback(
@@ -199,9 +202,9 @@ export function useReorder({ enabled, count, onReorder }: UseReorderOptions) {
 
   return {
     containerRef,
-    dragIndex,
-    overIndex,
-    isDragging: dragIndex !== null,
+    draggingId,
+    drop,
+    isDragging: draggingId !== null,
     handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel },
   }
 }

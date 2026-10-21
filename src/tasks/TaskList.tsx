@@ -1,7 +1,9 @@
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import { TaskRow } from './TaskRow'
 import { buildTaskTree } from './grouping'
-import { useReorder } from './useReorder'
+import { useTaskDrag } from './useTaskDrag'
+import type { DropTarget } from './dropTarget'
+import { getCollapsedIds, setTaskCollapsed } from './collapsedTasks'
 import { applySavedOrder, arrayMove, saveOrder } from './taskOrder'
 import { addDaysToKey, todayKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
@@ -46,38 +48,86 @@ export function TaskList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks, orderKey, orderVersion])
 
-  const reorderEnabled = canEdit && Boolean(orderKey)
+  const taskById = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks])
 
-  const handleReorder = useCallback(
-    (from: number, to: number) => {
-      if (!orderKey) return
-      const nextIds = arrayMove(roots.map((task) => task.id), from, to)
-      saveOrder(orderKey, nextIds)
-      setOrderVersion((version) => version + 1)
-    },
-    [orderKey, roots],
+  // Folded parents, read once from this device's storage; toggled per task.
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => getCollapsedIds())
+  const toggleCollapsed = useCallback(
+    (taskId: string) => setCollapsedIds(setTaskCollapsed(taskId, !collapsedIds.has(taskId))),
+    [collapsedIds],
   )
 
-  const { containerRef, dragIndex, overIndex, isDragging, handlers } = useReorder({
-    enabled: reorderEnabled,
-    count: roots.length,
-    onReorder: handleReorder,
+  const handleDrop = useCallback(
+    (drop: DropTarget, taskId: string) => {
+      const task = taskById.get(taskId)
+      if (!task) return
+
+      if (drop.kind === 'nest') {
+        // Nesting takes the parent's project and section, as Todoist does.
+        const parent = taskById.get(drop.parentId)
+        if (!parent || parent.id === task.parent_id) return
+        void store.move(taskId, {
+          parentId: parent.id,
+          projectId: parent.project_id ?? null,
+          sectionId: parent.section_id ?? null,
+        })
+        return
+      }
+
+      if (task.parent_id) {
+        // Lifting a subtask out: it becomes a top-level task at the drop slot.
+        if (orderKey) {
+          const ids = roots.map((root) => root.id)
+          ids.splice(drop.index, 0, taskId)
+          saveOrder(orderKey, ids)
+          setOrderVersion((version) => version + 1)
+        }
+        void store.move(taskId, {
+          parentId: null,
+          projectId: task.project_id ?? null,
+          sectionId: task.section_id ?? null,
+        })
+        return
+      }
+
+      // Reordering a top-level task. Without an orderKey the list has no saved order to change.
+      if (!orderKey) return
+      const from = roots.findIndex((root) => root.id === taskId)
+      const to = drop.index > from ? drop.index - 1 : drop.index
+      if (from < 0 || to === from) return
+      saveOrder(orderKey, arrayMove(roots.map((root) => root.id), from, to))
+      setOrderVersion((version) => version + 1)
+    },
+    [taskById, orderKey, roots, store],
+  )
+
+  const dragEnabled = canEdit
+  const { containerRef, draggingId, drop, isDragging, handlers } = useTaskDrag({
+    enabled: dragEnabled,
+    hasChildren: (taskId) => (childrenOf.get(taskId)?.length ?? 0) > 0,
+    onDrop: handleDrop,
   })
 
   if (tasks.length === 0) {
     return <p className="tasks-empty">{emptyMessage}</p>
   }
 
+  // A subtask being dragged has no top-level slot, so it always shows every gap.
+  const dragRootIndex = draggingId ? roots.findIndex((root) => root.id === draggingId) : -1
+  const dragIsTopLevel = dragRootIndex >= 0
+  const gapIndex = drop?.kind === 'gap' ? drop.index : null
+  const nestTargetId = drop?.kind === 'nest' ? drop.parentId : null
+
   return (
     <div
       className={`task-list${isDragging ? ' is-reordering' : ''}`}
       ref={containerRef}
-      {...(reorderEnabled ? handlers : {})}
+      {...(dragEnabled ? handlers : {})}
     >
       {roots.map((task, index) => {
         // Skip the drop line right where the dragged row already sits.
         const showDropLine =
-          isDragging && overIndex === index && dragIndex !== index && dragIndex !== index - 1
+          gapIndex === index && !(dragIsTopLevel && (dragRootIndex === index || dragRootIndex === index - 1))
         return (
           <Fragment key={task.id}>
             {showDropLine ? <div className="task-drop-line" aria-hidden="true" /> : null}
@@ -90,9 +140,12 @@ export function TaskList({
               editingTaskId={editingTaskId}
               showDate={showDate}
               showProject={showProject}
-              canReorder={reorderEnabled}
-              reorderIndex={reorderEnabled ? index : undefined}
-              isDragging={dragIndex === index}
+              canReorder={dragEnabled}
+              rootIndex={index}
+              draggingId={draggingId}
+              nestTargetId={nestTargetId}
+              isCollapsed={collapsedIds.has(task.id)}
+              onToggleCollapsed={toggleCollapsed}
               onEditToggle={onEditToggle}
               onComplete={store.complete}
               onSave={store.save}
@@ -102,7 +155,7 @@ export function TaskList({
           </Fragment>
         )
       })}
-      {isDragging && overIndex === roots.length && dragIndex !== roots.length - 1 ? (
+      {gapIndex === roots.length && !(dragIsTopLevel && dragRootIndex === roots.length - 1) ? (
         <div className="task-drop-line" aria-hidden="true" />
       ) : null}
     </div>

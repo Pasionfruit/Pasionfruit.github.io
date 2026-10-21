@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GripVertical, RotateCw } from 'lucide-react'
+import { ChevronDown, ChevronRight, GripVertical, RotateCw } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
 
@@ -137,8 +137,13 @@ export type TaskRowProps = {
   showProject?: boolean
   depth?: number
   canReorder?: boolean
-  reorderIndex?: number
-  isDragging?: boolean
+  /** Position among the top-level tasks; set only on those, so the drag code can find drop slots. */
+  rootIndex?: number
+  /** The task being dragged, and the task a drag would nest under. */
+  draggingId?: string | null
+  nestTargetId?: string | null
+  isCollapsed?: boolean
+  onToggleCollapsed?: (taskId: string) => void
   onEditToggle: (taskId: string | null) => void
   onComplete: (taskId: string) => void
   onSave: (taskId: string, update: TodoistTaskUpdate) => void
@@ -157,8 +162,11 @@ export function TaskRow({
   showProject = true,
   depth = 0,
   canReorder = false,
-  reorderIndex,
-  isDragging = false,
+  rootIndex,
+  draggingId = null,
+  nestTargetId = null,
+  isCollapsed = false,
+  onToggleCollapsed,
   onEditToggle,
   onComplete,
   onSave,
@@ -166,22 +174,42 @@ export function TaskRow({
   onDelete,
 }: TaskRowProps) {
   const isEditing = editingTaskId === task.id
+  const isDragging = draggingId === task.id
+  const isNestTarget = nestTargetId === task.id
   const dayKey = dueDateKey(task)
   const overdue = isOverdue(task)
   const timeLabel = dueTimeLabel(task)
   const priorityValue = normalizePriority(task.priority)
+  const hasSubtasks = subtasks.length > 0
 
   return (
     <div
       className={`task-item${isDragging ? ' is-dragging' : ''}`}
       data-depth={depth}
-      data-reorder-index={reorderIndex}
+      data-task-id={task.id}
+      data-parent-id={task.parent_id ?? undefined}
+      data-root-index={rootIndex}
     >
-      <div className={`task-row${isEditing ? ' is-editing' : ''}`} data-priority={priorityValue}>
+      <div
+        className={`task-row${isEditing ? ' is-editing' : ''}${isNestTarget ? ' is-nest-target' : ''}`}
+        data-priority={priorityValue}
+      >
         {canReorder ? (
-          <span className="task-drag-handle" aria-hidden="true" title="Drag to reorder">
+          <span className="task-drag-handle" aria-hidden="true" title="Drag to move or nest">
             <GripVertical size={15} />
           </span>
+        ) : null}
+        {hasSubtasks && depth === 0 && onToggleCollapsed ? (
+          <button
+            type="button"
+            className="task-collapse"
+            aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} subtasks of ${task.content}`}
+            title={isCollapsed ? 'Show subtasks' : 'Hide subtasks'}
+            onClick={() => onToggleCollapsed(task.id)}
+          >
+            {isCollapsed ? <ChevronRight size={15} aria-hidden="true" /> : <ChevronDown size={15} aria-hidden="true" />}
+          </button>
         ) : null}
         <button
           type="button"
@@ -213,6 +241,11 @@ export function TaskRow({
               <span className={`task-chip task-date${overdue ? ' is-overdue' : ''}`}>
                 {formatDayLabel(dayKey)}
                 {timeLabel ? ` · ${timeLabel}` : ''}
+              </span>
+            ) : null}
+            {hasSubtasks && isCollapsed ? (
+              <span className="task-chip task-subcount">
+                {subtasks.length} subtask{subtasks.length === 1 ? '' : 's'}
               </span>
             ) : null}
             {task.due?.is_recurring ? (
@@ -254,7 +287,7 @@ export function TaskRow({
         />
       ) : null}
 
-      {subtasks.length > 0 ? (
+      {hasSubtasks && !isCollapsed ? (
         <div className="task-subtasks">
           {subtasks.map((subtask) => (
             <TaskRow
@@ -267,6 +300,9 @@ export function TaskRow({
               showDate={showDate}
               showProject={false}
               depth={depth + 1}
+              canReorder={canReorder}
+              draggingId={draggingId}
+              nestTargetId={nestTargetId}
               onEditToggle={onEditToggle}
               onComplete={onComplete}
               onSave={onSave}

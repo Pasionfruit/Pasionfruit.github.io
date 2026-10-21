@@ -6,6 +6,7 @@ import {
   getActiveTasks,
   getProjects,
   getSections,
+  moveTask,
   rescheduleTask,
   updateTask,
 } from '../data/todoist/repositories'
@@ -13,6 +14,7 @@ import type {
   TodoistProject,
   TodoistSection,
   TodoistTask,
+  TodoistTaskDestination,
   TodoistTaskDraft,
   TodoistTaskUpdate,
 } from '../data/todoist/types'
@@ -218,6 +220,26 @@ export function useTodoistData(enabled: boolean) {
     [load],
   )
 
+  /** Nests a task under another, or lifts it to the top level, with the same placement Todoist applies. */
+  const move = useCallback(
+    (taskId: string, destination: TodoistTaskDestination) =>
+      mutate(
+        (prev) =>
+          prev.map((task) => {
+            if (task.id !== taskId) return task
+            return {
+              ...task,
+              parent_id: destination.parentId,
+              project_id: destination.projectId ?? task.project_id,
+              section_id: destination.sectionId,
+            }
+          }),
+        () => moveTask(taskId, destination),
+        'Unable to move task',
+      ),
+    [mutate],
+  )
+
   const projectsById = useMemo(
     () => new Map(projects.map((project) => [project.id, project])),
     [projects],
@@ -239,6 +261,7 @@ export function useTodoistData(enabled: boolean) {
     save,
     reschedule,
     create,
+    move,
   }
 }
 
