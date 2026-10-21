@@ -6278,3 +6278,15 @@ button svg,
     height: 1rem;
   }
 }
+
+/* Tasks of the Day header: the task manager link sits left of the title. */
+.section-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.todoist-add-form {
+  margin-bottom: 0.5rem;
+}

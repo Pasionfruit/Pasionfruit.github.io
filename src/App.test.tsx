@@ -370,7 +370,8 @@ describe('site sections and dashboards', () => {
 
     // The summary is read-and-complete only; editing lives on /tasks now.
     expect(within(card).queryByPlaceholderText('Task name')).toBeNull()
-    expect(within(card).getByRole('link', { name: /Open all tasks/ })).toBeTruthy()
+    expect(within(card).queryByRole('link', { name: /Open all tasks/ })).toBeNull()
+    expect(within(card).getByRole('button', { name: 'Add task to today' })).toBeTruthy()
 
     await user.click(within(card).getByRole('button', { name: 'Complete: Submit dashboard update' }))
 
@@ -402,6 +403,43 @@ describe('site sections and dashboards', () => {
     expect(within(card).queryByText('Renew insurance')).toBeNull()
     expect(within(card).queryByText('Submit dashboard update')).toBeNull()
     expect(todoistMocks.getActiveTasks).toHaveBeenCalled()
+  })
+
+  it('adds a task due today from the Today view, and one due tomorrow from the Tomorrow view', async () => {
+    const user = userEvent.setup()
+    const pad = (value: number) => String(value).padStart(2, '0')
+    const dateKey = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    renderAdminTasksPage()
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Tasks of the Day card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Add task to today' }))
+    await user.type(within(card).getByRole('textbox', { name: 'New task name' }), 'Pay the electric bill')
+    await user.click(within(card).getByRole('button', { name: 'Add task' }))
+    await waitFor(() => {
+      expect(todoistMocks.createTaskDetailed).toHaveBeenCalledWith({
+        content: 'Pay the electric bill',
+        dueDate: dateKey(today),
+      })
+    })
+
+    await user.click(within(card).getByRole('tab', { name: 'Tomorrow' }))
+    await user.click(within(card).getByRole('button', { name: 'Add task to tomorrow' }))
+    await user.type(within(card).getByRole('textbox', { name: 'New task name' }), 'Call the dentist')
+    await user.click(within(card).getByRole('button', { name: 'Add task' }))
+    await waitFor(() => {
+      expect(todoistMocks.createTaskDetailed).toHaveBeenLastCalledWith({
+        content: 'Call the dentist',
+        dueDate: dateKey(tomorrow),
+      })
+    })
   })
 
   it('blocks Todoist editing for non-authorized account', async () => {

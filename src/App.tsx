@@ -1,5 +1,6 @@
 import React, {
   type CSSProperties,
+  type FormEvent,
   type ReactNode,
   useCallback,
   useEffect,
@@ -15,6 +16,7 @@ import {
   ExternalLink,
   House,
   List,
+  Plus,
   NotebookPen,
   Newspaper,
   Pencil,
@@ -93,7 +95,7 @@ import {
   toDateOnlyKey,
 } from './training/workoutsOfDay'
 import { assignPlanDates, parseWorkoutTable } from './training/workoutPlan'
-import { dueDateKey, formatDayLabel, isOverdue, tomorrowKey } from './data/todoist/dates'
+import { dueDateKey, formatDayLabel, isOverdue, todayKey, tomorrowKey } from './data/todoist/dates'
 import {
   adminDashboards,
   adminDashboardsById,
@@ -123,7 +125,7 @@ import type {
   TrainingRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
-import { closeTask, getActiveTasks, getTasksOfTheDay } from './data/todoist/repositories'
+import { closeTask, createTaskDetailed, getActiveTasks, getTasksOfTheDay } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 import { getServerStatus, startServer } from './minecraft/api'
 
@@ -833,6 +835,8 @@ function TodoistTasksCard({
   const [day, setDay] = useState<'today' | 'tomorrow'>('today')
   const [tomorrowRows, setTomorrowRows] = useState<TodoistTask[]>([])
   const [isLoadingTomorrow, setIsLoadingTomorrow] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+  const [newContent, setNewContent] = useState('')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
@@ -886,6 +890,28 @@ function TodoistTasksCard({
     void loadTasks()
   }, [])
 
+  /** New tasks land on the day being viewed: today's list makes a task due today, tomorrow's one due tomorrow. */
+  async function handleAddTask(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const content = newContent.trim()
+    if (!content || isWriting || !todoistConfigured || !canEditTodoist) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await createTaskDetailed({ content, dueDate: day === 'tomorrow' ? tomorrowKey() : todayKey() })
+      setNewContent('')
+      setIsAdding(false)
+      await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to add task')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   async function handleCompleteTask(task: TodoistTask) {
     if (isWriting || !todoistConfigured || !canEditTodoist) {
       return
@@ -907,12 +933,26 @@ function TodoistTasksCard({
   return (
     <article className={`info-card home-todoist-card sheets-card${isCollapsed ? ' is-collapsed' : ''}`}>
       <div className="section-card-header">
-        <h3>{title}</h3>
-        <div className="section-card-actions">
-          {/* Icon-only, so the names live in aria-label and the hover tooltip. */}
+        <div className="section-card-title-row">
+          {/* Icon-only, so the name lives in aria-label and the hover tooltip. */}
           <Link to="/tasks" className="admin-quick-link" aria-label="Full task manager" title="Full task manager">
             <List size={15} strokeWidth={1.8} aria-hidden="true" />
           </Link>
+          <h3>{title}</h3>
+        </div>
+        <div className="section-card-actions">
+          {todoistConfigured && canEditTodoist ? (
+            <button
+              type="button"
+              className="section-collapse-btn"
+              aria-expanded={isAdding}
+              aria-label={`Add task to ${day === 'tomorrow' ? 'tomorrow' : 'today'}`}
+              title={`Add task to ${day === 'tomorrow' ? 'tomorrow' : 'today'}`}
+              onClick={() => setIsAdding((value) => !value)}
+            >
+              <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          ) : null}
           <button
             type="button"
             className="section-collapse-btn home-todoist-collapse-btn"
@@ -926,6 +966,28 @@ function TodoistTasksCard({
       </div>
 
       <div className="home-todoist-collapsible">
+          {isAdding && todoistConfigured && canEditTodoist ? (
+            <form className="task-add-form todoist-add-form" onSubmit={(event) => void handleAddTask(event)}>
+              <input
+                className="task-input"
+                value={newContent}
+                autoFocus
+                placeholder="Task name"
+                aria-label="New task name"
+                onChange={(event) => setNewContent(event.target.value)}
+              />
+              <div className="task-edit-actions">
+                <span className="sheets-meta">Due {day === 'tomorrow' ? 'tomorrow' : 'today'}</span>
+                <button type="submit" className="task-btn is-primary" disabled={isWriting || !newContent.trim()}>
+                  Add task
+                </button>
+                <button type="button" className="task-btn" onClick={() => setIsAdding(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : null}
+
           <div className="experience-toggle todoist-day-toggle" role="tablist" aria-label="Tasks by day">
             {(['today', 'tomorrow'] as const).map((id) => (
               <button
@@ -1013,9 +1075,6 @@ function TodoistTasksCard({
                 <p className="sheets-meta">+{shownRows.length - SUMMARY_TASK_LIMIT} more</p>
               ) : null}
 
-              <Link to="/tasks" className="todoist-summary-link">
-                Open all tasks →
-              </Link>
             </div>
           ) : null}
 
