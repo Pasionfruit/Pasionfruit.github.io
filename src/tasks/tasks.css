@@ -846,3 +846,29 @@
 .project-rename .task-input {
   flex: 1 1 12rem;
 }
+
+/* Project color picker, shown under the project header. */
+.project-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1 1 100%;
+  padding-bottom: 0.4rem;
+}
+
+.project-swatch {
+  width: 22px;
+  height: 22px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.project-swatch.is-current {
+  border-color: var(--text-strong);
+}
+
+.project-swatch:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

@@ -270,6 +270,13 @@ export async function updateProjectName(projectId: string, name: string) {
   })
 }
 
+export async function updateProjectColor(projectId: string, color: string) {
+  await todoistRequest<unknown>(`/projects/${projectId}`, {
+    method: 'POST',
+    body: JSON.stringify({ color }),
+  })
+}
+
 export async function closeTask(taskId: string) {
   await todoistRequest<unknown>(`/tasks/${taskId}/close`, {
     method: 'POST',

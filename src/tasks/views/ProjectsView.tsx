@@ -69,7 +69,7 @@ export function ProjectsView({
   }
 
   const projectTasks = useMemo(
-    () => (activeProjectId ? tasksByProject.get(activeProjectId) ?? [] : []),
+    () => (activeProjectId ? (tasksByProject.get(activeProjectId) ?? []) : []),
     [tasksByProject, activeProjectId],
   )
   // Subtasks follow their parent into its section, whatever Todoist reports for their own section.
@@ -273,6 +273,7 @@ function ProjectName({
 }) {
   const [isRenaming, setIsRenaming] = useState(false)
   const [draft, setDraft] = useState(project?.name ?? '')
+  const [isPickingColor, setIsPickingColor] = useState(false)
 
   if (!isRenaming || !project) {
     return (
@@ -282,18 +283,55 @@ function ProjectName({
           <span className="tasks-count">{count}</span>
         </h2>
         {canEdit && project ? (
-          <button
-            type="button"
-            className="tasks-section-control"
-            aria-label={`Rename ${project.name}`}
-            title="Rename project"
-            onClick={() => {
-              setDraft(project.name)
-              setIsRenaming(true)
-            }}
-          >
-            <Pencil size={14} aria-hidden="true" />
-          </button>
+          <>
+            <div className="tasks-section-controls">
+              <button
+                type="button"
+                className="tasks-section-control"
+                aria-label={`Rename ${project.name}`}
+                title="Rename project"
+                onClick={() => {
+                  setDraft(project.name)
+                  setIsRenaming(true)
+                }}
+              >
+                <Pencil size={14} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="tasks-section-control"
+                aria-label={`Change color of ${project.name}`}
+                aria-expanded={isPickingColor}
+                title="Change color"
+                onClick={() => setIsPickingColor((open) => !open)}
+              >
+                <span
+                  className="tasks-project-dot"
+                  style={{ background: colorFor(project.color) }}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+            {isPickingColor ? (
+              <div className="project-palette" role="group" aria-label={`Color for ${project.name}`}>
+                {Object.keys(PROJECT_COLORS).map((name) => (
+                  <button
+                    key={name}
+                    type="button"
+                    className={`project-swatch${project.color === name ? ' is-current' : ''}`}
+                    style={{ background: PROJECT_COLORS[name] }}
+                    aria-label={`${name.replace(/_/g, ' ')}${project.color === name ? ' (current)' : ''}`}
+                    aria-pressed={project.color === name}
+                    disabled={store.isWriting}
+                    onClick={async () => {
+                      if (project.color === name) return
+                      if (await store.recolorProject(project.id, name)) setIsPickingColor(false)
+                    }}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </>
         ) : null}
       </>
     )

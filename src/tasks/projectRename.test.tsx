@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event'
 const mocks = vi.hoisted(() => ({
   getActiveTasks: vi.fn(), getProjects: vi.fn(), getSections: vi.fn(), getTasksOfTheDay: vi.fn(),
   updateProjectName: vi.fn(),
+  updateProjectColor: vi.fn(),
 }))
 vi.mock('../data/todoist/repositories', () => mocks)
 import { TasksPage } from './TasksPage'
@@ -16,7 +17,10 @@ const base = { project_id: 'proj-1', content: '', description: '', labels: [], p
 beforeEach(() => {
   vi.clearAllMocks()
   mocks.getActiveTasks.mockResolvedValue([{ ...base, id: 'a', content: 'Alpha' }])
-  mocks.getProjects.mockResolvedValue([{ id: 'proj-1', name: 'Home' }])
+  mocks.getProjects.mockResolvedValue([{ id: 'proj-1', name: 'Home', color: 'charcoal' }])
+  mocks.updateProjectColor.mockImplementation(async (id: string, color: string) => {
+    mocks.getProjects.mockResolvedValue([{ id, name: 'Home', color }])
+  })
   mocks.getSections.mockResolvedValue([])
   // Todoist reports the new name on the next read, as the store's silent reload expects.
   mocks.updateProjectName.mockImplementation(async (id: string, name: string) => {
@@ -61,5 +65,17 @@ describe('renaming a project', () => {
     await userEvent.clear(screen.getByRole('textbox', { name: 'Project name' }))
     expect(screen.getByRole('button', { name: 'Save' })).toHaveProperty('disabled', true)
     expect(mocks.updateProjectName).not.toHaveBeenCalled()
+  })
+
+  it('changes the project color through Todoist and marks the new swatch', async () => {
+    await openProjects()
+    await userEvent.click(screen.getByRole('button', { name: 'Change color of Home' }))
+    await userEvent.click(screen.getByRole('button', { name: 'berry red' }))
+    await waitFor(() => expect(mocks.updateProjectColor).toHaveBeenCalledWith('proj-1', 'berry_red'))
+    await waitFor(() =>
+      expect(screen.queryByRole('group', { name: 'Color for Home' })).toBeNull(),
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Change color of Home' }))
+    expect(screen.getByRole('button', { name: 'berry red (current)' }).getAttribute('aria-pressed')).toBe('true')
   })
 })

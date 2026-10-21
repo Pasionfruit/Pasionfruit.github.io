@@ -8,6 +8,7 @@ import {
   getSections,
   moveTask,
   rescheduleTask,
+  updateProjectColor,
   updateProjectName,
   updateTask,
 } from '../data/todoist/repositories'
@@ -241,21 +242,21 @@ export function useTodoistData(enabled: boolean) {
     [mutate],
   )
 
-  /** Renames a project, showing the new name at once and restoring the old one if Todoist refuses. */
-  const renameProject = useCallback(
-    async (projectId: string, name: string) => {
+  /** Applies a change to one project at once, restoring the old values if Todoist refuses it. */
+  const editProject = useCallback(
+    async (projectId: string, patch: Partial<TodoistProject>, run: () => Promise<void>, fallbackMessage: string) => {
       const snapshot = projects
-      setProjects((prev) => prev.map((project) => (project.id === projectId ? { ...project, name } : project)))
+      setProjects((prev) => prev.map((project) => (project.id === projectId ? { ...project, ...patch } : project)))
       setIsWriting(true)
       setWriteError('')
       try {
-        await updateProjectName(projectId, name)
+        await run()
         void load({ silent: true })
         return true
       } catch (error) {
         if (isMountedRef.current) {
           setProjects(snapshot)
-          setWriteError(errorMessage(error, 'Unable to rename project'))
+          setWriteError(errorMessage(error, fallbackMessage))
         }
         return false
       } finally {
@@ -265,6 +266,18 @@ export function useTodoistData(enabled: boolean) {
       }
     },
     [projects, load],
+  )
+
+  const renameProject = useCallback(
+    (projectId: string, name: string) =>
+      editProject(projectId, { name }, () => updateProjectName(projectId, name), 'Unable to rename project'),
+    [editProject],
+  )
+
+  const recolorProject = useCallback(
+    (projectId: string, color: string) =>
+      editProject(projectId, { color }, () => updateProjectColor(projectId, color), 'Unable to change project color'),
+    [editProject],
   )
 
   const projectsById = useMemo(
@@ -290,6 +303,7 @@ export function useTodoistData(enabled: boolean) {
     create,
     move,
     renameProject,
+    recolorProject,
   }
 }
 
