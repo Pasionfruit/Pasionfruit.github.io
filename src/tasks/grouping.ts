@@ -65,3 +65,52 @@ export function inheritedSectionId(task: TodoistTask, byId: Map<string, TodoistT
   }
   return current.section_id ?? null
 }
+
+/**
+ * How many task levels a list may show, top level included. Todoist's own limit
+ * is not documented in the API, so this is ours: nesting past it is refused.
+ */
+export const MAX_TASK_LEVELS = 4
+
+/** Ids of every task below `taskId` in `childrenOf`, not including it. */
+export function descendantIds(taskId: string, childrenOf: Map<string, TodoistTask[]>): Set<string> {
+  const found = new Set<string>()
+  const stack = [...(childrenOf.get(taskId) ?? [])]
+  while (stack.length > 0) {
+    const child = stack.pop() as TodoistTask
+    if (found.has(child.id)) continue
+    found.add(child.id)
+    stack.push(...(childrenOf.get(child.id) ?? []))
+  }
+  return found
+}
+
+/** Levels below `taskId`: 0 for a task without subtasks, 1 for a task whose subtasks have none, and so on. */
+export function subtreeHeight(taskId: string, childrenOf: Map<string, TodoistTask[]>): number {
+  const children = childrenOf.get(taskId) ?? []
+  let deepest = 0
+  for (const child of children) {
+    deepest = Math.max(deepest, 1 + subtreeHeight(child.id, childrenOf))
+  }
+  return deepest
+}
+
+/**
+ * `matched` plus every ancestor of them, so a parent with a matching subtask
+ * still shows in a date view even when the parent has no date itself.
+ */
+export function withAncestors(all: TodoistTask[], matched: TodoistTask[]): TodoistTask[] {
+  const byId = new Map(all.map((task) => [task.id, task]))
+  const kept = new Map<string, TodoistTask>()
+  for (const task of matched) {
+    kept.set(task.id, task)
+    const seen = new Set<string>([task.id])
+    let parent = task.parent_id ? byId.get(task.parent_id) : undefined
+    while (parent && !seen.has(parent.id)) {
+      seen.add(parent.id)
+      kept.set(parent.id, parent)
+      parent = parent.parent_id ? byId.get(parent.parent_id) : undefined
+    }
+  }
+  return [...kept.values()]
+}

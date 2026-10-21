@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import { TaskRow } from './TaskRow'
-import { buildTaskTree } from './grouping'
+import { buildTaskTree, descendantIds, MAX_TASK_LEVELS, subtreeHeight } from './grouping'
 import { useTaskDrag } from './useTaskDrag'
 import type { DropTarget } from './dropTarget'
 import { getCollapsedIds, setTaskCollapsed } from './collapsedTasks'
@@ -101,10 +101,20 @@ export function TaskList({
     [taskById, orderKey, roots, store],
   )
 
+  // A task may nest under a visible task only if it stays inside the level limit and
+  // is not being dropped into its own subtree.
+  const canNestUnder = useCallback(
+    (draggingId: string, targetId: string, targetDepth: number) => {
+      if (descendantIds(draggingId, childrenOf).has(targetId)) return false
+      return targetDepth + 1 + subtreeHeight(draggingId, childrenOf) <= MAX_TASK_LEVELS - 1
+    },
+    [childrenOf],
+  )
+
   const dragEnabled = canEdit
   const { containerRef, draggingId, drop, isDragging, handlers } = useTaskDrag({
     enabled: dragEnabled,
-    hasChildren: (taskId) => (childrenOf.get(taskId)?.length ?? 0) > 0,
+    canNestUnder,
     onDrop: handleDrop,
   })
 
@@ -133,7 +143,7 @@ export function TaskList({
             {showDropLine ? <div className="task-drop-line" aria-hidden="true" /> : null}
             <TaskRow
               task={task}
-              subtasks={childrenOf.get(task.id) ?? []}
+              childrenOf={childrenOf}
               projectName={task.project_id ? store.projectsById.get(task.project_id)?.name : undefined}
               canEdit={canEdit}
               isWriting={store.isWriting}
@@ -144,7 +154,7 @@ export function TaskList({
               rootIndex={index}
               draggingId={draggingId}
               nestTargetId={nestTargetId}
-              isCollapsed={collapsedIds.has(task.id)}
+              collapsedIds={collapsedIds}
               onToggleCollapsed={toggleCollapsed}
               onEditToggle={onEditToggle}
               onComplete={store.complete}

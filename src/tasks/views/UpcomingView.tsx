@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AddTaskForm, TaskList } from '../TaskList'
-import { sortByPriorityThenDue } from '../grouping'
+import { sortByPriorityThenDue, withAncestors } from '../grouping'
 import {
   dateFromKey,
   dueDateKey,
@@ -55,8 +55,8 @@ export function UpcomingView({ store, canEdit, editingTaskId, onEditToggle }: Vi
   )
 
   const selectedTasks = useMemo(
-    () => sortByPriorityThenDue(tasksByDay.get(selectedDay) ?? []),
-    [tasksByDay, selectedDay],
+    () => sortByPriorityThenDue(withAncestors(store.tasks, tasksByDay.get(selectedDay) ?? [])),
+    [store.tasks, tasksByDay, selectedDay],
   )
 
   const monthLabel = new Date(monthCursor.year, monthCursor.month, 1).toLocaleDateString(undefined, {

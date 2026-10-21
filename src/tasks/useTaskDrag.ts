@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
-import { resolveDropTarget, type DropTarget, type RootRowBox } from './dropTarget'
+import { resolveDropTarget, type DropRowBox, type DropTarget } from './dropTarget'
 
 // How long a touch must rest on a row before it becomes a drag, and how far the
 // finger may drift in that window before we treat it as a scroll instead.
@@ -9,24 +9,24 @@ const MOVE_CANCEL_PX = 10
 
 type UseTaskDragOptions = {
   enabled: boolean
-  /** A task with subtasks cannot be nested under another, so it only reorders at the top level. */
-  hasChildren: (taskId: string) => boolean
+  /** Whether `draggingId` may become a subtask of `targetId`, which sits at `targetDepth`. */
+  canNestUnder: (draggingId: string, targetId: string, targetDepth: number) => boolean
   onDrop: (drop: DropTarget, taskId: string) => void
 }
 
 /**
  * Hold-and-drag for a task list, built on pointer events so mouse, touch, and pen
  * share one path. Any row can be dragged, from its grip or after a long press on
- * touch. While dragging, a top-level row's middle band takes the task as a subtask,
- * and the gaps between top-level rows place it there.
+ * touch. While dragging, the middle band of a visible task's row takes the dragged
+ * task as a subtask, and the gaps between top-level rows place it there.
  *
- * Rows are found by `data-task-id`; top-level rows also carry `data-root-index`.
+ * Rows are found by `data-task-id`, with `data-depth` giving their level.
  */
-export function useTaskDrag({ enabled, hasChildren, onDrop }: UseTaskDragOptions) {
+export function useTaskDrag({ enabled, canNestUnder, onDrop }: UseTaskDragOptions) {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const optionsRef = useRef({ hasChildren, onDrop })
+  const optionsRef = useRef({ canNestUnder, onDrop })
   useEffect(() => {
-    optionsRef.current = { hasChildren, onDrop }
+    optionsRef.current = { canNestUnder, onDrop }
   })
 
   const [draggingId, setDraggingId] = useState<string | null>(null)
@@ -61,15 +61,16 @@ export function useTaskDrag({ enabled, hasChildren, onDrop }: UseTaskDragOptions
 
   useEffect(() => resetState, [resetState])
 
-  const topLevelBoxes = useCallback((): RootRowBox[] => {
+  const rowBoxes = useCallback((): DropRowBox[] => {
     const container = containerRef.current
     if (!container) return []
-    return Array.from(container.querySelectorAll<HTMLElement>('.task-item[data-root-index]')).map((item) => {
+    return Array.from(container.querySelectorAll<HTMLElement>('.task-item[data-task-id]')).map((item) => {
       const itemRect = item.getBoundingClientRect()
       const row = item.querySelector<HTMLElement>(':scope > .task-row')
       const rowRect = (row ?? item).getBoundingClientRect()
       return {
         id: item.dataset.taskId ?? '',
+        depth: Number(item.dataset.depth ?? 0),
         top: itemRect.top,
         bottom: itemRect.bottom,
         rowTop: rowRect.top,
@@ -158,18 +159,15 @@ export function useTaskDrag({ enabled, hasChildren, onDrop }: UseTaskDragOptions
 
       event.preventDefault()
       const dragId = s.dragId
-      const next = resolveDropTarget(
-        topLevelBoxes(),
-        event.clientY,
-        dragId,
-        !optionsRef.current.hasChildren(dragId),
+      const next = resolveDropTarget(rowBoxes(), event.clientY, dragId, (targetId, targetDepth) =>
+        optionsRef.current.canNestUnder(dragId, targetId, targetDepth),
       )
       if (JSON.stringify(next) !== JSON.stringify(s.drop)) {
         s.drop = next
         setDrop(next)
       }
     },
-    [clearTimer, topLevelBoxes],
+    [clearTimer, rowBoxes],
   )
 
   const endGesture = useCallback(

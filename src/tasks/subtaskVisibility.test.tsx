@@ -1,0 +1,77 @@
+// @vitest-environment jsdom
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+const mocks = vi.hoisted(() => ({
+  getActiveTasks: vi.fn(),
+  getProjects: vi.fn(),
+  getSections: vi.fn(),
+  getTasksOfTheDay: vi.fn(),
+}))
+vi.mock('../data/todoist/repositories', () => mocks)
+
+import { TasksPage } from './TasksPage'
+import { todayKey } from '../data/todoist/dates'
+
+const TODAY = todayKey()
+
+const base = {
+  project_id: 'proj-1',
+  content: '',
+  description: '',
+  labels: [],
+  priority: 4,
+  is_completed: false,
+  child_order: 0,
+  due: null,
+}
+
+afterEach(() => cleanup())
+
+async function openTasks(tasks: unknown[], tab: RegExp | null) {
+  mocks.getActiveTasks.mockResolvedValue(tasks)
+  mocks.getProjects.mockResolvedValue([{ id: 'proj-1', name: 'Home' }])
+  mocks.getSections.mockResolvedValue([{ id: 's1', project_id: 'proj-1', name: 'Errands', section_order: 0 }])
+  render(
+    <MemoryRouter>
+      <TasksPage canEdit configured />
+    </MemoryRouter>,
+  )
+  await waitFor(() => expect(screen.queryByText('Loading Todoist…')).toBeNull())
+  if (tab) await userEvent.click(screen.getByRole('button', { name: tab }))
+}
+
+/** The task row's own container, so we can ask what sits inside it. */
+function itemOf(text: string) {
+  return screen.getByText(text).closest('.task-item') as HTMLElement
+}
+
+describe('nested subtasks', () => {
+  it('renders grandchildren under their child', async () => {
+    await openTasks(
+      [
+        { ...base, id: 'p', section_id: 's1', content: 'Parent' },
+        { ...base, id: 'c', parent_id: 'p', section_id: 's1', content: 'Child' },
+        { ...base, id: 'g', parent_id: 'c', section_id: 's1', content: 'Grandchild' },
+      ],
+      /^Projects/,
+    )
+    expect(itemOf('Child').querySelector('.task-item')?.textContent).toContain('Grandchild')
+  })
+})
+
+describe('subtask parents in date views', () => {
+  it('keeps an undated parent when a subtask is due today', async () => {
+    await openTasks(
+      [
+        { ...base, id: 'p', content: 'Parent' },
+        { ...base, id: 'c', parent_id: 'p', content: 'Child', due: { date: TODAY } },
+      ],
+      null,
+    )
+    expect(itemOf('Child').closest('.task-subtasks')).not.toBeNull()
+    expect(itemOf('Parent').textContent).toContain('Child')
+  })
+})

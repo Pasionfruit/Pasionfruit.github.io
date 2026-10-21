@@ -128,7 +128,8 @@ function TaskEditForm({
 
 export type TaskRowProps = {
   task: TodoistTask
-  subtasks?: TodoistTask[]
+  /** Every task's subtasks in this list, so the tree renders to any depth. */
+  childrenOf: Map<string, TodoistTask[]>
   projectName?: string
   canEdit: boolean
   isWriting: boolean
@@ -142,7 +143,8 @@ export type TaskRowProps = {
   /** The task being dragged, and the task a drag would nest under. */
   draggingId?: string | null
   nestTargetId?: string | null
-  isCollapsed?: boolean
+  /** Task ids whose subtasks are folded away. */
+  collapsedIds?: Set<string>
   onToggleCollapsed?: (taskId: string) => void
   onEditToggle: (taskId: string | null) => void
   onComplete: (taskId: string) => void
@@ -153,7 +155,7 @@ export type TaskRowProps = {
 
 export function TaskRow({
   task,
-  subtasks = [],
+  childrenOf,
   projectName,
   canEdit,
   isWriting,
@@ -165,7 +167,7 @@ export function TaskRow({
   rootIndex,
   draggingId = null,
   nestTargetId = null,
-  isCollapsed = false,
+  collapsedIds,
   onToggleCollapsed,
   onEditToggle,
   onComplete,
@@ -180,7 +182,9 @@ export function TaskRow({
   const overdue = isOverdue(task)
   const timeLabel = dueTimeLabel(task)
   const priorityValue = normalizePriority(task.priority)
+  const subtasks = childrenOf.get(task.id) ?? []
   const hasSubtasks = subtasks.length > 0
+  const isCollapsed = collapsedIds?.has(task.id) ?? false
 
   return (
     <div
@@ -199,7 +203,7 @@ export function TaskRow({
             <GripVertical size={15} />
           </span>
         ) : null}
-        {hasSubtasks && depth === 0 && onToggleCollapsed ? (
+        {hasSubtasks && onToggleCollapsed ? (
           <button
             type="button"
             className="task-collapse"
@@ -293,6 +297,9 @@ export function TaskRow({
             <TaskRow
               key={subtask.id}
               task={subtask}
+              childrenOf={childrenOf}
+              collapsedIds={collapsedIds}
+              onToggleCollapsed={onToggleCollapsed}
               projectName={projectName}
               canEdit={canEdit}
               isWriting={isWriting}

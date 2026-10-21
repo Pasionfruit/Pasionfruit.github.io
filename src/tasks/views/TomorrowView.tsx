@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { AddTaskForm, TaskList } from '../TaskList'
-import { sortByPriorityThenDue } from '../grouping'
+import { sortByPriorityThenDue, withAncestors } from '../grouping'
 import { dueDateKey, formatDayLabel, tomorrowKey } from '../../data/todoist/dates'
 import type { ViewProps } from './TodayView'
 
@@ -8,7 +8,13 @@ export function TomorrowView({ store, canEdit, editingTaskId, onEditToggle }: Vi
   const tomorrow = tomorrowKey()
 
   const tasks = useMemo(
-    () => sortByPriorityThenDue(store.tasks.filter((task) => dueDateKey(task) === tomorrow)),
+    () =>
+      sortByPriorityThenDue(
+        withAncestors(
+          store.tasks,
+          store.tasks.filter((task) => dueDateKey(task) === tomorrow),
+        ),
+      ),
     [store.tasks, tomorrow],
   )
 

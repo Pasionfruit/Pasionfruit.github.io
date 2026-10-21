@@ -147,7 +147,7 @@
   flex-direction: column;
 }
 
-.task-item[data-depth='1'] {
+.task-item[data-depth]:not([data-depth='0']) {
   margin-left: 1.6rem;
 }
 
@@ -725,7 +725,7 @@
     font-size: 0.8rem;
   }
 
-  .task-item[data-depth='1'] {
+  .task-item[data-depth]:not([data-depth='0']) {
     margin-left: 1rem;
   }
 
