@@ -8,6 +8,7 @@ import {
   getSections,
   moveTask,
   rescheduleTask,
+  updateProjectName,
   updateTask,
 } from '../data/todoist/repositories'
 import type {
@@ -240,6 +241,32 @@ export function useTodoistData(enabled: boolean) {
     [mutate],
   )
 
+  /** Renames a project, showing the new name at once and restoring the old one if Todoist refuses. */
+  const renameProject = useCallback(
+    async (projectId: string, name: string) => {
+      const snapshot = projects
+      setProjects((prev) => prev.map((project) => (project.id === projectId ? { ...project, name } : project)))
+      setIsWriting(true)
+      setWriteError('')
+      try {
+        await updateProjectName(projectId, name)
+        void load({ silent: true })
+        return true
+      } catch (error) {
+        if (isMountedRef.current) {
+          setProjects(snapshot)
+          setWriteError(errorMessage(error, 'Unable to rename project'))
+        }
+        return false
+      } finally {
+        if (isMountedRef.current) {
+          setIsWriting(false)
+        }
+      }
+    },
+    [projects, load],
+  )
+
   const projectsById = useMemo(
     () => new Map(projects.map((project) => [project.id, project])),
     [projects],
@@ -262,6 +289,7 @@ export function useTodoistData(enabled: boolean) {
     reschedule,
     create,
     move,
+    renameProject,
   }
 }
 

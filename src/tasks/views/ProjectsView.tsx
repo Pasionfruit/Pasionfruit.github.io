@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
-import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react'
+import type { FormEvent } from 'react'
+import { ChevronDown, ChevronUp, Eye, EyeOff, Pencil } from 'lucide-react'
 import { AddTaskForm, TaskList } from '../TaskList'
 import { inheritedSectionId, sortByPriorityThenDue } from '../grouping'
 import { isSectionHidden, orderSections, rowsForOrder } from '../sectionLayout'
 import type { TaskLayoutStore } from '../useTaskLayout'
-import type { TodoistSection, TodoistTask } from '../../data/todoist/types'
+import type { TodoistProject, TodoistSection, TodoistTask } from '../../data/todoist/types'
+import type { TodoistStore } from '../useTodoistData'
 import type { ViewProps } from './TodayView'
 
 export function ProjectsView({
@@ -133,10 +135,13 @@ export function ProjectsView({
 
       <div className="tasks-project-body">
         <header className="tasks-group-header">
-          <h2>
-            {activeProject?.name ?? 'Project'}
-            <span className="tasks-count">{projectTasks.length}</span>
-          </h2>
+          <ProjectName
+            key={activeProjectId ?? 'none'}
+            project={activeProject}
+            count={projectTasks.length}
+            store={store}
+            canEdit={canEdit}
+          />
         </header>
 
         <TaskList
@@ -251,6 +256,82 @@ export function ProjectsView({
         ) : null}
       </div>
     </div>
+  )
+}
+
+/** The project's title, with a rename form in place of it while editing. Keyed by project, so a draft never carries over. */
+function ProjectName({
+  project,
+  count,
+  store,
+  canEdit,
+}: {
+  project: TodoistProject | undefined
+  count: number
+  store: TodoistStore
+  canEdit: boolean
+}) {
+  const [isRenaming, setIsRenaming] = useState(false)
+  const [draft, setDraft] = useState(project?.name ?? '')
+
+  if (!isRenaming || !project) {
+    return (
+      <>
+        <h2>
+          {project?.name ?? 'Project'}
+          <span className="tasks-count">{count}</span>
+        </h2>
+        {canEdit && project ? (
+          <button
+            type="button"
+            className="tasks-section-control"
+            aria-label={`Rename ${project.name}`}
+            title="Rename project"
+            onClick={() => {
+              setDraft(project.name)
+              setIsRenaming(true)
+            }}
+          >
+            <Pencil size={14} aria-hidden="true" />
+          </button>
+        ) : null}
+      </>
+    )
+  }
+
+  const trimmed = draft.trim()
+  const current = project
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!trimmed || trimmed === current.name) {
+      setIsRenaming(false)
+      return
+    }
+    if (await store.renameProject(current.id, trimmed)) {
+      setIsRenaming(false)
+    }
+  }
+
+  return (
+    <form className="project-rename" onSubmit={(event) => void handleSubmit(event)}>
+      <input
+        className="task-input"
+        value={draft}
+        autoFocus
+        aria-label="Project name"
+        onChange={(event) => setDraft(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') setIsRenaming(false)
+        }}
+      />
+      <button type="submit" className="task-btn is-primary" disabled={store.isWriting || !trimmed}>
+        Save
+      </button>
+      <button type="button" className="task-btn" onClick={() => setIsRenaming(false)}>
+        Cancel
+      </button>
+    </form>
   )
 }
 

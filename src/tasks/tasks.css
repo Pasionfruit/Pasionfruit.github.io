@@ -832,3 +832,17 @@
 .task-subcount {
   opacity: 0.8;
 }
+
+/* Renaming a project from the Projects view header. */
+.project-rename {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 100%;
+  padding-bottom: 0.4rem;
+}
+
+.project-rename .task-input {
+  flex: 1 1 12rem;
+}

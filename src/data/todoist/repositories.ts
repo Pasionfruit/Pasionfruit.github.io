@@ -263,6 +263,13 @@ export async function moveTask(taskId: string, destination: TodoistTaskDestinati
   })
 }
 
+export async function updateProjectName(projectId: string, name: string) {
+  await todoistRequest<unknown>(`/projects/${projectId}`, {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  })
+}
+
 export async function closeTask(taskId: string) {
   await todoistRequest<unknown>(`/tasks/${taskId}/close`, {
     method: 'POST',
