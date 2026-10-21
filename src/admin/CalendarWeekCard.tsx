@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
 import { HourlyCards } from '../weather/HourlyCards'
+import { TenDayForecast } from '../weather/TenDayForecast'
 import { RadarMap } from '../weather/RadarMap'
 import type { WeatherHook } from '../weather/useWeather'
 import '../weather/weather.css'
@@ -159,7 +160,7 @@ export function CalendarWeekCard({
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
   const [isCollapsed, setIsCollapsed] = useState(readStoredCollapsed)
   // The radar and hourly forecast share the card with the month grid.
-  const [page, setPage] = useState<'month' | 'radar' | 'hourly'>('month')
+  const [page, setPage] = useState<'month' | 'radar' | 'hourly' | 'days'>('month')
 
   const monthLabel = month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
 
@@ -274,7 +275,7 @@ export function CalendarWeekCard({
           ))}
 
           <div className="experience-toggle month-view-pager" role="tablist" aria-label="Month view pages">
-            {(['month', 'radar', 'hourly'] as const).map((id) => (
+            {(['month', 'radar', 'hourly', 'days'] as const).map((id) => (
               <button
                 key={id}
                 type="button"
@@ -283,7 +284,7 @@ export function CalendarWeekCard({
                 className={`experience-toggle-btn ${page === id ? 'active' : ''}`}
                 onClick={() => setPage(id)}
               >
-                {id === 'month' ? 'Calendar' : id === 'radar' ? 'Radar' : 'Hourly'}
+                {id === 'month' ? 'Calendar' : id === 'radar' ? 'Radar' : id === 'hourly' ? 'Hourly' : '10 Days'}
               </button>
             ))}
           </div>
@@ -297,6 +298,10 @@ export function CalendarWeekCard({
             ) : (
               <p className="sheets-meta">Location unavailable — radar needs your position.</p>
             )
+          ) : null}
+
+          {page === 'days' ? (
+            <TenDayForecast coords={weather.coords} place={weather.place} onLocate={weather.retry} />
           ) : null}
 
           {page === 'hourly' ? (

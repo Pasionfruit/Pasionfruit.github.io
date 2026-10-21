@@ -388,3 +388,17 @@
   font-size: 0.75rem;
   color: var(--text-muted);
 }
+
+/* City search and "use my location" above the ten-day cards. */
+.weather-city-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.weather-city-form .task-input {
+  flex: 1 1 10rem;
+  min-width: 0;
+}

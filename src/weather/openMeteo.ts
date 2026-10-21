@@ -236,3 +236,64 @@ export function uvCategory(uv: number): { label: string; level: number } {
   if (uv < 11) return { label: 'Very high', level: 3 }
   return { label: 'Extreme', level: 4 }
 }
+
+// ── Ten-day forecast and city lookup ─────────────────────────────────────────
+
+export type DailyPoint = {
+  /** Local calendar day, YYYY-MM-DD. */
+  date: string
+  weatherCode: number
+  high: number
+  low: number
+  precipitationProbability: number
+}
+
+type DailyResponse = {
+  daily?: {
+    time: string[]
+    weather_code?: number[]
+    temperature_2m_max?: number[]
+    temperature_2m_min?: number[]
+    precipitation_probability_max?: number[]
+  }
+}
+
+type GeocodeResponse = {
+  results?: { latitude: number; longitude: number; name: string; admin1?: string; country?: string }[]
+}
+
+/** Ten days of daily highs, lows, conditions, and the chance of rain, from today. */
+export async function getDailyForecast(coords: Coords): Promise<DailyPoint[]> {
+  const query = new URLSearchParams({
+    latitude: String(coords.latitude),
+    longitude: String(coords.longitude),
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
+    temperature_unit: 'fahrenheit',
+    timezone: 'auto',
+    forecast_days: '10',
+  })
+
+  const data = await fetchJson<DailyResponse>(`https://api.open-meteo.com/v1/forecast?${query.toString()}`)
+  if (!data.daily) {
+    throw new Error('Forecast response was incomplete.')
+  }
+
+  return data.daily.time.map((date, index) => ({
+    date,
+    weatherCode: data.daily!.weather_code?.[index] ?? 0,
+    high: data.daily!.temperature_2m_max?.[index] ?? 0,
+    low: data.daily!.temperature_2m_min?.[index] ?? 0,
+    precipitationProbability: data.daily!.precipitation_probability_max?.[index] ?? 0,
+  }))
+}
+
+/** Looks a city up by name. Resolves to null when nothing matches. */
+export async function geocodeCity(name: string): Promise<{ coords: Coords; label: string } | null> {
+  const query = new URLSearchParams({ name, count: '1', language: 'en', format: 'json' })
+  const data = await fetchJson<GeocodeResponse>(`https://geocoding-api.open-meteo.com/v1/search?${query.toString()}`)
+  const match = data.results?.[0]
+  if (!match) return null
+
+  const label = [match.name, match.admin1, match.country].filter(Boolean).join(', ')
+  return { coords: { latitude: match.latitude, longitude: match.longitude }, label }
+}

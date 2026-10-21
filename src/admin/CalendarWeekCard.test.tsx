@@ -104,4 +104,18 @@ describe('CalendarWeekCard collapse', () => {
     expect(cards[1].textContent).toContain('70°F')
     expect(cards[1].textContent).toContain('60%')
   })
+
+  it('offers a 10 Days page with a city search and a use-my-location button', async () => {
+    const user = userEvent.setup()
+    const onLocate = vi.fn()
+    render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={{ ...noWeather, retry: onLocate }} />)
+
+    await user.click(screen.getByRole('tab', { name: '10 Days' }))
+
+    expect(screen.getByRole('textbox', { name: 'City' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Search' }).hasAttribute('disabled')).toBe(true)
+    await user.click(screen.getByRole('button', { name: 'Use my location' }))
+    expect(onLocate).toHaveBeenCalled()
+  })
 })
+

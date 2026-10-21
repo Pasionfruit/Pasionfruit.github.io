@@ -3,6 +3,8 @@ import {
   aqiCategory,
   describeWeather,
   getAirQuality,
+  geocodeCity,
+  getDailyForecast,
   getForecast,
   uvCategory,
 } from './openMeteo'
@@ -122,4 +124,42 @@ describe('getAirQuality', () => {
     mockFetchOnce({}, false, 500)
     expect(await getAirQuality(COORDS)).toBeNull()
   })
+
+  it('maps the ten-day forecast to highs, lows, conditions, and rain chance', async () => {
+    mockFetchOnce({
+      daily: {
+        time: ['2026-10-21', '2026-10-22'],
+        weather_code: [3, 61],
+        temperature_2m_max: [78.4, 66.1],
+        temperature_2m_min: [60.2, 55.9],
+        precipitation_probability_max: [10, 70],
+      },
+    })
+
+    const days = await getDailyForecast(COORDS)
+
+    expect(days).toEqual([
+      { date: '2026-10-21', weatherCode: 3, high: 78.4, low: 60.2, precipitationProbability: 10 },
+      { date: '2026-10-22', weatherCode: 61, high: 66.1, low: 55.9, precipitationProbability: 70 },
+    ])
+  })
+
+  it('finds a city and labels it with its region and country', async () => {
+    mockFetchOnce({
+      results: [{ name: 'Portland', latitude: 45.52, longitude: -122.68, admin1: 'Oregon', country: 'United States' }],
+    })
+
+    const found = await geocodeCity('Portland')
+
+    expect(found).toEqual({
+      coords: { latitude: 45.52, longitude: -122.68 },
+      label: 'Portland, Oregon, United States',
+    })
+  })
+
+  it('returns null when no city matches', async () => {
+    mockFetchOnce({})
+    expect(await geocodeCity('Nowhereville')).toBeNull()
+  })
 })
+
