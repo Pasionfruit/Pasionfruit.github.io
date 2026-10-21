@@ -813,9 +813,7 @@ function TodoistTasksCard({
   const googleEmail = getGoogleTokenEmail(googleIdToken)
   const canEditTodoist = profile === 'admin' && googleEmail === TODOIST_EDITOR_EMAIL
   const canViewOriginalTabs = shouldUseAdminProfile(googleEmail)
-  const [view, setView] = useState<'training' | 'todoist'>(
-    canViewOriginalTabs ? 'todoist' : 'training',
-  )
+  const [view, setView] = useState<'training' | 'todoist'>('training')
   const [rows, setRows] = useState<TodoistTask[]>([])
   const [trainingRows, setTrainingRows] = useState<TrainingRecord[]>([])
   const [garminRows, setGarminRows] = useState<GarminHealthRecord[]>([])

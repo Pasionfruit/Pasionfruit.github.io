@@ -22,6 +22,7 @@ export function RelationshipClock() {
 
   return (
     <article className="ciara-card ciara-clock">
+      <h2 className="ciara-clock-title">Every little second</h2>
       <p className="ciara-since">Together since 11:00 PM, November 19, 2022</p>
       <dl className="ciara-clock-grid" aria-label="Time together">
         {UNITS.map((unit) => (

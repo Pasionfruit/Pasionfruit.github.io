@@ -365,6 +365,7 @@ describe('site sections and dashboards', () => {
       throw new Error('Todoist card not found')
     }
 
+    await user.click(within(card).getByRole('tab', { name: 'Todoist' }))
     expect(await within(card).findByText('Submit dashboard update')).toBeTruthy()
     expect(within(card).getByText('Review overdue notes')).toBeTruthy()
 
@@ -380,6 +381,7 @@ describe('site sections and dashboards', () => {
   })
 
   it('blocks Todoist editing for non-authorized account', async () => {
+    const user = userEvent.setup()
     renderAdminTasksPage('pixielee1000@gmail.com')
 
     /*
@@ -393,10 +395,12 @@ describe('site sections and dashboards', () => {
       throw new Error('Tasks of the Day card not found')
     }
 
+    await user.click(within(card).getByRole('tab', { name: 'Todoist' }))
     expect(within(card).getByText('Edit access restricted to admin.')).toBeTruthy()
   })
 
   it('shows missing token guidance when Todoist env token is not set', async () => {
+    const user = userEvent.setup()
     vi.unstubAllEnvs()
     vi.stubEnv('VITE_TODOIST_API_TOKEN', '')
     renderAdminTasksPage()
@@ -407,7 +411,7 @@ describe('site sections and dashboards', () => {
       throw new Error('Todoist card not found')
     }
 
-    // The card opens on the Todoist tab for admins; the guidance shows without interaction.
+    await user.click(within(card).getByRole('tab', { name: 'Todoist' }))
     expect(
       await within(card).findByText('Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.'),
     ).toBeTruthy()
@@ -463,8 +467,7 @@ describe('site sections and dashboards', () => {
     if (!card) {
       throw new Error('Tasks of the Day card not found')
     }
-    // Todoist is the default view; training sits behind its own tab.
-    await user.click(within(card).getByRole('tab', { name: 'Training' }))
+    expect(within(card).getByRole('tab', { name: 'Training', selected: true })).toBeTruthy()
     return { card: card as HTMLElement, user }
   }
 

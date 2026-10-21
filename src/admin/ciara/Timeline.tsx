@@ -128,7 +128,7 @@ export function Timeline({ idToken }: { idToken: string }) {
       <div className="ciara-card-head">
         <div>
           <h2>Our timeline</h2>
-          <p className="ciara-since">Photos, oldest first.</p>
+          <p className="ciara-since">Our favorite moments, from the very beginning.</p>
         </div>
       </div>
 

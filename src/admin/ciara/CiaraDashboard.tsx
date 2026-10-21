@@ -135,7 +135,8 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
       <header className="ciara-hero">
         <FlowerGarland />
         <p className="ciara-kicker">our little corner</p>
-        <h1 className="ciara-title">{title}</h1>
+        <h1 className="ciara-title">{title.replace('+', ' + ')}</h1>
+        <p className="ciara-intro">A little place for all our moments.</p>
       </header>
 
       {/* The waterfall scene and the clock sit side by side on wide screens. */}
@@ -197,6 +198,10 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
       </main>
 
       <section className="ciara-notes-bottom" aria-label="Sticky notes">
+        <div className="ciara-notes-heading">
+          <h2>Little notes</h2>
+          <p>Something sweet, something silly, something for later.</p>
+        </div>
         <StickyNote color="yellow" notes={notes} className="ciara-note-yellow" />
         <StickyNote color="blue" notes={notes} className="ciara-note-blue" />
         <StickyNote color="pink" notes={notes} className="ciara-note-pink" />

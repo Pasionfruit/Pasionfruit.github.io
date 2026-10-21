@@ -4,33 +4,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@500;600;700&display=swap');
 
 .ciara-page {
-  --ciara-pink: #ff8fb8;
-  --ciara-rose: #e0609a;
-  --ciara-ink: #5b3b52;
-  --ciara-muted: #9a7088;
-  --ciara-line: #ffd1e3;
+  --ciara-pink: #e6adc2;
+  --ciara-rose: #956078;
+  --ciara-ink: #594650;
+  --ciara-muted: #806c78;
+  --ciara-line: #eddee5;
   --ciara-sky: #d9f1ff;
   --ciara-water: #8fd6f5;
-  --ciara-mint: #d7f5e6;
-  --ciara-lilac: #e4dcff;
-  --ciara-butter: #fff3c4;
+  --ciara-mint: #edf5ee;
+  --ciara-lilac: #f0ecf7;
+  --ciara-butter: #faf3df;
 
   position: relative;
-  padding: 1rem 0.9rem 3rem;
+  padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 2.5rem;
+  border: 1px solid #f0e6eb;
   border-radius: 32px;
   background:
-    radial-gradient(circle at 12% 8%, #ffe3ef 0 60px, transparent 61px),
-    radial-gradient(circle at 92% 30%, #e9e2ff 0 80px, transparent 81px),
-    linear-gradient(180deg, #fff7fb 0%, #f6f2ff 100%);
+    radial-gradient(ellipse at 10% 0%, #f9eaf0 0%, transparent 40%),
+    radial-gradient(ellipse at 100% 40%, #f0edf8 0%, transparent 45%),
+    #fcf9fb;
   color: var(--ciara-ink);
   font-family: 'Quicksand', ui-rounded, system-ui, sans-serif;
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 1.6;
   overflow: hidden;
 }
 
 /* ── Hero ─────────────────────────────────────────────────────────────── */
 
 .ciara-hero {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 0.5rem 0 0.75rem;
   text-align: center;
 }
 
@@ -67,18 +72,20 @@
 .ciara-kicker {
   margin: 0.4rem 0 0;
   color: var(--ciara-muted);
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .ciara-title {
-  margin: 0.1rem 0 0.8rem;
+  margin: 0.35rem 0 0.4rem;
   color: var(--ciara-rose);
   font-family: 'Fredoka', 'Quicksand', sans-serif;
-  font-size: clamp(2.8rem, 12vw, 4.4rem);
-  font-weight: 600;
+  font-size: clamp(2.8rem, 9vw, 4rem);
+  font-weight: 500;
   line-height: 1.1;
-  text-shadow: 0 3px 0 #ffe0ec;
+  letter-spacing: -0.025em;
 }
 
 /* ── Scene: sky, waterfall, pond ──────────────────────────────────────── */
@@ -89,7 +96,7 @@
   border: 3px solid #fff;
   border-radius: 28px;
   background: linear-gradient(180deg, #d9f1ff 0%, #f1f9ff 52%, #ffeaf4 100%);
-  box-shadow: 0 6px 0 var(--ciara-line);
+  box-shadow: 0 8px 28px rgba(111, 86, 105, 0.05);
   overflow: hidden;
 }
 
@@ -282,8 +289,8 @@
 
 @media (min-width: 900px) {
   .ciara-top-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 2rem;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 1.5rem;
   }
 
   /* The scene starts at the same height as the clock card, so both boxes share a top and a bottom. */
@@ -341,13 +348,11 @@
 
 .ciara-card {
   position: relative;
-  padding: 1.3rem 1.2rem 1.5rem;
-  border: 3px solid #fff;
-  border-radius: 30px;
-  background:
-    radial-gradient(circle, #ffe3ef 1.3px, transparent 1.6px) 0 0 / 20px 20px,
-    #ffffff;
-  box-shadow: 0 6px 0 var(--ciara-line);
+  padding: 1.6rem;
+  border: 1px solid var(--ciara-line);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 28px rgba(111, 86, 105, 0.05);
 }
 
 .ciara-since {
@@ -361,8 +366,8 @@
   margin: 0;
   color: var(--ciara-rose);
   font-family: 'Fredoka', 'Quicksand', sans-serif;
-  font-size: 1.9rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 500;
   text-align: center;
 }
 
@@ -375,33 +380,34 @@
 .ciara-clock-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
-  margin: 0.9rem 0 0;
+  gap: 0.65rem;
+  margin: 1.25rem 0 0;
 }
 
 .ciara-clock-unit {
   display: grid;
   gap: 0.1rem;
-  padding: 0.7rem 0.4rem 0.6rem;
-  border-radius: 24px;
-  background: #ffe0ef;
+  padding: 0.85rem 0.4rem;
+  border-radius: 18px;
+  background: #faedf2;
   text-align: center;
 }
 
 .ciara-clock-unit:nth-child(2) { background: var(--ciara-lilac); }
 .ciara-clock-unit:nth-child(3) { background: var(--ciara-mint); }
-.ciara-clock-unit:nth-child(4) { background: #d4ecff; }
+.ciara-clock-unit:nth-child(4) { background: #edf4fa; }
 .ciara-clock-unit:nth-child(5) { background: var(--ciara-butter); }
-.ciara-clock-unit:nth-child(6) { background: #ffd6d6; }
+.ciara-clock-unit:nth-child(6) { background: #faeeea; }
 
 .ciara-clock-unit dt {
   color: var(--ciara-ink);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .ciara-clock-unit dd {
   margin: 0;
+  order: -1;
   color: var(--ciara-rose);
   font-family: 'Fredoka', 'Quicksand', sans-serif;
   font-size: clamp(1.5rem, 5.5vw, 2.1rem);
@@ -409,7 +415,7 @@
   line-height: 1.2;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 720px) and (max-width: 899px), (min-width: 1200px) {
   .ciara-clock-grid {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -420,13 +426,13 @@
 .ciara-upload {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
+  gap: 1rem;
   align-items: end;
-  margin-top: 1rem;
-  padding: 0.9rem;
-  border: 2px dashed var(--ciara-line);
-  border-radius: 24px;
-  background: #fff8fc;
+  margin-top: 1.4rem;
+  padding: 1.25rem;
+  border: 1px solid var(--ciara-line);
+  border-radius: 20px;
+  background: #fcf9fb;
 }
 
 .ciara-field {
@@ -441,8 +447,9 @@
 .ciara-field input[type='text'],
 .ciara-field input[type='datetime-local'] {
   padding: 0.5rem 0.8rem;
-  border: 2px solid var(--ciara-line);
-  border-radius: 999px;
+  min-height: 44px;
+  border: 1px solid var(--ciara-line);
+  border-radius: 12px;
   background: #fff;
   color: var(--ciara-ink);
   font: inherit;
@@ -465,15 +472,17 @@
   padding: 0.55rem 1.2rem;
   border: 0;
   border-radius: 999px;
-  background: var(--ciara-pink);
+  background: var(--ciara-rose);
   color: #fff;
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
-  box-shadow: 0 4px 0 #e0609a;
+  box-shadow: 0 3px 10px rgba(111, 86, 105, 0.1);
 }
 
 .ciara-page .primary-action:disabled {
-  opacity: 0.55;
+  background: #f0e5eb;
+  color: #806c78;
+  opacity: 1;
   box-shadow: none;
 }
 
@@ -492,8 +501,9 @@
 }
 
 .ciara-page .sheets-error {
-  color: #c2185b;
-  font-weight: 700;
+  color: #96556a;
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 560px) {
@@ -682,7 +692,7 @@
   border: 3px solid #fff;
   border-radius: 30px;
   background: #fff;
-  box-shadow: 0 8px 0 var(--ciara-line);
+  box-shadow: 0 18px 60px rgba(91, 59, 82, 0.12);
   text-align: center;
 }
 
@@ -712,11 +722,11 @@
   padding: 0.55rem 1.6rem;
   border: 0;
   border-radius: 999px;
-  background: var(--ciara-pink);
+  background: var(--ciara-rose);
   color: #fff;
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
-  box-shadow: 0 4px 0 #e0609a;
+  box-shadow: 0 3px 10px rgba(111, 86, 105, 0.1);
 }
 
 .ciara-confetti {
@@ -743,14 +753,15 @@
   position: relative;
   display: grid;
   gap: 0.35rem;
-  padding: 1.5rem 0.9rem 0.8rem;
-  border-radius: 6px 6px 22px 6px;
-  box-shadow: 0 8px 14px rgba(91, 59, 82, 0.14);
+  padding: 1.5rem 1.25rem 1rem;
+  border: 1px solid rgba(111, 86, 105, 0.06);
+  border-radius: 8px 8px 20px 8px;
+  box-shadow: 0 6px 18px rgba(91, 59, 82, 0.06);
 }
 
-.ciara-sticky-yellow { background: #fff3a3; }
-.ciara-sticky-blue { background: #bfe6ff; }
-.ciara-sticky-pink { background: #ffd1e6; }
+.ciara-sticky-yellow { background: #faf1cf; }
+.ciara-sticky-blue { background: #e3eff7; }
+.ciara-sticky-pink { background: #f8e4ec; }
 
 /* A strip of tape holding each note to the page. */
 .ciara-sticky-tape {
@@ -874,17 +885,18 @@
   display: inline-flex;
   gap: 0.2rem;
   padding: 0.25rem;
-  border: 2px solid #fff;
+  border: 1px solid var(--ciara-line);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 0 var(--ciara-line);
+  box-shadow: 0 3px 12px rgba(111, 86, 105, 0.04);
 }
 
 .ciara-switch-option {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.3rem 0.7rem;
+  padding: 0.4rem 0.75rem;
+  min-height: 40px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -896,8 +908,8 @@
 }
 
 .ciara-switch-option[aria-pressed='true'] {
-  background: var(--ciara-pink);
-  color: #fff;
+  background: #f5e5ed;
+  color: #805166;
 }
 
 .ciara-switch-laser {
@@ -971,7 +983,7 @@
 
 @media (max-width: 639px) {
   .ciara-page {
-    padding: 0.75rem 0.6rem 2.5rem;
+    padding: 0.85rem 0.8rem 2rem;
     border-radius: 24px;
   }
 
@@ -1110,4 +1122,84 @@
   .ciara-sticky textarea {
     min-height: 5.5rem;
   }
+}
+
+/* Gentle finishing details shared across the page. */
+.ciara-intro {
+  margin: 0;
+  color: var(--ciara-muted);
+  font-size: 0.95rem;
+}
+
+.ciara-clock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ciara-clock-title {
+  margin: 0 0 0.25rem;
+  color: var(--ciara-rose);
+  font: 500 1.65rem 'Fredoka', 'Quicksand', sans-serif;
+  text-align: center;
+}
+
+.ciara-notes-heading {
+  grid-column: 1 / -1;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.ciara-notes-heading h2 {
+  margin: 0;
+  color: var(--ciara-rose);
+  font: 500 1.65rem 'Fredoka', 'Quicksand', sans-serif;
+}
+
+.ciara-notes-heading p {
+  margin: 0.4rem 0 0;
+  color: var(--ciara-muted);
+  font-size: 0.85rem;
+}
+
+.ciara-field input[type='file']::file-selector-button {
+  margin-right: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--ciara-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ciara-rose);
+  font: inherit;
+}
+
+.ciara-page .primary-action {
+  min-height: 44px;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.ciara-page .secondary-action {
+  min-height: 36px;
+  border-width: 1px;
+}
+
+.ciara-page :is(button, input, textarea):focus-visible {
+  outline: 2px solid var(--ciara-rose);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .ciara-page .primary-action:not(:disabled):hover {
+    background: #805166;
+    box-shadow: 0 4px 14px rgba(111, 86, 105, 0.15);
+  }
+
+  .ciara-switch-option:hover,
+  .ciara-page .secondary-action:hover {
+    background: #f9edf3;
+  }
+}
+
+@media (max-width: 639px) {
+  .ciara-intro { font-size: 0.85rem; }
+  .ciara-upload { padding: 0.9rem; }
 }
