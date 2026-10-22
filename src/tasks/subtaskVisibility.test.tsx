@@ -109,6 +109,8 @@ describe('repeating from the editor', () => {
         expect.objectContaining({ repeat: { every: 2, unit: 'week' } }),
       ),
     )
+    // Saving closes the editor.
+    expect(screen.queryByLabelText('Task name')).toBeNull()
   })
 })
 

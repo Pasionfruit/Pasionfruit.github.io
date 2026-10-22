@@ -57,6 +57,8 @@ function TaskEditForm({
       priority,
       repeat: recurrenceFromDraft(repeat, Boolean(dueDate)),
     })
+    // The save applies optimistically, so the editor can close straight away.
+    onCancel()
   }
 
   return (
