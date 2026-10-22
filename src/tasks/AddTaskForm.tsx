@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { addDaysToKey, todayKey } from '../data/todoist/dates'
 import type { TodoistStore } from './useTodoistData'
 
@@ -32,26 +32,23 @@ export function AddTaskForm({
   const [content, setContent] = useState('')
   const [dueDate, setDueDate] = useState(defaultDueDate ?? '')
   const [priority, setPriority] = useState(4)
+  const nameInputRef = useRef<HTMLInputElement>(null)
 
   if (!canEdit) {
     return null
   }
 
-  function reset() {
+  function dismiss() {
     setContent('')
     setDueDate(defaultDueDate ?? '')
     setPriority(4)
-  }
-
-  function close() {
-    reset()
     setIsOpen(false)
     onClose?.()
   }
 
   async function handleSubmit() {
     const trimmed = content.trim()
-    if (!trimmed) return
+    if (!trimmed || store.isWriting) return
 
     const created = await store.create({
       content: trimmed,
@@ -62,8 +59,10 @@ export function AddTaskForm({
       parentId,
     })
 
+    // Stay open for the next task: clear the name, keep the date and priority, and refocus.
     if (created) {
-      close()
+      setContent('')
+      nameInputRef.current?.focus()
     }
   }
 
@@ -84,12 +83,16 @@ export function AddTaskForm({
       }}
     >
       <input
+        ref={nameInputRef}
         className="task-input"
         value={content}
         autoFocus
         placeholder={parentId ? 'Subtask name' : 'Task name'}
         aria-label={parentId ? 'New subtask name' : 'New task name'}
         onChange={(event) => setContent(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') dismiss()
+        }}
       />
 
       <div className="task-edit-row">
@@ -126,7 +129,7 @@ export function AddTaskForm({
         <button type="submit" className="task-btn is-primary" disabled={store.isWriting || !content.trim()}>
           {parentId ? 'Add subtask' : 'Add task'}
         </button>
-        <button type="button" className="task-btn" onClick={close}>
+        <button type="button" className="task-btn" onClick={dismiss}>
           Cancel
         </button>
       </div>

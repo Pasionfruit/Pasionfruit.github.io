@@ -98,5 +98,7 @@ describe('adding a subtask from the editor', () => {
         expect.objectContaining({ content: 'New sub', parentId: 'p', dueDate: TODAY }),
       ),
     )
+    // The form stays open, cleared, ready for the next subtask.
+    await waitFor(() => expect((screen.getByLabelText('New subtask name') as HTMLInputElement).value).toBe(''))
   })
 })
