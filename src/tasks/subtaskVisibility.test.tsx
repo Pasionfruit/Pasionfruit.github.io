@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   getSections: vi.fn(),
   getTasksOfTheDay: vi.fn(),
   createTaskDetailed: vi.fn(),
+  deleteTask: vi.fn(),
 }))
 vi.mock('../data/todoist/repositories', () => mocks)
 
@@ -74,6 +75,18 @@ describe('subtask parents in date views', () => {
     )
     expect(screen.queryByText('Parent')).toBeNull()
     expect(itemOf('Child').closest('.task-subtasks')).toBeNull()
+  })
+})
+
+describe('deleting from the row', () => {
+  it('deletes a task from its trash icon without opening the editor', async () => {
+    mocks.deleteTask.mockResolvedValue(undefined)
+    await openTasks([{ ...base, id: 'b', content: 'Second', due: { date: TODAY } }], null)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete Second' }))
+
+    await waitFor(() => expect(mocks.deleteTask).toHaveBeenCalledWith('b'))
+    expect(screen.queryByLabelText('Task name')).toBeNull()
   })
 })
 

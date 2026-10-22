@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react'
-import { ChevronDown, ChevronRight, GripVertical, RotateCw } from 'lucide-react'
+import { ChevronDown, ChevronRight, GripVertical, RotateCw, Trash2 } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistProject, TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
 import { AddTaskForm } from './AddTaskForm'
@@ -335,6 +335,19 @@ export function TaskRow({
             onClick={() => onReschedule(task.id, todayKey())}
           >
             Today
+          </button>
+        ) : null}
+
+        {canEdit ? (
+          <button
+            type="button"
+            className="task-delete"
+            aria-label={`Delete ${task.content}`}
+            title="Delete task"
+            disabled={isWriting}
+            onClick={() => onDelete(task.id)}
+          >
+            <Trash2 size={15} aria-hidden="true" />
           </button>
         ) : null}
       </div>

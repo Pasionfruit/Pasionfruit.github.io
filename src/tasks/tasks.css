@@ -329,6 +329,46 @@
   color: var(--accent);
 }
 
+/* Right-aligned delete, revealed on row hover; touch screens have no hover, so it stays visible. */
+.task-delete {
+  flex-shrink: 0;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s, background 0.12s;
+}
+
+.task-row:hover .task-delete,
+.task-delete:focus-visible {
+  opacity: 1;
+}
+
+.task-delete:hover:not(:disabled) {
+  color: var(--p1);
+  background: color-mix(in srgb, var(--p1) 12%, transparent);
+}
+
+.task-delete:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+@media (hover: none) {
+  .task-delete {
+    opacity: 0.7;
+  }
+}
+
 @media (hover: none) {
   .task-quick-action {
     opacity: 1;
