@@ -1,5 +1,6 @@
 import { todoistRequest } from './client'
 import { dueSortValue, todayKey } from './dates'
+import { recurrenceToDueString } from './recurrence'
 import type {
   TodoistProject,
   TodoistSection,
@@ -227,12 +228,17 @@ export async function createTaskDetailed(draft: TodoistTaskDraft): Promise<Todoi
 }
 
 export async function updateTask(taskId: string, update: TodoistTaskUpdate) {
+  // A repeat is set through its due string; the date, if any, is where the repeat starts.
+  const due = update.repeat
+    ? { due_string: recurrenceToDueString(update.repeat), due_date: update.dueDate || undefined }
+    : { due_date: update.dueDate || null }
+
   await todoistRequest<unknown>(`/tasks/${taskId}`, {
     method: 'POST',
     body: JSON.stringify({
       content: update.content,
       description: update.description ?? '',
-      due_date: update.dueDate || null,
+      ...due,
       priority: mapPriorityToApi(update.priority),
     }),
   })

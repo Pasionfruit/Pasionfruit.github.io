@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   getTasksOfTheDay: vi.fn(),
   createTaskDetailed: vi.fn(),
   deleteTask: vi.fn(),
+  updateTask: vi.fn(),
 }))
 vi.mock('../data/todoist/repositories', () => mocks)
 
@@ -87,6 +88,27 @@ describe('deleting from the row', () => {
 
     await waitFor(() => expect(mocks.deleteTask).toHaveBeenCalledWith('b'))
     expect(screen.queryByLabelText('Task name')).toBeNull()
+  })
+})
+
+describe('repeating from the editor', () => {
+  it('saves a repeat with its interval when Repeat is on', async () => {
+    mocks.updateTask.mockResolvedValue(undefined)
+    await openTasks([{ ...base, id: 'r', content: 'Water', due: { date: TODAY } }], null)
+
+    await userEvent.click(screen.getByText('Water'))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Repeat' }))
+    await userEvent.clear(screen.getByLabelText('Repeat every'))
+    await userEvent.type(screen.getByLabelText('Repeat every'), '2')
+    await userEvent.selectOptions(screen.getByLabelText('Repeat unit'), 'week')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(mocks.updateTask).toHaveBeenCalledWith(
+        'r',
+        expect.objectContaining({ repeat: { every: 2, unit: 'week' } }),
+      ),
+    )
   })
 })
 

@@ -5,6 +5,12 @@ import type { TodoistProject, TodoistTask, TodoistTaskUpdate } from '../data/tod
 import { AddTaskForm } from './AddTaskForm'
 import { MAX_TASK_LEVELS } from './grouping'
 import type { TodoistStore } from './useTodoistData'
+import {
+  DEFAULT_RECURRENCE,
+  parseRecurrence,
+  RECURRENCE_UNITS,
+  type RecurrenceUnit,
+} from '../data/todoist/recurrence'
 
 function normalizePriority(value: number) {
   if (!Number.isFinite(value)) {
@@ -43,15 +49,23 @@ function TaskEditForm({
   const [description, setDescription] = useState(task.description ?? '')
   const [dueDate, setDueDate] = useState(dueDateKey(task))
   const [priority, setPriority] = useState(normalizePriority(task.priority))
+  const [repeats, setRepeats] = useState(Boolean(task.due?.is_recurring))
+  // Kept as text while typing, so clearing the number field does not snap it back to 1.
+  const savedRepeat = parseRecurrence(task.due?.string) ?? DEFAULT_RECURRENCE
+  const [repeatEvery, setRepeatEvery] = useState(String(savedRepeat.every))
+  const [repeatUnit, setRepeatUnit] = useState<RecurrenceUnit>(savedRepeat.unit)
 
   function handleSubmit() {
     const trimmed = content.trim()
     if (!trimmed) return
+    // A repeat needs a date to start from, so clearing the date stops it.
+    const every = Math.max(1, Number.parseInt(repeatEvery, 10) || 1)
     onSave(task.id, {
       content: trimmed,
       description: description.trim(),
       dueDate: dueDate || undefined,
       priority,
+      repeat: repeats && dueDate ? { every, unit: repeatUnit } : null,
     })
   }
 
@@ -97,6 +111,43 @@ function TaskEditForm({
           <option value={3}>P3</option>
           <option value={4}>P4</option>
         </select>
+      </div>
+
+      <div className="task-edit-row task-repeat-row">
+        <label className="task-repeat-toggle">
+          <input
+            type="checkbox"
+            checked={repeats}
+            disabled={isWriting || !dueDate}
+            onChange={(event) => setRepeats(event.target.checked)}
+          />
+          Repeat
+        </label>
+        {repeats && dueDate ? (
+          <>
+            <span className="task-repeat-every-label">every</span>
+            <input
+              className="task-input task-repeat-every"
+              type="number"
+              min={1}
+              value={repeatEvery}
+              aria-label="Repeat every"
+              onChange={(event) => setRepeatEvery(event.target.value)}
+            />
+            <select
+              className="task-input"
+              value={repeatUnit}
+              aria-label="Repeat unit"
+              onChange={(event) => setRepeatUnit(event.target.value as RecurrenceUnit)}
+            >
+              {RECURRENCE_UNITS.map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}s
+                </option>
+              ))}
+            </select>
+          </>
+        ) : null}
       </div>
 
       {projects.length > 0 && onMoveToProject ? (

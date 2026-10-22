@@ -1,3 +1,5 @@
+import type { Recurrence } from './recurrence'
+
 export type TodoistDue = {
   date?: string
   datetime?: string
@@ -42,6 +44,8 @@ export type TodoistTaskUpdate = {
   description?: string
   dueDate?: string
   priority: number
+  /** Omit to leave repeating as it is; null to stop repeating. */
+  repeat?: Recurrence | null
 }
 
 /**

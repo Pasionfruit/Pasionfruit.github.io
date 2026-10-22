@@ -814,6 +814,29 @@
 }
 
 /* Subtask folding and nesting by drag. */
+.task-repeat-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.task-repeat-toggle input:disabled {
+  cursor: default;
+}
+
+.task-repeat-every-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.task-repeat-every {
+  flex: 0 0 4.5rem;
+  width: 4.5rem;
+}
+
 .task-collapse-spacer {
   flex-shrink: 0;
   width: var(--task-collapse-slot);

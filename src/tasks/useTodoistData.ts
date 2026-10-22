@@ -172,7 +172,14 @@ export function useTodoistData(enabled: boolean) {
                   content: update.content,
                   description: update.description ?? '',
                   priority: update.priority,
-                  due: update.dueDate ? { ...task.due, date: update.dueDate, datetime: undefined } : null,
+                  due: update.dueDate
+                    ? {
+                        ...task.due,
+                        date: update.dueDate,
+                        datetime: undefined,
+                        ...(update.repeat !== undefined ? { is_recurring: update.repeat !== null } : {}),
+                      }
+                    : null,
                 }
               : task,
           ),
