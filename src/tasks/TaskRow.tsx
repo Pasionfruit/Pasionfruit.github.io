@@ -255,6 +255,7 @@ export function TaskRow({
             <GripVertical size={15} />
           </span>
         ) : null}
+        {!(hasSubtasks && onToggleCollapsed) ? <span className="task-collapse-spacer" aria-hidden="true" /> : null}
         {hasSubtasks && onToggleCollapsed ? (
           <button
             type="button"
@@ -354,7 +355,7 @@ export function TaskRow({
       ) : null}
 
       {isAddingSubtask && store ? (
-        <div className="task-subtasks">
+        <div className="task-subtask-add">
           <AddTaskForm
             store={store}
             canEdit={canEdit}

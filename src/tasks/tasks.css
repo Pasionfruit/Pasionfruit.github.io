@@ -142,19 +142,26 @@
 
 /* ── Rows ── */
 
+/*
+ * Every row reserves the fold chevron's slot, so tasks with and without subtasks
+ * line up. A subtask steps in by one slot plus one gap, which puts its checkbox
+ * just right of its parent's.
+ */
 .task-list {
+  --task-row-gap: 0.65rem;
+  --task-collapse-slot: 22px;
   display: flex;
   flex-direction: column;
 }
 
 .task-item[data-depth]:not([data-depth='0']) {
-  margin-left: 1.6rem;
+  margin-left: calc(var(--task-collapse-slot) + var(--task-row-gap));
 }
 
 .task-row {
   display: flex;
   align-items: flex-start;
-  gap: 0.65rem;
+  gap: var(--task-row-gap);
   padding: 0.6rem 0.5rem;
   border-bottom: 1px solid var(--border);
   transition: background 0.12s;
@@ -694,9 +701,12 @@
   }
 
   /* Bigger touch targets */
+  .task-list {
+    --task-row-gap: 0.55rem;
+  }
+
   .task-row {
     padding: 0.7rem 0.25rem;
-    gap: 0.55rem;
   }
 
   .task-check {
@@ -723,10 +733,6 @@
   .task-quick-action {
     padding: 0.35rem 0.6rem;
     font-size: 0.8rem;
-  }
-
-  .task-item[data-depth]:not([data-depth='0']) {
-    margin-left: 1rem;
   }
 
   .tasks-calendar-day {
@@ -802,14 +808,19 @@
 }
 
 /* Subtask folding and nesting by drag. */
+.task-collapse-spacer {
+  flex-shrink: 0;
+  width: var(--task-collapse-slot);
+}
+
 .task-collapse {
   flex-shrink: 0;
   align-self: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: var(--task-collapse-slot);
+  height: var(--task-collapse-slot);
   padding: 0;
   border: 0;
   border-radius: 999px;
@@ -821,6 +832,11 @@
 .task-collapse:hover {
   background: var(--surface-muted);
   color: var(--text-strong);
+}
+
+/* The subtask form opened from a task sits one level in, like that task's subtasks. */
+.task-subtask-add {
+  margin-left: calc(var(--task-collapse-slot) + var(--task-row-gap));
 }
 
 .task-row.is-nest-target {
