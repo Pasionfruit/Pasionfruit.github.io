@@ -63,6 +63,8 @@ export type TodoistTaskDraft = {
   content: string
   description?: string
   dueDate?: string
+  /** Repeats from the due date; needs one. */
+  repeat?: Recurrence | null
   priority?: number
   parentId?: string
   projectId?: string

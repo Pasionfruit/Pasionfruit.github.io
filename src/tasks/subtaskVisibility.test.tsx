@@ -112,6 +112,27 @@ describe('repeating from the editor', () => {
   })
 })
 
+describe('repeating a new task', () => {
+  it('creates the task with its repeat from the add form', async () => {
+    mocks.createTaskDetailed.mockResolvedValue({ ...base, id: 'n', content: 'Stretch', due: { date: TODAY } })
+    await openTasks([{ ...base, id: 'x', content: 'Other', due: { date: TODAY } }], null)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add task' }))
+    await userEvent.type(screen.getByLabelText('New task name'), 'Stretch')
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Repeat' }))
+    await userEvent.clear(screen.getByLabelText('Repeat every'))
+    await userEvent.type(screen.getByLabelText('Repeat every'), '3')
+    await userEvent.selectOptions(screen.getByLabelText('Repeat unit'), 'day')
+    await userEvent.click(screen.getByRole('button', { name: 'Add task' }))
+
+    await waitFor(() =>
+      expect(mocks.createTaskDetailed).toHaveBeenCalledWith(
+        expect.objectContaining({ content: 'Stretch', dueDate: TODAY, repeat: { every: 3, unit: 'day' } }),
+      ),
+    )
+  })
+})
+
 describe('add forms and the task editor', () => {
   it('closes an open add form when another task is clicked', async () => {
     await openTasks(

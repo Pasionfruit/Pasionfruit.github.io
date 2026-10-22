@@ -760,6 +760,15 @@
     width: 100%;
   }
 
+  /* The repeat row stays on one line on a phone, with its number field kept narrow. */
+  .task-repeat-row {
+    flex-direction: row;
+  }
+
+  .task-repeat-row .task-input {
+    width: auto;
+  }
+
   .task-edit-actions .task-btn {
     flex: 1;
     padding: 0.5rem 0.7rem;
@@ -835,6 +844,11 @@
 .task-repeat-every {
   flex: 0 0 4.5rem;
   width: 4.5rem;
+}
+
+/* Centre the checkbox, "every", the number and the unit on one line. */
+.task-repeat-row {
+  align-items: center;
 }
 
 .task-collapse-spacer {

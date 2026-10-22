@@ -217,6 +217,7 @@ export async function createTaskDetailed(draft: TodoistTaskDraft): Promise<Todoi
       content: draft.content,
       description: draft.description || undefined,
       due_date: draft.dueDate || undefined,
+      due_string: draft.repeat ? recurrenceToDueString(draft.repeat) : undefined,
       priority: mapPriorityToApi(draft.priority ?? 1),
       parent_id: draft.parentId || undefined,
       project_id: draft.projectId || undefined,

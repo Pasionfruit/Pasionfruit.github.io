@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
 import { addDaysToKey, todayKey } from '../data/todoist/dates'
+import { recurrenceFromDraft, type RepeatDraft } from '../data/todoist/recurrence'
+import { RepeatControls } from './RepeatControls'
 import type { TodoistStore } from './useTodoistData'
 
 export type AddTaskFormProps = {
@@ -35,6 +37,7 @@ export function AddTaskForm({
   const [content, setContent] = useState('')
   const [dueDate, setDueDate] = useState(defaultDueDate ?? '')
   const [priority, setPriority] = useState(4)
+  const [repeat, setRepeat] = useState<RepeatDraft>({ repeats: false, every: '1', unit: 'week' })
   const nameInputRef = useRef<HTMLInputElement>(null)
   const [seenEditingId, setSeenEditingId] = useState(editingTaskId)
 
@@ -42,6 +45,7 @@ export function AddTaskForm({
     setContent('')
     setDueDate(defaultDueDate ?? '')
     setPriority(4)
+    setRepeat((current) => ({ ...current, repeats: false }))
   }
 
   // Opening a task in the editor closes this form. Adjusting state while rendering, not in an
@@ -72,6 +76,7 @@ export function AddTaskForm({
       content: trimmed,
       dueDate: dueDate || undefined,
       priority,
+      repeat: recurrenceFromDraft(repeat, Boolean(dueDate)),
       projectId: defaultProjectId,
       sectionId: defaultSectionId,
       parentId,
@@ -142,6 +147,8 @@ export function AddTaskForm({
           Tomorrow
         </button>
       </div>
+
+      <RepeatControls draft={repeat} onChange={setRepeat} canRepeat={Boolean(dueDate)} disabled={store.isWriting} />
 
       <div className="task-edit-actions">
         <button type="submit" className="task-btn is-primary" disabled={store.isWriting || !content.trim()}>

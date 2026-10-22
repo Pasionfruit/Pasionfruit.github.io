@@ -25,3 +25,22 @@ export function parseRecurrence(dueString: string | undefined): Recurrence | nul
   if (!match) return null
   return { every: match[1] ? Number(match[1]) : 1, unit: match[2].toLowerCase() as RecurrenceUnit }
 }
+
+/** The repeat fields as a form holds them. `every` is text so a cleared field can be typed over. */
+export type RepeatDraft = {
+  repeats: boolean
+  every: string
+  unit: RecurrenceUnit
+}
+
+/** The form's starting repeat for a task: its saved repeat, or the default when it repeats in a way the form cannot edit. */
+export function repeatDraftFor(dueString: string | undefined, isRecurring: boolean): RepeatDraft {
+  const saved = parseRecurrence(dueString) ?? DEFAULT_RECURRENCE
+  return { repeats: isRecurring, every: String(saved.every), unit: saved.unit }
+}
+
+/** The repeat to save from a form. A repeat needs a date to start from, so without one there is none. */
+export function recurrenceFromDraft(draft: RepeatDraft, hasDate: boolean): Recurrence | null {
+  if (!draft.repeats || !hasDate) return null
+  return { every: Math.max(1, Number.parseInt(draft.every, 10) || 1), unit: draft.unit }
+}
