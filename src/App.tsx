@@ -13,6 +13,7 @@ import {
   Activity,
   Check,
   ChevronDown,
+  ChevronUp,
   ExternalLink,
   House,
   List,
@@ -21,6 +22,7 @@ import {
   Newspaper,
   Pencil,
   RotateCcw,
+  Trash2,
   UserRound,
   type LucideIcon,
 } from 'lucide-react'
@@ -77,6 +79,7 @@ import {
 } from './admin/training/activities'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
+import { applySavedOrder, arrayMove, saveOrder } from './tasks/taskOrder'
 import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
@@ -125,7 +128,13 @@ import type {
   TrainingRecord,
 } from './data/sheets/types'
 import { warmupAppsScript } from './data/sheets/client'
-import { closeTask, createTaskDetailed, getActiveTasks, getTasksOfTheDay } from './data/todoist/repositories'
+import {
+  closeTask,
+  createTaskDetailed,
+  deleteTask,
+  getActiveTasks,
+  getTasksOfTheDay,
+} from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 import { getServerStatus, startServer } from './minecraft/api'
 
@@ -817,6 +826,10 @@ function normalizePriority(value: number) {
 /** Rows shown on the home summary card before it collapses to a "+N more" line. */
 const SUMMARY_TASK_LIMIT = 8
 
+// The card keeps its own saved order, apart from the Tasks page's sections.
+const HOME_TODAY_ORDER = 'home:today'
+const HOME_TOMORROW_ORDER = 'home:tomorrow'
+
 
 function TodoistTasksCard({
   title,
@@ -844,7 +857,9 @@ function TodoistTasksCard({
 
   const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
   const summaryTodayCount = rows.length - summaryOverdueCount
-  const shownRows = day === 'today' ? rows : tomorrowRows
+  const dayOrderKey = day === 'today' ? HOME_TODAY_ORDER : HOME_TOMORROW_ORDER
+  const [, setOrderVersion] = useState(0)
+  const shownRows = applySavedOrder(day === 'today' ? rows : tomorrowRows, dayOrderKey)
 
   async function loadTomorrow() {
     setIsLoadingTomorrow(true)
@@ -907,6 +922,33 @@ function TodoistTasksCard({
       await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to add task')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  /** Swaps a row with its neighbour in the day's saved order. */
+  function moveRow(taskId: string, delta: -1 | 1) {
+    const ids = shownRows.map((row) => row.id)
+    const from = ids.indexOf(taskId)
+    const to = from + delta
+    if (from < 0 || to < 0 || to >= ids.length) return
+    saveOrder(dayOrderKey, arrayMove(ids, from, to))
+    setOrderVersion((version) => version + 1)
+  }
+
+  async function handleDeleteTask(task: TodoistTask) {
+    if (isWriting || !todoistConfigured || !canEditTodoist) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await deleteTask(task.id)
+      await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to delete task')
     } finally {
       setIsWriting(false)
     }
@@ -1019,7 +1061,7 @@ function TodoistTasksCard({
 
               {shownRows.length > 0 ? (
                 <div className="todoist-task-list">
-                  {shownRows.slice(0, SUMMARY_TASK_LIMIT).map((row) => (
+                  {shownRows.slice(0, SUMMARY_TASK_LIMIT).map((row, index) => (
                     <div
                       key={`summary-${row.id}`}
                       className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}`}
@@ -1039,6 +1081,40 @@ function TodoistTasksCard({
                       </div>
                       {isOverdue(row) ? (
                         <p className="todoist-summary-overdue">{formatDayLabel(dueDateKey(row))}</p>
+                      ) : null}
+                      {canEditTodoist ? (
+                        <div className="todoist-row-actions">
+                          <button
+                            type="button"
+                            className="todoist-row-btn"
+                            aria-label={`Move ${row.content} up`}
+                            title="Move up"
+                            disabled={isWriting || index === 0}
+                            onClick={() => moveRow(row.id, -1)}
+                          >
+                            <ChevronUp size={14} strokeWidth={1.8} aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+                            className="todoist-row-btn"
+                            aria-label={`Move ${row.content} down`}
+                            title="Move down"
+                            disabled={isWriting || index === shownRows.length - 1}
+                            onClick={() => moveRow(row.id, 1)}
+                          >
+                            <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+                            className="todoist-row-btn is-danger"
+                            aria-label={`Delete ${row.content}`}
+                            title="Delete task"
+                            disabled={isWriting}
+                            onClick={() => void handleDeleteTask(row)}
+                          >
+                            <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" />
+                          </button>
+                        </div>
                       ) : null}
                     </div>
                   ))}

@@ -2925,13 +2925,60 @@ button svg,
   align-items: center;
   gap: 0.55rem;
   padding: 0.35rem 0.65rem;
-  user-select: none;
-  -webkit-user-select: none;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   transition: background-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
-  cursor: grab;
+}
+
+/* Move arrows and delete, at the row's right edge. Revealed on hover; touch screens always show them. */
+.todoist-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.todoist-task-row:hover .todoist-row-actions,
+.todoist-row-actions:focus-within {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .todoist-row-actions {
+    opacity: 0.7;
+  }
+}
+
+.todoist-row-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.todoist-row-btn:hover:not(:disabled) {
+  color: var(--text-strong);
+  background: var(--surface-muted);
+}
+
+.todoist-row-btn.is-danger:hover:not(:disabled) {
+  color: var(--p1);
+  background: color-mix(in srgb, var(--p1) 12%, transparent);
+}
+
+.todoist-row-btn:disabled {
+  cursor: default;
+  opacity: 0.35;
 }
 
 /* Priority shows once, as the checkbox ring color, not also as a side bar. */
