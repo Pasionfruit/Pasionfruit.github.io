@@ -118,7 +118,7 @@ export function AddTaskForm({
         }}
       />
 
-      <div className="task-edit-row">
+      <div className="task-edit-row is-inline">
         <input
           className="task-input"
           type="date"
@@ -139,12 +139,15 @@ export function AddTaskForm({
         </select>
       </div>
 
-      <div className="task-edit-row">
+      <div className="task-edit-row is-inline">
         <button type="button" className="task-btn" onClick={() => setDueDate(todayKey())}>
           Today
         </button>
         <button type="button" className="task-btn" onClick={() => setDueDate(addDaysToKey(todayKey(), 1))}>
           Tomorrow
+        </button>
+        <button type="button" className="task-btn" onClick={() => setDueDate(addDaysToKey(todayKey(), 7))}>
+          Next week
         </button>
       </div>
 

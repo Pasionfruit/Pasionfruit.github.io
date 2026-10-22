@@ -765,6 +765,17 @@
     flex-direction: row;
   }
 
+  /* Add form rows that stay on one line on a phone: date and priority, then the quick dates. */
+  .task-edit-row.is-inline {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .task-edit-row.is-inline .task-input {
+    width: auto;
+  }
+
   .task-repeat-row .task-input {
     width: auto;
   }
