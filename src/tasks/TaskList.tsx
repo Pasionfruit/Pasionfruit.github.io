@@ -5,9 +5,10 @@ import { useTaskDrag } from './useTaskDrag'
 import type { DropTarget } from './dropTarget'
 import { getCollapsedIds, setTaskCollapsed } from './collapsedTasks'
 import { applySavedOrder, arrayMove, saveOrder, subtaskOrderKey } from './taskOrder'
-import { addDaysToKey, todayKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
 import type { TodoistStore } from './useTodoistData'
+
+export { AddTaskForm } from './AddTaskForm'
 
 export type TaskListProps = {
   tasks: TodoistTask[]
@@ -187,6 +188,7 @@ export function TaskList({
               onDelete={store.remove}
               projects={store.projects}
               onMoveToProject={handleMoveToProject}
+              store={store}
             />
           </Fragment>
         )
@@ -195,129 +197,5 @@ export function TaskList({
         <div className="task-drop-line" aria-hidden="true" />
       ) : null}
     </div>
-  )
-}
-
-export type AddTaskFormProps = {
-  store: TodoistStore
-  canEdit: boolean
-  defaultDueDate?: string
-  defaultProjectId?: string
-  defaultSectionId?: string
-  label?: string
-}
-
-export function AddTaskForm({
-  store,
-  canEdit,
-  defaultDueDate,
-  defaultProjectId,
-  defaultSectionId,
-  label = 'Add task',
-}: AddTaskFormProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [content, setContent] = useState('')
-  const [dueDate, setDueDate] = useState(defaultDueDate ?? '')
-  const [priority, setPriority] = useState(4)
-
-  if (!canEdit) {
-    return null
-  }
-
-  function reset() {
-    setContent('')
-    setDueDate(defaultDueDate ?? '')
-    setPriority(4)
-  }
-
-  async function handleSubmit() {
-    const trimmed = content.trim()
-    if (!trimmed) return
-
-    const created = await store.create({
-      content: trimmed,
-      dueDate: dueDate || undefined,
-      priority,
-      projectId: defaultProjectId,
-      sectionId: defaultSectionId,
-    })
-
-    if (created) {
-      reset()
-      setIsOpen(false)
-    }
-  }
-
-  if (!isOpen) {
-    return (
-      <button type="button" className="task-add-trigger" onClick={() => setIsOpen(true)}>
-        <span aria-hidden="true">+</span> {label}
-      </button>
-    )
-  }
-
-  return (
-    <form
-      className="task-add-form"
-      onSubmit={(event) => {
-        event.preventDefault()
-        void handleSubmit()
-      }}
-    >
-      <input
-        className="task-input"
-        value={content}
-        autoFocus
-        placeholder="Task name"
-        aria-label="New task name"
-        onChange={(event) => setContent(event.target.value)}
-      />
-
-      <div className="task-edit-row">
-        <input
-          className="task-input"
-          type="date"
-          value={dueDate}
-          aria-label="New task due date"
-          onChange={(event) => setDueDate(event.target.value)}
-        />
-        <select
-          className="task-input"
-          value={priority}
-          aria-label="New task priority"
-          onChange={(event) => setPriority(Number(event.target.value))}
-        >
-          <option value={1}>P1</option>
-          <option value={2}>P2</option>
-          <option value={3}>P3</option>
-          <option value={4}>P4</option>
-        </select>
-      </div>
-
-      <div className="task-edit-row">
-        <button type="button" className="task-btn" onClick={() => setDueDate(todayKey())}>
-          Today
-        </button>
-        <button type="button" className="task-btn" onClick={() => setDueDate(addDaysToKey(todayKey(), 1))}>
-          Tomorrow
-        </button>
-      </div>
-
-      <div className="task-edit-actions">
-        <button type="submit" className="task-btn is-primary" disabled={store.isWriting || !content.trim()}>
-          Add task
-        </button>
-        <button
-          type="button"
-          className="task-btn"
-          onClick={() => {
-            reset()
-            setIsOpen(false)
-          }}
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
   )
 }

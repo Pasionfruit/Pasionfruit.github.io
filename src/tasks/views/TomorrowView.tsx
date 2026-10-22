@@ -1,20 +1,15 @@
 import { useMemo } from 'react'
 import { AddTaskForm, TaskList } from '../TaskList'
-import { sortByPriorityThenDue, withAncestors } from '../grouping'
+import { sortByPriorityThenDue } from '../grouping'
 import { dueDateKey, formatDayLabel, tomorrowKey } from '../../data/todoist/dates'
 import type { ViewProps } from './TodayView'
 
 export function TomorrowView({ store, canEdit, editingTaskId, onEditToggle }: ViewProps) {
   const tomorrow = tomorrowKey()
 
+  // Only the tasks due tomorrow: a subtask due tomorrow shows alone, not under its parent.
   const tasks = useMemo(
-    () =>
-      sortByPriorityThenDue(
-        withAncestors(
-          store.tasks,
-          store.tasks.filter((task) => dueDateKey(task) === tomorrow),
-        ),
-      ),
+    () => sortByPriorityThenDue(store.tasks.filter((task) => dueDateKey(task) === tomorrow)),
     [store.tasks, tomorrow],
   )
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { AddTaskForm, TaskList } from '../TaskList'
-import { sortByPriorityThenDue, withAncestors } from '../grouping'
+import { sortByPriorityThenDue } from '../grouping'
 import { dueDateKey, formatDayLabel, todayKey } from '../../data/todoist/dates'
 import type { TodoistStore } from '../useTodoistData'
 
@@ -28,10 +28,10 @@ export function TodayView({ store, canEdit, editingTaskId, onEditToggle }: ViewP
       }
     }
 
-    // Ancestors come along, so a parent with no date still frames its dated subtasks.
+    // Only the dated tasks themselves: a subtask due today shows alone, not under its parent.
     return {
-      overdue: sortByPriorityThenDue(withAncestors(store.tasks, overdueTasks)),
-      dueToday: sortByPriorityThenDue(withAncestors(store.tasks, todayTasks)),
+      overdue: sortByPriorityThenDue(overdueTasks),
+      dueToday: sortByPriorityThenDue(todayTasks),
     }
   }, [store.tasks, today])
 

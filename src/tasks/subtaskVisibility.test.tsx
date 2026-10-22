@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   getProjects: vi.fn(),
   getSections: vi.fn(),
   getTasksOfTheDay: vi.fn(),
+  createTaskDetailed: vi.fn(),
 }))
 vi.mock('../data/todoist/repositories', () => mocks)
 
@@ -63,7 +64,7 @@ describe('nested subtasks', () => {
 })
 
 describe('subtask parents in date views', () => {
-  it('keeps an undated parent when a subtask is due today', async () => {
+  it('shows a dated subtask alone when its parent has no date', async () => {
     await openTasks(
       [
         { ...base, id: 'p', content: 'Parent' },
@@ -71,7 +72,31 @@ describe('subtask parents in date views', () => {
       ],
       null,
     )
-    expect(itemOf('Child').closest('.task-subtasks')).not.toBeNull()
-    expect(itemOf('Parent').textContent).toContain('Child')
+    expect(screen.queryByText('Parent')).toBeNull()
+    expect(itemOf('Child').closest('.task-subtasks')).toBeNull()
+  })
+})
+
+describe('adding a subtask from the editor', () => {
+  it('creates the subtask under the clicked task', async () => {
+    mocks.createTaskDetailed.mockResolvedValue({
+      ...base,
+      id: 'n',
+      parent_id: 'p',
+      content: 'New sub',
+      due: { date: TODAY },
+    })
+    await openTasks([{ ...base, id: 'p', content: 'Parent', due: { date: TODAY } }], null)
+
+    await userEvent.click(screen.getByText('Parent'))
+    await userEvent.click(screen.getByRole('button', { name: 'Add subtask' }))
+    await userEvent.type(screen.getByLabelText('New subtask name'), 'New sub')
+    await userEvent.click(screen.getByRole('button', { name: 'Add subtask' }))
+
+    await waitFor(() =>
+      expect(mocks.createTaskDetailed).toHaveBeenCalledWith(
+        expect.objectContaining({ content: 'New sub', parentId: 'p', dueDate: TODAY }),
+      ),
+    )
   })
 })

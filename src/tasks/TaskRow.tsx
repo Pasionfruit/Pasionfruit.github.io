@@ -2,6 +2,9 @@ import { Fragment, useState } from 'react'
 import { ChevronDown, ChevronRight, GripVertical, RotateCw } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistProject, TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
+import { AddTaskForm } from './AddTaskForm'
+import { MAX_TASK_LEVELS } from './grouping'
+import type { TodoistStore } from './useTodoistData'
 
 function normalizePriority(value: number) {
   if (!Number.isFinite(value)) {
@@ -24,6 +27,7 @@ function TaskEditForm({
   onDelete,
   projects,
   onMoveToProject,
+  onAddSubtask,
 }: {
   task: TodoistTask
   isWriting: boolean
@@ -32,6 +36,8 @@ function TaskEditForm({
   onDelete: (taskId: string) => void
   projects: TodoistProject[]
   onMoveToProject?: (taskId: string, projectId: string) => void
+  /** Shown only when the task can take another level of subtasks. */
+  onAddSubtask?: () => void
 }) {
   const [content, setContent] = useState(task.content)
   const [description, setDescription] = useState(task.description ?? '')
@@ -137,6 +143,11 @@ function TaskEditForm({
         <button type="submit" className="task-btn is-primary" disabled={isWriting || !content.trim()}>
           Save
         </button>
+        {onAddSubtask ? (
+          <button type="button" className="task-btn" disabled={isWriting} onClick={onAddSubtask}>
+            Add subtask
+          </button>
+        ) : null}
         <button type="button" className="task-btn" disabled={isWriting} onClick={onCancel}>
           Cancel
         </button>
@@ -178,6 +189,8 @@ export type TaskRowProps = {
   /** Projects the editor can file the task into; the Inbox is one of them. */
   projects?: TodoistProject[]
   onMoveToProject?: (taskId: string, projectId: string) => void
+  /** Needed to create subtasks from the editor. */
+  store?: TodoistStore
 }
 
 export function TaskRow({
@@ -204,11 +217,15 @@ export function TaskRow({
   onDelete,
   projects = [],
   onMoveToProject,
+  store,
 }: TaskRowProps) {
+  const [isAddingSubtask, setIsAddingSubtask] = useState(false)
   const isEditing = editingTaskId === task.id
   const isDragging = draggingId === task.id
   const isNestTarget = nestTargetId === task.id
   const dayKey = dueDateKey(task)
+  // A subtask sits one level below this task, so this task must leave room for it.
+  const canAddSubtask = canEdit && store !== undefined && depth + 1 < MAX_TASK_LEVELS
   const overdue = isOverdue(task)
   const timeLabel = dueTimeLabel(task)
   const priorityValue = normalizePriority(task.priority)
@@ -325,7 +342,30 @@ export function TaskRow({
           onDelete={onDelete}
           projects={projects}
           onMoveToProject={onMoveToProject}
+          onAddSubtask={
+            canAddSubtask
+              ? () => {
+                  onEditToggle(null)
+                  setIsAddingSubtask(true)
+                }
+              : undefined
+          }
         />
+      ) : null}
+
+      {isAddingSubtask && store ? (
+        <div className="task-subtasks">
+          <AddTaskForm
+            store={store}
+            canEdit={canEdit}
+            parentId={task.id}
+            defaultDueDate={dayKey ?? undefined}
+            defaultProjectId={task.project_id ?? undefined}
+            defaultSectionId={task.section_id ?? undefined}
+            defaultOpen
+            onClose={() => setIsAddingSubtask(false)}
+          />
+        </div>
       ) : null}
 
       {hasSubtasks && !isCollapsed ? (
@@ -356,6 +396,7 @@ export function TaskRow({
                 onDelete={onDelete}
                 projects={projects}
                 onMoveToProject={onMoveToProject}
+                store={store}
               />
             </Fragment>
           ))}
