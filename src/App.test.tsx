@@ -427,17 +427,68 @@ describe('site sections and dashboards', () => {
       expect(todoistMocks.createTaskDetailed).toHaveBeenCalledWith({
         content: 'Pay the electric bill',
         dueDate: dateKey(today),
+        priority: 4,
       })
     })
 
+    // The form stays open after an add, so the next task goes straight in.
     await user.click(within(card).getByRole('tab', { name: 'Tomorrow' }))
-    await user.click(within(card).getByRole('button', { name: 'Add task to tomorrow' }))
     await user.type(within(card).getByRole('textbox', { name: 'New task name' }), 'Call the dentist')
     await user.click(within(card).getByRole('button', { name: 'Add task' }))
     await waitFor(() => {
       expect(todoistMocks.createTaskDetailed).toHaveBeenLastCalledWith({
         content: 'Call the dentist',
         dueDate: dateKey(tomorrow),
+        priority: 4,
+      })
+    })
+  })
+
+  it('filters the day’s tasks by priority', async () => {
+    const user = userEvent.setup()
+    renderAdminTasksPage()
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Tasks of the Day card not found')
+    }
+
+    expect(await within(card).findByText('Review overdue notes')).toBeTruthy()
+
+    await user.selectOptions(within(card).getByRole('combobox', { name: 'Filter by priority' }), '2')
+    expect(within(card).getByText('Submit dashboard update')).toBeTruthy()
+    expect(within(card).queryByText('Review overdue notes')).toBeNull()
+  })
+
+  it('adds a task on Enter and keeps the form open for the next one', async () => {
+    const user = userEvent.setup()
+    const pad = (value: number) => String(value).padStart(2, '0')
+    const today = new Date()
+    const todayDate = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`
+
+    renderAdminTasksPage()
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Tasks of the Day card not found')
+    }
+
+    await user.click(within(card).getByRole('button', { name: 'Add task to today' }))
+    await user.type(within(card).getByRole('textbox', { name: 'New task name' }), 'Water plants{Enter}')
+    await waitFor(() => {
+      expect(todoistMocks.createTaskDetailed).toHaveBeenCalledWith({
+        content: 'Water plants',
+        dueDate: todayDate,
+        priority: 4,
+      })
+    })
+
+    await user.type(within(card).getByRole('textbox', { name: 'New task name' }), 'Feed the cat{Enter}')
+    await waitFor(() => {
+      expect(todoistMocks.createTaskDetailed).toHaveBeenLastCalledWith({
+        content: 'Feed the cat',
+        dueDate: todayDate,
+        priority: 4,
       })
     })
   })

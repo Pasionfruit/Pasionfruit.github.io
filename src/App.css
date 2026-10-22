@@ -2920,6 +2920,40 @@ button svg,
   max-height: 22rem;
 }
 
+/* The list is an ordered list: Today numbers its rows, Tomorrow shows them bare. */
+.todoist-task-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todoist-task-list.is-numbered {
+  list-style: decimal;
+  padding-left: 1.6rem;
+}
+
+.todoist-task-item {
+  min-width: 0;
+}
+
+.todoist-task-item::marker {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.todoist-priority-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.todoist-priority-filter .task-input {
+  flex: 0 0 auto;
+  width: auto;
+}
+
 .todoist-task-row {
   display: flex;
   align-items: center;

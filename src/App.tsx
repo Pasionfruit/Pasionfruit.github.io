@@ -79,7 +79,7 @@ import {
 } from './admin/training/activities'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
-import { applySavedOrder, arrayMove, saveOrder } from './tasks/taskOrder'
+import { applySavedOrder, saveOrder } from './tasks/taskOrder'
 import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
@@ -822,6 +822,17 @@ function normalizePriority(value: number) {
   return Math.min(4, Math.max(1, Math.round(value)))
 }
 
+type PriorityLevel = 1 | 2 | 3 | 4
+type PriorityFilter = 'all' | PriorityLevel
+
+function parsePriorityLevel(value: string): PriorityLevel {
+  return Number(value) as PriorityLevel
+}
+
+function parsePriorityFilter(value: string): PriorityFilter {
+  return value === 'all' ? 'all' : parsePriorityLevel(value)
+}
+
 
 /** Rows shown on the home summary card before it collapses to a "+N more" line. */
 const SUMMARY_TASK_LIMIT = 8
@@ -849,6 +860,9 @@ function TodoistTasksCard({
   const [tomorrowRows, setTomorrowRows] = useState<TodoistTask[]>([])
   const [isLoadingTomorrow, setIsLoadingTomorrow] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [newPriority, setNewPriority] = useState<PriorityLevel>(4)
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all')
+  const addInputRef = useRef<HTMLInputElement>(null)
   const [newContent, setNewContent] = useState('')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -859,7 +873,9 @@ function TodoistTasksCard({
   const summaryTodayCount = rows.length - summaryOverdueCount
   const dayOrderKey = day === 'today' ? HOME_TODAY_ORDER : HOME_TOMORROW_ORDER
   const [, setOrderVersion] = useState(0)
-  const shownRows = applySavedOrder(day === 'today' ? rows : tomorrowRows, dayOrderKey)
+  const orderedRows = applySavedOrder(day === 'today' ? rows : tomorrowRows, dayOrderKey)
+  const shownRows =
+    priorityFilter === 'all' ? orderedRows : orderedRows.filter((row) => normalizePriority(row.priority) === priorityFilter)
 
   async function loadTomorrow() {
     setIsLoadingTomorrow(true)
@@ -916,9 +932,14 @@ function TodoistTasksCard({
     setIsWriting(true)
     setWriteError('')
     try {
-      await createTaskDetailed({ content, dueDate: day === 'tomorrow' ? tomorrowKey() : todayKey() })
+      await createTaskDetailed({
+        content,
+        dueDate: day === 'tomorrow' ? tomorrowKey() : todayKey(),
+        priority: newPriority,
+      })
+      // Stay open for the next task: clear the name, keep the day and priority, and refocus.
       setNewContent('')
-      setIsAdding(false)
+      addInputRef.current?.focus()
       await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
     } catch (error) {
       setWriteError(error instanceof Error ? error.message : 'Unable to add task')
@@ -929,11 +950,15 @@ function TodoistTasksCard({
 
   /** Swaps a row with its neighbour in the day's saved order. */
   function moveRow(taskId: string, delta: -1 | 1) {
-    const ids = shownRows.map((row) => row.id)
-    const from = ids.indexOf(taskId)
-    const to = from + delta
-    if (from < 0 || to < 0 || to >= ids.length) return
-    saveOrder(dayOrderKey, arrayMove(ids, from, to))
+    const from = shownRows.findIndex((row) => row.id === taskId)
+    const neighbour = shownRows[from + delta]
+    if (from < 0 || !neighbour) return
+    // Swap within the whole day's order, so a filtered view moves past the hidden rows correctly.
+    const ids = orderedRows.map((row) => row.id)
+    const a = ids.indexOf(taskId)
+    const b = ids.indexOf(neighbour.id)
+    ;[ids[a], ids[b]] = [ids[b], ids[a]]
+    saveOrder(dayOrderKey, ids)
     setOrderVersion((version) => version + 1)
   }
 
@@ -1027,6 +1052,22 @@ function TodoistTasksCard({
             {day === 'today' ? 'Scope: Today + overdue tasks from Todoist.' : 'Scope: Tasks due tomorrow.'}
           </p>
 
+          <label className="todoist-priority-filter">
+            <span className="sheets-meta">Priority</span>
+            <select
+              className="task-input"
+              value={priorityFilter}
+              aria-label="Filter by priority"
+              onChange={(event) => setPriorityFilter(parsePriorityFilter(event.target.value))}
+            >
+              <option value="all">All</option>
+              <option value="1">P1</option>
+              <option value="2">P2</option>
+              <option value="3">P3</option>
+              <option value="4">P4</option>
+            </select>
+          </label>
+
           {!todoistConfigured ? (
             <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
           ) : null}
@@ -1060,10 +1101,10 @@ function TodoistTasksCard({
               </p>
 
               {shownRows.length > 0 ? (
-                <div className="todoist-task-list">
+                <ol className={`todoist-task-list ${day === 'today' ? 'is-numbered' : 'is-unnumbered'}`}>
                   {shownRows.slice(0, SUMMARY_TASK_LIMIT).map((row, index) => (
+                    <li key={`summary-${row.id}`} className="todoist-task-item">
                     <div
-                      key={`summary-${row.id}`}
                       className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}`}
                       data-priority={normalizePriority(row.priority)}
                     >
@@ -1117,11 +1158,16 @@ function TodoistTasksCard({
                         </div>
                       ) : null}
                     </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               ) : (
                 <p className="sheets-meta">
-                  {day === 'today' ? 'No tasks due today or overdue.' : 'Nothing due tomorrow.'}
+                  {priorityFilter !== 'all'
+                    ? `No P${priorityFilter} tasks ${day === 'today' ? 'today' : 'tomorrow'}.`
+                    : day === 'today'
+                      ? 'No tasks due today or overdue.'
+                      : 'Nothing due tomorrow.'}
                 </p>
               )}
 
@@ -1139,15 +1185,32 @@ function TodoistTasksCard({
           {isAdding && todoistConfigured && canEditTodoist ? (
             <form className="task-add-form todoist-add-form" onSubmit={(event) => void handleAddTask(event)}>
               <input
+                ref={addInputRef}
                 className="task-input"
                 value={newContent}
                 autoFocus
                 placeholder="Task name"
                 aria-label="New task name"
                 onChange={(event) => setNewContent(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') setIsAdding(false)
+                }}
               />
-              <div className="task-edit-actions">
+              <div className="task-edit-row is-inline">
                 <span className="sheets-meta">Due {day === 'tomorrow' ? 'tomorrow' : 'today'}</span>
+                <select
+                  className="task-input"
+                  value={newPriority}
+                  aria-label="New task priority"
+                  onChange={(event) => setNewPriority(parsePriorityLevel(event.target.value))}
+                >
+                  <option value={1}>P1</option>
+                  <option value={2}>P2</option>
+                  <option value={3}>P3</option>
+                  <option value={4}>P4</option>
+                </select>
+              </div>
+              <div className="task-edit-actions">
                 <button type="submit" className="task-btn is-primary" disabled={isWriting || !newContent.trim()}>
                   Add task
                 </button>
