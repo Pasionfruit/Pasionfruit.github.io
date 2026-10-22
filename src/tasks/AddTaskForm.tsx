@@ -13,8 +13,10 @@ export type AddTaskFormProps = {
   label?: string
   /** Starts expanded instead of as a trigger button. */
   defaultOpen?: boolean
-  /** Called after a cancel or a successful add, for a parent that mounts the form on demand. */
+  /** Called after a cancel or Escape, for a parent that mounts the form on demand. */
   onClose?: () => void
+  /** The task open in the editor; opening a different one closes this form. Leave unset for a subtask form, which its task closes. */
+  editingTaskId?: string | null
 }
 
 export function AddTaskForm({
@@ -27,23 +29,39 @@ export function AddTaskForm({
   label = 'Add task',
   defaultOpen = false,
   onClose,
+  editingTaskId = null,
 }: AddTaskFormProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
   const [content, setContent] = useState('')
   const [dueDate, setDueDate] = useState(defaultDueDate ?? '')
   const [priority, setPriority] = useState(4)
   const nameInputRef = useRef<HTMLInputElement>(null)
+  const [seenEditingId, setSeenEditingId] = useState(editingTaskId)
 
-  if (!canEdit) {
-    return null
-  }
-
-  function dismiss() {
+  function reset() {
     setContent('')
     setDueDate(defaultDueDate ?? '')
     setPriority(4)
+  }
+
+  // Opening a task in the editor closes this form. Adjusting state while rendering, not in an
+  // effect, so the form is already closed on the frame the click lands.
+  if (editingTaskId !== seenEditingId) {
+    setSeenEditingId(editingTaskId)
+    if (editingTaskId) {
+      reset()
+      setIsOpen(false)
+    }
+  }
+
+  function dismiss() {
+    reset()
     setIsOpen(false)
     onClose?.()
+  }
+
+  if (!canEdit) {
+    return null
   }
 
   async function handleSubmit() {

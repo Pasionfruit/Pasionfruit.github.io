@@ -181,6 +181,7 @@ export function ProjectsView({
           canEdit={canEdit}
           defaultProjectId={activeProjectId ?? undefined}
           label="Add task to project"
+          editingTaskId={editingTaskId}
         />
 
         {layout.error ? (
@@ -250,6 +251,7 @@ export function ProjectsView({
                 canEdit={canEdit}
                 defaultProjectId={activeProjectId ?? undefined}
                 defaultSectionId={section.id}
+                editingTaskId={editingTaskId}
               />
             </section>
           )

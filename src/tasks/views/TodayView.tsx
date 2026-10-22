@@ -88,7 +88,7 @@ export function TodayView({ store, canEdit, editingTaskId, onEditToggle }: ViewP
           emptyMessage="Nothing due today. Enjoy it."
           orderKey="today"
         />
-        <AddTaskForm store={store} canEdit={canEdit} defaultDueDate={today} />
+        <AddTaskForm store={store} canEdit={canEdit} defaultDueDate={today} editingTaskId={editingTaskId} />
       </section>
     </div>
   )

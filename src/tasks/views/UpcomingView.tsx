@@ -154,7 +154,7 @@ export function UpcomingView({ store, canEdit, editingTaskId, onEditToggle }: Vi
           emptyMessage="Nothing scheduled for this day."
           orderKey={`day:${selectedDay}`}
         />
-        <AddTaskForm store={store} canEdit={canEdit} defaultDueDate={selectedDay} />
+        <AddTaskForm store={store} canEdit={canEdit} defaultDueDate={selectedDay} editingTaskId={editingTaskId} />
       </section>
     </div>
   )

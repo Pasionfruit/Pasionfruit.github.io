@@ -220,6 +220,12 @@ export function TaskRow({
   store,
 }: TaskRowProps) {
   const [isAddingSubtask, setIsAddingSubtask] = useState(false)
+  // Opening any task in the editor closes this task's subtask form.
+  const [seenEditingId, setSeenEditingId] = useState(editingTaskId)
+  if (editingTaskId !== seenEditingId) {
+    setSeenEditingId(editingTaskId)
+    if (editingTaskId) setIsAddingSubtask(false)
+  }
   const isEditing = editingTaskId === task.id
   const isDragging = draggingId === task.id
   const isNestTarget = nestTargetId === task.id

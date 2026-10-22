@@ -77,6 +77,24 @@ describe('subtask parents in date views', () => {
   })
 })
 
+describe('add forms and the task editor', () => {
+  it('closes an open add form when another task is clicked', async () => {
+    await openTasks(
+      [
+        { ...base, id: 'a', content: 'First', due: { date: TODAY } },
+        { ...base, id: 'b', content: 'Second', due: { date: TODAY } },
+      ],
+      null,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add task' }))
+    expect(screen.getByLabelText('New task name')).toBeTruthy()
+
+    await userEvent.click(screen.getByText('Second'))
+    expect(screen.queryByLabelText('New task name')).toBeNull()
+  })
+})
+
 describe('adding a subtask from the editor', () => {
   it('creates the subtask under the clicked task', async () => {
     mocks.createTaskDetailed.mockResolvedValue({
