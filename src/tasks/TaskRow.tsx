@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react'
-import { ChevronDown, ChevronRight, GripVertical, RotateCw, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronRight, ChevronUp, RotateCw, Trash2 } from 'lucide-react'
 import { addDaysToKey, dueDateKey, dueTimeLabel, formatDayLabel, isOverdue, todayKey } from '../data/todoist/dates'
 import type { TodoistProject, TodoistTask, TodoistTaskUpdate } from '../data/todoist/types'
 import { AddTaskForm } from './AddTaskForm'
@@ -167,6 +167,9 @@ function TaskEditForm({
   )
 }
 
+/** A task's place among the tasks it sits with, counted from the top, starting at 0. */
+export type SiblingPosition = { index: number; count: number }
+
 export type TaskRowProps = {
   task: TodoistTask
   /** Every task's subtasks in this list, so the tree renders to any depth. */
@@ -178,14 +181,10 @@ export type TaskRowProps = {
   showDate?: boolean
   showProject?: boolean
   depth?: number
-  canReorder?: boolean
-  /** Position among the top-level tasks; set only on those, so the drag code can find drop slots. */
-  rootIndex?: number
-  /** The task being dragged, and the task a drag would nest under. */
-  draggingId?: string | null
-  nestTargetId?: string | null
-  /** Where a dragged subtask would land among this task's subtasks, when it is in this block. */
-  siblingDrop?: { parentId: string; index: number } | null
+  /** Where each task sits among its siblings, so the move arrows know when to stop. */
+  positions?: Map<string, SiblingPosition>
+  /** Moves a task one place up or down among its siblings. Unset when the list cannot reorder. */
+  onMove?: (taskId: string, delta: -1 | 1) => void
   /** Task ids whose subtasks are folded away. */
   collapsedIds?: Set<string>
   onToggleCollapsed?: (taskId: string) => void
@@ -211,11 +210,8 @@ export function TaskRow({
   showDate = true,
   showProject = true,
   depth = 0,
-  canReorder = false,
-  rootIndex,
-  draggingId = null,
-  nestTargetId = null,
-  siblingDrop = null,
+  positions,
+  onMove,
   collapsedIds,
   onToggleCollapsed,
   onEditToggle,
@@ -235,8 +231,7 @@ export function TaskRow({
     if (editingTaskId) setIsAddingSubtask(false)
   }
   const isEditing = editingTaskId === task.id
-  const isDragging = draggingId === task.id
-  const isNestTarget = nestTargetId === task.id
+  const position = positions?.get(task.id)
   const dayKey = dueDateKey(task)
   // A subtask sits one level below this task, so this task must leave room for it.
   const canAddSubtask = canEdit && store !== undefined && depth + 1 < MAX_TASK_LEVELS
@@ -246,29 +241,11 @@ export function TaskRow({
   const subtasks = childrenOf?.get(task.id) ?? []
   const hasSubtasks = subtasks.length > 0
   const isCollapsed = collapsedIds?.has(task.id) ?? false
-  // The drop line falls before the subtask at the slot, counting the dragged subtask out.
-  const visibleSubtasks = subtasks.filter((subtask) => subtask.id !== draggingId)
-  const slot = siblingDrop && siblingDrop.parentId === task.id ? siblingDrop.index : -1
-  const lineBeforeId = slot >= 0 && slot < visibleSubtasks.length ? visibleSubtasks[slot].id : null
-  const lineAtEnd = slot >= 0 && slot >= visibleSubtasks.length
+  const canMove = Boolean(onMove && position)
 
   return (
-    <div
-      className={`task-item${isDragging ? ' is-dragging' : ''}`}
-      data-depth={depth}
-      data-task-id={task.id}
-      data-parent-id={task.parent_id ?? undefined}
-      data-root-index={rootIndex}
-    >
-      <div
-        className={`task-row${isEditing ? ' is-editing' : ''}${isNestTarget ? ' is-nest-target' : ''}`}
-        data-priority={priorityValue}
-      >
-        {canReorder ? (
-          <span className="task-drag-handle" aria-hidden="true" title="Drag to move or nest">
-            <GripVertical size={15} />
-          </span>
-        ) : null}
+    <div className="task-item" data-depth={depth} data-task-id={task.id}>
+      <div className={`task-row${isEditing ? ' is-editing' : ''}`} data-priority={priorityValue}>
         {!(hasSubtasks && onToggleCollapsed) ? <span className="task-collapse-spacer" aria-hidden="true" /> : null}
         {hasSubtasks && onToggleCollapsed ? (
           <button
@@ -346,6 +323,31 @@ export function TaskRow({
           </button>
         ) : null}
 
+        {canEdit && canMove ? (
+          <span className="task-move">
+            <button
+              type="button"
+              className="task-move-btn"
+              aria-label={`Move ${task.content} up`}
+              title="Move up"
+              disabled={isWriting || !position || position.index === 0}
+              onClick={() => onMove?.(task.id, -1)}
+            >
+              <ChevronUp size={15} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="task-move-btn"
+              aria-label={`Move ${task.content} down`}
+              title="Move down"
+              disabled={isWriting || !position || position.index === position.count - 1}
+              onClick={() => onMove?.(task.id, 1)}
+            >
+              <ChevronDown size={15} aria-hidden="true" />
+            </button>
+          </span>
+        ) : null}
+
         {canEdit ? (
           <button
             type="button"
@@ -400,7 +402,6 @@ export function TaskRow({
         <div className="task-subtasks">
           {subtasks.map((subtask) => (
             <Fragment key={subtask.id}>
-              {lineBeforeId === subtask.id ? <div className="task-drop-line" aria-hidden="true" /> : null}
               <TaskRow
                 task={subtask}
                 childrenOf={childrenOf}
@@ -413,10 +414,8 @@ export function TaskRow({
                 showDate={showDate}
                 showProject={false}
                 depth={depth + 1}
-                canReorder={canReorder}
-                draggingId={draggingId}
-                nestTargetId={nestTargetId}
-                siblingDrop={siblingDrop}
+                positions={positions}
+                onMove={onMove}
                 onEditToggle={onEditToggle}
                 onComplete={onComplete}
                 onSave={onSave}
@@ -428,7 +427,6 @@ export function TaskRow({
               />
             </Fragment>
           ))}
-          {lineAtEnd ? <div className="task-drop-line" aria-hidden="true" /> : null}
         </div>
       ) : null}
     </div>

@@ -329,6 +329,52 @@
   color: var(--accent);
 }
 
+/* Move up and down, revealed on row hover like the delete icon beside them. */
+.task-move {
+  flex-shrink: 0;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.task-row:hover .task-move,
+.task-move:focus-within {
+  opacity: 1;
+}
+
+.task-move-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.task-move-btn:hover:not(:disabled) {
+  color: var(--text-strong);
+  background: var(--surface-muted);
+}
+
+.task-move-btn:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+@media (hover: none) {
+  .task-move {
+    opacity: 0.7;
+  }
+}
+
 /* Right-aligned delete, revealed on row hover; touch screens have no hover, so it stays visible. */
 .task-delete {
   flex-shrink: 0;
@@ -373,63 +419,6 @@
   .task-quick-action {
     opacity: 1;
   }
-}
-
-/* ── Hold-and-drag reordering ── */
-
-.task-drag-handle {
-  flex-shrink: 0;
-  align-self: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: -0.2rem;
-  color: var(--text-muted);
-  cursor: grab;
-  opacity: 0;
-  touch-action: none;
-  transition: opacity 0.12s, color 0.12s;
-}
-
-.task-row:hover .task-drag-handle {
-  opacity: 0.55;
-}
-
-.task-drag-handle:hover {
-  opacity: 1;
-  color: var(--text-strong);
-}
-
-/* Touch devices can't hover, so keep the grip visible as the drag affordance. */
-@media (hover: none) {
-  .task-drag-handle {
-    opacity: 0.5;
-  }
-}
-
-.task-list.is-reordering {
-  cursor: grabbing;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.task-item.is-dragging {
-  opacity: 0.9;
-}
-
-.task-item.is-dragging .task-row {
-  background: var(--surface-muted);
-  border-bottom-color: transparent;
-  border-radius: var(--radius);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-  cursor: grabbing;
-}
-
-.task-drop-line {
-  height: 2px;
-  margin: 0 0.5rem;
-  border-radius: 1px;
-  background: var(--accent);
 }
 
 /* ── Editing / adding ── */
@@ -723,13 +712,6 @@
     height: 1.35rem;
   }
 
-  /* A roomier grip that's easy to press and hold on a phone. */
-  .task-drag-handle {
-    opacity: 0.5;
-    padding: 0.25rem 0.1rem;
-    margin-left: -0.3rem;
-  }
-
   /* Projects wrap onto as many lines as they need instead of scrolling sideways. */
   .tasks-project-rail {
     flex-wrap: wrap;
@@ -833,7 +815,7 @@
   padding: 4px 0;
 }
 
-/* Subtask folding and nesting by drag. */
+/* Subtask folding. */
 .task-repeat-toggle {
   display: inline-flex;
   align-items: center;
@@ -891,12 +873,6 @@
 /* The subtask form opened from a task sits one level in, like that task's subtasks. */
 .task-subtask-add {
   margin-left: calc(var(--task-collapse-slot) + var(--task-row-gap));
-}
-
-.task-row.is-nest-target {
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-  box-shadow: inset 0 0 0 2px var(--accent);
-  border-radius: var(--radius);
 }
 
 .task-subcount {

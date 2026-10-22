@@ -175,15 +175,15 @@ describe('TasksPage', () => {
     expect(screen.queryByText('Undated idea')).toBeNull()
   })
 
-  it('shows drag handles for reordering only when editable', async () => {
+  it('shows move arrows for reordering only when editable', async () => {
     const { container, unmount } = renderTasksPage(true)
     await screen.findByText('Standup notes')
-    expect(container.querySelectorAll('.task-drag-handle').length).toBeGreaterThan(0)
+    expect(container.querySelectorAll('.task-move-btn').length).toBeGreaterThan(0)
     unmount()
 
     const readOnly = renderTasksPage(false)
     await screen.findByText('Standup notes')
-    expect(readOnly.container.querySelectorAll('.task-drag-handle').length).toBe(0)
+    expect(readOnly.container.querySelectorAll('.task-move-btn').length).toBe(0)
   })
 
   it('creates a task into the selected day', async () => {
