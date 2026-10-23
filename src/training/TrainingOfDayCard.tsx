@@ -5,6 +5,7 @@ import { getGarminHealth, getTrainingRecords } from '../data/sheets/repositories
 import type { GarminHealthRecord, TrainingRecord } from '../data/sheets/types'
 import { WorkoutText } from './WorkoutText'
 import { describeGarminActivity, pairPlanWithGarmin, toDateOnlyKey } from './workoutsOfDay'
+import { mergeTrainingLog } from './trainingPlan'
 
 /**
  * Today's planned training beside what Garmin recorded. Completion is whatever
@@ -38,7 +39,7 @@ export function TrainingOfDayCard({ title }: { title: string }) {
   /** A failed read keeps what is already on screen rather than blanking it. */
   async function loadDailyData() {
     const [training, garmin] = await Promise.allSettled([getTrainingRecords(), getGarminHealth()])
-    if (training.status === 'fulfilled') setTrainingRows(training.value)
+    if (training.status === 'fulfilled') setTrainingRows(mergeTrainingLog(training.value))
     if (garmin.status === 'fulfilled') setGarminRows(garmin.value)
     setGarminError(garmin.status === 'rejected' ? 'Could not load Garmin activities.' : '')
     setIsLoading(false)

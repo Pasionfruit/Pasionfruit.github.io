@@ -22,6 +22,7 @@ import { addDaysToKey, dateFromKey, dueDateKey, todayKey, toLocalDateKey } from 
 import type { TodoistTask } from '../../data/todoist/types'
 import { moodScore } from '../journal/moods'
 import { workoutOneLine } from '../../training/workoutPlan'
+import { mergeTrainingLog } from '../../training/trainingPlan'
 
 /**
  * Everything Ace is shown about Abe, gathered client-side.
@@ -140,7 +141,7 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
       : Promise.resolve([] as TodoistTask[]),
     settle('Garmin', getGarminWellness(), gaps, [] as GarminWellnessRecord[]),
     settle('Garmin activities', getGarminHealth(), gaps, [] as GarminHealthRecord[]),
-    settle('Training log', getTrainingRecords(), gaps, [] as TrainingRecord[]),
+    settle('Training log', getTrainingRecords().then(mergeTrainingLog), gaps, [] as TrainingRecord[]),
     settle('Races', getEvents(), gaps, [] as EventRecord[]),
     settle('Milestones', getPersonalTraining(), gaps, [] as PersonalTrainingRecord[]),
     idToken
