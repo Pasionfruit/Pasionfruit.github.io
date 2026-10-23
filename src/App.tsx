@@ -1104,6 +1104,11 @@ function TodoistTasksCard({
                 <ol className={`todoist-task-list ${day === 'today' ? 'is-numbered' : 'is-unnumbered'}`}>
                   {shownRows.slice(0, SUMMARY_TASK_LIMIT).map((row, index) => (
                     <li key={`summary-${row.id}`} className="todoist-task-item">
+                    {day === 'today' ? (
+                      <span className="todoist-task-number" aria-hidden="true">
+                        {index + 1}
+                      </span>
+                    ) : null}
                     <div
                       className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}`}
                       data-priority={normalizePriority(row.priority)}

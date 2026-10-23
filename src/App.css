@@ -2920,23 +2920,33 @@ button svg,
   max-height: 22rem;
 }
 
-/* The list is an ordered list: Today numbers its rows, Tomorrow shows them bare. */
+/* The list is an ordered list: Today numbers its rows, Tomorrow shows them bare.
+   Numbers are drawn inside each item rather than as list markers, which sit outside
+   the item and shift when the scrolling list box moves (seen on iPhone PWA). */
 .todoist-task-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.todoist-task-list.is-numbered {
-  list-style: decimal;
-  padding-left: 1.6rem;
-}
-
 .todoist-task-item {
   min-width: 0;
 }
 
-.todoist-task-item::marker {
+.todoist-task-list.is-numbered .todoist-task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.todoist-task-list.is-numbered .todoist-task-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.todoist-task-number {
+  flex: 0 0 1.25rem;
+  text-align: right;
   color: var(--text-muted);
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
