@@ -2939,7 +2939,8 @@ button svg,
   gap: 0.4rem;
 }
 
-.todoist-task-list.is-numbered .todoist-task-row {
+/* A row and, when it is being edited, its form underneath. */
+.todoist-task-stack {
   flex: 1;
   min-width: 0;
 }
@@ -2952,16 +2953,12 @@ button svg,
   font-variant-numeric: tabular-nums;
 }
 
-.todoist-priority-filter {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0.25rem 0 0.5rem;
-}
-
-.todoist-priority-filter .task-input {
+/* Priority filter in the card header, beside the add button. */
+.todoist-priority-select {
   flex: 0 0 auto;
   width: auto;
+  padding-block: 0.2rem;
+  font-size: 0.8rem;
 }
 
 .todoist-task-row {

@@ -245,6 +245,21 @@ export async function updateTask(taskId: string, update: TodoistTaskUpdate) {
   })
 }
 
+/** Name, description and priority only — leaves the due date and any repeat untouched. */
+export async function updateTaskDetails(
+  taskId: string,
+  update: Pick<TodoistTaskUpdate, 'content' | 'description' | 'priority'>,
+) {
+  await todoistRequest<unknown>(`/tasks/${taskId}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      content: update.content,
+      description: update.description ?? '',
+      priority: mapPriorityToApi(update.priority),
+    }),
+  })
+}
+
 /** Reschedule only — leaves content, description and priority untouched. */
 export async function rescheduleTask(taskId: string, dueDate: string) {
   await todoistRequest<unknown>(`/tasks/${taskId}`, {

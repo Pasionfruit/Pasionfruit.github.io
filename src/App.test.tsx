@@ -50,6 +50,7 @@ const todoistMocks = vi.hoisted(() => ({
   createTask: vi.fn(),
   createTaskDetailed: vi.fn(),
   updateTask: vi.fn(),
+  updateTaskDetails: vi.fn(),
   rescheduleTask: vi.fn(),
   closeTask: vi.fn(),
   deleteTask: vi.fn(),
@@ -331,6 +332,7 @@ beforeEach(() => {
   todoistMocks.createTask.mockResolvedValue(undefined)
   todoistMocks.createTaskDetailed.mockResolvedValue(undefined)
   todoistMocks.updateTask.mockResolvedValue(undefined)
+  todoistMocks.updateTaskDetails.mockResolvedValue(undefined)
   todoistMocks.rescheduleTask.mockResolvedValue(undefined)
   todoistMocks.closeTask.mockResolvedValue(undefined)
   todoistMocks.deleteTask.mockResolvedValue(undefined)
@@ -368,8 +370,8 @@ describe('site sections and dashboards', () => {
     expect(await within(card).findByText('Submit dashboard update')).toBeTruthy()
     expect(within(card).getByText('Review overdue notes')).toBeTruthy()
 
-    // The summary is read-and-complete only; editing lives on /tasks now.
-    expect(within(card).queryByPlaceholderText('Task name')).toBeNull()
+    // Nothing is being edited until a task is tapped.
+    expect(within(card).queryByRole('textbox', { name: 'Task name' })).toBeNull()
     expect(within(card).queryByRole('link', { name: /Open all tasks/ })).toBeNull()
     expect(within(card).getByRole('button', { name: 'Add task to today' })).toBeTruthy()
 
@@ -442,6 +444,40 @@ describe('site sections and dashboards', () => {
         priority: 4,
       })
     })
+  })
+
+  it('opens a tapped task for editing and saves name, description and priority', async () => {
+    const user = userEvent.setup()
+    renderAdminTasksPage()
+    const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const card = heading.closest('article')
+    if (!card) {
+      throw new Error('Tasks of the Day card not found')
+    }
+
+    await user.click(await within(card).findByRole('button', { name: 'Edit: Submit dashboard update' }))
+
+    const name = within(card).getByRole('textbox', { name: 'Task name' })
+    expect((name as HTMLInputElement).value).toBe('Submit dashboard update')
+    expect((within(card).getByRole('textbox', { name: 'Task description' }) as HTMLTextAreaElement).value).toBe(
+      'Include KPI updates and rollout notes',
+    )
+
+    await user.clear(name)
+    await user.type(name, 'Send dashboard update')
+    await user.selectOptions(within(card).getByRole('combobox', { name: 'Task priority' }), '1')
+    await user.click(within(card).getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(todoistMocks.updateTaskDetails).toHaveBeenCalledWith('todo-1', {
+        content: 'Send dashboard update',
+        description: 'Include KPI updates and rollout notes',
+        priority: 1,
+      })
+    })
+    // The date was not touched, so the schedule is left alone.
+    expect(todoistMocks.rescheduleTask).not.toHaveBeenCalled()
+    await waitFor(() => expect(within(card).queryByRole('textbox', { name: 'Task name' })).toBeNull())
   })
 
   it('filters the day’s tasks by priority', async () => {

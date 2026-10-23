@@ -1,6 +1,7 @@
 import React, {
   type CSSProperties,
   type FormEvent,
+  type KeyboardEvent,
   type ReactNode,
   useCallback,
   useEffect,
@@ -134,6 +135,8 @@ import {
   deleteTask,
   getActiveTasks,
   getTasksOfTheDay,
+  rescheduleTask,
+  updateTaskDetails,
 } from './data/todoist/repositories'
 import type { TodoistTask } from './data/todoist/types'
 import { getServerStatus, startServer } from './minecraft/api'
@@ -868,6 +871,8 @@ function TodoistTasksCard({
   const [isLoading, setIsLoading] = useState(true)
   const [isWriting, setIsWriting] = useState(false)
   const [writeError, setWriteError] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [draft, setDraft] = useState({ content: '', description: '', priority: 4 as PriorityLevel, dueDate: '' })
 
   const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
   const summaryTodayCount = rows.length - summaryOverdueCount
@@ -979,6 +984,45 @@ function TodoistTasksCard({
     }
   }
 
+  /** Opens a task's editor, or closes it when it is already open. */
+  function toggleEdit(task: TodoistTask) {
+    if (editingId === task.id) {
+      setEditingId(null)
+      return
+    }
+    setDraft({
+      content: task.content,
+      description: task.description ?? '',
+      priority: normalizePriority(task.priority) as PriorityLevel,
+      dueDate: dueDateKey(task),
+    })
+    setEditingId(task.id)
+  }
+
+  async function handleSaveEdit(event: FormEvent<HTMLFormElement>, task: TodoistTask) {
+    event.preventDefault()
+    const content = draft.content.trim()
+    if (!content || isWriting || !todoistConfigured || !canEditTodoist) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await updateTaskDetails(task.id, { content, description: draft.description.trim(), priority: draft.priority })
+      // A repeating task keeps its schedule: moving only its date would end the repeat.
+      if (!task.due?.is_recurring && draft.dueDate !== dueDateKey(task)) {
+        await rescheduleTask(task.id, draft.dueDate)
+      }
+      setEditingId(null)
+      await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to save task')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   async function handleCompleteTask(task: TodoistTask) {
     if (isWriting || !todoistConfigured || !canEditTodoist) {
       return
@@ -1008,6 +1052,19 @@ function TodoistTasksCard({
           <h3>{title}</h3>
         </div>
         <div className="section-card-actions">
+          <select
+            className="task-input todoist-priority-select"
+            value={priorityFilter}
+            aria-label="Filter by priority"
+            title="Filter by priority"
+            onChange={(event) => setPriorityFilter(parsePriorityFilter(event.target.value))}
+          >
+            <option value="all">All</option>
+            <option value="1">P1</option>
+            <option value="2">P2</option>
+            <option value="3">P3</option>
+            <option value="4">P4</option>
+          </select>
           {todoistConfigured && canEditTodoist ? (
             <button
               type="button"
@@ -1052,22 +1109,6 @@ function TodoistTasksCard({
             {day === 'today' ? 'Scope: Today + overdue tasks from Todoist.' : 'Scope: Tasks due tomorrow.'}
           </p>
 
-          <label className="todoist-priority-filter">
-            <span className="sheets-meta">Priority</span>
-            <select
-              className="task-input"
-              value={priorityFilter}
-              aria-label="Filter by priority"
-              onChange={(event) => setPriorityFilter(parsePriorityFilter(event.target.value))}
-            >
-              <option value="all">All</option>
-              <option value="1">P1</option>
-              <option value="2">P2</option>
-              <option value="3">P3</option>
-              <option value="4">P4</option>
-            </select>
-          </label>
-
           {!todoistConfigured ? (
             <p className="sheets-error">Set VITE_TODOIST_API_TOKEN in your .env file, then restart the app.</p>
           ) : null}
@@ -1109,8 +1150,9 @@ function TodoistTasksCard({
                         {index + 1}
                       </span>
                     ) : null}
+                    <div className="todoist-task-stack">
                     <div
-                      className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}`}
+                      className={`todoist-task-row${row.is_completed ? ' is-completed' : ''}${editingId === row.id ? ' is-editing' : ''}`}
                       data-priority={normalizePriority(row.priority)}
                     >
                       <button
@@ -1122,7 +1164,24 @@ function TodoistTasksCard({
                         title={canEditTodoist ? 'Mark complete' : undefined}
                         aria-label={`Complete: ${row.content}`}
                       />
-                      <div className="todoist-task-content">
+                      <div
+                        className="todoist-task-content"
+                        {...(canEditTodoist
+                          ? {
+                              role: 'button',
+                              tabIndex: 0,
+                              'aria-expanded': editingId === row.id,
+                              'aria-label': `Edit: ${row.content}`,
+                              onClick: () => toggleEdit(row),
+                              onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                  event.preventDefault()
+                                  toggleEdit(row)
+                                }
+                              },
+                            }
+                          : {})}
+                      >
                         <p className={row.is_completed ? 'todoist-task-done' : ''}>{row.content}</p>
                       </div>
                       {isOverdue(row) ? (
@@ -1162,6 +1221,62 @@ function TodoistTasksCard({
                           </button>
                         </div>
                       ) : null}
+                    </div>
+                    {canEditTodoist && editingId === row.id ? (
+                      <form className="todoist-inline-edit" onSubmit={(event) => void handleSaveEdit(event, row)}>
+                        <input
+                          className="task-input"
+                          value={draft.content}
+                          autoFocus
+                          aria-label="Task name"
+                          onChange={(event) => setDraft((current) => ({ ...current, content: event.target.value }))}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Escape') setEditingId(null)
+                          }}
+                        />
+                        <textarea
+                          className="task-input todoist-inline-edit-desc"
+                          value={draft.description}
+                          placeholder="Description"
+                          aria-label="Task description"
+                          onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))}
+                        />
+                        <div className="todoist-inline-edit-row">
+                          <select
+                            className="task-input"
+                            value={draft.priority}
+                            aria-label="Task priority"
+                            onChange={(event) =>
+                              setDraft((current) => ({ ...current, priority: parsePriorityLevel(event.target.value) }))
+                            }
+                          >
+                            <option value={1}>P1</option>
+                            <option value={2}>P2</option>
+                            <option value={3}>P3</option>
+                            <option value={4}>P4</option>
+                          </select>
+                          {row.due?.is_recurring ? (
+                            <span className="sheets-meta">Repeats: change the schedule in the task manager</span>
+                          ) : (
+                            <input
+                              type="date"
+                              className="task-input"
+                              value={draft.dueDate}
+                              aria-label="Due date"
+                              onChange={(event) => setDraft((current) => ({ ...current, dueDate: event.target.value }))}
+                            />
+                          )}
+                        </div>
+                        <div className="todoist-inline-edit-actions">
+                          <button type="submit" className="task-btn is-primary" disabled={isWriting || !draft.content.trim()}>
+                            Save
+                          </button>
+                          <button type="button" className="task-btn" onClick={() => setEditingId(null)}>
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : null}
                     </div>
                     </li>
                   ))}
