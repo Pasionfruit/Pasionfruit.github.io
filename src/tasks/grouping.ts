@@ -41,6 +41,22 @@ export function buildTaskTree(tasks: TodoistTask[]): TaskTree {
   return { roots, childrenOf }
 }
 
+/**
+ * A day view's tasks as a flat list: each task once, with no parent. A subtask due that day
+ * shows on its own, as it does on the home card, instead of nesting under a parent that is
+ * also due (which would list it twice over the card's count).
+ */
+export function flatDayTasks(tasks: TodoistTask[]): TodoistTask[] {
+  const seen = new Set<string>()
+  const flat: TodoistTask[] = []
+  for (const task of tasks) {
+    if (seen.has(task.id)) continue
+    seen.add(task.id)
+    flat.push(task.parent_id ? { ...task, parent_id: null } : task)
+  }
+  return flat
+}
+
 /** Priority first (P1 highest), then due date. Matches Todoist's default sort. */
 export function sortByPriorityThenDue(tasks: TodoistTask[]): TodoistTask[] {
   return [...tasks].sort((a, b) => {

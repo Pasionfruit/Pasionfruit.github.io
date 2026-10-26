@@ -881,7 +881,7 @@ function TodoistTasksCard({
   const [dragId, setDragId] = useState<string | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
   // Overdue rows come first, then the day's own, each in the Tasks page's order.
-  const byDue = (list: TodoistTask[]) => [...list].sort((a, b) => dueSortValue(a) - dueSortValue(b))
+  const byDue = (list: TodoistTask[]) => [...new Map(list.map((task) => [task.id, task])).values()].sort((a, b) => dueSortValue(a) - dueSortValue(b))
   const orderedRows =
     day === 'today'
       ? [

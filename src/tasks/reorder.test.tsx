@@ -77,20 +77,18 @@ describe('moving tasks with the arrows', () => {
     expect((moveButton('Beta', 'up') as HTMLButtonElement).disabled).toBe(false)
   })
 
-  it('moves subtasks among their siblings and saves the order per parent', async () => {
+  it('lists a due subtask on its own beside its due parent, as the home card does', async () => {
     setTasks([
       { ...base, id: 'P', content: 'Alpha', due: { date: TODAY } },
       { ...base, id: 'c1', parent_id: 'P', content: 'Child one', due: { date: TODAY } },
       { ...base, id: 'c2', parent_id: 'P', content: 'Child two', due: { date: TODAY } },
     ])
     await openToday()
-    const subtaskTitles = () =>
-      Array.from(document.querySelectorAll('.task-subtasks > .task-item > .task-row .task-title')).map((el) => el.textContent)
-    expect(subtaskTitles()).toEqual(['Child one', 'Child two'])
+    expect(order()).toEqual(['Alpha', 'Child one', 'Child two'])
+    expect(document.querySelectorAll('.task-subtasks').length).toBe(0)
 
     await userEvent.click(moveButton('Child two', 'up'))
 
-    expect(subtaskTitles()).toEqual(['Child two', 'Child one'])
-    expect(JSON.parse(window.localStorage.getItem('todoist-order:subtasks:P') ?? '[]')).toEqual(['c2', 'c1'])
+    expect(order()).toEqual(['Alpha', 'Child two', 'Child one'])
   })
 })
