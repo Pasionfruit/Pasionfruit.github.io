@@ -426,7 +426,7 @@
   margin-left: -0.2rem;
   color: var(--text-muted);
   cursor: grab;
-  opacity: 0;
+  opacity: 0.3;
   touch-action: none;
   transition: opacity 0.12s, color 0.12s;
 }

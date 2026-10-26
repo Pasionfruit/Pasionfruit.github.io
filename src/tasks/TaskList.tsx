@@ -122,7 +122,7 @@ export function TaskList({
         return
       }
 
-      if (task.parent_id) {
+      if (task.parent_id && taskById.has(task.parent_id)) {
         // Lifting a subtask out: it becomes a top-level task at the drop slot.
         if (orderKey) {
           const ids = roots.map((root) => root.id)

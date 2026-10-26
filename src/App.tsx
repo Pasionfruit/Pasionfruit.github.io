@@ -100,7 +100,7 @@ import {
   toDateOnlyKey,
 } from './training/workoutsOfDay'
 import { assignPlanDates, parseWorkoutTable } from './training/workoutPlan'
-import { dueDateKey, formatDayLabel, isOverdue, todayKey, tomorrowKey } from './data/todoist/dates'
+import { dueDateKey, dueSortValue, formatDayLabel, isOverdue, todayKey, tomorrowKey } from './data/todoist/dates'
 import {
   adminDashboards,
   adminDashboardsById,
@@ -838,9 +838,10 @@ function parsePriorityFilter(value: string): PriorityFilter {
 }
 
 
-// The card keeps its own saved order, apart from the Tasks page's sections.
-const HOME_TODAY_ORDER = 'home:today'
-const HOME_TOMORROW_ORDER = 'home:tomorrow'
+// The same saved-order keys the Tasks page uses, so the card and the page always agree.
+const OVERDUE_ORDER = 'overdue'
+const TODAY_ORDER = 'today'
+const TOMORROW_ORDER = 'tomorrow'
 
 
 function TodoistTasksCard({
@@ -874,13 +875,20 @@ function TodoistTasksCard({
 
   const summaryOverdueCount = useMemo(() => rows.filter((row) => isOverdue(row)).length, [rows])
   const summaryTodayCount = rows.length - summaryOverdueCount
-  const dayOrderKey = day === 'today' ? HOME_TODAY_ORDER : HOME_TOMORROW_ORDER
   const [, setOrderVersion] = useState(0)
   // Drag to reorder is for a mouse or trackpad; touch screens keep the arrows.
   const canDragRows = useMediaQuery('(hover: hover) and (pointer: fine)')
   const [dragId, setDragId] = useState<string | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
-  const orderedRows = applySavedOrder(day === 'today' ? rows : tomorrowRows, dayOrderKey)
+  // Overdue rows come first, then the day's own, each in the Tasks page's order.
+  const byDue = (list: TodoistTask[]) => [...list].sort((a, b) => dueSortValue(a) - dueSortValue(b))
+  const orderedRows =
+    day === 'today'
+      ? [
+          ...applySavedOrder(byDue(rows.filter((row) => isOverdue(row))), OVERDUE_ORDER),
+          ...applySavedOrder(byDue(rows.filter((row) => !isOverdue(row))), TODAY_ORDER),
+        ]
+      : applySavedOrder(byDue(tomorrowRows), TOMORROW_ORDER)
   const shownRows =
     priorityFilter === 'all' ? orderedRows : orderedRows.filter((row) => normalizePriority(row.priority) === priorityFilter)
 
@@ -955,6 +963,18 @@ function TodoistTasksCard({
     }
   }
 
+  /** Saves a new row order under the Tasks page's keys, overdue rows apart from the day's own. */
+  function persistOrder(ids: string[]) {
+    if (day === 'tomorrow') {
+      saveOrder(TOMORROW_ORDER, ids)
+    } else {
+      const overdueIds = new Set(rows.filter((row) => isOverdue(row)).map((row) => row.id))
+      saveOrder(OVERDUE_ORDER, ids.filter((id) => overdueIds.has(id)))
+      saveOrder(TODAY_ORDER, ids.filter((id) => !overdueIds.has(id)))
+    }
+    setOrderVersion((version) => version + 1)
+  }
+
   /** Swaps a row with its neighbour in the day's saved order. */
   function moveRow(taskId: string, delta: -1 | 1) {
     const from = shownRows.findIndex((row) => row.id === taskId)
@@ -965,8 +985,7 @@ function TodoistTasksCard({
     const a = ids.indexOf(taskId)
     const b = ids.indexOf(neighbour.id)
     ;[ids[a], ids[b]] = [ids[b], ids[a]]
-    saveOrder(dayOrderKey, ids)
-    setOrderVersion((version) => version + 1)
+    persistOrder(ids)
   }
 
   /** Moves every missed (overdue) task to today; repeating ones resend their repeat so it isn't ended. */
@@ -1003,8 +1022,7 @@ function TodoistTasksCard({
     const from = ids.indexOf(draggedId)
     const to = ids.indexOf(targetId)
     if (from < 0 || to < 0) return
-    saveOrder(dayOrderKey, arrayMove(ids, from, to))
-    setOrderVersion((version) => version + 1)
+    persistOrder(arrayMove(ids, from, to))
   }
 
   async function handleDeleteTask(task: TodoistTask) {
