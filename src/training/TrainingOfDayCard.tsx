@@ -3,6 +3,7 @@ import { Check, ChevronDown, RefreshCw, RotateCcw } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getGarminHealth, getTrainingRecords } from '../data/sheets/repositories'
 import type { GarminHealthRecord, TrainingRecord } from '../data/sheets/types'
+import { tomorrowKey } from '../data/todoist/dates'
 import { WorkoutText } from './WorkoutText'
 import { describeGarminActivity, pairPlanWithGarmin, toDateOnlyKey } from './workoutsOfDay'
 import { mergeTrainingLog } from './trainingPlan'
@@ -19,6 +20,7 @@ export function TrainingOfDayCard({ title }: { title: string }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [day, setDay] = useState<'today' | 'tomorrow'>('today')
 
   const todayKey = toDateOnlyKey(new Date().toISOString())
 
@@ -34,6 +36,16 @@ export function TrainingOfDayCard({ title }: { title: string }) {
         garminRows.filter((row) => String(row.date ?? '').slice(0, 10) === todayKey),
       ),
     [todaysTrainingRecord, garminRows, todayKey],
+  )
+
+  // Tomorrow is the plan alone: nothing has been recorded for it yet.
+  const tomorrowsWorkouts = useMemo(
+    () =>
+      pairPlanWithGarmin(
+        trainingRows.find((row) => toDateOnlyKey(row.date) === tomorrowKey()),
+        [],
+      ),
+    [trainingRows],
   )
 
   /** A failed read keeps what is already on screen rather than blanking it. */
@@ -58,7 +70,9 @@ export function TrainingOfDayCard({ title }: { title: string }) {
     void loadDailyData()
   }, [])
 
-  const hasWorkouts = todaysWorkouts.planned.length > 0 || todaysWorkouts.unplanned.length > 0
+  const isTomorrow = day === 'tomorrow'
+  const shownWorkouts = isTomorrow ? tomorrowsWorkouts : todaysWorkouts
+  const hasWorkouts = shownWorkouts.planned.length > 0 || shownWorkouts.unplanned.length > 0
 
   return (
     <article className={`info-card home-todoist-card sheets-card${isCollapsed ? ' is-collapsed' : ''}`}>
@@ -91,7 +105,22 @@ export function TrainingOfDayCard({ title }: { title: string }) {
       </div>
 
       <div className="home-todoist-collapsible">
-        <p className="sheets-meta">Workout(s) of the Day</p>
+        <div className="experience-toggle todoist-day-toggle" role="tablist" aria-label="Workouts by day">
+          {(['today', 'tomorrow'] as const).map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={day === id}
+              className={`experience-toggle-btn ${day === id ? 'active' : ''}`}
+              onClick={() => setDay(id)}
+            >
+              {id === 'today' ? 'Today' : 'Tomorrow'}
+            </button>
+          ))}
+        </div>
+
+        <p className="sheets-meta">{isTomorrow ? 'Workout(s) planned for tomorrow' : 'Workout(s) of the Day'}</p>
 
         {isLoading ? <p className="sheets-meta">Loading training...</p> : null}
 
@@ -101,15 +130,16 @@ export function TrainingOfDayCard({ title }: { title: string }) {
               <thead>
                 <tr>
                   <th>Workout</th>
-                  <th>Completed</th>
+                  {isTomorrow ? null : <th>Completed</th>}
                 </tr>
               </thead>
               <tbody>
-                {todaysWorkouts.planned.map(({ workout, isPlanned, activity }, index) => (
+                {shownWorkouts.planned.map(({ workout, isPlanned, activity }, index) => (
                   <tr key={index === 0 ? 'morning' : 'evening'}>
                     <td>
                       <WorkoutText value={workout} empty={index === 0 ? 'Morning —' : 'Evening —'} />
                     </td>
+                    {isTomorrow ? null : (
                     <td className="study-complete-cell">
                       {activity ? (
                         <span>
@@ -119,9 +149,10 @@ export function TrainingOfDayCard({ title }: { title: string }) {
                         <span>{isPlanned ? 'Not yet' : '—'}</span>
                       )}
                     </td>
+                    )}
                   </tr>
                 ))}
-                {todaysWorkouts.unplanned.map((activity, index) => (
+                {shownWorkouts.unplanned.map((activity, index) => (
                   <tr key={activity.activity_id || `unplanned-${index}`}>
                     <td className="sheets-meta">Unplanned</td>
                     <td className="study-complete-cell">
@@ -136,9 +167,9 @@ export function TrainingOfDayCard({ title }: { title: string }) {
           </div>
         ) : null}
 
-        {!isLoading && !hasWorkouts ? <p className="sheets-meta">No workout scheduled for today.</p> : null}
+        {!isLoading && !hasWorkouts ? <p className="sheets-meta">No workout scheduled for {isTomorrow ? 'tomorrow' : 'today'}.</p> : null}
 
-        {!isLoading ? <p className="sheets-meta">Completed is read from Garmin, which syncs at 9 AM and 9 PM.</p> : null}
+        {!isLoading && !isTomorrow ? <p className="sheets-meta">Completed is read from Garmin, which syncs at 9 AM and 9 PM.</p> : null}
 
         {garminError ? <p className="sheets-error">{garminError}</p> : null}
       </div>

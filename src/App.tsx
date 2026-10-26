@@ -1091,6 +1091,19 @@ function TodoistTasksCard({
           <Link to="/tasks" className="admin-quick-link" aria-label="Full task manager" title="Full task manager">
             <List size={15} strokeWidth={1.8} aria-hidden="true" />
           </Link>
+          <select
+            className="task-input todoist-priority-select"
+            value={priorityFilter}
+            aria-label="Filter by priority"
+            title="Filter by priority"
+            onChange={(event) => setPriorityFilter(parsePriorityFilter(event.target.value))}
+          >
+            <option value="all">All</option>
+            <option value="1">P1</option>
+            <option value="2">P2</option>
+            <option value="3">P3</option>
+            <option value="4">P4</option>
+          </select>
           <h3>{title}</h3>
         </div>
         <div className="section-card-actions">
@@ -1106,19 +1119,6 @@ function TodoistTasksCard({
               <RotateCcw size={16} strokeWidth={1.8} aria-hidden="true" />
             </button>
           ) : null}
-          <select
-            className="task-input todoist-priority-select"
-            value={priorityFilter}
-            aria-label="Filter by priority"
-            title="Filter by priority"
-            onChange={(event) => setPriorityFilter(parsePriorityFilter(event.target.value))}
-          >
-            <option value="all">All</option>
-            <option value="1">P1</option>
-            <option value="2">P2</option>
-            <option value="3">P3</option>
-            <option value="4">P4</option>
-          </select>
           {todoistConfigured && canEditTodoist ? (
             <button
               type="button"
