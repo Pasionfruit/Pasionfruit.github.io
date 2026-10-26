@@ -150,7 +150,9 @@ async function fetchAllPages<T>(path: string): Promise<T[]> {
 /** Every active (uncompleted) task, unfiltered. Views derive from this. */
 export async function getActiveTasks(): Promise<TodoistTask[]> {
   const rows = await fetchAllPages<TodoistTaskApi>('/tasks')
-  return rows.map(normalizeTask).sort((a, b) => dueSortValue(a) - dueSortValue(b))
+  // Pages can overlap when a task changes mid-read; keep each id once.
+  const unique = [...new Map(rows.map((row) => [String(row.id), row])).values()]
+  return unique.map(normalizeTask).sort((a, b) => dueSortValue(a) - dueSortValue(b))
 }
 
 export async function getProjects(): Promise<TodoistProject[]> {
