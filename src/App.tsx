@@ -837,9 +837,6 @@ function parsePriorityFilter(value: string): PriorityFilter {
 }
 
 
-/** Rows shown on the home summary card before it collapses to a "+N more" line. */
-const SUMMARY_TASK_LIMIT = 8
-
 // The card keeps its own saved order, apart from the Tasks page's sections.
 const HOME_TODAY_ORDER = 'home:today'
 const HOME_TOMORROW_ORDER = 'home:tomorrow'
@@ -1010,9 +1007,11 @@ function TodoistTasksCard({
     setWriteError('')
     try {
       await updateTaskDetails(task.id, { content, description: draft.description.trim(), priority: draft.priority })
-      // A repeating task keeps its schedule: moving only its date would end the repeat.
-      if (!task.due?.is_recurring && draft.dueDate !== dueDateKey(task)) {
-        await rescheduleTask(task.id, draft.dueDate)
+      // Only today or later; a repeating task resends its repeat so the date move doesn't end it.
+      if (draft.dueDate && draft.dueDate >= todayKey() && draft.dueDate !== dueDateKey(task)) {
+        await (task.due?.is_recurring
+          ? rescheduleTask(task.id, draft.dueDate, task.due.string)
+          : rescheduleTask(task.id, draft.dueDate))
       }
       setEditingId(null)
       await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
@@ -1143,7 +1142,7 @@ function TodoistTasksCard({
 
               {shownRows.length > 0 ? (
                 <ol className={`todoist-task-list ${day === 'today' ? 'is-numbered' : 'is-unnumbered'}`}>
-                  {shownRows.slice(0, SUMMARY_TASK_LIMIT).map((row, index) => (
+                  {shownRows.map((row, index) => (
                     <li key={`summary-${row.id}`} className="todoist-task-item">
                     {day === 'today' ? (
                       <span className="todoist-task-number" aria-hidden="true">
@@ -1255,17 +1254,14 @@ function TodoistTasksCard({
                             <option value={3}>P3</option>
                             <option value={4}>P4</option>
                           </select>
-                          {row.due?.is_recurring ? (
-                            <span className="sheets-meta">Repeats: change the schedule in the task manager</span>
-                          ) : (
-                            <input
-                              type="date"
-                              className="task-input"
-                              value={draft.dueDate}
-                              aria-label="Due date"
-                              onChange={(event) => setDraft((current) => ({ ...current, dueDate: event.target.value }))}
-                            />
-                          )}
+                          <input
+                            type="date"
+                            className="task-input"
+                            value={draft.dueDate}
+                            aria-label="Due date"
+                            onChange={(event) => setDraft((current) => ({ ...current, dueDate: event.target.value }))}
+                          />
+                          {row.due?.is_recurring ? <span className="sheets-meta">Repeat stays as is</span> : null}
                         </div>
                         <div className="todoist-inline-edit-actions">
                           <button type="submit" className="task-btn is-primary" disabled={isWriting || !draft.content.trim()}>
@@ -1290,10 +1286,6 @@ function TodoistTasksCard({
                       : 'Nothing due tomorrow.'}
                 </p>
               )}
-
-              {shownRows.length > SUMMARY_TASK_LIMIT ? (
-                <p className="sheets-meta">+{shownRows.length - SUMMARY_TASK_LIMIT} more</p>
-              ) : null}
 
             </div>
           ) : null}

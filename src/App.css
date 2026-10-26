@@ -2915,9 +2915,6 @@ button svg,
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 22rem;
 }
 
 /* The list is an ordered list: Today numbers its rows, Tomorrow shows them bare.

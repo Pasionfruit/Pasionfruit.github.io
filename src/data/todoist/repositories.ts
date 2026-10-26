@@ -232,7 +232,9 @@ export async function updateTask(taskId: string, update: TodoistTaskUpdate) {
   // A repeat is set through its due string; the date, if any, is where the repeat starts.
   const due = update.repeat
     ? { due_string: recurrenceToDueString(update.repeat), due_date: update.dueDate || undefined }
-    : { due_date: update.dueDate || null }
+    : update.repeat === undefined && update.dueString && update.dueDate
+      ? { due_string: update.dueString, due_date: update.dueDate }
+      : { due_date: update.dueDate || null }
 
   await todoistRequest<unknown>(`/tasks/${taskId}`, {
     method: 'POST',
@@ -260,11 +262,16 @@ export async function updateTaskDetails(
   })
 }
 
-/** Reschedule only — leaves content, description and priority untouched. */
-export async function rescheduleTask(taskId: string, dueDate: string) {
+/**
+ * Reschedule only — leaves content, description and priority untouched. Pass the task's
+ * repeat string to move a repeating task without ending its repeat.
+ */
+export async function rescheduleTask(taskId: string, dueDate: string, repeatString?: string) {
   await todoistRequest<unknown>(`/tasks/${taskId}`, {
     method: 'POST',
-    body: JSON.stringify({ due_date: dueDate || null }),
+    body: JSON.stringify(
+      repeatString && dueDate ? { due_string: repeatString, due_date: dueDate } : { due_date: dueDate || null },
+    ),
   })
 }
 

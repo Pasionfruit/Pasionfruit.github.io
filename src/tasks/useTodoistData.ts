@@ -198,10 +198,13 @@ export function useTodoistData(enabled: boolean) {
               ? { ...task, due: dueDate ? { ...task.due, date: dueDate, datetime: undefined } : null }
               : task,
           ),
-        () => rescheduleTask(taskId, dueDate),
+        () => {
+          const due = tasks.find((task) => task.id === taskId)?.due
+          return due?.is_recurring ? rescheduleTask(taskId, dueDate, due.string) : rescheduleTask(taskId, dueDate)
+        },
         'Unable to reschedule task',
       ),
-    [mutate],
+    [mutate, tasks],
   )
 
   const create = useCallback(

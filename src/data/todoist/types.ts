@@ -46,6 +46,8 @@ export type TodoistTaskUpdate = {
   priority: number
   /** Omit to leave repeating as it is; null to stop repeating. */
   repeat?: Recurrence | null
+  /** The task's current repeat string, resent with a new date so the repeat keeps its schedule. */
+  dueString?: string
 }
 
 /**

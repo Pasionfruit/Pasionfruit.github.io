@@ -50,12 +50,22 @@ function TaskEditForm({
   function handleSubmit() {
     const trimmed = content.trim()
     if (!trimmed) return
+    // A repeat left as it was is resent as the task already has it, so editing never
+    // shifts which day it repeats on (the form can't express e.g. "every monday").
+    const initialRepeat = repeatDraftFor(task.due?.string, Boolean(task.due?.is_recurring))
+    const repeatUnchanged =
+      Boolean(task.due?.is_recurring) &&
+      repeat.repeats &&
+      repeat.every === initialRepeat.every &&
+      repeat.unit === initialRepeat.unit
     onSave(task.id, {
       content: trimmed,
       description: description.trim(),
       dueDate: dueDate || undefined,
       priority,
-      repeat: recurrenceFromDraft(repeat, Boolean(dueDate)),
+      ...(repeatUnchanged
+        ? { dueString: task.due?.string }
+        : { repeat: recurrenceFromDraft(repeat, Boolean(dueDate)) }),
     })
     // The save applies optimistically, so the editor can close straight away.
     onCancel()
