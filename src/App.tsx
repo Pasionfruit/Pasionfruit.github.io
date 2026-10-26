@@ -64,7 +64,6 @@ import {
 import 'chartjs-adapter-date-fns'
 import './App.css'
 import './admin/admin.css'
-import { sounds } from './sounds'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { HomeHero } from './components/HomeHero'
 import { MonthTileHeatmap, type HeatmapDay } from './components/MonthTileHeatmap'
@@ -756,10 +755,6 @@ function HomePage() {
 
   function toggleSection(id: SectionId) {
     const isOpen = openSections.includes(id)
-    if (isOpen) {
-      sounds.sectionCollapse()
-    }
-
     setOpenSections((previous) =>
       isOpen ? previous.filter((value) => value !== id) : [...previous, id],
     )
@@ -1109,7 +1104,6 @@ function TodoistTasksCard({
       return
     }
 
-    sounds.todoistComplete()
     setIsWriting(true)
     setWriteError('')
     try {

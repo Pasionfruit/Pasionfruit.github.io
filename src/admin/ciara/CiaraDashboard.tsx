@@ -5,7 +5,6 @@ import { CursorGlyph, CursorSwitch, type CursorKind } from './Cursors'
 import { RelationshipClock } from './RelationshipClock'
 import { Monthiversary } from './Monthiversary'
 import { monthiversaryOn, TOGETHER_SINCE } from './elapsed'
-import { meowOnce } from './meow'
 import { StickyNote, StickyStatus } from './StickyNotes'
 import { useStickyNotes } from './useStickyNotes'
 import { Timeline } from './Timeline'
@@ -92,8 +91,6 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
     setCursor(kind)
     setGaze(NO_GAZE)
     setTailWiggle(false)
-    // Picking the laser is a click, so it is also the moment sound is allowed.
-    if (kind === 'laser') meowOnce()
     try {
       window.localStorage.setItem(CURSOR_KEY, kind)
     } catch {
@@ -101,7 +98,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
     }
   }
 
-  // While the laser is out, Inky opens her mouth and meows every few seconds.
+  // While the laser is out, Inky opens her mouth every few seconds.
   useEffect(() => {
     if (cursor !== 'laser') return
 
@@ -110,7 +107,6 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
     const schedule = () => {
       openTimer = window.setTimeout(() => {
         setMouthOpen(true)
-        meowOnce()
         closeTimer = window.setTimeout(() => {
           setMouthOpen(false)
           schedule()

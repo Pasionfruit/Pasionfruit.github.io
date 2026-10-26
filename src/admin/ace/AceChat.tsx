@@ -170,47 +170,6 @@ export function AceChat({
     )
   }
 
-  /*
-   * Rocky's signature: he speaks in musical chords. A short bell-like arpeggio
-   * marks the start and end of Ace's speech — synthesized here, so it works
-   * offline and costs nothing.
-   */
-  const audioCtxRef = useRef<AudioContext | null>(null)
-
-  function playChord(frequencies: number[], duration = 0.55) {
-    try {
-      const w = window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }
-      const Ctx = w.AudioContext ?? w.webkitAudioContext
-      if (!Ctx) return
-      const ctx = audioCtxRef.current ?? new Ctx()
-      audioCtxRef.current = ctx
-      void ctx.resume()
-
-      const now = ctx.currentTime
-      frequencies.forEach((frequency, index) => {
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.type = 'sine'
-        osc.frequency.value = frequency
-        const start = now + index * 0.08
-        gain.gain.setValueAtTime(0, start)
-        gain.gain.linearRampToValueAtTime(0.1, start + 0.05)
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
-        osc.connect(gain)
-        gain.connect(ctx.destination)
-        osc.start(start)
-        osc.stop(start + duration + 0.05)
-      })
-    } catch {
-      // A blocked or missing AudioContext should never break speech itself.
-    }
-  }
-
-  /** Bright rising chord: Ace is about to speak. */
-  const CHORD_SPEAK = [659.25, 783.99, 987.77] // E5 · G5 · B5
-  /** Soft settling chord: your turn. */
-  const CHORD_DONE = [523.25, 659.25, 783.99] // C5 · E5 · G5
-
   /**
    * Gathers everything Ace is told. Only the newest request may land: a slow
    * first load must not overwrite the fresh one a "New conversation" started.
@@ -461,7 +420,6 @@ export function AceChat({
     utterance.pitch = 0.92
     utterance.rate = 1.02
     utterance.onend = () => {
-      playChord(CHORD_DONE, 0.45)
       if (voiceOnRef.current) startListening()
     }
     // Let the chord ring for a beat before the words begin.
@@ -482,7 +440,6 @@ export function AceChat({
 
     stopSpeaking()
     const session = speechSessionRef.current
-    playChord(CHORD_SPEAK)
     setVoiceState('speaking')
 
     let chunks: string[] = []
@@ -506,7 +463,6 @@ export function AceChat({
       }
 
       setVoiceNote('')
-      playChord(CHORD_DONE, 0.45)
       if (voiceOnRef.current) startListening()
     } catch (caught) {
       if (session !== speechSessionRef.current) return
@@ -581,7 +537,6 @@ export function AceChat({
     setVoiceState('off')
     recognitionRef.current?.stop()
     stopSpeaking()
-    playChord(CHORD_DONE, 0.5)
   }
 
   function toggleVoice() {
@@ -594,7 +549,6 @@ export function AceChat({
       // Inside the tap gesture: unlock the audio element and the chord
       // context, or mobile browsers will refuse both later.
       unlockSpeechAudio()
-      playChord(CHORD_DONE, 0.4)
       startListening()
     }
   }
