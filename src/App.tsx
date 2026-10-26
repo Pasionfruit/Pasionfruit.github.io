@@ -1083,6 +1083,27 @@ function TodoistTasksCard({
     }
   }
 
+  /** Pushes a task to tomorrow in one tap; a repeating task resends its repeat so it isn't ended. */
+  async function handleMoveToTomorrow(task: TodoistTask) {
+    if (isWriting || !todoistConfigured || !canEditTodoist) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      await (task.due?.is_recurring
+        ? rescheduleTask(task.id, tomorrowKey(), task.due.string)
+        : rescheduleTask(task.id, tomorrowKey()))
+      setEditingId(null)
+      await (day === 'tomorrow' ? loadTomorrow() : loadTasks())
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to move task to tomorrow')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
   async function handleCompleteTask(task: TodoistTask) {
     if (isWriting || !todoistConfigured || !canEditTodoist) {
       return
@@ -1369,6 +1390,16 @@ function TodoistTasksCard({
                           <button type="button" className="task-btn" onClick={() => setEditingId(null)}>
                             Cancel
                           </button>
+                          {dueDateKey(row) !== tomorrowKey() ? (
+                            <button
+                              type="button"
+                              className="task-btn"
+                              disabled={isWriting}
+                              onClick={() => void handleMoveToTomorrow(row)}
+                            >
+                              Move to tomorrow
+                            </button>
+                          ) : null}
                         </div>
                       </form>
                     ) : null}
