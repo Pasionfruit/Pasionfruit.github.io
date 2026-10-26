@@ -1,6 +1,7 @@
 import React, {
   type CSSProperties,
   type FormEvent,
+  type DragEvent,
   type KeyboardEvent,
   type ReactNode,
   useCallback,
@@ -80,7 +81,7 @@ import {
 } from './admin/training/activities'
 import { PageFrame, SummaryText } from './components/PageFrame'
 import { TasksPage } from './tasks/TasksPage'
-import { applySavedOrder, saveOrder } from './tasks/taskOrder'
+import { applySavedOrder, arrayMove, saveOrder } from './tasks/taskOrder'
 import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
@@ -875,6 +876,10 @@ function TodoistTasksCard({
   const summaryTodayCount = rows.length - summaryOverdueCount
   const dayOrderKey = day === 'today' ? HOME_TODAY_ORDER : HOME_TOMORROW_ORDER
   const [, setOrderVersion] = useState(0)
+  // Drag to reorder is for a mouse or trackpad; touch screens keep the arrows.
+  const canDragRows = useMediaQuery('(hover: hover) and (pointer: fine)')
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
   const orderedRows = applySavedOrder(day === 'today' ? rows : tomorrowRows, dayOrderKey)
   const shownRows =
     priorityFilter === 'all' ? orderedRows : orderedRows.filter((row) => normalizePriority(row.priority) === priorityFilter)
@@ -961,6 +966,44 @@ function TodoistTasksCard({
     const b = ids.indexOf(neighbour.id)
     ;[ids[a], ids[b]] = [ids[b], ids[a]]
     saveOrder(dayOrderKey, ids)
+    setOrderVersion((version) => version + 1)
+  }
+
+  /** Moves every missed (overdue) task to today; repeating ones resend their repeat so it isn't ended. */
+  async function handleRescheduleMissed() {
+    const missed = rows.filter((row) => isOverdue(row))
+    if (missed.length === 0 || isWriting || !todoistConfigured || !canEditTodoist) {
+      return
+    }
+
+    setIsWriting(true)
+    setWriteError('')
+    try {
+      const today = todayKey()
+      await Promise.all(
+        missed.map((task) =>
+          task.due?.is_recurring ? rescheduleTask(task.id, today, task.due.string) : rescheduleTask(task.id, today),
+        ),
+      )
+      await loadTasks()
+    } catch (error) {
+      setWriteError(error instanceof Error ? error.message : 'Unable to reschedule tasks')
+    } finally {
+      setIsWriting(false)
+    }
+  }
+
+  /** Drops the dragged row where the target row sits, in the day's saved order. */
+  function dropRow(targetId: string) {
+    const draggedId = dragId
+    setDragId(null)
+    setDragOverId(null)
+    if (!draggedId || draggedId === targetId) return
+    const ids = orderedRows.map((row) => row.id)
+    const from = ids.indexOf(draggedId)
+    const to = ids.indexOf(targetId)
+    if (from < 0 || to < 0) return
+    saveOrder(dayOrderKey, arrayMove(ids, from, to))
     setOrderVersion((version) => version + 1)
   }
 
@@ -1051,6 +1094,18 @@ function TodoistTasksCard({
           <h3>{title}</h3>
         </div>
         <div className="section-card-actions">
+          {todoistConfigured && canEditTodoist ? (
+            <button
+              type="button"
+              className="section-collapse-btn"
+              aria-label="Reschedule missed tasks to today"
+              title="Reschedule missed tasks to today"
+              disabled={isWriting || summaryOverdueCount === 0}
+              onClick={() => void handleRescheduleMissed()}
+            >
+              <RotateCcw size={16} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          ) : null}
           <select
             className="task-input todoist-priority-select"
             value={priorityFilter}
@@ -1143,7 +1198,33 @@ function TodoistTasksCard({
               {shownRows.length > 0 ? (
                 <ol className={`todoist-task-list ${day === 'today' ? 'is-numbered' : 'is-unnumbered'}`}>
                   {shownRows.map((row, index) => (
-                    <li key={`summary-${row.id}`} className="todoist-task-item">
+                    <li
+                      key={`summary-${row.id}`}
+                      className={`todoist-task-item${dragId === row.id ? ' is-dragging' : ''}${dragOverId === row.id && dragId !== row.id ? ' is-drop-target' : ''}`}
+                      {...(canDragRows && canEditTodoist && editingId !== row.id
+                        ? {
+                            draggable: true,
+                            onDragStart: (event: DragEvent<HTMLLIElement>) => {
+                              event.dataTransfer.effectAllowed = 'move'
+                              event.dataTransfer.setData('text/plain', row.id)
+                              setDragId(row.id)
+                            },
+                            onDragOver: (event: DragEvent<HTMLLIElement>) => {
+                              if (!dragId) return
+                              event.preventDefault()
+                              setDragOverId(row.id)
+                            },
+                            onDrop: (event: DragEvent<HTMLLIElement>) => {
+                              event.preventDefault()
+                              dropRow(row.id)
+                            },
+                            onDragEnd: () => {
+                              setDragId(null)
+                              setDragOverId(null)
+                            },
+                          }
+                        : {})}
+                    >
                     {day === 'today' ? (
                       <span className="todoist-task-number" aria-hidden="true">
                         {index + 1}

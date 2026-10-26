@@ -2930,6 +2930,18 @@ button svg,
   min-width: 0;
 }
 
+.todoist-task-item[draggable='true'] {
+  cursor: grab;
+}
+
+.todoist-task-item.is-dragging {
+  opacity: 0.45;
+}
+
+.todoist-task-item.is-drop-target {
+  box-shadow: 0 -2px 0 var(--accent);
+}
+
 .todoist-task-list.is-numbered .todoist-task-item {
   display: flex;
   align-items: center;
