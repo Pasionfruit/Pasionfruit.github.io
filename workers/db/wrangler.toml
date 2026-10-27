@@ -14,8 +14,11 @@ binding = "DB"
 database_name = "pasion-db"
 database_id = "f8d1ee38-8bee-4dd2-b62e-d13578b9c4d3"
 
-# The Ciara timeline's photos (workers/db/photos.js). Create the bucket first:
+# The Ciara timeline's photos (workers/db/photos.js). Disabled until R2 is
+# enabled on the account (the deploy fails on a bucket that does not exist);
+# /photos/* answers 500 meanwhile. To turn on: enable R2 in the dashboard, then
 #   npx wrangler r2 bucket create pasion-photos
-[[r2_buckets]]
-binding = "PHOTOS"
-bucket_name = "pasion-photos"
+# and uncomment:
+# [[r2_buckets]]
+# binding = "PHOTOS"
+# bucket_name = "pasion-photos"

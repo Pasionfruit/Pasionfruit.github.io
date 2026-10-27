@@ -120,6 +120,25 @@ python ingest_ringconn.py --file ~/Downloads/ringconn_export.csv
 ```
 > **Note:** If you see "unmapped columns" in the output, the script found columns it doesn't recognize. You can add them to `_COL_MAP` in `ingest_ringconn.py` to capture additional metrics.
 
+### Ringconn — automatic, from Apple Health (no CSV)
+RingConn writes to Apple Health; an iPhone Shortcut pushes each day to the db Worker's `ringconn_health` table, and the site merges it with the sheet's older rows (D1 wins on a shared date).
+
+One-time server setup (from `workers/db`):
+```bash
+npx wrangler d1 execute pasion-db --remote --file=ringconn.sql
+npx wrangler secret put RINGCONN_INGEST_KEY      # any long random string
+npx wrangler deploy
+```
+
+Shortcut (Shortcuts app → Automation → Time of Day, e.g. 9:00, **Run Immediately**). For each of yesterday and today, build one request:
+1. **Find Health Samples** per metric, date = that day: Resting Heart Rate, Heart Rate Variability, Steps (sum), Active Energy (sum), Sleeping Wrist Temperature, Sleep Analysis (sum hours per stage: Core → `light_sleep_h`, Deep, REM; total → `sleep_duration_h`).
+2. **Get Contents of URL**
+   - URL `https://db.abepasion.workers.dev/db/ringconn_health`, Method `POST`
+   - Header `Authorization: Bearer <RINGCONN_INGEST_KEY>`
+   - Request Body JSON with the keys `date` (`yyyy-MM-dd`), `sleep_duration_h`, `deep_sleep_h`, `rem_sleep_h`, `light_sleep_h`, `resting_hr`, `hrv`, `skin_temp_c`, `steps`, `calories`. Leave `sleep_score` out.
+
+Each POST replaces the whole day's row, so send every metric each time, or a missing one blanks the stored value. Apple Health has no RingConn sleep score, so that column stays empty for these days.
+
 ### Apple Health
 1. iPhone → Health app → tap your profile picture (top-right) → **Export All Health Data**
 2. The export creates a `.zip`. Unzip it — you'll find `export.xml` inside.

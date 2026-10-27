@@ -287,24 +287,37 @@ export async function getGarminPrs(): Promise<GarminPrRecord[]> {
     .filter((row) => row.type_id && row.value)
 }
 
+/**
+ * RingConn days: the historical CSV imports in the sheet, plus the days the
+ * phone Shortcut pushes into D1. D1 wins on a shared date; either source
+ * failing leaves the other's days.
+ */
 export async function getRingconnHealth(): Promise<RingconnHealthRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('ringconn_health')
+  const [sheetRows, dbRows] = await Promise.all([
+    fetchSheetTable<Record<string, unknown>>('ringconn_health').catch(() => []),
+    dbRead<Record<string, unknown>>('ringconn_health').catch(() => []),
+  ])
+  const text = (value: unknown) => String(value ?? '').trim()
 
-  return rows
-    .map((row) => ({
-      date:             String(row.date ?? '').trim(),
-      sleep_score:      String(row.sleep_score ?? '').trim(),
-      sleep_duration_h: String(row.sleep_duration_h ?? '').trim(),
-      deep_sleep_h:     String(row.deep_sleep_h ?? '').trim(),
-      rem_sleep_h:      String(row.rem_sleep_h ?? '').trim(),
-      light_sleep_h:    String(row.light_sleep_h ?? '').trim(),
-      resting_hr:       String(row.resting_hr ?? '').trim(),
-      hrv:              String(row.hrv ?? '').trim(),
-      skin_temp_c:      String(row.skin_temp_c ?? '').trim(),
-      steps:            String(row.steps ?? '').trim(),
-      calories:         String(row.calories ?? '').trim(),
-    }))
-    .filter((row) => row.date)
+  const byDate = new Map<string, RingconnHealthRecord>()
+  for (const row of [...sheetRows, ...dbRows]) {
+    const date = text(row.date)
+    if (!date) continue
+    byDate.set(date, {
+      date,
+      sleep_score:      text(row.sleep_score),
+      sleep_duration_h: text(row.sleep_duration_h),
+      deep_sleep_h:     text(row.deep_sleep_h),
+      rem_sleep_h:      text(row.rem_sleep_h),
+      light_sleep_h:    text(row.light_sleep_h),
+      resting_hr:       text(row.resting_hr),
+      hrv:              text(row.hrv),
+      skin_temp_c:      text(row.skin_temp_c),
+      steps:            text(row.steps),
+      calories:         text(row.calories),
+    })
+  }
+  return [...byDate.values()]
 }
 
 export async function getAppleHealth(): Promise<AppleHealthRecord[]> {

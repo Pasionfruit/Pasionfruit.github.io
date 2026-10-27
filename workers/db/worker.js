@@ -15,7 +15,8 @@
  * Secrets: ADMIN_EMAIL, GOOGLE_CLIENT_ID, SESSION_SECRET (same values as
  * workers/ace), and MINITE_INGEST_KEY, the desktop's write-only key for
  * `youtube_videos` (the same value as ingest_key in MiniteThoughts'
- * config/site.toml).
+ * config/site.toml), and RINGCONN_INGEST_KEY, the phone Shortcut's write-only
+ * key for `ringconn_health`.
  */
 
 import { bearerToken, createHttp, mintSessionRoute, verifyAdmin, verifyRoute } from '../shared/admin.js'
@@ -96,6 +97,18 @@ const TABLES = {
     ints: ['hidden'],
     reals: ['position'],
     read: 'admin',
+  },
+  // One row per day of RingConn data, pushed from the phone's Apple Health
+  // (workers/db/ringconn.sql). Public to read, like the Sheets tab it sits
+  // beside; written with RINGCONN_INGEST_KEY, which can write this table only.
+  ringconn_health: {
+    key: 'date',
+    columns: [
+      'date', 'sleep_score', 'sleep_duration_h', 'deep_sleep_h', 'rem_sleep_h',
+      'light_sleep_h', 'resting_hr', 'hrv', 'skin_temp_c', 'steps', 'calories',
+    ],
+    read: 'public',
+    ingestKey: 'RINGCONN_INGEST_KEY',
   },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.

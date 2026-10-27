@@ -89,3 +89,33 @@ describe('youtube_videos ingest key', () => {
     expect(db.runs).toHaveLength(0)
   })
 })
+
+describe('ringconn_health ingest key', () => {
+  beforeEach(() => vi.stubGlobal('fetch', async () => new Response('{}', { status: 400 })))
+  afterEach(() => vi.unstubAllGlobals())
+
+  const RING_KEY = 'ring-key-not-the-real-one'
+  const DAY = { date: '2026-10-26', resting_hr: 52, hrv: 61, steps: 8400 }
+  const ringEnv = (db = fakeDb()) => ({ ...env(db), RINGCONN_INGEST_KEY: RING_KEY })
+
+  it('lets the phone upsert a day with its key', async () => {
+    const db = fakeDb()
+    const response = await worker.fetch(request('ringconn_health', 'POST', RING_KEY, DAY), ringEnv(db))
+
+    expect(response.status).toBe(200)
+    expect(db.runs[0].sql).toContain('INSERT OR REPLACE INTO ringconn_health')
+    expect(db.runs[0].values.slice(0, 1)).toEqual(['2026-10-26'])
+  })
+
+  it('does not accept the YouTube key, or write other tables', async () => {
+    const db = fakeDb()
+    expect((await worker.fetch(request('ringconn_health', 'POST', KEY, DAY), ringEnv(db))).status).toBe(403)
+    expect((await worker.fetch(request('youtube_videos', 'POST', RING_KEY, ROW), ringEnv(db))).status).toBe(403)
+    expect(db.runs).toHaveLength(0)
+  })
+
+  it('reads publicly', async () => {
+    const response = await worker.fetch(request('ringconn_health', 'GET'), ringEnv())
+    expect(response.status).toBe(200)
+  })
+})
