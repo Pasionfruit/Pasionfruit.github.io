@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-const repoMocks = vi.hoisted(() => ({ getGarminWellness: vi.fn() }))
+const repoMocks = vi.hoisted(() => ({ getGarminWellness: vi.fn(), getRingconnHealth: vi.fn(async () => []) }))
 
 vi.mock('../data/sheets/repositories', () => repoMocks)
 
@@ -200,5 +200,33 @@ describe('GarminWellnessCard', () => {
     await waitFor(() => expect(repoMocks.getGarminWellness).toHaveBeenCalledTimes(2))
     expect(await screen.findByText('12,345')).toBeTruthy()
     expect(screen.queryByText(/No reading for today yet/)).toBeNull()
+  })
+
+  it('switches to the RingConn ring and back, each with its own numbers', async () => {
+    repoMocks.getRingconnHealth.mockResolvedValue([
+      {
+        date: YESTERDAY, sleep_score: '', sleep_duration_h: '', deep_sleep_h: '', rem_sleep_h: '',
+        light_sleep_h: '', resting_hr: '55', hrv: '', skin_temp_c: '', steps: '5390', calories: '424',
+      },
+    ])
+    const user = userEvent.setup()
+    render(<GarminWellnessCard title="Daily wellness" />)
+    await screen.findByText('9,000')
+
+    const source = screen.getByRole('group', { name: 'Data source' })
+    await user.click(within(source).getByRole('button', { name: 'RingConn' }))
+
+    expect(await screen.findByText('5,390')).toBeTruthy()
+    expect(screen.getByText('Active energy')).toBeTruthy()
+    expect(screen.queryByText('9,000')).toBeNull()
+    // The ring has no HRV to show.
+    expect(screen.queryByText('HRV')).toBeNull()
+    // Sleep was never recorded: a dash, not a zero.
+    expect(screen.getByText('Time asleep').parentElement?.textContent).toContain('—')
+
+    // The panel remounts per source, so the switch has to be found again.
+    const again = screen.getByRole('group', { name: 'Data source' })
+    await user.click(within(again).getByRole('button', { name: 'Garmin' }))
+    expect(await screen.findByText('9,000')).toBeTruthy()
   })
 })

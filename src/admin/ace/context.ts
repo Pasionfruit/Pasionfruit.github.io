@@ -6,6 +6,7 @@ import {
   getJournalEntries,
   getMail,
   getPersonalTraining,
+  getRingconnHealth,
   getTrainingRecords,
 } from '../../data/sheets/repositories'
 import type { CalendarEventRecord, MailSummaryRecord } from '../../data/sheets/repositories'
@@ -15,6 +16,7 @@ import type {
   GarminWellnessRecord,
   JournalEntryRecord,
   PersonalTrainingRecord,
+  RingconnHealthRecord,
   TrainingRecord,
 } from '../../data/sheets/types'
 import { getActiveTasks, getCompletedTasks } from '../../data/todoist/repositories'
@@ -49,6 +51,8 @@ export type AceContext = {
   wellness: GarminWellnessRecord | null
   /** Up to two weeks of nights, newest first, for baselines and trends. */
   wellnessHistory: GarminWellnessRecord[]
+  /** Up to two weeks of RingConn days (via Apple Health), newest first. */
+  ringconn: RingconnHealthRecord[]
   /** Garmin activities from the last four weeks, newest first. */
   activities: GarminHealthRecord[]
   /** Training-log rows from a week back to a week ahead, oldest first. */
@@ -118,6 +122,7 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
     races,
     personalTraining,
     journal,
+    ringconn,
   ] = await Promise.all([
     idToken
       ? settle('Gmail', getMail(idToken, MAIL_LIMIT), gaps, [] as MailSummaryRecord[])
@@ -147,6 +152,7 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
     idToken
       ? settle('Journal', getJournalEntries(idToken), gaps, [] as JournalEntryRecord[])
       : Promise.resolve([] as JournalEntryRecord[]),
+    settle('RingConn', getRingconnHealth(), gaps, [] as RingconnHealthRecord[]),
   ])
 
   const activityCutoff = addDaysToKey(today, -ACTIVITY_DAYS)
@@ -170,6 +176,7 @@ export async function buildAceContext(idToken: string, todoistConfigured: boolea
     tasksTomorrow: active.filter((task) => dueDateKey(task) === addDaysToKey(today, 1)),
     wellness: wellness[0] ?? null,
     wellnessHistory: wellness.slice(0, WELLNESS_DAYS),
+    ringconn: ringconn.slice(0, WELLNESS_DAYS),
     activities: activities
       .filter((activity) => activity.date.slice(0, 10) >= activityCutoff)
       .sort((a, b) => b.date.localeCompare(a.date)),
@@ -234,6 +241,7 @@ export function hasAnyData(context: AceContext) {
     context.completedYesterday.length > 0 ||
     context.slippedYesterday.length > 0 ||
     context.wellness !== null ||
+    context.ringconn.length > 0 ||
     context.activities.length > 0 ||
     context.trainingPlan.length > 0 ||
     context.races.length > 0 ||
@@ -516,6 +524,35 @@ export function renderAceContext(context: AceContext) {
       `## Sleep and recovery, last ${history.length} nights\n${
         baseline.length ? `Averages (his baseline): ${baseline.join(', ')}.\n` : ''
       }${history.map(nightLine).join('\n')}`,
+    )
+  }
+
+  if (context.ringconn.length > 0) {
+    const days = context.ringconn
+    const baseline = [
+      ['resting HR', average(days.map((day) => day.resting_hr)), 'bpm'],
+      ['steps', average(days.map((day) => day.steps))],
+      ['sleep', average(days.map((day) => day.sleep_duration_h), 1), 'h'],
+    ]
+      .filter(([, value]) => value !== null)
+      .map(([label, value, unit]) => `${label} ${value}${unit ?? ''}`)
+
+    const dayLine = (day: RingconnHealthRecord) => {
+      const bits = [
+        day.resting_hr && `RHR ${day.resting_hr}`,
+        day.steps && `${day.steps} steps`,
+        day.calories && `${day.calories} kcal active`,
+        day.sleep_duration_h && `slept ${day.sleep_duration_h}h`,
+        day.deep_sleep_h && `deep ${day.deep_sleep_h}h`,
+        day.rem_sleep_h && `REM ${day.rem_sleep_h}h`,
+      ].filter(Boolean)
+      return `- ${day.date}: ${bits.join(', ') || 'no metrics'}`
+    }
+
+    parts.push(
+      `## RingConn ring, last ${days.length} days\nHe wears a RingConn ring alongside the Garmin watch. It reports through Apple Health, which carries no HRV, skin temperature or sleep score for it, so do not mention those from this source. A missing sleep figure means the ring was not worn.\n${
+        baseline.length ? `Averages: ${baseline.join(', ')}.\n` : ''
+      }${days.map(dayLine).join('\n')}`,
     )
   }
 

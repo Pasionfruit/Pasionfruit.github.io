@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { getGarminWellness } from '../data/sheets/repositories'
+import { getGarminWellness, getRingconnHealth } from '../data/sheets/repositories'
 import { todayKey } from '../data/todoist/dates'
-import type { GarminWellnessRecord } from '../data/sheets/types'
+import type { GarminWellnessRecord, RingconnHealthRecord } from '../data/sheets/types'
 import {
   daysBetween,
   formatDayLabel,
@@ -12,6 +12,7 @@ import {
   toWeeklyAverages,
   weekStartKey,
   type Metric,
+  type MetricSummary,
 } from './garmin/wellness'
 
 const SLEEP_METRICS: Metric[] = [
@@ -100,15 +101,15 @@ const WELLNESS_METRICS: Metric[] = [
 ]
 
 /**
- * Wellness rows, refetched whenever the app comes back to the foreground.
+ * Rows from `fetchRows`, refetched whenever the app comes back to the foreground.
  *
  * iOS freezes a home-screen PWA rather than unloading it, and restores it from
  * a snapshot without re-running effects. A mount-only fetch therefore leaves
  * the dashboard showing whatever it read the first time the app was opened —
  * for days, since nothing else invalidates it.
  */
-function useGarminWellness() {
-  const [rows, setRows] = useState<GarminWellnessRecord[]>([])
+function useRefetchedRows<Row>(fetchRows: () => Promise<Row[]>, failure: string) {
+  const [rows, setRows] = useState<Row[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const inFlight = useRef(false)
@@ -119,7 +120,7 @@ function useGarminWellness() {
     inFlight.current = true
 
     try {
-      const data = await getGarminWellness()
+      const data = await fetchRows()
       if (mounted.current) {
         setRows(data)
         setError('')
@@ -128,7 +129,7 @@ function useGarminWellness() {
       // A failed refresh keeps whatever is already on screen; the note under
       // the header says the refresh failed rather than blanking the card.
       if (mounted.current) {
-        setError(caught instanceof Error ? caught.message : 'Unable to load Garmin wellness data')
+        setError(caught instanceof Error ? caught.message : failure)
       }
     } finally {
       inFlight.current = false
@@ -136,7 +137,7 @@ function useGarminWellness() {
         setIsLoading(false)
       }
     }
-  }, [])
+  }, [fetchRows, failure])
 
   useEffect(() => {
     mounted.current = true
@@ -167,22 +168,34 @@ function useGarminWellness() {
   return { rows, isLoading, error, refresh: load }
 }
 
-type MetricGroup = { title: string; metrics: Metric[] }
+function useGarminWellness() {
+  return useRefetchedRows(getGarminWellness, 'Unable to load Garmin wellness data')
+}
+
+function useRingconnHealth() {
+  return useRefetchedRows(getRingconnHealth, 'Unable to load RingConn data')
+}
+
+type MetricGroup<Row extends { date: string } = GarminWellnessRecord> = { title: string; metrics: Metric<Row>[] }
 
 /**
  * Titled metric grids sharing one set of rows. Loading, error and empty states
  * are said once for the card rather than once per group.
  */
-function MetricGroups({
+function MetricGroups<Row extends { date: string }>({
   rows,
   groups,
   isLoading,
   error,
+  label,
+  empty,
 }: {
-  rows: GarminWellnessRecord[]
-  groups: MetricGroup[]
+  rows: Row[]
+  groups: MetricGroup<Row>[]
   isLoading: boolean
   error: string
+  label: string
+  empty: ReactNode
 }) {
   const summarised = useMemo(
     () =>
@@ -196,7 +209,7 @@ function MetricGroups({
   const hasAny = summarised.some((group) => group.summaries.some((entry) => entry.summary !== null))
 
   if (isLoading && rows.length === 0) {
-    return <p className="sheets-meta">Loading Garmin data…</p>
+    return <p className="sheets-meta">Loading {label} data…</p>
   }
 
   if (error && rows.length === 0) {
@@ -204,13 +217,7 @@ function MetricGroups({
   }
 
   if (!hasAny) {
-    return (
-      <p className="sheets-meta">
-        No Garmin wellness data yet. Run{' '}
-        <code>python scripts/health-ingestion/ingest_garmin_wellness.py --days 30</code> after
-        creating the <code>garmin_wellness</code> sheet.
-      </p>
-    )
+    return <p className="sheets-meta">{empty}</p>
   }
 
   return (
@@ -228,7 +235,7 @@ function MetricGroups({
 function MetricGrid({
   summaries,
 }: {
-  summaries: { metric: Metric; summary: ReturnType<typeof summarise> }[]
+  summaries: { metric: Pick<Metric<Record<string, string>>, 'key' | 'label' | 'unit' | 'description'>; summary: MetricSummary | null }[]
 }) {
   return (
     <div className="garmin-metric-grid">
@@ -285,7 +292,15 @@ function MetricGrid({
  * Without it the card shows a date and a grid of numbers with nothing to say
  * the watch stopped reporting days ago.
  */
-function SyncNote({ rows, error }: { rows: GarminWellnessRecord[]; error: string }) {
+function SyncNote({
+  rows,
+  error,
+  source = 'Garmin sync',
+}: {
+  rows: { date: string }[]
+  error: string
+  source?: string
+}) {
   const newest = rows[0]?.date
   if (!newest) return null
 
@@ -296,7 +311,7 @@ function SyncNote({ rows, error }: { rows: GarminWellnessRecord[]; error: string
     gap === 1
       ? `No reading for today yet — newest is yesterday, ${formatDayLabel(newest)}.`
       : gap > 1
-        ? `No reading for the last ${gap} days — newest is ${formatDayLabel(newest)}. Check that the Garmin sync is still running.`
+        ? `No reading for the last ${gap} days — newest is ${formatDayLabel(newest)}. Check that the ${source} is still running.`
         : ''
 
   return (
@@ -438,29 +453,118 @@ const WELLNESS_GROUPS: MetricGroup[] = [
   { title: 'Activity', metrics: WELLNESS_METRICS },
 ]
 
+/*
+ * The ring reaches us through Apple Health, which carries no HRV, skin
+ * temperature or sleep score for it, so those are not offered. Sleep stays a
+ * dash until the ring has been worn for a night.
+ */
+const RINGCONN_GROUPS: MetricGroup<RingconnHealthRecord>[] = [
+  {
+    title: 'Sleep & recovery',
+    metrics: [
+      { key: 'sleep_duration_h', label: 'Time asleep', unit: 'h', higherIsBetter: true, description: 'Hours asleep, from the ring via Apple Health.' },
+      { key: 'deep_sleep_h', label: 'Deep', unit: 'h', higherIsBetter: true },
+      { key: 'rem_sleep_h', label: 'REM', unit: 'h', higherIsBetter: true },
+      {
+        key: 'resting_hr',
+        label: 'Resting HR',
+        unit: 'bpm',
+        higherIsBetter: false,
+        description: 'Lowest sustained heart rate the ring recorded. A jump of several bpm often shows up a day before you feel run down.',
+      },
+    ],
+  },
+  {
+    title: 'Activity',
+    metrics: [
+      { key: 'steps', label: 'Steps', higherIsBetter: true, description: 'Total steps recorded across the day.' },
+      { key: 'calories', label: 'Active energy', unit: 'kcal', higherIsBetter: true, description: 'Calories burned on top of resting metabolism.' },
+    ],
+  },
+]
+
+type WellnessSource = 'garmin' | 'ringconn'
+
+const SOURCE_LABELS: Record<WellnessSource, string> = { garmin: 'Garmin', ringconn: 'RingConn' }
+
 /**
  * Daily wellness: last night's sleep and recovery and the day's activity on
- * one card, under one date. Day / Week avg switches both groups together.
+ * one card, under one date. Day / Week avg switches both groups together, and
+ * the source switch picks whose numbers they are: the Garmin watch or the
+ * RingConn ring.
  *
  * No date pill in the header — the date row under it already names the day.
  */
 export function GarminWellnessCard({ title }: { title: string }) {
-  const { rows, isLoading, error, refresh } = useGarminWellness()
+  const [source, setSource] = useState<WellnessSource>('garmin')
+  const garmin = useGarminWellness()
+  const ringconn = useRingconnHealth()
+
+  // Keyed by source so each starts on its own newest day in Day mode.
+  return source === 'garmin' ? (
+    <WellnessPanel
+      key="garmin"
+      title={title}
+      source={source}
+      onSource={setSource}
+      data={garmin}
+      groups={WELLNESS_GROUPS}
+      syncName="Garmin sync"
+      empty={
+        <>
+          No Garmin wellness data yet. Run{' '}
+          <code>python scripts/health-ingestion/ingest_garmin_wellness.py --days 30</code> after
+          creating the <code>garmin_wellness</code> sheet.
+        </>
+      }
+    />
+  ) : (
+    <WellnessPanel
+      key="ringconn"
+      title={title}
+      source={source}
+      onSource={setSource}
+      data={ringconn}
+      groups={RINGCONN_GROUPS}
+      syncName="RingConn Shortcut"
+      empty="No RingConn data yet. Run the Shortcut described in scripts/health-ingestion/README.md."
+    />
+  )
+}
+
+function WellnessPanel<Row extends { date: string }>({
+  title,
+  source,
+  onSource,
+  data,
+  groups,
+  syncName,
+  empty,
+}: {
+  title: string
+  source: WellnessSource
+  onSource: (source: WellnessSource) => void
+  data: { rows: Row[]; isLoading: boolean; error: string; refresh: () => Promise<void> }
+  groups: MetricGroup<Row>[]
+  syncName: string
+  empty: ReactNode
+}) {
+  const { rows, isLoading, error, refresh } = data
   const [mode, setMode] = useState<'day' | 'week'>('day')
   const [selectedDate, setSelectedDate] = useState('')
 
   const weekly = useMemo(() => toWeeklyAverages(rows), [rows])
-  const source = mode === 'week' ? weekly : rows
-  const dates = useMemo(() => source.map((row) => row.date).filter(Boolean), [source])
+  const shown = mode === 'week' ? weekly : rows
+  const dates = useMemo(() => shown.map((row) => row.date).filter(Boolean), [shown])
 
   // Default to the newest row once data arrives, but let a chosen date stick.
   const activeDate = resolveDate(dates, selectedDate)
 
   const visible = useMemo(() => {
-    if (!activeDate) return source
-    const index = source.findIndex((row) => row.date === activeDate)
-    return index < 0 ? source : source.slice(index)
-  }, [source, activeDate])
+    if (!activeDate) return shown
+    const index = shown.findIndex((row) => row.date === activeDate)
+    return index < 0 ? shown : shown.slice(index)
+  }, [shown, activeDate])
 
   return (
     <GarminCard
@@ -468,6 +572,19 @@ export function GarminWellnessCard({ title }: { title: string }) {
       className="garmin-wellness-card"
       actions={
         <>
+          <div className="garmin-mode-toggle" role="group" aria-label="Data source">
+            {(Object.keys(SOURCE_LABELS) as WellnessSource[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                className={source === key ? 'active' : ''}
+                aria-pressed={source === key}
+                onClick={() => onSource(key)}
+              >
+                {SOURCE_LABELS[key]}
+              </button>
+            ))}
+          </div>
           <div className="garmin-mode-toggle" role="group" aria-label="Averaging period">
             <button
               type="button"
@@ -497,9 +614,16 @@ export function GarminWellnessCard({ title }: { title: string }) {
         onSelect={(date) => setSelectedDate(mode === 'week' && date ? weekStartKey(date) : date)}
       />
 
-      {mode === 'day' ? <SyncNote rows={rows} error={error} /> : null}
+      {mode === 'day' ? <SyncNote rows={rows} error={error} source={syncName} /> : null}
 
-      <MetricGroups rows={visible} groups={WELLNESS_GROUPS} isLoading={isLoading} error={error} />
+      <MetricGroups
+        rows={visible}
+        groups={groups}
+        isLoading={isLoading}
+        error={error}
+        label={SOURCE_LABELS[source]}
+        empty={empty}
+      />
     </GarminCard>
   )
 }

@@ -317,7 +317,11 @@ export async function getRingconnHealth(): Promise<RingconnHealthRecord[]> {
       calories:         text(row.calories),
     })
   }
+  // Newest first, and days with no metric at all (today, before the ring has
+  // synced) are left out, as with the Garmin wellness rows.
   return [...byDate.values()]
+    .filter((row) => Object.entries(row).some(([key, value]) => key !== 'date' && value !== ''))
+    .sort((a, b) => b.date.localeCompare(a.date))
 }
 
 export async function getAppleHealth(): Promise<AppleHealthRecord[]> {

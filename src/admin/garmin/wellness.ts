@@ -8,8 +8,8 @@
 import type { GarminWellnessRecord } from '../../data/sheets/types'
 
 /** One metric to surface, and where to read it from a wellness row. */
-export type Metric = {
-  key: keyof GarminWellnessRecord
+export type Metric<Row = GarminWellnessRecord> = {
+  key: keyof Row
   label: string
   unit?: string
   /** Higher is better — drives the trend arrow's colour. */
@@ -101,7 +101,7 @@ export type MetricSummary = {
  * in only every few days — but the fallback is flagged so the card can name the
  * day it actually came from instead of passing it off as the selected day's.
  */
-export function summarise(rows: GarminWellnessRecord[], metric: Metric): MetricSummary | null {
+export function summarise<Row extends { date: string }>(rows: Row[], metric: Metric<Row>): MetricSummary | null {
   const anchor = rows[0]?.date ?? ''
 
   const values = rows
@@ -133,8 +133,8 @@ export function summarise(rows: GarminWellnessRecord[], metric: Metric): MetricS
  * Collapse rows into one averaged row per ISO week, so the same metric grid can
  * render a week without knowing anything about averaging.
  */
-export function toWeeklyAverages(rows: GarminWellnessRecord[]): GarminWellnessRecord[] {
-  const byWeek = new Map<string, GarminWellnessRecord[]>()
+export function toWeeklyAverages<Row extends { date: string }>(rows: Row[]): Row[] {
+  const byWeek = new Map<string, Row[]>()
 
   for (const row of rows) {
     if (!row.date) continue
@@ -142,23 +142,23 @@ export function toWeeklyAverages(rows: GarminWellnessRecord[]): GarminWellnessRe
     byWeek.set(key, [...(byWeek.get(key) ?? []), row])
   }
 
-  const numericKeys = (Object.keys(rows[0] ?? {}) as (keyof GarminWellnessRecord)[]).filter(
-    (key) => key !== 'date' && key !== 'training_status',
-  )
+  // Text columns (Garmin's training_status) average to '' like any other
+  // value with no numbers in it.
+  const numericKeys = (Object.keys(rows[0] ?? {}) as (keyof Row)[]).filter((key) => key !== 'date')
 
   return [...byWeek.entries()]
     .sort((a, b) => b[0].localeCompare(a[0]))
     .map(([weekKey, weekRows]) => {
-      const averaged = { date: weekKey, training_status: '' } as GarminWellnessRecord
+      const averaged = { date: weekKey } as Row
 
       for (const key of numericKeys) {
         const values = weekRows
           .map((row) => toNumber(String(row[key])))
           .filter((value): value is number => value !== null)
 
-        averaged[key] = values.length
+        averaged[key] = (values.length
           ? String(values.reduce((sum, value) => sum + value, 0) / values.length)
-          : ''
+          : '') as Row[keyof Row]
       }
 
       return averaged

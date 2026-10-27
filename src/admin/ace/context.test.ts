@@ -16,6 +16,7 @@ function context(overrides: Partial<AceContext> = {}): AceContext {
     tasksTomorrow: [],
     wellness: null,
     wellnessHistory: [],
+    ringconn: [],
     activities: [],
     trainingPlan: [],
     races: [],
@@ -95,6 +96,21 @@ describe('renderAceContext', () => {
     expect(text).toContain('## Sleep and recovery, last 2 nights')
     expect(text).toContain('Averages (his baseline): sleep score 80, HRV 65ms, resting HR 55bpm.')
     expect(text).toContain('- 2026-08-31: sleep 85, HRV 75, RHR 53')
+  })
+
+  it('summarises the RingConn days and warns off the metrics Apple Health does not carry', () => {
+    const day = (date: string, values: Record<string, string>) => ({
+      date, sleep_score: '', sleep_duration_h: '', deep_sleep_h: '', rem_sleep_h: '', light_sleep_h: '',
+      resting_hr: '', hrv: '', skin_temp_c: '', steps: '', calories: '', ...values,
+    })
+    const ringconn = [day('2026-08-31', { resting_hr: '54', steps: '9000' }), day('2026-08-30', { resting_hr: '56', steps: '5000' })]
+    const text = renderAceContext(context({ ringconn }))
+
+    expect(hasAnyData(context({ ringconn }))).toBe(true)
+    expect(text).toContain('## RingConn ring, last 2 days')
+    expect(text).toContain('Averages: resting HR 55bpm, steps 7000.')
+    expect(text).toContain('- 2026-08-31: RHR 54, 9000 steps')
+    expect(text).toContain('do not mention those from this source')
   })
 
   it('totals training by discipline per week and counts down to the goal race', () => {
