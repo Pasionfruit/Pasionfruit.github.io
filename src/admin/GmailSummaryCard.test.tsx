@@ -175,3 +175,18 @@ describe('GmailSummaryCard list', () => {
     expect(screen.queryByRole('group', { name: 'Reply templates for Sam' })).toBeNull()
   })
 })
+
+describe('GmailSummaryCard collapse', () => {
+  it('hides the threads when collapsed and remembers it', async () => {
+    const user = userEvent.setup()
+    await renderCard()
+
+    await user.click(screen.getByRole('button', { name: 'Collapse Inbox' }))
+    expect(screen.queryByText('Invoice for August')).toBeNull()
+    expect(window.localStorage.getItem('admin-inbox-collapsed')).toBe('true')
+
+    await user.click(screen.getByRole('button', { name: 'Expand Inbox' }))
+    expect(await screen.findByText('Invoice for August')).toBeTruthy()
+    expect(window.localStorage.getItem('admin-inbox-collapsed')).toBe('false')
+  })
+})

@@ -148,7 +148,7 @@
   --card-accent: var(--color-amber);
 }
 
-.admin-home > .admin-card:nth-last-child(2) {
+.admin-home > .admin-card:last-child {
   --card-accent: var(--color-lavender);
 }
 
@@ -2714,4 +2714,13 @@
 
 .backlog-clear {
   justify-self: start;
+}
+
+/* Chores and backlog share one body height (a capped five-row list plus its
+   controls and the Clear-done button), so the tab switch never resizes the card. */
+.chore-body {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+  min-height: 21rem;
 }

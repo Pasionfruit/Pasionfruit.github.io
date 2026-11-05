@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Archive, PenLine, ExternalLink } from 'lucide-react'
+import { Archive, ChevronDown, PenLine, ExternalLink } from 'lucide-react'
 import { ConnectPanel } from './ConnectPanel'
 import {
   archiveMail,
@@ -15,6 +15,24 @@ import { REPLY_TEMPLATES, fillTemplate, senderFirstName } from './mail/replyTemp
  * shows three at a time and scrolls through the rest (see `.mail-list`).
  */
 const FETCH_LIMIT = 25
+
+const COLLAPSED_STORAGE_KEY = 'admin-inbox-collapsed'
+
+function readStoredCollapsed(): boolean {
+  try {
+    return window.localStorage.getItem(COLLAPSED_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function writeStoredCollapsed(collapsed: boolean) {
+  try {
+    window.localStorage.setItem(COLLAPSED_STORAGE_KEY, collapsed ? 'true' : 'false')
+  } catch {
+    // Nothing to do — the card just opens expanded next visit.
+  }
+}
 
 function timeLabel(iso: string) {
   const date = new Date(iso)
@@ -61,6 +79,7 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
   const [notice, setNotice] = useState('')
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   const [busyId, setBusyId] = useState('')
+  const [isCollapsed, setIsCollapsed] = useState(readStoredCollapsed)
   /** Thread the reply-template picker is open for. */
   const [composingId, setComposingId] = useState('')
 
@@ -211,10 +230,23 @@ export function GmailSummaryCard({ title, idToken }: { title: string; idToken: s
               {busyId === 'all' ? 'Clearing…' : 'Clear inbox'}
             </button>
           ) : null}
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!isCollapsed}
+            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
+            onClick={() => {
+              const next = !isCollapsed
+              setIsCollapsed(next)
+              writeStoredCollapsed(next)
+            }}
+          >
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
+          </button>
         </div>
       </div>
 
-      {status.state !== 'connected' ? (
+      {isCollapsed ? null : status.state !== 'connected' ? (
         <ConnectPanel name="Gmail" status={status} />
       ) : isLoading ? (
         <p className="sheets-meta">Loading mail…</p>

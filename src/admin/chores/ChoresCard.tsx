@@ -158,6 +158,8 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
         ))}
       </div>
 
+      {/* One fixed minimum height for both views, so switching tabs never resizes the card. */}
+      <div className="chore-body">
       {view === 'backlog' ? (
         <BacklogPanel idToken={idToken} />
       ) : (
@@ -329,6 +331,7 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
       )}
         </>
       )}
+      </div>
     </article>
   )
 }

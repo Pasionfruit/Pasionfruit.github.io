@@ -389,9 +389,9 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
         <TrainingOfDayCard title="Training of the Day" />
       </div>
 
-      <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
-
       <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
+
+      <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
     </div>
   )
 }
