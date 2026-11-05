@@ -2691,6 +2691,12 @@
   gap: 0.4rem;
 }
 
+.backlog-when select {
+  flex: 1;
+  min-width: 0;
+}
+
+.backlog-add select,
 .backlog-add input {
   min-height: 2rem;
   padding: 0.25rem 0.7rem;

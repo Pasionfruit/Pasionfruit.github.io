@@ -2823,6 +2823,15 @@ button svg,
   }
 }
 
+/* On a phone the Tasks of the Day card keeps a fixed height too: its body
+   (.home-todoist-collapsible) scrolls inside, so a long list never stretches
+   the page. Collapsed, it shrinks back to just its header. */
+@media (max-width: 899px) {
+  .home-top-row > .home-todoist-card:not(.is-collapsed) {
+    height: 24rem;
+  }
+}
+
 .home-daily-focus-card {
   margin-bottom: 0.9rem;
 }

@@ -6,7 +6,9 @@ import {
   saveBacklogItem,
   type BacklogItem,
 } from '../../data/backlog/client'
-import { dueState, formatDue, joinDue, sortBacklog } from './backlogDue'
+import { dayOptions, defaultDue, dueState, formatDue, joinDue, sortBacklog, timeOptions } from './backlogDue'
+
+const TIME_OPTIONS = timeOptions()
 
 /**
  * A quick-jot list of one-off to-dos. Type, press Enter; optionally give it a
@@ -72,7 +74,7 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
     const item: BacklogItem = {
       id: crypto.randomUUID(),
       title: trimmed,
-      due: joinDue(date, time),
+      due: showWhen ? joinDue(date, time) : '',
       done: false,
       createdAt: new Date().toISOString(),
     }
@@ -86,6 +88,16 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
       () => saveBacklogItem(idToken, item),
       'The item could not be added.',
     )
+  }
+
+  /** Opening the scheduler pre-fills it with an hour from now; closing it means no due time. */
+  function toggleWhen() {
+    if (!showWhen) {
+      const suggestion = defaultDue(new Date())
+      setDate(suggestion.date)
+      setTime(suggestion.time)
+    }
+    setShowWhen((open) => !open)
   }
 
   function toggle(item: BacklogItem) {
@@ -107,6 +119,7 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
     )
   }
 
+  const days = useMemo(() => dayOptions(now), [now])
   const sorted = useMemo(() => sortBacklog(items), [items])
   const doneCount = items.filter((i) => i.done).length
 
@@ -129,8 +142,8 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
             className="chore-icon-btn"
             aria-label="Set a due date and time"
             aria-expanded={showWhen}
-            data-active={Boolean(date)}
-            onClick={() => setShowWhen((open) => !open)}
+            data-active={showWhen}
+            onClick={toggleWhen}
           >
             <CalendarClock size={15} strokeWidth={1.8} aria-hidden="true" />
           </button>
@@ -140,14 +153,20 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
         </div>
         {showWhen ? (
           <div className="backlog-when">
-            <input type="date" aria-label="Due date" value={date} onChange={(event) => setDate(event.target.value)} />
-            <input
-              type="time"
-              aria-label="Due time"
-              value={time}
-              disabled={!date}
-              onChange={(event) => setTime(event.target.value)}
-            />
+            <select aria-label="Due day" value={date} onChange={(event) => setDate(event.target.value)}>
+              {days.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select aria-label="Due time" value={time} onChange={(event) => setTime(event.target.value)}>
+              {TIME_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
         ) : null}
       </form>
