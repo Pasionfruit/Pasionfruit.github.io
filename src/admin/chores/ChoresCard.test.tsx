@@ -20,6 +20,7 @@ beforeEach(() => {
   mocks.listChores.mockResolvedValue([
     { id: '1', name: 'Scoop litter', category: 'cats', intervalDays: 1, lastDone: '2026-11-01' },
     { id: '2', name: 'Wipe counters', category: 'kitchen', intervalDays: 7, lastDone: '2026-11-04' },
+    { id: '3', name: 'Wash trash cans', category: 'hygiene', intervalDays: 30, lastDone: '2026-10-20' },
   ])
 })
 
@@ -42,9 +43,44 @@ describe('ChoresCard', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<ChoresCard title="Chores" idToken="t" />)
     await screen.findByText('Scoop litter')
+    await user.click(screen.getByRole('button', { name: 'Filter by category' }))
     await user.click(screen.getByRole('button', { name: 'Kitchen' }))
     expect(screen.queryByText('Scoop litter')).toBeNull()
     expect(screen.getByText('Wipe counters')).toBeTruthy()
+  })
+
+  it('combines a time filter with a category filter', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<ChoresCard title="Chores" idToken="t" />)
+    await screen.findByText('Scoop litter')
+    expect(screen.queryByRole('group', { name: 'Time options' })).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Filter by how often' }))
+    await user.click(within(screen.getByRole('group', { name: 'Time options' })).getByRole('button', { name: 'Weekly' }))
+    // Choosing closes the panel and the button now names the choice.
+    expect(screen.queryByRole('group', { name: 'Time options' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Filter by how often' }).getAttribute('title')).toBe('Weekly')
+    expect(screen.getByText('Wipe counters')).toBeTruthy()
+    expect(screen.queryByText('Scoop litter')).toBeNull()
+    expect(screen.queryByText('Wash trash cans')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Filter by category' }))
+    await user.click(within(screen.getByRole('group', { name: 'Category options' })).getByRole('button', { name: 'Cats' }))
+    expect(screen.queryByText('Wipe counters')).toBeNull()
+    expect(screen.getByText('No chores match these filters.')).toBeTruthy()
+  })
+
+  it('needs-attention view shows only overdue or never-done chores', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<ChoresCard title="Chores" idToken="t" />)
+    await screen.findByText('Scoop litter')
+    const toggle = screen.getByRole('button', { name: /Needs attention/ })
+    expect(within(toggle).getByText('1')).toBeTruthy()
+
+    await user.click(toggle)
+    expect(screen.getByText('Scoop litter')).toBeTruthy()
+    expect(screen.queryByText('Wipe counters')).toBeNull()
+    expect(screen.queryByText('Wash trash cans')).toBeNull()
   })
 
   it('marking done saves today and clears the warning', async () => {

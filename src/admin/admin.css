@@ -2390,6 +2390,65 @@
   background: color-mix(in srgb, var(--warning) 10%, var(--surface));
 }
 
+.chore-filters {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.chore-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.chore-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+}
+
+/* Time and category sit at the right as circular icon buttons. */
+.chore-filter-icons {
+  display: flex;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.chore-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.chore-icon-btn[aria-expanded='true'] {
+  background: var(--surface-muted);
+}
+
+.chore-icon-btn[data-active='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Opened options line up under the icons. */
+.chore-filters > .chore-filter {
+  justify-content: flex-end;
+}
+
+.chore-attention-btn:not([aria-pressed='true']) {
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 40%, var(--border));
+}
+
 .chore-filter {
   display: flex;
   flex-wrap: wrap;

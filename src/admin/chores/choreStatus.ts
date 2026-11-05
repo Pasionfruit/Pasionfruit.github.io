@@ -59,3 +59,23 @@ export function sortChores(chores: Chore[], today: string): Chore[] {
     return (sb.daysOverdue ?? 0) - (sa.daysOverdue ?? 0) || a.name.localeCompare(b.name)
   })
 }
+
+export type ChoreCadence = 'daily' | 'weekly' | 'monthly'
+
+export const CADENCE_LABELS: Record<ChoreCadence, string> = {
+  daily: 'Daily',
+  weekly: 'Weekly',
+  monthly: 'Monthly',
+}
+
+/** Bucket by interval: every day, up to a fortnight (the twice-weekly vacuum counts), or longer. */
+export function choreCadence(chore: Chore): ChoreCadence {
+  if (chore.intervalDays <= 1) return 'daily'
+  if (chore.intervalDays < 14) return 'weekly'
+  return 'monthly'
+}
+
+/** Overdue, never done, or due today: what "may need to be addressed". */
+export function needsAttention(chore: Chore, today: string) {
+  return choreStatus(chore, today).state !== 'ok'
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Chore } from '../../data/chores/client'
-import { choreStatus, lastDoneLabel, sortChores, warningLabel } from './choreStatus'
+import { choreCadence, choreStatus, lastDoneLabel, sortChores, warningLabel } from './choreStatus'
 
 const chore = (over: Partial<Chore>): Chore => ({
   id: 'c', name: 'Dishes', category: 'kitchen', intervalDays: 3, lastDone: '', ...over,
@@ -44,5 +44,15 @@ describe('sortChores', () => {
       chore({ id: 'never', name: 'c' }),
     ]
     expect(sortChores(list, '2026-11-05').map((c) => c.id)).toEqual(['late', 'never', 'ok'])
+  })
+})
+
+describe('choreCadence', () => {
+  it('buckets by interval', () => {
+    expect(choreCadence(chore({ intervalDays: 1 }))).toBe('daily')
+    expect(choreCadence(chore({ intervalDays: 4 }))).toBe('weekly')
+    expect(choreCadence(chore({ intervalDays: 7 }))).toBe('weekly')
+    expect(choreCadence(chore({ intervalDays: 30 }))).toBe('monthly')
+    expect(choreCadence(chore({ intervalDays: 60 }))).toBe('monthly')
   })
 })

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
-import { Check, Plus, Trash2, TriangleAlert } from 'lucide-react'
+import { Check, Clock, ListFilter, Plus, Trash2, TriangleAlert } from 'lucide-react'
 import {
   CHORE_CATEGORIES,
   CHORE_CATEGORY_LABELS,
@@ -9,9 +9,21 @@ import {
   type Chore,
   type ChoreCategory,
 } from '../../data/chores/client'
-import { choreStatus, lastDoneLabel, localDayKey, sortChores, warningLabel } from './choreStatus'
+import {
+  CADENCE_LABELS,
+  choreCadence,
+  choreStatus,
+  lastDoneLabel,
+  localDayKey,
+  needsAttention,
+  sortChores,
+  warningLabel,
+  type ChoreCadence,
+} from './choreStatus'
 
 type Filter = 'all' | ChoreCategory
+type CadenceFilter = 'all' | ChoreCadence
+type OpenFilter = 'time' | 'category' | null
 
 /**
  * Recurring household chores. Each has a category and a "every N days" interval;
@@ -22,6 +34,9 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
+  const [cadence, setCadence] = useState<CadenceFilter>('all')
+  const [attentionOnly, setAttentionOnly] = useState(false)
+  const [openFilter, setOpenFilter] = useState<OpenFilter>(null)
   const [adding, setAdding] = useState(false)
   const [today, setToday] = useState(() => localDayKey(new Date()))
 
@@ -94,22 +109,19 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
   )
 
   const sorted = useMemo(() => sortChores(chores, today), [chores, today])
-  const visible = filter === 'all' ? sorted : sorted.filter((c) => c.category === filter)
-  const overdueCount = chores.filter((c) => {
-    const state = choreStatus(c, today).state
-    return state === 'overdue' || state === 'never'
-  }).length
+  const visible = sorted.filter(
+    (c) =>
+      (filter === 'all' || c.category === filter) &&
+      (cadence === 'all' || choreCadence(c) === cadence) &&
+      (!attentionOnly || needsAttention(c, today)),
+  )
+  const attentionCount = chores.filter((c) => needsAttention(c, today)).length
 
   return (
     <article className="info-card admin-card chores-card">
       <div className="admin-card-head">
         <h3>{title}</h3>
         <div className="admin-card-actions">
-          {overdueCount > 0 ? (
-            <span className="admin-pill chore-warn-pill">
-              <TriangleAlert size={12} strokeWidth={1.8} aria-hidden="true" /> {overdueCount} need attention
-            </span>
-          ) : null}
           <button
             type="button"
             className="section-collapse-btn"
@@ -122,19 +134,86 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
         </div>
       </div>
 
-      <div className="chore-filter" role="group" aria-label="Filter chores by category">
-        {(['all', ...CHORE_CATEGORIES] as Filter[]).map((id) => (
+      <div className="chore-filters">
+        <div className="chore-filter-bar">
           <button
-            key={id}
             type="button"
-            className="chore-filter-btn"
-            aria-pressed={filter === id}
-            onClick={() => setFilter(id)}
+            className="chore-filter-btn chore-attention-btn"
+            aria-pressed={attentionOnly}
+            onClick={() => setAttentionOnly((on) => !on)}
           >
-            {id !== 'all' ? <span className={`chore-dot chore-dot--${id}`} aria-hidden="true" /> : null}
-            {id === 'all' ? 'All' : CHORE_CATEGORY_LABELS[id]}
+            <TriangleAlert size={12} strokeWidth={1.8} aria-hidden="true" />
+            Needs attention
+            <span className="chore-count">{attentionCount}</span>
           </button>
-        ))}
+
+          <div className="chore-filter-icons">
+            <button
+              type="button"
+              className="chore-icon-btn"
+              aria-label="Filter by how often"
+              title={cadence === 'all' ? 'Any time' : CADENCE_LABELS[cadence]}
+              aria-expanded={openFilter === 'time'}
+              aria-controls="chore-time-options"
+              data-active={cadence !== 'all'}
+              onClick={() => setOpenFilter((open) => (open === 'time' ? null : 'time'))}
+            >
+              <Clock size={15} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              className="chore-icon-btn"
+              aria-label="Filter by category"
+              title={filter === 'all' ? 'All categories' : CHORE_CATEGORY_LABELS[filter]}
+              aria-expanded={openFilter === 'category'}
+              aria-controls="chore-category-options"
+              data-active={filter !== 'all'}
+              onClick={() => setOpenFilter((open) => (open === 'category' ? null : 'category'))}
+            >
+              <ListFilter size={15} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        {openFilter === 'time' ? (
+          <div id="chore-time-options" className="chore-filter" role="group" aria-label="Time options">
+            {(['all', 'daily', 'weekly', 'monthly'] as CadenceFilter[]).map((id) => (
+              <button
+                key={id}
+                type="button"
+                className="chore-filter-btn"
+                aria-pressed={cadence === id}
+                onClick={() => {
+                  setCadence(id)
+                  setOpenFilter(null)
+                }}
+              >
+                {id === 'all' ? 'Any time' : CADENCE_LABELS[id]}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {openFilter === 'category' ? (
+          <div id="chore-category-options" className="chore-filter" role="group" aria-label="Category options">
+            {(['all', ...CHORE_CATEGORIES] as Filter[]).map((id) => (
+              <button
+                key={id}
+                type="button"
+                className="chore-filter-btn"
+                aria-pressed={filter === id}
+                onClick={() => {
+                  setFilter(id)
+                  setOpenFilter(null)
+                }}
+              >
+                {id !== 'all' ? <span className={`chore-dot chore-dot--${id}`} aria-hidden="true" /> : null}
+                {id === 'all' ? 'All categories' : CHORE_CATEGORY_LABELS[id]}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {adding ? <AddChoreForm defaultCategory={filter === 'all' ? 'kitchen' : filter} onAdd={add} /> : null}
@@ -148,7 +227,7 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
       {loading ? (
         <p className="chore-empty">Loading chores…</p>
       ) : visible.length === 0 ? (
-        <p className="chore-empty">{chores.length === 0 ? 'No chores yet. Add one with the + button.' : 'Nothing in this category.'}</p>
+        <p className="chore-empty">{chores.length === 0 ? 'No chores yet. Add one with the + button.' : attentionOnly && chores.length > 0 ? 'Nothing needs attention here.' : 'No chores match these filters.'}</p>
       ) : (
         <ul className="chore-list">
           {visible.map((chore) => {
