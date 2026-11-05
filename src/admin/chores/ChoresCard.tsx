@@ -142,19 +142,6 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
     <article className="info-card admin-card chores-card">
       <div className="admin-card-head">
         <h3>{title}</h3>
-        <div className="admin-card-actions">
-          {view === 'chores' ? (
-            <button
-              type="button"
-              className="section-collapse-btn"
-              aria-label={adding ? 'Cancel adding a chore' : 'Add a chore'}
-              aria-expanded={adding}
-              onClick={() => setAdding((open) => !open)}
-            >
-              <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
-            </button>
-          ) : null}
-        </div>
       </div>
 
       <div className="chore-views" role="group" aria-label="Chores view">
@@ -214,6 +201,16 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
               onClick={() => setOpenFilter((open) => (open === 'category' ? null : 'category'))}
             >
               <ListFilter size={15} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              className="chore-icon-btn"
+              aria-label={adding ? 'Cancel adding a chore' : 'Add a chore'}
+              aria-expanded={adding}
+              onClick={() => setAdding((open) => !open)}
+            >
+              <Plus size={15} strokeWidth={1.8} aria-hidden="true" />
             </button>
           </div>
         </div>
