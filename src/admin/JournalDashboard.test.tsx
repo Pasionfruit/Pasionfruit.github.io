@@ -22,6 +22,8 @@ vi.mock('../data/sheets/repositories', () => ({
   getJournalEntries: vi.fn(async () => [ENTRY]),
   getGarminWellness: vi.fn(async () => []),
   getRingconnHealth: vi.fn(async () => []),
+  getTrainingRecords: vi.fn(async () => []),
+  getGarminHealth: vi.fn(async () => []),
   createJournalEntry: vi.fn(),
   updateJournalEntry: vi.fn(),
   deleteJournalEntry: vi.fn(),

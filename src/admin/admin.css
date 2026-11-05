@@ -2374,6 +2374,14 @@
   font-size: 0.8rem;
 }
 
+/* "Summarize day" under the journal entry: the button and what it found or could not read. */
+.journal-summarize {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* ── Chores ────────────────────────────────────────────────────────────────
    Category is a dot; the only color that is not a dot is the overdue warning. */
 .chores-card {

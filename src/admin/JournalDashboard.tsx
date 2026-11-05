@@ -15,6 +15,7 @@ import { MOOD_SCALE } from './journal/moods'
 import { VerseOfTheDayCard } from './VerseOfTheDayCard'
 import { GRATITUDE_LINE_COUNT, getPromptOfTheDay } from './journal/prompts'
 import { JournalLock } from './journal/JournalLock'
+import { loadDaySummary } from './journal/daySummary'
 
 /** Best first in the picker; MOOD_SCALE is ordered worst-first for scoring. */
 const MOODS = [...MOOD_SCALE].reverse()
@@ -100,6 +101,8 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
   const [isComposing, setIsComposing] = useState(false)
   const [draft, setDraft] = useState<Draft>(emptyDraft)
   const [entryIndex, setEntryIndex] = useState(0)
+  const [isSummarizing, setIsSummarizing] = useState(false)
+  const [summaryNote, setSummaryNote] = useState('')
 
   async function load() {
     try {
@@ -225,6 +228,42 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
     setEditingId(null)
     setIsComposing(false)
     setDraft(emptyDraft())
+    setSummaryNote('')
+  }
+
+  /**
+   * Fill the entry with up to three bullets on what the dashboards recorded for
+   * the entry's date: workout, chores and finished tasks. It adds to what is
+   * already written rather than replacing it, and skips bullets already there.
+   */
+  async function handleSummarize() {
+    if (isSummarizing || !draft.entryDate) {
+      return
+    }
+
+    setIsSummarizing(true)
+    setSummaryNote('')
+
+    try {
+      const { bullets, unavailable } = await loadDaySummary(draft.entryDate, idToken)
+      const fresh = bullets.filter((line) => !draft.body.includes(line))
+
+      if (fresh.length > 0) {
+        const added = fresh.join('\n')
+        setDraft((current) => ({
+          ...current,
+          body: current.body.trim() ? `${current.body.trimEnd()}\n\n${added}` : added,
+        }))
+      }
+
+      const notes: string[] = []
+      if (bullets.length === 0) notes.push('Nothing logged for that day yet.')
+      else if (fresh.length === 0) notes.push('Already in your entry.')
+      if (unavailable.length > 0) notes.push(`Could not read: ${unavailable.join(', ')}.`)
+      setSummaryNote(notes.join(' '))
+    } finally {
+      setIsSummarizing(false)
+    }
   }
 
   const isEditorOpen = isComposing || editingId !== null
@@ -306,6 +345,22 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
                 onChange={(event) => setDraft({ ...draft, body: event.target.value })}
               />
             </label>
+
+            <div className="journal-summarize">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => void handleSummarize()}
+                disabled={isSummarizing || !draft.entryDate}
+              >
+                {isSummarizing ? 'Summarizing…' : 'Summarize day'}
+              </button>
+              {summaryNote ? (
+                <span className="sheets-meta" role="status">
+                  {summaryNote}
+                </span>
+              ) : null}
+            </div>
 
             <fieldset className="gratitude-block">
               <legend>Grateful for</legend>
