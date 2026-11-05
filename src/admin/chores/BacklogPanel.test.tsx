@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const mocks = vi.hoisted(() => ({ listBacklog: vi.fn(), saveBacklogItem: vi.fn(), deleteBacklogItem: vi.fn() }))
@@ -42,61 +42,90 @@ describe('BacklogPanel', () => {
     expect(within(later).getByText(/Nov 7/)).toBeTruthy()
   })
 
-  it('jots an item with Enter and no due time unless the scheduler is opened', async () => {
+  it('shows the due date and time on the right, before the Overdue pill', async () => {
+    render(<BacklogPanel idToken="t" />)
+    await screen.findByText('Renew passport')
+    const row = screen.getByText('Renew passport').closest('li') as HTMLElement
+    const kids = Array.from(row.children).map((el) => el.className)
+    const due = kids.findIndex((c) => c.includes('backlog-due'))
+    const overdue = kids.findIndex((c) => c.includes('chore-status'))
+    expect(due).toBeGreaterThan(kids.findIndex((c) => c.includes('chore-main')))
+    expect(due).toBeLessThan(overdue)
+    expect(within(row).getByText('Nov 4')).toBeTruthy()
+  })
+
+  it('defaults a new item to an hour from now with no extra steps', async () => {
     const user = setup()
     render(<BacklogPanel idToken="t" />)
     await screen.findByText('Buy bulbs')
+
+    // The clock is 12:00 noon, so the scheduler already reads Today, 1:00 PM.
+    expect((screen.getByLabelText('Due day') as HTMLSelectElement).selectedOptions[0].textContent).toBe('Today')
+    expect((screen.getByLabelText('Due time') as HTMLSelectElement).selectedOptions[0].textContent).toBe('1:00 PM')
 
     await user.type(screen.getByLabelText('New backlog item'), 'Water plants')
     await user.keyboard('{Enter}')
 
-    expect(mocks.saveBacklogItem).toHaveBeenCalledWith('t', expect.objectContaining({ title: 'Water plants', due: '' }))
+    expect(mocks.saveBacklogItem).toHaveBeenCalledWith(
+      't',
+      expect.objectContaining({ title: 'Water plants', due: '2026-11-05T13:00' }),
+    )
     expect((screen.getByLabelText('New backlog item') as HTMLInputElement).value).toBe('')
+    expect(screen.getByText('Today, 1:00 PM')).toBeTruthy()
   })
 
-  it('opens the scheduler set to today, an hour from now, with plain labels', async () => {
+  it('only offers times in the future, and every time again for later days', async () => {
     const user = setup()
     render(<BacklogPanel idToken="t" />)
     await screen.findByText('Buy bulbs')
 
-    await user.click(screen.getByRole('button', { name: 'Set a due date and time' }))
-    // The clock is 12:00 noon, so an hour from now is 1:00 PM today.
-    expect((screen.getByLabelText('Due day') as HTMLSelectElement).selectedOptions[0].textContent).toBe('Today')
-    expect((screen.getByLabelText('Due time') as HTMLSelectElement).selectedOptions[0].textContent).toBe('1:00 PM')
+    const time = screen.getByLabelText('Due time')
+    expect(within(time).queryByRole('option', { name: '9:00 AM' })).toBeNull()
+    expect(within(time).queryByRole('option', { name: '12:00 PM' })).toBeNull()
+    expect(within(time).getByRole('option', { name: '12:30 PM' })).toBeTruthy()
+    expect(within(time).getByRole('option', { name: 'All day' })).toBeTruthy()
+
+    await user.selectOptions(screen.getByLabelText('Due day'), 'Tomorrow')
+    expect(within(time).getByRole('option', { name: '9:00 AM' })).toBeTruthy()
+    expect(within(time).getByRole('option', { name: '12:00 AM' })).toBeTruthy()
+  })
+
+  it('picks another day and time, and All day drops the time', async () => {
+    const user = setup()
+    render(<BacklogPanel idToken="t" />)
+    await screen.findByText('Buy bulbs')
 
     await user.type(screen.getByLabelText('New backlog item'), 'Pay rent')
     await user.selectOptions(screen.getByLabelText('Due day'), 'Tomorrow')
     await user.selectOptions(screen.getByLabelText('Due time'), '9:30 AM')
     await user.click(screen.getByRole('button', { name: 'Add' }))
-
-    expect(mocks.saveBacklogItem).toHaveBeenCalledWith(
+    expect(mocks.saveBacklogItem).toHaveBeenLastCalledWith(
       't',
       expect.objectContaining({ title: 'Pay rent', due: '2026-11-06T09:30', done: false }),
     )
-    expect(screen.getByText('Pay rent')).toBeTruthy()
-  })
-
-  it('keeps the suggested time as-is, and All day drops the time', async () => {
-    const user = setup()
-    render(<BacklogPanel idToken="t" />)
-    await screen.findByText('Buy bulbs')
-
-    await user.type(screen.getByLabelText('New backlog item'), 'Quick')
-    await user.click(screen.getByRole('button', { name: 'Set a due date and time' }))
-    await user.click(screen.getByRole('button', { name: 'Add' }))
-    expect(mocks.saveBacklogItem).toHaveBeenLastCalledWith(
-      't',
-      expect.objectContaining({ title: 'Quick', due: '2026-11-05T13:00' }),
-    )
 
     await user.type(screen.getByLabelText('New backlog item'), 'Whole day')
-    await user.click(screen.getByRole('button', { name: 'Set a due date and time' }))
     await user.selectOptions(screen.getByLabelText('Due time'), 'All day')
     await user.click(screen.getByRole('button', { name: 'Add' }))
     expect(mocks.saveBacklogItem).toHaveBeenLastCalledWith(
       't',
       expect.objectContaining({ title: 'Whole day', due: '2026-11-05' }),
     )
+  })
+
+  it('moves a picked time that slips into the past to the next one ahead', async () => {
+    const user = setup()
+    render(<BacklogPanel idToken="t" />)
+    await screen.findByText('Buy bulbs')
+
+    await user.selectOptions(screen.getByLabelText('Due time'), '12:30 PM')
+    // A minute-tick later than 12:30 makes that choice a past time.
+    await act(async () => {
+      vi.setSystemTime(new Date(2026, 10, 5, 12, 45))
+      vi.advanceTimersByTime(60_000)
+    })
+    const time = screen.getByLabelText('Due time') as HTMLSelectElement
+    expect(time.selectedOptions[0].textContent).toBe('1:00 PM')
   })
 
   it('completes, clears done items, and removes', async () => {

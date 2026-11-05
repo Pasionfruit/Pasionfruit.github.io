@@ -1,27 +1,34 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
-import { CalendarClock, Check, TriangleAlert, X } from 'lucide-react'
+import { Check, TriangleAlert, X } from 'lucide-react'
 import {
   deleteBacklogItem,
   listBacklog,
   saveBacklogItem,
   type BacklogItem,
 } from '../../data/backlog/client'
-import { dayOptions, defaultDue, dueState, formatDue, joinDue, sortBacklog, timeOptions } from './backlogDue'
-
-const TIME_OPTIONS = timeOptions()
+import {
+  dayOptions,
+  defaultDue,
+  dueState,
+  formatDue,
+  isFutureDue,
+  joinDue,
+  sortBacklog,
+  timeOptionsFor,
+} from './backlogDue'
 
 /**
- * A quick-jot list of one-off to-dos. Type, press Enter; optionally give it a
- * date and a time, and it warns once that moment has passed.
+ * A quick-jot list of one-off to-dos. Every item gets a due time: an hour from
+ * now unless you pick another, and never in the past. Type, press Enter.
  */
 export function BacklogPanel({ idToken }: { idToken: string }) {
   const [items, setItems] = useState<BacklogItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [title, setTitle] = useState('')
-  const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
-  const [showWhen, setShowWhen] = useState(false)
+  // Null until you pick one, so the suggestion keeps tracking "an hour from now".
+  const [pickedDay, setPickedDay] = useState<string | null>(null)
+  const [pickedTime, setPickedTime] = useState<string | null>(null)
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -67,37 +74,46 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
     [],
   )
 
+  const suggestion = useMemo(() => defaultDue(now), [now])
+  const days = useMemo(() => dayOptions(now), [now])
+  const day = pickedDay ?? suggestion.date
+  const times = useMemo(() => timeOptionsFor(day, now), [day, now])
+  // A picked time that has since slipped into the past falls back to the first one still ahead.
+  const wanted = pickedTime ?? suggestion.time
+  const time = times.some((option) => option.value === wanted)
+    ? wanted
+    : (times.find((option) => option.value !== '')?.value ?? '')
+
+  function chooseDay(value: string) {
+    setPickedDay(value)
+    setError('')
+  }
+
   function add(event: FormEvent) {
     event.preventDefault()
     const trimmed = title.trim()
     if (!trimmed) return
+    const due = joinDue(day, time)
+    if (!isFutureDue(due, new Date())) {
+      setError('Pick a time in the future.')
+      return
+    }
     const item: BacklogItem = {
       id: crypto.randomUUID(),
       title: trimmed,
-      due: showWhen ? joinDue(date, time) : '',
+      due,
       done: false,
       createdAt: new Date().toISOString(),
     }
     setTitle('')
-    setDate('')
-    setTime('')
-    setShowWhen(false)
+    setPickedDay(null)
+    setPickedTime(null)
     void run(
       () => setItems((current) => [...current, item]),
       () => setItems((current) => current.filter((i) => i.id !== item.id)),
       () => saveBacklogItem(idToken, item),
       'The item could not be added.',
     )
-  }
-
-  /** Opening the scheduler pre-fills it with an hour from now; closing it means no due time. */
-  function toggleWhen() {
-    if (!showWhen) {
-      const suggestion = defaultDue(new Date())
-      setDate(suggestion.date)
-      setTime(suggestion.time)
-    }
-    setShowWhen((open) => !open)
   }
 
   function toggle(item: BacklogItem) {
@@ -119,7 +135,6 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
     )
   }
 
-  const days = useMemo(() => dayOptions(now), [now])
   const sorted = useMemo(() => sortBacklog(items), [items])
   const doneCount = items.filter((i) => i.done).length
 
@@ -137,38 +152,33 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
             value={title}
             onChange={(event) => setTitle(event.target.value)}
           />
-          <button
-            type="button"
-            className="chore-icon-btn"
-            aria-label="Set a due date and time"
-            aria-expanded={showWhen}
-            data-active={showWhen}
-            onClick={toggleWhen}
-          >
-            <CalendarClock size={15} strokeWidth={1.8} aria-hidden="true" />
-          </button>
           <button type="submit" className="primary-action" disabled={!title.trim()}>
             Add
           </button>
         </div>
-        {showWhen ? (
-          <div className="backlog-when">
-            <select aria-label="Due day" value={date} onChange={(event) => setDate(event.target.value)}>
-              {days.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <select aria-label="Due time" value={time} onChange={(event) => setTime(event.target.value)}>
-              {TIME_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : null}
+        <div className="backlog-when">
+          <select aria-label="Due day" value={day} onChange={(event) => chooseDay(event.target.value)}>
+            {days.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Due time"
+            value={time}
+            onChange={(event) => {
+              setPickedTime(event.target.value)
+              setError('')
+            }}
+          >
+            {times.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </form>
 
       {error ? (
@@ -201,8 +211,8 @@ export function BacklogPanel({ idToken }: { idToken: string }) {
                 </button>
                 <div className="chore-main">
                   <span className="chore-name">{item.title}</span>
-                  {item.due ? <span className="chore-meta">{formatDue(item.due, now)}</span> : null}
                 </div>
+                {item.due ? <span className="backlog-due">{formatDue(item.due, now)}</span> : null}
                 {state === 'overdue' ? (
                   <span className="chore-status chore-status--overdue">
                     <TriangleAlert size={12} strokeWidth={1.8} aria-hidden="true" />

@@ -84,6 +84,19 @@ export function dayOptions(now: Date, count = 30): { value: string; label: strin
   })
 }
 
+/** True once the due moment is still ahead of `now`. A date alone runs to the end of that day. */
+export function isFutureDue(due: string, now: Date) {
+  const moment = dueMoment(due)
+  return moment !== null && moment.getTime() > now.getTime()
+}
+
+/** The time choices for a day: on today, only times still ahead (plus All day). */
+export function timeOptionsFor(date: string, now: Date) {
+  const all = timeOptions()
+  if (date !== dateKey(now)) return all
+  return all.filter((option) => option.value === '' || isFutureDue(`${date}T${option.value}`, now))
+}
+
 /** "All day", then every half hour as "9:00 AM" style labels. */
 export function timeOptions(): { value: string; label: string }[] {
   const options = [{ value: '', label: 'All day' }]
