@@ -1430,9 +1430,15 @@ function createDraftReply_(payload) {
 
 // ── Calendars ─────────────────────────────────────────────────────────────
 
-function calendarIsoDate_(date, allDay) {
+/**
+ * All-day events start at midnight in the *calendar's* time zone, so the date
+ * has to be read back in that same zone. Formatting in the script's zone
+ * instead shifts the event to the previous day whenever the script's zone is
+ * west of the calendar's (the default for a new project is often Pacific).
+ */
+function calendarIsoDate_(date, allDay, timeZone) {
   if (allDay) {
-    return Utilities.formatDate(date, Session.getScriptTimeZone(), 'yyyy-MM-dd')
+    return Utilities.formatDate(date, timeZone || Session.getScriptTimeZone(), 'yyyy-MM-dd')
   }
   return date.toISOString()
 }
@@ -1461,6 +1467,7 @@ function getCalendarEvents_(payload) {
     for (var c = 0; c < calendars.length; c += 1) {
       var cal = calendars[c]
       var name = cal.getName()
+      var calTimeZone = cal.getTimeZone()
       var events = cal.getEvents(start, end)
 
       for (var e = 0; e < events.length; e += 1) {
@@ -1471,8 +1478,8 @@ function getCalendarEvents_(payload) {
           id: ev.getId(),
           source: 'google',
           title: ev.getTitle() || '(no title)',
-          start: calendarIsoDate_(ev.getStartTime(), allDay),
-          end: calendarIsoDate_(ev.getEndTime(), allDay),
+          start: calendarIsoDate_(ev.getStartTime(), allDay, calTimeZone),
+          end: calendarIsoDate_(ev.getEndTime(), allDay, calTimeZone),
           allDay: allDay,
           location: ev.getLocation() || '',
           calendarName: name
@@ -1552,7 +1559,11 @@ function fetchAppleEvents_(icsUrl, start, end) {
         var s = parseIcsDate_(current.DTSTART)
         var e = parseIcsDate_(current.DTEND || current.DTSTART)
 
-        if (s && s.date >= start && s.date < end) {
+        // Overlap, not "starts inside": a multi-day event that began before the
+        // window must still appear for the days it covers. An all-day DTEND is
+        // exclusive, so an event ending exactly at the window start is out.
+        var finish = e ? e.date : (s ? s.date : null)
+        if (s && s.date < end && (s.date >= start || (finish && finish > start))) {
           events.push({
             id: current.UID || (s.iso + '-' + (current.SUMMARY || '')),
             source: 'apple',

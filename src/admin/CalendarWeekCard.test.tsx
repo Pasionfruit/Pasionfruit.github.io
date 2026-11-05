@@ -117,5 +117,30 @@ describe('CalendarWeekCard collapse', () => {
     await user.click(screen.getByRole('button', { name: 'Use my location' }))
     expect(onLocate).toHaveBeenCalled()
   })
-})
 
+  it('shows a multi-day all-day event on every day it covers and not the day before', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 10, 5, 12))
+    try {
+      calendarMocks.getCalendarEvents.mockResolvedValue({
+        events: [
+          {
+            id: 'trip', source: 'google', title: 'Trip', start: '2026-11-08', end: '2026-11-11',
+            allDay: true, location: '', calendarName: '',
+          },
+        ],
+        errors: [],
+        appleConfigured: true,
+      })
+      render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
+
+      expect(await screen.findByLabelText('2026-11-08 has 1 event')).toBeTruthy()
+      expect(screen.getByLabelText('2026-11-09 has 1 event')).toBeTruthy()
+      expect(screen.getByLabelText('2026-11-10 has 1 event')).toBeTruthy()
+      expect(screen.getByLabelText('2026-11-07 has no events')).toBeTruthy()
+      expect(screen.getByLabelText('2026-11-11 has no events')).toBeTruthy()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})

@@ -7,6 +7,7 @@ import { RadarMap } from '../weather/RadarMap'
 import type { WeatherHook } from '../weather/useWeather'
 import '../weather/weather.css'
 import { Pager } from '../components/Pager'
+import { dayKey, eventDayKeys, eventTimeLabelForDay } from './calendarDays'
 import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
 import type { ConnectionStatus } from './integrations/types'
 
@@ -53,35 +54,6 @@ function writeStoredMonth(month: Date) {
   } catch {
     // Nothing to do — the view opens on today's month next visit instead.
   }
-}
-
-function dayKey(date: Date) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function eventDayKey(event: CalendarEventRecord) {
-  if (event.allDay) {
-    return event.start.slice(0, 10)
-  }
-
-  const parsed = new Date(event.start)
-  return Number.isNaN(parsed.getTime()) ? '' : dayKey(parsed)
-}
-
-function eventTimeLabel(event: CalendarEventRecord) {
-  if (event.allDay) {
-    return 'All day'
-  }
-
-  const parsed = new Date(event.start)
-  if (Number.isNaN(parsed.getTime())) {
-    return ''
-  }
-
-  return parsed.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
 }
 
 function formatDayHeading(key: string) {
@@ -211,13 +183,12 @@ export function CalendarWeekCard({
   const eventsByDay = useMemo(() => {
     const map: Record<string, CalendarEventRecord[]> = {}
 
+    // An event lands on every day it covers, not just the one it starts on.
     for (const event of events) {
-      const key = eventDayKey(event)
-      if (!key) {
-        continue
+      for (const key of eventDayKeys(event)) {
+        map[key] = map[key] ?? []
+        map[key].push(event)
       }
-      map[key] = map[key] ?? []
-      map[key].push(event)
     }
 
     for (const key of Object.keys(map)) {
@@ -404,7 +375,7 @@ export function CalendarWeekCard({
                 <ul className="admin-calendar-day-list">
                   {selectedEvents.map((event) => (
                     <li key={`${event.source}-${event.id}`} className={`source-${event.source}`}>
-                      <span className="calendar-event-time">{eventTimeLabel(event)}</span>
+                      <span className="calendar-event-time">{eventTimeLabelForDay(event, selectedDayKey)}</span>
                       <span className="calendar-event-title">{event.title}</span>
                       {event.location ? (
                         <span className="calendar-event-location">{event.location}</span>
