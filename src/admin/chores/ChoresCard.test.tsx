@@ -5,6 +5,12 @@ import userEvent from '@testing-library/user-event'
 
 const mocks = vi.hoisted(() => ({ listChores: vi.fn(), saveChore: vi.fn(), deleteChore: vi.fn() }))
 
+vi.mock('../../data/backlog/client', () => ({
+  listBacklog: vi.fn(async () => []),
+  saveBacklogItem: vi.fn(),
+  deleteBacklogItem: vi.fn(),
+}))
+
 vi.mock('../../data/chores/client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../data/chores/client')>()),
   ...mocks,
@@ -90,5 +96,55 @@ describe('ChoresCard', () => {
     await user.click(screen.getByRole('button', { name: 'Mark Scoop litter done' }))
     expect(mocks.saveChore).toHaveBeenCalledWith('t', expect.objectContaining({ id: '1', lastDone: '2026-11-05' }))
     expect(screen.queryByText(/Overdue/)).toBeNull()
+  })
+
+  it('edits name, category and frequency, and cancel discards the changes', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<ChoresCard title="Chores" idToken="t" />)
+    await screen.findByText('Scoop litter')
+
+    await user.click(screen.getByRole('button', { name: 'Edit Wipe counters' }))
+    await user.clear(screen.getByLabelText('Chore name'))
+    await user.type(screen.getByLabelText('Chore name'), 'Wipe everything')
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.getByText('Wipe counters')).toBeTruthy()
+    expect(mocks.saveChore).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: 'Edit Wipe counters' }))
+    await user.clear(screen.getByLabelText('Chore name'))
+    await user.type(screen.getByLabelText('Chore name'), 'Wipe everything')
+    await user.selectOptions(screen.getByLabelText('Category'), 'hygiene')
+    await user.clear(screen.getByLabelText('Repeat every N days'))
+    await user.type(screen.getByLabelText('Repeat every N days'), '2')
+    await user.click(screen.getByRole('button', { name: 'Update' }))
+
+    expect(mocks.saveChore).toHaveBeenCalledWith('t', {
+      id: '2', name: 'Wipe everything', category: 'hygiene', intervalDays: 2, lastDone: '2026-11-04',
+    })
+    expect(screen.getByText('Wipe everything')).toBeTruthy()
+    expect(screen.queryByText('Wipe counters')).toBeNull()
+  })
+
+  it('deletes from the editor', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    mocks.deleteChore.mockResolvedValue(undefined)
+    render(<ChoresCard title="Chores" idToken="t" />)
+    await screen.findByText('Scoop litter')
+    await user.click(screen.getByRole('button', { name: 'Edit Scoop litter' }))
+    await user.click(screen.getByRole('button', { name: 'Delete' }))
+    expect(mocks.deleteChore).toHaveBeenCalledWith('t', '1')
+    expect(screen.queryByText('Scoop litter')).toBeNull()
+  })
+
+  it('switches to the backlog view and back', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<ChoresCard title="Chores" idToken="t" />)
+    await screen.findByText('Scoop litter')
+    await user.click(screen.getByRole('button', { name: 'Backlog' }))
+    expect(screen.getByLabelText('New backlog item')).toBeTruthy()
+    expect(screen.queryByText('Scoop litter')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Add a chore' })).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Chores' }))
+    expect(screen.getByText('Scoop litter')).toBeTruthy()
   })
 })

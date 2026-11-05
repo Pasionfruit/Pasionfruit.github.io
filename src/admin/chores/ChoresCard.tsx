@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
-import { Check, Clock, ListFilter, Plus, Trash2, TriangleAlert } from 'lucide-react'
+import { Check, Clock, ListFilter, Pencil, Plus, TriangleAlert } from 'lucide-react'
 import {
   CHORE_CATEGORIES,
   CHORE_CATEGORY_LABELS,
@@ -9,6 +9,7 @@ import {
   type Chore,
   type ChoreCategory,
 } from '../../data/chores/client'
+import { BacklogPanel } from './BacklogPanel'
 import {
   CADENCE_LABELS,
   choreCadence,
@@ -24,6 +25,7 @@ import {
 type Filter = 'all' | ChoreCategory
 type CadenceFilter = 'all' | ChoreCadence
 type OpenFilter = 'time' | 'category' | null
+type View = 'chores' | 'backlog'
 
 /**
  * Recurring household chores. Each has a category and a "every N days" interval;
@@ -37,7 +39,9 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
   const [cadence, setCadence] = useState<CadenceFilter>('all')
   const [attentionOnly, setAttentionOnly] = useState(false)
   const [openFilter, setOpenFilter] = useState<OpenFilter>(null)
+  const [view, setView] = useState<View>('chores')
   const [adding, setAdding] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [today, setToday] = useState(() => localDayKey(new Date()))
 
   useEffect(() => {
@@ -82,6 +86,7 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
   const remove = useCallback(
     async (chore: Chore) => {
       setChores((current) => current.filter((c) => c.id !== chore.id))
+      setEditingId(null)
       setError('')
       try {
         await deleteChore(idToken, chore.id)
@@ -91,6 +96,22 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
       }
     },
     [idToken],
+  )
+
+  const update = useCallback(
+    async (chore: Chore) => {
+      const previous = chores.find((c) => c.id === chore.id)
+      setChores((current) => current.map((c) => (c.id === chore.id ? chore : c)))
+      setEditingId(null)
+      setError('')
+      try {
+        await saveChore(idToken, chore)
+      } catch (caught) {
+        if (previous) setChores((current) => current.map((c) => (c.id === chore.id ? previous : c)))
+        setError(caught instanceof Error ? caught.message : 'The chore could not be updated.')
+      }
+    },
+    [idToken, chores],
   )
 
   const add = useCallback(
@@ -122,17 +143,38 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
       <div className="admin-card-head">
         <h3>{title}</h3>
         <div className="admin-card-actions">
-          <button
-            type="button"
-            className="section-collapse-btn"
-            aria-label={adding ? 'Cancel adding a chore' : 'Add a chore'}
-            aria-expanded={adding}
-            onClick={() => setAdding((open) => !open)}
-          >
-            <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
-          </button>
+          {view === 'chores' ? (
+            <button
+              type="button"
+              className="section-collapse-btn"
+              aria-label={adding ? 'Cancel adding a chore' : 'Add a chore'}
+              aria-expanded={adding}
+              onClick={() => setAdding((open) => !open)}
+            >
+              <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          ) : null}
         </div>
       </div>
+
+      <div className="chore-views" role="group" aria-label="Chores view">
+        {(['chores', 'backlog'] as View[]).map((id) => (
+          <button
+            key={id}
+            type="button"
+            className="chore-filter-btn"
+            aria-pressed={view === id}
+            onClick={() => setView(id)}
+          >
+            {id === 'chores' ? 'Chores' : 'Backlog'}
+          </button>
+        ))}
+      </div>
+
+      {view === 'backlog' ? (
+        <BacklogPanel idToken={idToken} />
+      ) : (
+        <>
 
       <div className="chore-filters">
         <div className="chore-filter-bar">
@@ -216,7 +258,12 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
         ) : null}
       </div>
 
-      {adding ? <AddChoreForm defaultCategory={filter === 'all' ? 'kitchen' : filter} onAdd={add} /> : null}
+      {adding ? <ChoreForm
+          key="add"
+          initial={{ id: crypto.randomUUID(), name: '', category: filter === 'all' ? 'kitchen' : filter, intervalDays: 7, lastDone: '' }}
+          submitLabel="Add chore"
+          onSubmit={add}
+        /> : null}
 
       {error ? (
         <p className="chore-error" role="alert">
@@ -234,6 +281,19 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
             const status = choreStatus(chore, today)
             const warning = warningLabel(status)
             const alert = status.state === 'overdue' || status.state === 'never'
+            if (editingId === chore.id) {
+              return (
+                <li key={chore.id} className="chore-row chore-row--editing">
+                  <ChoreForm
+                    initial={chore}
+                    submitLabel="Update"
+                    onSubmit={update}
+                    onCancel={() => setEditingId(null)}
+                    onDelete={() => void remove(chore)}
+                  />
+                </li>
+              )
+            }
             return (
               <li key={chore.id} className={`chore-row${alert ? ' is-overdue' : ''}`}>
                 <button
@@ -259,38 +319,47 @@ export function ChoresCard({ title, idToken }: { title: string; idToken: string 
                 ) : null}
                 <button
                   type="button"
-                  className="chore-delete-btn"
-                  aria-label={`Delete ${chore.name}`}
-                  onClick={() => void remove(chore)}
+                  className="chore-edit-btn"
+                  aria-label={`Edit ${chore.name}`}
+                  onClick={() => setEditingId(chore.id)}
                 >
-                  <Trash2 size={14} strokeWidth={1.6} aria-hidden="true" />
+                  <Pencil size={14} strokeWidth={1.6} aria-hidden="true" />
                 </button>
               </li>
             )
           })}
         </ul>
       )}
+        </>
+      )}
     </article>
   )
 }
 
-function AddChoreForm({
-  defaultCategory,
-  onAdd,
+/** Add and edit share this form; `initial` carries the id and, when editing, last-done. */
+function ChoreForm({
+  initial,
+  submitLabel,
+  onSubmit,
+  onCancel,
+  onDelete,
 }: {
-  defaultCategory: ChoreCategory
-  onAdd: (chore: Chore) => void
+  initial: Chore
+  submitLabel: string
+  onSubmit: (chore: Chore) => void
+  onCancel?: () => void
+  onDelete?: () => void
 }) {
-  const [name, setName] = useState('')
-  const [category, setCategory] = useState<ChoreCategory>(defaultCategory)
-  const [interval, setInterval] = useState('7')
+  const [name, setName] = useState(initial.name)
+  const [category, setCategory] = useState<ChoreCategory>(initial.category)
+  const [interval, setInterval] = useState(String(initial.intervalDays))
 
   function submit(event: FormEvent) {
     event.preventDefault()
     const trimmed = name.trim()
     const days = Math.round(Number(interval))
     if (!trimmed || !Number.isFinite(days) || days < 1) return
-    onAdd({ id: crypto.randomUUID(), name: trimmed, category, intervalDays: days, lastDone: '' })
+    onSubmit({ ...initial, name: trimmed, category, intervalDays: days })
   }
 
   return (
@@ -325,9 +394,21 @@ function AddChoreForm({
         />
         days
       </label>
-      <button type="submit" className="primary-action">
-        Add chore
-      </button>
+      <div className="chore-form-actions">
+        <button type="submit" className="primary-action">
+          {submitLabel}
+        </button>
+        {onCancel ? (
+          <button type="button" className="secondary-action" onClick={onCancel}>
+            Cancel
+          </button>
+        ) : null}
+        {onDelete ? (
+          <button type="button" className="secondary-action chore-delete-action" onClick={onDelete}>
+            Delete
+          </button>
+        ) : null}
+      </div>
     </form>
   )
 }

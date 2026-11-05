@@ -2495,7 +2495,8 @@
 
 .chore-list {
   display: grid;
-  max-height: 30rem;
+  /* About five rows; the rest scrolls. */
+  max-height: 15.5rem;
   overflow-y: auto;
   margin: 0;
   padding: 0;
@@ -2558,7 +2559,7 @@
 }
 
 .chore-done-btn,
-.chore-delete-btn {
+.chore-edit-btn {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -2573,21 +2574,19 @@
   transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 
-.chore-delete-btn {
+.chore-edit-btn {
   border-color: transparent;
   background: transparent;
 }
 
 @media (hover: hover) {
-  .chore-done-btn:hover {
+  .chore-done-btn:hover,
+  .chore-edit-btn:hover {
     border-color: var(--accent);
     background: var(--accent-soft);
     color: var(--accent);
   }
 
-  .chore-delete-btn:hover {
-    color: var(--danger);
-  }
 }
 
 .chore-form {
@@ -2611,6 +2610,25 @@
 
 .chore-form input[aria-label='Chore name'] {
   flex: 1 1 12rem;
+}
+
+.chore-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.chore-delete-action {
+  color: var(--danger);
+}
+
+.chore-row--editing {
+  align-items: stretch;
+}
+
+.chore-row--editing .chore-form {
+  flex: 1;
 }
 
 .chore-interval {
@@ -2648,4 +2666,52 @@
   .chore-status {
     margin-left: 2.35rem;
   }
+}
+
+/* ── Backlog ───────────────────────────────────────────────────────────────── */
+.chore-views {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.backlog {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.backlog-add {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.backlog-add-row,
+.backlog-when {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.backlog-add input {
+  min-height: 2rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.backlog-add-row input[aria-label='New backlog item'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.backlog-row.is-done .chore-name {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.backlog-clear {
+  justify-self: start;
 }

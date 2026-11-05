@@ -96,6 +96,13 @@ const TABLES = {
     reals: ['interval_days'],
     read: 'admin',
   },
+  // The chore card's backlog of one-off to-dos (workers/db/backlog.sql). Admin-only, both ways.
+  backlog: {
+    key: 'item_id',
+    columns: ['item_id', 'title', 'due', 'done', 'created_at'],
+    ints: ['done'],
+    read: 'admin',
+  },
   // The Tasks page's section order and hidden sections, one row per Todoist
   // section (workers/db/tasks_layout.sql). Admin-only, both ways.
   tasks_layout: {
