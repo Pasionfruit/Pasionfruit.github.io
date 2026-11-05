@@ -232,10 +232,10 @@ function MetricGroups<Row extends { date: string }>({
   )
 }
 
-function MetricGrid({
+function MetricGrid<Row extends { date: string }>({
   summaries,
 }: {
-  summaries: { metric: Pick<Metric<Record<string, string>>, 'key' | 'label' | 'unit' | 'description'>; summary: MetricSummary | null }[]
+  summaries: { metric: Pick<Metric<Row>, 'key' | 'label' | 'unit' | 'description'>; summary: MetricSummary | null }[]
 }) {
   return (
     <div className="garmin-metric-grid">

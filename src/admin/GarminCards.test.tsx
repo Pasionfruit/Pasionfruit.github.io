@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-const repoMocks = vi.hoisted(() => ({ getGarminWellness: vi.fn(), getRingconnHealth: vi.fn(async () => []) }))
+const repoMocks = vi.hoisted(() => ({ getGarminWellness: vi.fn(), getRingconnHealth: vi.fn(async (): Promise<unknown[]> => []) }))
 
 vi.mock('../data/sheets/repositories', () => repoMocks)
 
