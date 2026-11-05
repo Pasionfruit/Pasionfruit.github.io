@@ -2436,6 +2436,8 @@
 
 .chore-list {
   display: grid;
+  max-height: 30rem;
+  overflow-y: auto;
   margin: 0;
   padding: 0;
   list-style: none;
