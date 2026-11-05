@@ -148,7 +148,7 @@
   --card-accent: var(--color-amber);
 }
 
-.admin-home > .admin-card:last-child {
+.admin-home > .admin-card:nth-last-child(2) {
   --card-accent: var(--color-lavender);
 }
 
@@ -2372,4 +2372,219 @@
 .mood-range .experience-toggle-btn {
   padding: 0.35rem 0.8rem;
   font-size: 0.8rem;
+}
+
+/* ── Chores ────────────────────────────────────────────────────────────────
+   Category is a dot; the only color that is not a dot is the overdue warning. */
+.chores-card {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.chore-warn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 40%, var(--border));
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface));
+}
+
+.chore-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chore-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  min-height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.chore-filter-btn[aria-pressed='true'] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.chore-dot {
+  display: inline-block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.chore-dot--kitchen { background: var(--color-amber); }
+.chore-dot--laundry { background: var(--color-blue); }
+.chore-dot--hygiene { background: var(--color-teal); }
+.chore-dot--cats { background: var(--color-coral); }
+.chore-dot--technical { background: var(--color-lavender); }
+
+.chore-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chore-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.chore-row:first-child {
+  border-top: 0;
+}
+
+.chore-main {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.1rem;
+}
+
+.chore-name {
+  color: var(--text-strong);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.chore-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.chore-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chore-status--overdue,
+.chore-status--never {
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 40%, var(--border));
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface));
+}
+
+.chore-done-btn,
+.chore-delete-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.chore-delete-btn {
+  border-color: transparent;
+  background: transparent;
+}
+
+@media (hover: hover) {
+  .chore-done-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .chore-delete-btn:hover {
+    color: var(--danger);
+  }
+}
+
+.chore-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chore-form input,
+.chore-form select {
+  min-height: 2rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.chore-form input[aria-label='Chore name'] {
+  flex: 1 1 12rem;
+}
+
+.chore-interval {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.chore-interval input {
+  width: 4rem;
+}
+
+.chore-empty,
+.chore-error {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.chore-error {
+  color: var(--danger);
+}
+
+@media (max-width: 30rem) {
+  .chore-row {
+    flex-wrap: wrap;
+  }
+
+  .chore-main {
+    flex-basis: calc(100% - 5rem);
+  }
+
+  .chore-status {
+    margin-left: 2.35rem;
+  }
 }

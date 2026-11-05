@@ -89,6 +89,13 @@ const TABLES = {
     columns: ['note_id', 'color', 'body', 'updated_at'],
     read: 'admin',
   },
+  // The home dashboard's chore list (workers/db/chores.sql). Admin-only, both ways.
+  chores: {
+    key: 'chore_id',
+    columns: ['chore_id', 'name', 'category', 'interval_days', 'last_done', 'created_at'],
+    reals: ['interval_days'],
+    read: 'admin',
+  },
   // The Tasks page's section order and hidden sections, one row per Todoist
   // section (workers/db/tasks_layout.sql). Admin-only, both ways.
   tasks_layout: {

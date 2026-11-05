@@ -66,6 +66,7 @@ import './App.css'
 import './admin/admin.css'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { HomeHero } from './components/HomeHero'
+import { ChoresCard } from './admin/chores/ChoresCard'
 import { MonthTileHeatmap, type HeatmapDay } from './components/MonthTileHeatmap'
 import { GitHubActivity } from './components/GitHubActivity'
 import { profile } from './siteContent/profile'
@@ -379,7 +380,7 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
       className="admin-page admin-home"
       style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
     >
-      <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
+      <ChoresCard title="Chores" idToken={googleIdToken} />
 
       {/* Reuses the public home-top-row layout: equal columns and a fixed height
           on desktop, so switching tabs inside the tasks card cannot resize the row. */}
@@ -390,6 +391,7 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
 
       <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
 
+      <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
     </div>
   )
 }
