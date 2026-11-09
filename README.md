@@ -35,9 +35,9 @@ dashboard.
 | Calendar | `/admin/calendar` | The month and week ahead, with the weather |
 | Home | `/` | Verse of the day (mark it read to fold it, or open the whole chapter), today's training, chores, and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
 | Journal | `/admin/personal` | Journal entries with gratitude prompts |
-| Overview | `/admin/overview` | Two tabs: Health (next event countdown, Garmin/RingConn/Apple Health data, training log) and News (`?tab=news`) |
+| Overview | `/admin/overview` | Three tabs: Training (next event countdown, Garmin data, training log; the default), Health (`?tab=health`: daily wellness with sleep & recovery) and News (`?tab=news`) |
 
-`/admin/journal` redirects to Journal. `/admin/health` and `/admin/training` redirect to Overview, `/admin/news` to its News tab, and `/admin/ciara` to Home. The
+`/admin/journal` redirects to Journal. `/admin/training` redirects to Overview, `/admin/health` to its Health tab, `/admin/news` to its News tab, and `/admin/ciara` to Home. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.
 
 Tasks and Calendar are modular pages: each holds one module with no page

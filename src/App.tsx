@@ -89,6 +89,7 @@ import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
+import { GarminWellnessCard } from './admin/GarminCards'
 import { NewsDashboard } from './admin/news/NewsDashboard'
 import { CiaraDashboard } from './admin/ciara/CiaraDashboard'
 import { WorkoutText } from './training/WorkoutText'
@@ -308,7 +309,7 @@ function App() {
               element={<AdminOverviewPage profile={profile} googleIdToken={googleIdToken} />}
             />
             {/* Health and News became tabs of Overview; WW + TG moved onto Home. */}
-            <Route path="health" element={<Navigate replace to="/admin/overview" />} />
+            <Route path="health" element={<Navigate replace to="/admin/overview?tab=health" />} />
             <Route path="training" element={<Navigate replace to="/admin/overview" />} />
             <Route path="news" element={<Navigate replace to="/admin/overview?tab=news" />} />
             <Route path="ciara" element={<Navigate replace to="/" />} />
@@ -424,38 +425,41 @@ function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
 }
 
 /**
- * Health and News under one nav item. The training dashboard folds in what used
- * to be spread across /training, /training/records, and /training/data — the
- * wearable data is the point, so Health leads. `?tab=news` opens the headlines.
+ * Training, Health (daily wellness and sleep) and News under one nav item.
+ * Training folds in what used to be spread across /training, /training/records
+ * and /training/data, and is the default; `?tab=health` and `?tab=news` open the others.
  */
 function AdminOverviewPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const tab = searchParams.get('tab') === 'news' ? 'news' : 'health'
+  const requested = searchParams.get('tab')
+  const tab = requested === 'news' || requested === 'health' ? requested : 'training'
   const canWrite = profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL
 
   return (
     <AdminPage meta={adminDashboardsById.overview}>
       <div className="experience-toggle" role="tablist" aria-label="Overview sections">
-        {(['health', 'news'] as const).map((id) => (
+        {(['training', 'health', 'news'] as const).map((id) => (
           <button
             key={id}
             type="button"
             role="tab"
             aria-selected={tab === id}
             className={`experience-toggle-btn ${tab === id ? 'active' : ''}`}
-            onClick={() => setSearchParams(id === 'news' ? { tab: 'news' } : {}, { replace: true })}
+            onClick={() => setSearchParams(id === 'training' ? {} : { tab: id }, { replace: true })}
           >
-            {id === 'health' ? 'Health' : 'News'}
+            {id === 'training' ? 'Training' : id === 'health' ? 'Health' : 'News'}
           </button>
         ))}
       </div>
 
-      {tab === 'health' ? (
+      {tab === 'training' ? (
         <>
           <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
           <TrainingDataCard title="Training" />
           <TrainingLogCard title="Training Log" />
         </>
+      ) : tab === 'health' ? (
+        <GarminWellnessCard title="Daily wellness" />
       ) : (
         <NewsDashboard idToken={googleIdToken} />
       )}

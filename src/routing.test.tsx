@@ -564,11 +564,12 @@ describe('admin routing', () => {
     expect(reset.getAttribute('href')).toBe('/weekly-reset')
   })
 
-  it('keeps Health to workouts: no Milestones, and Daily wellness lives on Personal', async () => {
-    renderAt('/admin/health', ADMIN_EMAIL)
+  it('keeps the Training tab to workouts and puts daily wellness (sleep) on Health: no Milestones', async () => {
+    renderAt('/admin/overview', ADMIN_EMAIL)
 
     expect(await screen.findByRole('heading', { name: 'Training' })).toBeTruthy()
     expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+      'Training',
       'Health',
       'News',
       'Workouts',
@@ -577,12 +578,16 @@ describe('admin routing', () => {
       'Bikes',
     ])
     expect(screen.queryByRole('heading', { name: 'Milestones' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Daily wellness' })).toBeNull()
+    // Sleep & recovery has its own Health tab, not the Training one.
+    expect(screen.queryByRole('heading', { name: 'Daily wellness', level: 3 })).toBeNull()
+    await userEvent.setup().click(screen.getByRole('tab', { name: 'Health' }))
+    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Training Log' })).toBeNull()
   })
 
   it('switches the Training Log between its tiles and the PR board', async () => {
     const user = userEvent.setup()
-    renderAt('/admin/health', ADMIN_EMAIL)
+    renderAt('/admin/overview', ADMIN_EMAIL)
 
     const tiles = await screen.findByRole('button', { name: 'Tiles' })
     const prs = screen.getByRole('button', { name: 'PRs' })
@@ -595,9 +600,9 @@ describe('admin routing', () => {
     expect(await screen.findByText('Personal records arrive with the next Garmin sync.')).toBeTruthy()
   })
 
-  it('puts Health and News on Overview tabs, and the old URLs land there', async () => {
+  it('puts Training, Health and News on Overview tabs, and the old URLs land there', async () => {
     const user = userEvent.setup()
-    renderAt('/admin/health', ADMIN_EMAIL)
+    renderAt('/admin/training', ADMIN_EMAIL)
     expect(pageTitle()).toBe('Overview')
     expect(await screen.findByRole('heading', { name: 'Training' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Local' })).toBeNull()
@@ -610,6 +615,10 @@ describe('admin routing', () => {
     renderAt('/admin/news', ADMIN_EMAIL)
     expect(pageTitle()).toBe('Overview')
     expect(await screen.findByRole('heading', { name: 'Local' })).toBeTruthy()
+    cleanup()
+
+    renderAt('/admin/health', ADMIN_EMAIL)
+    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
   })
 
   it('shows WW + TG at the bottom of Home and sends /admin/ciara there', async () => {

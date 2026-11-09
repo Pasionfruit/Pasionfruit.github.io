@@ -36,6 +36,7 @@ const repoMocks = vi.hoisted(() => ({
   updateJournalEntry: vi.fn(),
   deleteJournalEntry: vi.fn(),
   getGarminHealth: vi.fn(),
+  getGarminWellness: vi.fn(),
   getRingconnHealth: vi.fn(),
   getAppleHealth: vi.fn(),
   getPersonalTraining: vi.fn(),
@@ -88,7 +89,7 @@ function eventDateInDays(days: number) {
 }
 
 function renderTrainingPage(email = 'pasionabe@gmail.com') {
-  return renderAdminPage('/admin/health', email)
+  return renderAdminPage('/admin/overview', email)
 }
 
 function renderAdminTasksPage(email = 'pasionabe@gmail.com') {
@@ -140,6 +141,7 @@ beforeEach(() => {
 
   // Health data is read by the training dashboard.
   repoMocks.getGarminHealth.mockResolvedValue([])
+  repoMocks.getGarminWellness.mockResolvedValue([])
   repoMocks.getRingconnHealth.mockResolvedValue([])
   repoMocks.getAppleHealth.mockResolvedValue([])
   repoMocks.getPersonalTraining.mockResolvedValue([])
@@ -346,7 +348,7 @@ afterEach(() => {
 
 describe('site sections and dashboards', () => {
   it('floats the Ace launcher over admin pages, and nowhere for guests', async () => {
-    renderAdminPage('/admin/health')
+    renderAdminPage('/admin/overview')
     expect(await screen.findByRole('button', { name: 'Open Ace' })).toBeTruthy()
     // Ace is no longer a card on the home dashboard.
     expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
