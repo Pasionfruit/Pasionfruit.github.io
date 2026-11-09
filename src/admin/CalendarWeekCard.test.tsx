@@ -36,32 +36,13 @@ afterEach(() => {
   vi.unstubAllEnvs()
 })
 
-describe('CalendarWeekCard collapse', () => {
-  it('folds the month grid away and keeps the event count in the header', async () => {
-    const user = userEvent.setup()
+describe('CalendarWeekCard', () => {
+  it('is not collapsible and keeps the event count in the header', async () => {
     render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
 
     expect(await screen.findByText('0 events')).toBeTruthy()
     expect(screen.getByLabelText('Calendar view')).toBeTruthy()
-
-    await user.click(screen.getByRole('button', { name: 'Collapse Calendar and Weather' }))
-
-    expect(screen.queryByLabelText('Calendar view')).toBeNull()
-    expect(screen.getByText('0 events')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Expand Calendar and Weather' }).getAttribute('aria-expanded')).toBe('false')
-  })
-
-  it('stays collapsed the next time the dashboard opens', async () => {
-    const user = userEvent.setup()
-    const { unmount } = render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
-
-    await user.click(await screen.findByRole('button', { name: 'Collapse Calendar and Weather' }))
-    unmount()
-
-    render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
-
-    expect(screen.getByRole('button', { name: 'Expand Calendar and Weather' })).toBeTruthy()
-    expect(screen.queryByLabelText('Calendar view')).toBeNull()
+    expect(screen.queryByRole('button', { name: /Collapse|Expand/ })).toBeNull()
   })
 
   it('shows the radar and hourly forecast as pages of the month view', async () => {

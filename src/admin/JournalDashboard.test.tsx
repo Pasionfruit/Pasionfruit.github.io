@@ -56,15 +56,13 @@ describe('JournalDashboard', () => {
     expect(screen.getByRole('heading', { name: 'Entries are locked' })).toBeTruthy()
   })
 
-  it('puts the entries directly under the verse of the day', async () => {
+  it('is just the entries: no verse, mood trend or daily wellness', async () => {
     render(<JournalDashboard canWrite idToken="token" />)
 
-    const verse = screen.getByRole('heading', { name: 'Verse of the day' })
-    const entries = screen.getByRole('heading', { name: 'Entries' })
-    const mood = screen.getByRole('heading', { name: 'Mood' })
-
-    expect(verse.compareDocumentPosition(entries) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    expect(entries.compareDocumentPosition(mood) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Entries' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Verse of the day' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Mood' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Daily wellness' })).toBeNull()
     await screen.findByRole('heading', { name: 'Entries are locked' })
   })
 

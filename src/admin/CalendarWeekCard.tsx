@@ -1,4 +1,3 @@
-import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectPanel } from './ConnectPanel'
 import { HourlyCards } from '../weather/HourlyCards'
@@ -14,23 +13,6 @@ import type { ConnectionStatus } from './integrations/types'
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const MONTH_STORAGE_KEY = 'admin-calendar-month'
-const COLLAPSED_STORAGE_KEY = 'admin-calendar-collapsed'
-
-function readStoredCollapsed(): boolean {
-  try {
-    return window.localStorage.getItem(COLLAPSED_STORAGE_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
-
-function writeStoredCollapsed(collapsed: boolean) {
-  try {
-    window.localStorage.setItem(COLLAPSED_STORAGE_KEY, collapsed ? 'true' : 'false')
-  } catch {
-    // Nothing to do — the card just opens expanded next visit.
-  }
-}
 
 function readStoredMonth(): Date | null {
   try {
@@ -130,7 +112,6 @@ export function CalendarWeekCard({
   const [appleConfigured, setAppleConfigured] = useState(true)
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
-  const [isCollapsed, setIsCollapsed] = useState(readStoredCollapsed)
   // The radar and hourly forecast share the card with the month grid.
   const [page, setPage] = useState<'month' | 'radar' | 'hourly' | 'days'>('month')
 
@@ -139,10 +120,6 @@ export function CalendarWeekCard({
   useEffect(() => {
     writeStoredMonth(month)
   }, [month])
-
-  useEffect(() => {
-    writeStoredCollapsed(isCollapsed)
-  }, [isCollapsed])
 
   useEffect(() => {
     if (status.state !== 'connected') {
@@ -225,19 +202,9 @@ export function CalendarWeekCard({
               {events.length} event{events.length === 1 ? '' : 's'}
             </span>
           ) : null}
-          <button
-            type="button"
-            className="section-collapse-btn"
-            aria-expanded={!isCollapsed}
-            aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
-            onClick={() => setIsCollapsed((value) => !value)}
-          >
-            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
-          </button>
         </div>
       </div>
 
-      {isCollapsed ? null : (
         <>
           {errors.map((message) => (
             <p key={message} className="sheets-meta">
@@ -417,7 +384,6 @@ export function CalendarWeekCard({
             </>
           ) : null}
         </>
-      )}
     </article>
   )
 }

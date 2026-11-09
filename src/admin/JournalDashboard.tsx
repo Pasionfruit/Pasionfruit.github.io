@@ -9,10 +9,7 @@ import {
   updateJournalEntry,
 } from '../data/sheets/repositories'
 import type { JournalEntryRecord } from '../data/sheets/types'
-import { GarminWellnessCard } from './GarminCards'
-import { MoodTrackerCard } from './MoodTrackerCard'
 import { MOOD_SCALE } from './journal/moods'
-import { VerseOfTheDayCard } from './VerseOfTheDayCard'
 import { GRATITUDE_LINE_COUNT, getPromptOfTheDay } from './journal/prompts'
 import { JournalLock } from './journal/JournalLock'
 import { loadDaySummary } from './journal/daySummary'
@@ -270,9 +267,6 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
 
   return (
     <AdminPage meta={meta}>
-      {/* Verse first, then the entries right under it, then the mood trend. */}
-      <VerseOfTheDayCard title="Verse of the day" />
-
       <article className="info-card admin-card admin-card-wide">
         <div className="admin-card-head">
           <h3>Entries</h3>
@@ -517,10 +511,6 @@ export function JournalDashboard({ canWrite, idToken }: { canWrite: boolean; idT
           )}
         </JournalLock>
       </article>
-
-      <MoodTrackerCard title="Mood" entries={entries} isLoading={isLoading} />
-      {/* Sleep and recovery sit with mood: how the day felt next to how the night went. */}
-      <GarminWellnessCard title="Daily wellness" />
     </AdminPage>
   )
 }

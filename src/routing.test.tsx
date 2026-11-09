@@ -432,16 +432,16 @@ describe('admin routing', () => {
     // Ace floats over the page rather than taking a card on it.
     expect(screen.getByRole('button', { name: 'Open Ace' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
-    // Tasks, calendar and emails moved to pages of their own.
+    // Tasks and calendar moved to pages of their own; the inbox was removed.
     expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Inbox' })).toBeNull()
+    expect(screen.getByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Calendar and Weather' })).toBeNull()
   })
 
   it.each([
     ['/admin/tasks', 'Tasks of the Day'],
     ['/admin/calendar', 'Calendar and Weather'],
-    ['/admin/emails', 'Inbox'],
   ])('renders %s as a bare page holding just %s', async (path, heading) => {
     renderAt(path, ADMIN_EMAIL)
 
@@ -505,8 +505,8 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    // Tasks, Calendar and Emails follow Home; News sits right of Health, WW+TG after News.
-    expect(labels).toEqual(['Home', 'Tasks', 'Calendar', 'Emails', 'Personal', 'Health', 'News', 'WW+TG'])
+    // Tasks and Calendar follow Home; News sits right of Health, WW+TG after News.
+    expect(labels).toEqual(['Home', 'Tasks', 'Calendar', 'Personal', 'Health', 'News', 'WW+TG'])
   })
 
   it.each([
@@ -588,14 +588,12 @@ describe('admin routing', () => {
     expect(await screen.findByText('Personal records arrive with the next Garmin sync.')).toBeTruthy()
   })
 
-  it('shows Daily wellness on Personal, after Mood, and no separate Breathe or Sleep card', async () => {
+  it('keeps Personal to the entries, with the verse of the day on Home', async () => {
     renderAt('/admin/personal', ADMIN_EMAIL)
 
-    const mood = await screen.findByRole('heading', { name: 'Mood', level: 3 })
-    const wellness = await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })
-    expect(mood.compareDocumentPosition(wellness) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Breathe' })).toBeNull()
-    // Sleep is a group inside Daily wellness now, never a card of its own.
-    expect(screen.queryByRole('heading', { name: 'Sleep & recovery', level: 3 })).toBeNull()
+    expect(await screen.findByRole('heading', { name: 'Entries' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Verse of the day' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Mood', level: 3 })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Daily wellness', level: 3 })).toBeNull()
   })
 })

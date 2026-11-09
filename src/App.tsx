@@ -21,7 +21,6 @@ import {
   House,
   List,
   ListChecks,
-  Mail,
   Plus,
   NotebookPen,
   Newspaper,
@@ -88,7 +87,7 @@ import { applySavedOrder, arrayMove, saveOrder } from './tasks/taskOrder'
 import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
-import { GmailSummaryCard } from './admin/GmailSummaryCard'
+import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
 import { NewsDashboard } from './admin/news/NewsDashboard'
@@ -300,7 +299,6 @@ function App() {
             <Route index element={<Navigate replace to="/" />} />
             <Route path="tasks" element={<AdminTasksPage profile={profile} googleIdToken={googleIdToken} />} />
             <Route path="calendar" element={<AdminCalendarPage googleIdToken={googleIdToken} />} />
-            <Route path="emails" element={<AdminEmailsPage googleIdToken={googleIdToken} />} />
             <Route
               path="personal"
               element={<JournalDashboard canWrite={isAdmin} idToken={googleIdToken} />}
@@ -369,8 +367,8 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/`: chores and today's training. Tasks, calendar and
- * emails are their own pages (see AdminBarePage). Ace is not a card here — it
+ * What the admin sees at `/`: the verse of the day, chores and today's training.
+ * Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card here — it
  * floats over every admin page (see AceLauncher).
  */
 function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
@@ -384,6 +382,7 @@ function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
       className="admin-page admin-home"
       style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
     >
+      <VerseOfTheDayCard title="Verse of the day" />
       <ChoresCard title="Chores" idToken={googleIdToken} />
       <TrainingOfDayCard title="Training of the Day" />
     </div>
@@ -422,14 +421,6 @@ function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
   )
 }
 
-function AdminEmailsPage({ googleIdToken }: { googleIdToken: string }) {
-  return (
-    <AdminBarePage dashboard="emails">
-      <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
-    </AdminBarePage>
-  )
-}
-
 /**
  * The training dashboard folds in what used to be spread across /training,
  * /training/records, and /training/data — the wearable data is the point, so
@@ -452,7 +443,6 @@ const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   home: House,
   tasks: ListChecks,
   calendar: CalendarDays,
-  emails: Mail,
   personal: NotebookPen,
   health: Activity,
   news: Newspaper,

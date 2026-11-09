@@ -31,11 +31,10 @@ dashboard.
 
 | Nav item | Route | Contents |
 | --- | --- | --- |
-| Home | `/` | Chores and today's training |
+| Home | `/` | Verse of the day, chores, and today's training |
 | Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager |
 | Calendar | `/admin/calendar` | The month and week ahead, with the weather |
-| Emails | `/admin/emails` | The inbox summary |
-| Personal | `/admin/personal` | Verse of the day, journal entries with gratitude prompts, mood tracker |
+| Personal | `/admin/personal` | Journal entries with gratitude prompts |
 | Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log |
 | News | `/admin/news` | Local, city, national, and international headlines |
 | WW+TG | `/admin/ciara` | Time together since 11:00 PM, Nov 19 2022, and a photo timeline |
@@ -43,7 +42,7 @@ dashboard.
 `/admin/journal` and `/admin/training` redirect to their renamed routes. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.
 
-Tasks, Calendar and Emails are modular pages: each holds one module with no page
+Tasks and Calendar are modular pages: each holds one module with no page
 title and no card frame (`AdminBarePage`). `/admin` redirects to `/`. The full
 Todoist manager (`/tasks`) is linked from the Tasks page and `/weekly-reset`
 from Training of the Day on Home.
