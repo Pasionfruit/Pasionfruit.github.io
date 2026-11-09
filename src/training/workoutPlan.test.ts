@@ -64,6 +64,37 @@ describe('parseWorkoutTable', () => {
     ])
   })
 
+  it('reads unquoted multiline cells where a line ends the morning and starts the evening', () => {
+    const plan = [
+      'Day\tMorning — Endurance\tEvening — Strength',
+      'Mon 11/9\tDryland Swim — 35min - 5min shoulder mobility',
+      '- 3×15 band freestyle pulls (30s)',
+      '- 5min thoracic mobility\tChest, Tri & Shoulders - Bench press 3×8–10',
+      '- Incline DB press 3×10',
+      'Tue 11/10\tQuality Run — 50min - 10min easy warm-up',
+      '- 10min easy cool-down\tBack, Bi & Forearms - Lat pulldown 3×10',
+      '- Seated row 3×10',
+      'Sat 11/14\tLong Run — 9–11mi - 10min very easy start',
+      '- Cap at ~2hr\tRest',
+    ].join('\n')
+    const { days, skipped, error } = parseWorkoutTable(plan)
+    expect(error).toBeUndefined()
+    expect(skipped).toEqual([])
+    expect(days).toEqual([
+      {
+        weekday: 1,
+        morning: '**Dryland Swim — 35min**\n• 5min shoulder mobility\n- 3×15 band freestyle pulls (30s)\n- 5min thoracic mobility',
+        evening: '**Chest, Tri & Shoulders**\n• Bench press 3×8–10\n- Incline DB press 3×10',
+      },
+      {
+        weekday: 2,
+        morning: '**Quality Run — 50min**\n• 10min easy warm-up\n- 10min easy cool-down',
+        evening: '**Back, Bi & Forearms**\n• Lat pulldown 3×10\n- Seated row 3×10',
+      },
+      { weekday: 6, morning: '**Long Run — 9–11mi**\n• 10min very easy start\n- Cap at ~2hr', evening: 'Rest' },
+    ])
+  })
+
   it('preserves quoted multiline cells and empty cells in copied tables', () => {
     expect(parseWorkoutTable('Day\tMorning\tEvening\nWed\t"Easy swim\n• 4×50m free"\t\nThu\t\tLegs').days).toEqual([
       { weekday: 3, morning: 'Easy swim\n• 4×50m free', evening: '' },

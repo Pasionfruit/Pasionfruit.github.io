@@ -66,12 +66,22 @@ function isSeparatorRow(cells: string[]) {
 }
 
 function cleanCell(cell: string | undefined): string {
-  return (cell ?? '')
+  const lines = (cell ?? '')
     .replace(/<br\s*\/?>/gi, '\n')
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
-    .join('\n')
+
+  // Sheets copies often run the title into the first bullet:
+  // "Dryland Swim — 35min - 5min mobility" above "- 3×15 pulls". Split it.
+  const [first, ...rest] = lines
+  const split = first && !BULLET.test(first) && rest.length > 0 && BULLET.test(rest[0]) ? first.indexOf(' - ') : -1
+  if (split > 0) {
+    const title = first.slice(0, split).trim()
+    const bullet = first.slice(split + 3).trim()
+    if (bullet) return [`**${title}**`, `• ${bullet}`, ...rest].join('\n')
+  }
+  return lines.join('\n')
 }
 
 /** Copied tables may quote multiline cells or put continuation lines below a row. */
@@ -81,7 +91,18 @@ function tabRows(text: string): string[][] {
   let cell = ''
   let quoted = false
   const addRow = (row: string[]) => {
-    if (row.length > 1) {
+    const previous = rows[rows.length - 1]
+    if (
+      row.length === 2 &&
+      previous?.length === 2 &&
+      weekdayIndex(previous[0]) >= 0 &&
+      weekdayIndex(row[0]) < 0 &&
+      BULLET.test(row[0])
+    ) {
+      // Unquoted multiline morning cell: this line ends it and starts the evening cell.
+      previous[1] += `\n${row[0]}`
+      previous.push(row[1])
+    } else if (row.length > 1) {
       rows.push(row)
     } else if (row[0] && rows.length > 0) {
       const previous = rows[rows.length - 1]
