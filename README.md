@@ -31,7 +31,7 @@ dashboard.
 
 | Nav item | Route | Contents |
 | --- | --- | --- |
-| Home | `/` | Verse of the day, chores, and today's training |
+| Home | `/` | Verse of the day (mark it read to fold it, or open the whole chapter), today's training, and chores |
 | Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager |
 | Calendar | `/admin/calendar` | The month and week ahead, with the weather |
 | Personal | `/admin/personal` | Journal entries with gratitude prompts |

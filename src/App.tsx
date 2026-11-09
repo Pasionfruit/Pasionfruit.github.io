@@ -367,7 +367,7 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/`: the verse of the day, chores and today's training.
+ * What the admin sees at `/`: the verse of the day, today's training and chores.
  * Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card here — it
  * floats over every admin page (see AceLauncher).
  */
@@ -383,8 +383,8 @@ function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
       style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
     >
       <VerseOfTheDayCard title="Verse of the day" />
-      <ChoresCard title="Chores" idToken={googleIdToken} />
       <TrainingOfDayCard title="Training of the Day" />
+      <ChoresCard title="Chores" idToken={googleIdToken} />
     </div>
   )
 }

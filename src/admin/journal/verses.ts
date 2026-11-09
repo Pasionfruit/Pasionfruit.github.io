@@ -107,3 +107,36 @@ function dayIndex(date: Date) {
 export function getVerseOfTheDay(date = new Date()): Verse {
   return KJV_VERSES[((dayIndex(date) % KJV_VERSES.length) + KJV_VERSES.length) % KJV_VERSES.length]
 }
+
+export type VerseRef = { book: string; chapter: number; first: number; last: number }
+
+/** "1 Thessalonians 5:18" or "Psalm 23:1-3"; null when it is not book chapter:verse. */
+export function parseVerseReference(reference: string): VerseRef | null {
+  const match = /^(.+?)\s+(\d+):(\d+)(?:\s*[-–]\s*(\d+))?$/.exec(reference.trim())
+  if (!match) return null
+  const first = Number(match[3])
+  return { book: match[1], chapter: Number(match[2]), first, last: match[4] ? Number(match[4]) : first }
+}
+
+/** Where to read the chapter if it cannot be fetched in the card. */
+export function chapterUrl(ref: VerseRef): string {
+  return `https://www.biblegateway.com/passage/?search=${encodeURIComponent(`${ref.book} ${ref.chapter}`)}&version=KJV`
+}
+
+export type ChapterVerse = { verse: number; text: string }
+
+/**
+ * The whole chapter, fetched only when asked for (the daily verse itself stays
+ * local so the card works offline). bible-api.com serves the public-domain KJV.
+ */
+export async function fetchChapter(ref: VerseRef, signal?: AbortSignal): Promise<ChapterVerse[]> {
+  const response = await fetch(
+    `https://bible-api.com/${encodeURIComponent(`${ref.book} ${ref.chapter}`)}?translation=kjv`,
+    { signal },
+  )
+  if (!response.ok) throw new Error(`Chapter request failed (${response.status})`)
+  const body = (await response.json()) as { verses?: Array<{ verse: number; text: string }> }
+  const verses = (body.verses ?? []).map((item) => ({ verse: item.verse, text: item.text.trim() }))
+  if (verses.length === 0) throw new Error('No verses returned')
+  return verses
+}

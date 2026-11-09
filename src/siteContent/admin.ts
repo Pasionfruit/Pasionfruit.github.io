@@ -13,7 +13,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     title: 'Home',
     path: '/',
     icon: 'home',
-    summary: "Verse of the day, chores, and today's training",
+    summary: "Verse of the day, today's training, and chores",
     accent: '#00cccc',
     eyebrow: 'Daily driver',
   },
