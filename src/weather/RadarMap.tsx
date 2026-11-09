@@ -22,8 +22,10 @@ function currentTheme(): 'light' | 'dark' {
 }
 
 function radarTileUrl(host: string, path: string): string {
-  // 256px tiles, color scheme 4 (Universal Blue), smoothed, with snow.
-  return `${host}${path}/256/{z}/{x}/{y}/4/1_1.png`
+  // 256px tiles, color scheme 4 (Universal Blue), no smoothing or snow. RainViewer
+  // now serves blank tiles for the smoothed/snow options (`1_1`), and only
+  // supports zoom 7 and below, so the layer scales its z7 tiles beyond that.
+  return `${host}${path}/256/{z}/{x}/{y}/4/0_0.png`
 }
 
 export function RadarMap({ coords }: { coords: Coords }) {
@@ -51,6 +53,8 @@ export function RadarMap({ coords }: { coords: Coords }) {
     const nextLayer = L.tileLayer(radarTileUrl(hostRef.current, frame.path), {
       opacity: 0.7,
       zIndex: 2,
+      maxNativeZoom: 7,
+      maxZoom: 19,
     })
     nextLayer.addTo(map)
 

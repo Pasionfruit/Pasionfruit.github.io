@@ -481,8 +481,11 @@
   font-weight: 700;
 }
 
-.admin-calendar-day.has-events {
+.admin-calendar-day {
   cursor: pointer;
+}
+
+.admin-calendar-day.has-events {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 }
 
@@ -510,6 +513,23 @@
 
 .calendar-event-dot.source-apple {
   background: #8e8e93;
+}
+
+.calendar-event-dot.source-todoist {
+  background: #d1453b;
+}
+
+.admin-calendar-day-list li.source-todoist {
+  border-left-color: #d1453b;
+}
+
+.calendar-dialog-section {
+  margin: 0.9rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .admin-calendar-day-list {

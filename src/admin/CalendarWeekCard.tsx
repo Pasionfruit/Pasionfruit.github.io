@@ -9,6 +9,9 @@ import { Pager } from '../components/Pager'
 import { dayKey, eventDayKeys, eventTimeLabelForDay } from './calendarDays'
 import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
 import type { ConnectionStatus } from './integrations/types'
+import { getActiveTasks } from '../data/todoist/repositories'
+import { dueDateKey } from '../data/todoist/dates'
+import type { TodoistTask } from '../data/todoist/types'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -111,6 +114,8 @@ export function CalendarWeekCard({
   const [errors, setErrors] = useState<string[]>([])
   const [appleConfigured, setAppleConfigured] = useState(true)
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
+  // Todoist tasks, so a selected day shows what is due as well as what is booked.
+  const [tasks, setTasks] = useState<TodoistTask[]>([])
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
   // The radar and hourly forecast share the card with the month grid.
   const [page, setPage] = useState<'month' | 'radar' | 'hourly' | 'days'>('month')
@@ -157,6 +162,41 @@ export function CalendarWeekCard({
     }
   }, [status.state, idToken, month])
 
+  useEffect(() => {
+    if (!import.meta.env.VITE_TODOIST_API_TOKEN?.trim()) {
+      return
+    }
+
+    let cancelled = false
+    getActiveTasks()
+      .then((rows) => {
+        if (!cancelled) setTasks(rows)
+      })
+      .catch(() => {
+        // The calendar still works without tasks.
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const tasksByDay = useMemo(() => {
+    const map: Record<string, TodoistTask[]> = {}
+    const today = dayKey(new Date())
+
+    for (const task of tasks) {
+      const key = dueDateKey(task)
+      if (!key) continue
+      // Overdue work is still on today's plate.
+      const day = key < today ? today : key
+      map[day] = map[day] ?? []
+      map[day].push(task)
+    }
+
+    return map
+  }, [tasks])
+
   const eventsByDay = useMemo(() => {
     const map: Record<string, CalendarEventRecord[]> = {}
 
@@ -191,6 +231,7 @@ export function CalendarWeekCard({
 
   const todayKey = dayKey(new Date())
   const selectedEvents = selectedDayKey ? (eventsByDay[selectedDayKey] ?? []) : []
+  const selectedTasks = selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : []
 
   return (
     <article className="info-card admin-card admin-card-wide">
@@ -286,6 +327,7 @@ export function CalendarWeekCard({
 
                   const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
                   const dayEvents = eventsByDay[key] ?? []
+                  const dayTasks = tasksByDay[key] ?? []
                   const hasEvents = dayEvents.length > 0
 
                   return (
@@ -293,26 +335,24 @@ export function CalendarWeekCard({
                       key={key}
                       type="button"
                       className={`month-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''}`}
-                      onClick={() => {
-                        if (hasEvents) {
-                          setSelectedDayKey(key)
-                        }
-                      }}
+                      onClick={() => setSelectedDayKey(key)}
                       aria-label={
-                        hasEvents
+                        (hasEvents
                           ? `${key} has ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}`
-                          : `${key} has no events`
+                          : `${key} has no events`) +
+                        (dayTasks.length > 0 ? `, ${dayTasks.length} task${dayTasks.length === 1 ? '' : 's'}` : '')
                       }
                     >
                       <span>{day}</span>
-                      {hasEvents ? (
+                      {hasEvents || dayTasks.length > 0 ? (
                         <span className="calendar-event-dots" aria-hidden="true">
-                          {dayEvents.slice(0, 3).map((event, dotIndex) => (
+                          {dayEvents.slice(0, 2).map((event, dotIndex) => (
                             <span
                               key={`${event.source}-${event.id}-${dotIndex}`}
                               className={`calendar-event-dot source-${event.source}`}
                             />
                           ))}
+                          {dayTasks.length > 0 ? <span className="calendar-event-dot source-todoist" /> : null}
                         </span>
                       ) : null}
                     </button>
@@ -324,7 +364,7 @@ export function CalendarWeekCard({
 
           {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
 
-          {selectedDayKey && selectedEvents.length > 0 ? (
+          {selectedDayKey ? (
             <div
               className="calendar-dialog-backdrop"
               role="presentation"
@@ -339,6 +379,28 @@ export function CalendarWeekCard({
               >
                 <h2 id="admin-calendar-popup-title">{formatDayHeading(selectedDayKey)}</h2>
 
+                {selectedTasks.length > 0 ? (
+                  <>
+                    <h3 className="calendar-dialog-section">Tasks</h3>
+                    <ul className="admin-calendar-day-list">
+                      {selectedTasks.map((task) => (
+                        <li key={task.id} className="source-todoist">
+                          <span className="calendar-event-title">{task.content}</span>
+                          {dueDateKey(task) < todayKey ? (
+                            <span className="calendar-event-source">Overdue</span>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
+
+                {selectedEvents.length > 0 ? (
+                  <h3 className="calendar-dialog-section">Events</h3>
+                ) : null}
+                {selectedEvents.length === 0 && selectedTasks.length === 0 ? (
+                  <p className="sheets-meta">Nothing scheduled.</p>
+                ) : null}
                 <ul className="admin-calendar-day-list">
                   {selectedEvents.map((event) => (
                     <li key={`${event.source}-${event.id}`} className={`source-${event.source}`}>
