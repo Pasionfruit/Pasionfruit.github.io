@@ -45,6 +45,19 @@ describe('CalendarWeekCard', () => {
     expect(screen.queryByRole('button', { name: /Collapse|Expand/ })).toBeNull()
   })
 
+  it('shows the selected day below the calendar instead of in a popup', async () => {
+    const user = userEvent.setup()
+    render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
+
+    const grid = await screen.findByLabelText('Calendar view')
+    await user.click(grid.querySelector('button')!)
+
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.getByText('Nothing scheduled.')).toBeTruthy()
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByText('Nothing scheduled.')).toBeNull()
+  })
+
   it('shows the radar and hourly forecast as pages of the month view', async () => {
     const user = userEvent.setup()
     render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)

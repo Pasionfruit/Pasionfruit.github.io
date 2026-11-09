@@ -86,6 +86,7 @@ import { applySavedOrder, arrayMove, saveOrder } from './tasks/taskOrder'
 import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
+import { MealPlanCard } from './admin/meals/MealPlanCard'
 import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
@@ -420,6 +421,7 @@ function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
   return (
     <AdminBarePage dashboard="calendar">
       <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
+      <MealPlanCard title="Meal plan" />
     </AdminBarePage>
   )
 }

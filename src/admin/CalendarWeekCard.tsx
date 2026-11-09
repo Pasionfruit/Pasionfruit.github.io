@@ -12,6 +12,7 @@ import type { ConnectionStatus } from './integrations/types'
 import { getActiveTasks } from '../data/todoist/repositories'
 import { dueDateKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
+import { MEAL_LABELS, MEAL_SLOTS, useMealPlan } from './meals/mealPlan'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -82,7 +83,7 @@ function getStatus(idToken: string): ConnectionStatus {
 
 /**
  * A month grid: compact day cells with a dot when something is on, and a
- * dialog listing that day's events on tap. Seven narrow columns fit a phone
+ * panel below it listing that day's events, tasks and meals on tap. Seven narrow columns fit a phone
  * without horizontal scrolling, which the previous week-strip layout could not
  * do.
  *
@@ -231,6 +232,13 @@ export function CalendarWeekCard({
 
   const todayKey = dayKey(new Date())
   const selectedEvents = selectedDayKey ? (eventsByDay[selectedDayKey] ?? []) : []
+  const mealPlan = useMealPlan()
+  const selectedMeals = selectedDayKey
+    ? MEAL_SLOTS.flatMap((slot) => {
+        const meal = mealPlan[selectedDayKey]?.[slot]
+        return meal ? [[slot, meal] as const] : []
+      })
+    : []
   const selectedTasks = selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : []
 
   return (
@@ -334,8 +342,9 @@ export function CalendarWeekCard({
                     <button
                       key={key}
                       type="button"
-                      className={`month-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''}`}
-                      onClick={() => setSelectedDayKey(key)}
+                      className={`month-calendar-day admin-calendar-day ${hasEvents ? 'has-events' : ''} ${key === todayKey ? 'is-today' : ''} ${key === selectedDayKey ? 'is-selected' : ''}`}
+                      aria-pressed={key === selectedDayKey}
+                      onClick={() => setSelectedDayKey(key === selectedDayKey ? null : key)}
                       aria-label={
                         (hasEvents
                           ? `${key} has ${dayEvents.length} event${dayEvents.length === 1 ? '' : 's'}`
@@ -365,66 +374,62 @@ export function CalendarWeekCard({
           {isLoading ? <p className="sheets-meta">Loading events…</p> : null}
 
           {selectedDayKey ? (
-            <div
-              className="calendar-dialog-backdrop"
-              role="presentation"
-              onClick={() => setSelectedDayKey(null)}
-            >
-              <div
-                className="calendar-dialog"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="admin-calendar-popup-title"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <h2 id="admin-calendar-popup-title">{formatDayHeading(selectedDayKey)}</h2>
-
-                {selectedTasks.length > 0 ? (
-                  <>
-                    <h3 className="calendar-dialog-section">Tasks</h3>
-                    <ul className="admin-calendar-day-list">
-                      {selectedTasks.map((task) => (
-                        <li key={task.id} className="source-todoist">
-                          <span className="calendar-event-title">{task.content}</span>
-                          {dueDateKey(task) < todayKey ? (
-                            <span className="calendar-event-source">Overdue</span>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : null}
-
-                {selectedEvents.length > 0 ? (
-                  <h3 className="calendar-dialog-section">Events</h3>
-                ) : null}
-                {selectedEvents.length === 0 && selectedTasks.length === 0 ? (
-                  <p className="sheets-meta">Nothing scheduled.</p>
-                ) : null}
-                <ul className="admin-calendar-day-list">
-                  {selectedEvents.map((event) => (
-                    <li key={`${event.source}-${event.id}`} className={`source-${event.source}`}>
-                      <span className="calendar-event-time">{eventTimeLabelForDay(event, selectedDayKey)}</span>
-                      <span className="calendar-event-title">{event.title}</span>
-                      {event.location ? (
-                        <span className="calendar-event-location">{event.location}</span>
-                      ) : null}
-                      {event.calendarName ? (
-                        <span className="calendar-event-source">{event.calendarName}</span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  type="button"
-                  className="calendar-dialog-close"
-                  onClick={() => setSelectedDayKey(null)}
-                >
+            <section className="calendar-day-panel" aria-labelledby="admin-calendar-day-title">
+              <div className="calendar-day-panel-head">
+                <h4 id="admin-calendar-day-title">{formatDayHeading(selectedDayKey)}</h4>
+                <button type="button" className="calendar-day-panel-close" onClick={() => setSelectedDayKey(null)}>
                   Close
                 </button>
               </div>
-            </div>
+
+              {selectedTasks.length > 0 ? (
+                <>
+                  <h5 className="calendar-dialog-section">Tasks</h5>
+                  <ul className="admin-calendar-day-list">
+                    {selectedTasks.map((task) => (
+                      <li key={task.id} className="source-todoist">
+                        <span className="calendar-event-title">{task.content}</span>
+                        {dueDateKey(task) < todayKey ? <span className="calendar-event-source">Overdue</span> : null}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+
+              {selectedEvents.length > 0 ? (
+                <>
+                  <h5 className="calendar-dialog-section">Events</h5>
+                  <ul className="admin-calendar-day-list">
+                    {selectedEvents.map((event) => (
+                      <li key={`${event.source}-${event.id}`} className={`source-${event.source}`}>
+                        <span className="calendar-event-time">{eventTimeLabelForDay(event, selectedDayKey)}</span>
+                        <span className="calendar-event-title">{event.title}</span>
+                        {event.location ? <span className="calendar-event-location">{event.location}</span> : null}
+                        {event.calendarName ? <span className="calendar-event-source">{event.calendarName}</span> : null}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+
+              {selectedMeals.length > 0 ? (
+                <>
+                  <h5 className="calendar-dialog-section">Meals</h5>
+                  <ul className="admin-calendar-day-list">
+                    {selectedMeals.map(([slot, meal]) => (
+                      <li key={slot} className="source-meal">
+                        <span className="calendar-event-time">{MEAL_LABELS[slot]}</span>
+                        <span className="calendar-event-title">{meal}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+
+              {selectedEvents.length === 0 && selectedTasks.length === 0 && selectedMeals.length === 0 ? (
+                <p className="sheets-meta">Nothing scheduled.</p>
+              ) : null}
+            </section>
           ) : null}
 
           {status.state !== 'connected' ? <ConnectPanel name="Calendars" status={status} /> : null}
