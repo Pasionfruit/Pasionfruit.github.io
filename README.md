@@ -31,7 +31,10 @@ dashboard.
 
 | Nav item | Route | Contents |
 | --- | --- | --- |
-| Home | `/` | The month's calendar, today's tasks, yesterday's recap, and the inbox |
+| Home | `/` | Chores and today's training |
+| Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager |
+| Calendar | `/admin/calendar` | The month and week ahead, with the weather |
+| Emails | `/admin/emails` | The inbox summary |
 | Personal | `/admin/personal` | Verse of the day, journal entries with gratitude prompts, mood tracker |
 | Health | `/admin/health` | Next event countdown, Garmin/RingConn/Apple Health data, session log |
 | News | `/admin/news` | Local, city, national, and international headlines |
@@ -40,10 +43,10 @@ dashboard.
 `/admin/journal` and `/admin/training` redirect to their renamed routes. The
 Finance, Work and System dashboards were removed; their old URLs land on `/`.
 
-The Calendar dashboard was merged into Home rather than getting its own tab, so
-`/admin`, `/admin/tasks`, and `/admin/calendar` all redirect to `/`. The full
-Todoist manager (`/tasks`) and `/weekly-reset` are linked from the bottom of the
-Home dashboard.
+Tasks, Calendar and Emails are modular pages: each holds one module with no page
+title and no card frame (`AdminBarePage`). `/admin` redirects to `/`. The full
+Todoist manager (`/tasks`) is linked from the Tasks page and `/weekly-reset`
+from Training of the Day on Home.
 
 `/weekly-reset` edits the workouts for today and the six days after it.
 **Paste plan**, beside the edit pencil, opens the editor and accepts Markdown

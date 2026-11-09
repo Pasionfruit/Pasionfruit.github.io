@@ -428,12 +428,27 @@ describe('admin routing', () => {
   it('lands the admin on the daily dashboard at /', async () => {
     renderAt('/', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
     // Ace floats over the page rather than taking a card on it.
     expect(screen.getByRole('button', { name: 'Open Ace' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
-    expect(screen.getByRole('heading', { name: 'Inbox' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Calendar and Weather' })).toBeTruthy()
+    // Tasks, calendar and emails moved to pages of their own.
+    expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Inbox' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Calendar and Weather' })).toBeNull()
+  })
+
+  it.each([
+    ['/admin/tasks', 'Tasks of the Day'],
+    ['/admin/calendar', 'Calendar and Weather'],
+    ['/admin/emails', 'Inbox'],
+  ])('renders %s as a bare page holding just %s', async (path, heading) => {
+    renderAt(path, ADMIN_EMAIL)
+
+    expect(await screen.findByRole('heading', { name: heading })).toBeTruthy()
+    expect(document.querySelector('.admin-bare')).toBeTruthy()
+    // No page title block: the nav already names the page.
+    expect(document.querySelector('.admin-page-head')).toBeNull()
   })
 
   it('hides the public sections from the admin home page', () => {
@@ -482,7 +497,7 @@ describe('admin routing', () => {
     'sends the removed dashboard %s back to home',
     async (path) => {
       renderAt(path, ADMIN_EMAIL)
-      expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
+      expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
     },
   )
 
@@ -490,8 +505,8 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    // News sits to the right of Health, and WW+TG after News.
-    expect(labels).toEqual(['Home', 'Personal', 'Health', 'News', 'WW+TG'])
+    // Tasks, Calendar and Emails follow Home; News sits right of Health, WW+TG after News.
+    expect(labels).toEqual(['Home', 'Tasks', 'Calendar', 'Emails', 'Personal', 'Health', 'News', 'WW+TG'])
   })
 
   it.each([
@@ -502,31 +517,29 @@ describe('admin routing', () => {
     expect(pageTitle()).toBe(title)
   })
 
-  it.each(['/admin', '/admin/tasks', '/admin/calendar'])(
-    'folds %s back into the home dashboard',
-    async (path) => {
-      renderAt(path, ADMIN_EMAIL)
-      expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
-    },
-  )
+  it('folds /admin back into the home dashboard', async () => {
+    renderAt('/admin', ADMIN_EMAIL)
+    expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
+  })
 
   it('sends the retired /training route to the Health dashboard', () => {
     renderAt('/training', ADMIN_EMAIL)
     expect(pageTitle()).toBe('Health')
   })
 
-  it('links the full task manager and weekly reset from home', () => {
+  it('links the weekly reset from home and the full task manager from the Tasks page', async () => {
     renderAt('/', ADMIN_EMAIL)
+    const homeHrefs = [...document.querySelectorAll('.admin-quick-link')].map((link) => link.getAttribute('href'))
+    expect(homeHrefs).toEqual(['/weekly-reset'])
+    cleanup()
 
-    const hrefs = [...document.querySelectorAll('.admin-quick-link')].map((link) =>
-      link.getAttribute('href'),
-    )
-    expect(hrefs).toEqual(['/tasks', '/weekly-reset'])
+    renderAt('/admin/tasks', ADMIN_EMAIL)
+    await screen.findByRole('heading', { name: 'Tasks of the Day' })
+    const taskHrefs = [...document.querySelectorAll('.admin-quick-link')].map((link) => link.getAttribute('href'))
+    expect(taskHrefs).toEqual(['/tasks'])
   })
 
   it('shows the task manager link on Tasks of the Day, and the weekly reset on Training of the Day', async () => {
-    renderAt('/', ADMIN_EMAIL)
-
     const headerOf = async (name: string) => {
       const heading = await screen.findByRole('heading', { name })
       const header = heading.closest('.section-card-header')
@@ -536,12 +549,15 @@ describe('admin routing', () => {
       return header as HTMLElement
     }
 
+    renderAt('/admin/tasks', ADMIN_EMAIL)
     const tasksHeader = await headerOf('Tasks of the Day')
     const tasks = within(tasksHeader).getByRole('link', { name: 'Full task manager' })
     expect(tasks.textContent).toBe('')
     expect(tasks.getAttribute('title')).toBe('Full task manager')
     expect(within(tasksHeader).queryByRole('link', { name: 'Weekly reset' })).toBeNull()
 
+    cleanup()
+    renderAt('/', ADMIN_EMAIL)
     const trainingHeader = await headerOf('Training of the Day')
     const reset = within(trainingHeader).getByRole('link', { name: 'Weekly reset' })
     expect(reset.textContent).toBe('')

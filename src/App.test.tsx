@@ -606,7 +606,7 @@ describe('site sections and dashboards', () => {
 
   async function openTrainingTab() {
     const user = userEvent.setup()
-    renderAdminTasksPage()
+    renderAdminPage('/')
     const heading = await screen.findByRole('heading', { name: 'Training of the Day' })
     const card = heading.closest('article')
     if (!card) {
@@ -656,7 +656,7 @@ describe('site sections and dashboards', () => {
     expect(within(unplanned).getByText('Pool Swim · 35 min')).toBeTruthy()
   })
 
-  it('keeps training out of Tasks of the Day, in its own card', async () => {
+  it('keeps training out of the Tasks page, on Home in its own card', async () => {
     renderAdminTasksPage()
 
     const heading = await screen.findByRole('heading', { name: 'Tasks of the Day' })
@@ -667,7 +667,8 @@ describe('site sections and dashboards', () => {
 
     expect(within(card).queryByRole('tab', { name: 'Training' })).toBeNull()
     expect(within(card).queryByRole('tab', { name: 'Todoist' })).toBeNull()
-    expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
+    // Training lives on Home now, not beside the tasks.
+    expect(screen.queryByRole('heading', { name: 'Training of the Day' })).toBeNull()
   })
 
   /*

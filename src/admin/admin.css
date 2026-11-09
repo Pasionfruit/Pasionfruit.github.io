@@ -177,6 +177,34 @@
   line-height: 1.55;
 }
 
+/* ── Bare module pages ────────────────────────────────────────────────────
+   Tasks, Calendar and Emails: the card's frame, padding and title chip are
+   dropped so the content sits straight on the page, at its natural height. */
+.admin-bare .info-card {
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.admin-bare .info-card > h3:first-child:not(.sr-only),
+.admin-bare .info-card > :first-child h3:not(.sr-only) {
+  position: static;
+  max-width: none;
+  padding: 0;
+  overflow: visible;
+  transform: none;
+  border: 0;
+  background: none;
+  font-size: 1.05rem;
+}
+
+.admin-bare .home-todoist-collapsible {
+  overflow: visible;
+}
+
 /* ── Admin home ───────────────────────────────────────────────────────────
    Tasks lead, yesterday and inbox sit side by side, the week runs full width. */
 .admin-home-split {

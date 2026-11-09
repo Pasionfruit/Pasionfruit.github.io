@@ -13,12 +13,15 @@ import React, {
 } from 'react'
 import {
   Activity,
+  CalendarDays,
   Check,
   ChevronDown,
   ChevronUp,
   ExternalLink,
   House,
   List,
+  ListChecks,
+  Mail,
   Plus,
   NotebookPen,
   Newspaper,
@@ -109,6 +112,7 @@ import {
   personalSiteEntries,
   professionalExperienceEntries,
   sectionPages,
+  type AdminDashboardId,
   type AdminIconId,
   type EducationEntry,
   type PersonalSiteEntry,
@@ -260,7 +264,7 @@ function App() {
             index
             element={
               isAdmin ? (
-                <AdminHomePage profile={profile} googleIdToken={googleIdToken} />
+                <AdminHomePage googleIdToken={googleIdToken} />
               ) : (
                 <HomePage />
               )
@@ -294,8 +298,9 @@ function App() {
             {/* Home is the daily dashboard now, so the old hub and the pages that
                 merged into it all land back on `/`. */}
             <Route index element={<Navigate replace to="/" />} />
-            <Route path="tasks" element={<Navigate replace to="/" />} />
-            <Route path="calendar" element={<Navigate replace to="/" />} />
+            <Route path="tasks" element={<AdminTasksPage profile={profile} googleIdToken={googleIdToken} />} />
+            <Route path="calendar" element={<AdminCalendarPage googleIdToken={googleIdToken} />} />
+            <Route path="emails" element={<AdminEmailsPage googleIdToken={googleIdToken} />} />
             <Route
               path="personal"
               element={<JournalDashboard canWrite={isAdmin} idToken={googleIdToken} />}
@@ -364,12 +369,11 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/` instead of the public sections: the month's
- * calendar, today's tasks and weather, and the inbox. Ace is not a card here
- * any more — it floats over every admin page (see AceLauncher).
+ * What the admin sees at `/`: chores and today's training. Tasks, calendar and
+ * emails are their own pages (see AdminBarePage). Ace is not a card here — it
+ * floats over every admin page (see AceLauncher).
  */
-function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
-  const weather = useOutletContext<WeatherHook>()
+function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
   return (
     /*
      * The admin home renders its own shell rather than going through AdminPage,
@@ -381,18 +385,48 @@ function AdminHomePage({ profile, googleIdToken }: { profile: UserProfile; googl
       style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
     >
       <ChoresCard title="Chores" idToken={googleIdToken} />
-
-      {/* Reuses the public home-top-row layout: equal columns and a fixed height
-          on desktop, so switching tabs inside the tasks card cannot resize the row. */}
-      <div className="home-top-row">
-        <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
-        <TrainingOfDayCard title="Training of the Day" />
-      </div>
-
-      <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
-
-      <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
+      <TrainingOfDayCard title="Training of the Day" />
     </div>
+  )
+}
+
+/**
+ * A single module on its own page: no page title and no card frame, just the
+ * content under the nav bar. The nav already says which page this is.
+ */
+function AdminBarePage({ dashboard, children }: { dashboard: AdminDashboardId; children: ReactNode }) {
+  return (
+    <div
+      className="admin-page admin-bare"
+      style={{ '--page-accent': adminDashboardsById[dashboard].accent } as CSSProperties}
+    >
+      {children}
+    </div>
+  )
+}
+
+function AdminTasksPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+  return (
+    <AdminBarePage dashboard="tasks">
+      <TodoistTasksCard title="Tasks of the Day" profile={profile} googleIdToken={googleIdToken} />
+    </AdminBarePage>
+  )
+}
+
+function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
+  const weather = useOutletContext<WeatherHook>()
+  return (
+    <AdminBarePage dashboard="calendar">
+      <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
+    </AdminBarePage>
+  )
+}
+
+function AdminEmailsPage({ googleIdToken }: { googleIdToken: string }) {
+  return (
+    <AdminBarePage dashboard="emails">
+      <GmailSummaryCard title="Inbox" idToken={googleIdToken} />
+    </AdminBarePage>
   )
 }
 
@@ -416,6 +450,9 @@ function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; goo
 /** Minimal line icons for the admin top bar, keyed off AdminDashboardMeta.icon. */
 const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   home: House,
+  tasks: ListChecks,
+  calendar: CalendarDays,
+  emails: Mail,
   personal: NotebookPen,
   health: Activity,
   news: Newspaper,

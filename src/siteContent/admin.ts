@@ -4,8 +4,8 @@ import type { AdminDashboardId, AdminDashboardMeta } from './shared'
  * The admin nav. Order here drives the icon bar in the top bar — there is no
  * hamburger menu and no section list once you are signed in as admin.
  *
- * Home is the daily driver: the week's calendar, tasks, yesterday's recap, and
- * the inbox all on one screen, so it replaces the old /admin tile hub.
+ * Home keeps chores and training; tasks, calendar and emails each get a
+ * bare page of their own.
  */
 export const adminDashboards: AdminDashboardMeta[] = [
   {
@@ -13,9 +13,36 @@ export const adminDashboards: AdminDashboardMeta[] = [
     title: 'Home',
     path: '/',
     icon: 'home',
-    summary: "The week ahead, today's tasks, yesterday's recap, and the inbox",
+    summary: "Chores and today's training",
     accent: '#00cccc',
     eyebrow: 'Daily driver',
+  },
+  {
+    id: 'tasks',
+    title: 'Tasks',
+    path: '/admin/tasks',
+    icon: 'tasks',
+    summary: 'Tasks of the day from Todoist',
+    accent: '#00cccc',
+    eyebrow: 'Todoist',
+  },
+  {
+    id: 'calendar',
+    title: 'Calendar',
+    path: '/admin/calendar',
+    icon: 'calendar',
+    summary: 'The month and week ahead, with the weather',
+    accent: '#3b82f6',
+    eyebrow: 'Schedule',
+  },
+  {
+    id: 'emails',
+    title: 'Emails',
+    path: '/admin/emails',
+    icon: 'emails',
+    summary: 'The inbox summary',
+    accent: '#8b5cf6',
+    eyebrow: 'Inbox',
   },
   {
     id: 'personal',
