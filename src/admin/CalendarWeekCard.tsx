@@ -12,7 +12,7 @@ import type { ConnectionStatus } from './integrations/types'
 import { getActiveTasks } from '../data/todoist/repositories'
 import { dueDateKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
-import { MEAL_LABELS, MEAL_SLOTS, useMealPlan } from './meals/mealPlan'
+import { isFilled, useMealPlan } from './meals/mealPlan'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -233,12 +233,7 @@ export function CalendarWeekCard({
   const todayKey = dayKey(new Date())
   const selectedEvents = selectedDayKey ? (eventsByDay[selectedDayKey] ?? []) : []
   const mealPlan = useMealPlan()
-  const selectedMeals = selectedDayKey
-    ? MEAL_SLOTS.flatMap((slot) => {
-        const meal = mealPlan[selectedDayKey]?.[slot]
-        return meal ? [[slot, meal] as const] : []
-      })
-    : []
+  const selectedMeals = selectedDayKey ? (mealPlan[selectedDayKey] ?? []).filter(isFilled) : []
   const selectedTasks = selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : []
 
   return (
@@ -416,10 +411,12 @@ export function CalendarWeekCard({
                 <>
                   <h5 className="calendar-dialog-section">Meals</h5>
                   <ul className="admin-calendar-day-list">
-                    {selectedMeals.map(([slot, meal]) => (
-                      <li key={slot} className="source-meal">
-                        <span className="calendar-event-time">{MEAL_LABELS[slot]}</span>
-                        <span className="calendar-event-title">{meal}</span>
+                    {selectedMeals.map((meal) => (
+                      <li key={meal.id} className="source-meal">
+                        <span className="calendar-event-title">{meal.title || 'Meal'}</span>
+                        {meal.dishes.length > 0 ? (
+                          <span className="calendar-event-location">{meal.dishes.join(', ')}</span>
+                        ) : null}
                       </li>
                     ))}
                   </ul>

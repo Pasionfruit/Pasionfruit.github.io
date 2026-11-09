@@ -2925,7 +2925,7 @@
   border-left-color: #16a34a;
 }
 
-/* Meal plan: a row per day, four short fields each. */
+/* Meal plan: a row per day, any number of named entries under it. */
 .meal-week {
   display: grid;
   gap: 0.6rem;
@@ -2946,6 +2946,13 @@
   border-color: var(--accent);
 }
 
+.meal-day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .meal-day h4 {
   display: flex;
   gap: 0.5rem;
@@ -2960,26 +2967,58 @@
   font-weight: 500;
 }
 
-.meal-slots {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: 0.4rem;
-}
-
-.meal-slot {
-  display: grid;
-  gap: 0.15rem;
-  font-size: 0.68rem;
+.meal-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-height: 1.75rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
   color: var(--text-muted);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
 }
 
-.meal-slot input {
+.meal-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem;
+}
+
+.meal-entry input {
   min-width: 0;
-  padding: 0.35rem 0.6rem;
+  padding: 0.35rem 0.7rem;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
   color: var(--text);
   font: inherit;
   font-size: 0.82rem;
+}
+
+.meal-entry-title {
+  grid-column: 1;
+  font-weight: 600;
+}
+
+.meal-entry-dishes {
+  grid-column: 1;
+}
+
+.meal-entry-remove {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
 }
