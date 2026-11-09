@@ -23,6 +23,14 @@ describe('parseVerseReference', () => {
 })
 
 describe('VerseOfTheDayCard', () => {
+  it('puts the chapter button first and Mark as read last, so they sit left and right', () => {
+    render(<VerseOfTheDayCard title="Verse of the day" />)
+
+    const buttons = [...document.querySelectorAll('.verse-actions > button')].map((button) => button.textContent)
+    expect(buttons[0]).toMatch(/^Read /)
+    expect(buttons[buttons.length - 1]).toBe('Mark as read')
+  })
+
   it('folds to a line once marked read, and reopens', async () => {
     const user = userEvent.setup()
     render(<VerseOfTheDayCard title="Verse of the day" />)

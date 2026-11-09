@@ -1019,11 +1019,37 @@
 }
 
 /* Verse actions and the on-demand chapter. */
+.verse-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .verse-btn:hover {
+    background: var(--surface-2, var(--accent-soft));
+  }
+}
+
 .verse-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.4rem;
   margin-top: 0.7rem;
+}
+
+/* Chapter on the left; Mark as read stays on the right even when alone. */
+.verse-actions > :last-child {
+  margin-left: auto;
 }
 
 .verse-chapter {

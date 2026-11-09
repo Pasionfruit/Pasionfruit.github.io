@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ChevronDown, ExternalLink, Sparkles } from 'lucide-react'
-import { AdminPage } from '../AdminPage'
-import { adminDashboardsById } from '../../siteContent'
 import { getNews, type NewsItem } from '../../data/news/client'
 import { useNewsPlaces } from './useNewsPlaces'
 import { askAceAboutNews } from '../ace/newsSummary'
@@ -146,13 +144,12 @@ function NewsCard({
  * outlets' feeds.
  */
 export function NewsDashboard({ idToken }: { idToken: string }) {
-  const meta = adminDashboardsById.news
   const location = useNewsPlaces()
   const { status, places, error } = location
   const waiting = status === 'error' ? error : 'Finding your location…'
 
   return (
-    <AdminPage meta={meta}>
+    <>
       <NewsDigest idToken={idToken} location={location} />
       <div className="news-grid">
         <NewsCard
@@ -193,6 +190,6 @@ export function NewsDashboard({ idToken }: { idToken: string }) {
           waitingMessage=""
         />
       </div>
-    </AdminPage>
+    </>
   )
 }

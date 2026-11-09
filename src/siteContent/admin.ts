@@ -4,19 +4,11 @@ import type { AdminDashboardId, AdminDashboardMeta } from './shared'
  * The admin nav. Order here drives the icon bar in the top bar — there is no
  * hamburger menu and no section list once you are signed in as admin.
  *
- * Home keeps the verse, chores and training; tasks and calendar each get a
- * bare page of their own.
+ * Home sits in the middle of the bar. It keeps the verse, training, chores and
+ * WW + TG; tasks and calendar each get a bare page of their own, and Overview
+ * holds Health and News as tabs.
  */
 export const adminDashboards: AdminDashboardMeta[] = [
-  {
-    id: 'home',
-    title: 'Home',
-    path: '/',
-    icon: 'home',
-    summary: "Verse of the day, today's training, and chores",
-    accent: '#00cccc',
-    eyebrow: 'Daily driver',
-  },
   {
     id: 'tasks',
     title: 'Tasks',
@@ -36,8 +28,17 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Schedule',
   },
   {
+    id: 'home',
+    title: 'Home',
+    path: '/',
+    icon: 'home',
+    summary: "Verse of the day, today's training, chores, and WW + TG",
+    accent: '#00cccc',
+    eyebrow: 'Daily driver',
+  },
+  {
     id: 'personal',
-    title: 'Personal',
+    title: 'Journal',
     path: '/admin/personal',
     icon: 'personal',
     summary: 'Journal entries with gratitude',
@@ -45,31 +46,13 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Writing',
   },
   {
-    id: 'health',
-    title: 'Health',
-    path: '/admin/health',
-    icon: 'health',
-    summary: 'Garmin workouts, runs, swims, and rides, plus the training log and PRs',
+    id: 'overview',
+    title: 'Overview',
+    path: '/admin/overview',
+    icon: 'overview',
+    summary: 'Health data and the news headlines',
     accent: '#14b8a6',
-    eyebrow: 'Body',
-  },
-  {
-    id: 'news',
-    title: 'News',
-    path: '/admin/news',
-    icon: 'news',
-    summary: 'Local, city, national, international, and tech headlines',
-    accent: '#f59e0b',
-    eyebrow: 'Headlines',
-  },
-  {
-    id: 'ciara',
-    title: 'WW+TG',
-    path: '/admin/ciara',
-    icon: 'ciara',
-    summary: 'Time together and a photo timeline',
-    accent: '#ef4444',
-    eyebrow: 'Ciara',
+    eyebrow: 'Health and news',
   },
 ]
 

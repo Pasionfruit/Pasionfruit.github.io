@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { adminDashboardsById } from '../../siteContent'
 import { Axolotl, Cat, Frog, FlowerGarland, LilyPad, Waterfall } from './critters'
 import { CursorGlyph, CursorSwitch, type CursorKind } from './Cursors'
 import { RelationshipClock } from './RelationshipClock'
@@ -40,8 +39,7 @@ function gazeToward(headX: number, headY: number, x: number, y: number): Point {
 }
 
 export function CiaraDashboard({ idToken }: { idToken: string }) {
-  const { title } = adminDashboardsById.ciara
-
+  const rootRef = useRef<HTMLDivElement>(null)
   const midnightRef = useRef<HTMLElement>(null)
   const inkyRef = useRef<HTMLElement>(null)
   const pirouetteRef = useRef<HTMLElement>(null)
@@ -63,6 +61,13 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
     const move = (event: PointerEvent) => {
       if (event.pointerType === 'touch') return
       const { clientX: x, clientY: y } = event
+      // This lives on Home beside other cards: the pointer only turns into a
+      // feather, laser or fish while it is over the WW + TG panel.
+      if (!(event.target instanceof Node) || !rootRef.current?.contains(event.target)) {
+        setPointer(null)
+        setTailWiggle(false)
+        return
+      }
       setPointer({ x, y })
 
       const rect = watcher.current?.getBoundingClientRect()
@@ -122,7 +127,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
   }, [cursor])
 
   return (
-    <div className="ciara-page">
+    <div className="ciara-page" ref={rootRef}>
       <div className="ciara-topbar">
         <StickyStatus status={notes.status} error={notes.error} />
         <CursorSwitch value={cursor} onChange={chooseCursor} />
@@ -131,7 +136,7 @@ export function CiaraDashboard({ idToken }: { idToken: string }) {
       <header className="ciara-hero">
         <FlowerGarland />
         <p className="ciara-kicker">our little corner</p>
-        <h1 className="ciara-title">{title.replace('+', ' + ')}</h1>
+        <h2 className="ciara-title">WW + TG</h2>
         <p className="ciara-intro">A little place for all our moments.</p>
       </header>
 

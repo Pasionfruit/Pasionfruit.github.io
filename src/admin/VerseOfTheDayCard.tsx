@@ -73,7 +73,7 @@ export function VerseOfTheDayCard({ title }: { title: string }) {
           <h3>{title}</h3>
           <div className="admin-card-actions">
             <span className="admin-pill">Read · {verse.reference}</span>
-            <button type="button" className="section-edit-btn" onClick={() => setRead(false)}>
+            <button type="button" className="verse-btn" onClick={() => setRead(false)}>
               Reopen
             </button>
           </div>
@@ -98,14 +98,14 @@ export function VerseOfTheDayCard({ title }: { title: string }) {
         {ref ? (
           <button
             type="button"
-            className="section-edit-btn"
+            className="verse-btn"
             aria-expanded={showChapter}
             onClick={() => setShowChapter((value) => !value)}
           >
             {showChapter ? 'Hide chapter' : `Read ${ref.book} ${ref.chapter}`}
           </button>
         ) : null}
-        <button type="button" className="section-edit-btn" onClick={() => setRead(true)}>
+        <button type="button" className="verse-btn" onClick={() => setRead(true)}>
           Mark as read
         </button>
       </div>

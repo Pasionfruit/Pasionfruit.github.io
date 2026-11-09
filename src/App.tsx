@@ -12,22 +12,20 @@ import React, {
   useSyncExternalStore,
 } from 'react'
 import {
-  Activity,
   CalendarDays,
   Check,
   ChevronDown,
   ChevronUp,
   ExternalLink,
   House,
+  LayoutDashboard,
   List,
   ListChecks,
   Plus,
   NotebookPen,
-  Newspaper,
   Pencil,
   RotateCcw,
   Trash2,
-  UserRound,
   type LucideIcon,
 } from 'lucide-react'
 import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google'
@@ -49,6 +47,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom'
 import { useRouteMeta } from './routeMeta'
 import { RouteErrorBoundary } from './RouteErrorBoundary'
@@ -305,12 +304,14 @@ function App() {
             />
             <Route path="journal" element={<Navigate replace to="/admin/personal" />} />
             <Route
-              path="health"
-              element={<AdminHealthPage profile={profile} googleIdToken={googleIdToken} />}
+              path="overview"
+              element={<AdminOverviewPage profile={profile} googleIdToken={googleIdToken} />}
             />
-            <Route path="training" element={<Navigate replace to="/admin/health" />} />
-            <Route path="news" element={<NewsDashboard idToken={googleIdToken} />} />
-            <Route path="ciara" element={<CiaraDashboard idToken={googleIdToken} />} />
+            {/* Health and News became tabs of Overview; WW + TG moved onto Home. */}
+            <Route path="health" element={<Navigate replace to="/admin/overview" />} />
+            <Route path="training" element={<Navigate replace to="/admin/overview" />} />
+            <Route path="news" element={<Navigate replace to="/admin/overview?tab=news" />} />
+            <Route path="ciara" element={<Navigate replace to="/" />} />
           </Route>
 
           <Route
@@ -340,8 +341,8 @@ function App() {
 
           {/* Sections that moved or were retired. Finance, Work and System are
               gone entirely; their old URLs fall through to the catch-all. */}
-          <Route path="training" element={<Navigate replace to="/admin/health" />} />
-          <Route path="training/*" element={<Navigate replace to="/admin/health" />} />
+          <Route path="training" element={<Navigate replace to="/admin/overview" />} />
+          <Route path="training/*" element={<Navigate replace to="/admin/overview" />} />
           <Route path="mrpasionfruit" element={<Navigate replace to="/" />} />
           <Route path="mrpasionfruit/*" element={<Navigate replace to="/" />} />
           <Route path="cooking" element={<Navigate replace to="/#personal-sites" />} />
@@ -367,7 +368,7 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/`: the verse of the day, today's training and chores.
+ * What the admin sees at `/`: the verse of the day, today's training, chores and WW + TG.
  * Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card here — it
  * floats over every admin page (see AceLauncher).
  */
@@ -385,6 +386,7 @@ function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
       <VerseOfTheDayCard title="Verse of the day" />
       <TrainingOfDayCard title="Training of the Day" />
       <ChoresCard title="Chores" idToken={googleIdToken} />
+      <CiaraDashboard idToken={googleIdToken} />
     </div>
   )
 }
@@ -422,18 +424,41 @@ function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
 }
 
 /**
- * The training dashboard folds in what used to be spread across /training,
- * /training/records, and /training/data — the wearable data is the point, so
- * it leads.
+ * Health and News under one nav item. The training dashboard folds in what used
+ * to be spread across /training, /training/records, and /training/data — the
+ * wearable data is the point, so Health leads. `?tab=news` opens the headlines.
  */
-function AdminHealthPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+function AdminOverviewPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('tab') === 'news' ? 'news' : 'health'
   const canWrite = profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL
 
   return (
-    <AdminPage meta={adminDashboardsById.health}>
-      <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
-      <TrainingDataCard title="Training" />
-      <TrainingLogCard title="Training Log" />
+    <AdminPage meta={adminDashboardsById.overview}>
+      <div className="experience-toggle" role="tablist" aria-label="Overview sections">
+        {(['health', 'news'] as const).map((id) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={tab === id}
+            className={`experience-toggle-btn ${tab === id ? 'active' : ''}`}
+            onClick={() => setSearchParams(id === 'news' ? { tab: 'news' } : {}, { replace: true })}
+          >
+            {id === 'health' ? 'Health' : 'News'}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'health' ? (
+        <>
+          <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
+          <TrainingDataCard title="Training" />
+          <TrainingLogCard title="Training Log" />
+        </>
+      ) : (
+        <NewsDashboard idToken={googleIdToken} />
+      )}
     </AdminPage>
   )
 }
@@ -444,9 +469,7 @@ const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
   tasks: ListChecks,
   calendar: CalendarDays,
   personal: NotebookPen,
-  health: Activity,
-  news: Newspaper,
-  ciara: UserRound,
+  overview: LayoutDashboard,
 }
 
 function AdminNav() {
