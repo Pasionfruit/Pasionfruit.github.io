@@ -4334,6 +4334,32 @@ button svg,
     overflow-wrap: anywhere;
     word-break: break-word;
   }
+  /* A full workout needs the whole card width: stack each row, with what was
+     completed under the workout instead of squeezed in a column beside it. */
+  .study-today-table,
+  .study-today-table tbody,
+  .study-today-table tr,
+  .study-today-table td {
+    display: block;
+    width: 100%;
+  }
+  .study-today-table thead {
+    display: none;
+  }
+  .study-today-table tr {
+    border-bottom: 1px solid var(--border);
+  }
+  .study-today-table tr:last-child {
+    border-bottom: 0;
+  }
+  .study-today-table td {
+    border-bottom: 0;
+  }
+  .study-today-table td.study-complete-cell {
+    padding-top: 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
   .meal-plan-table-shell {
     max-height: none;
     overflow: visible;
