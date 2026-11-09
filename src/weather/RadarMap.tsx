@@ -10,22 +10,24 @@ type RainViewerResponse = {
   radar?: { past?: RainViewerFrame[]; nowcast?: RainViewerFrame[] }
 }
 
-// CARTO basemaps come in light/dark so the map tracks the site theme.
+// Esri gray basemaps come in light/dark so the map tracks the site theme. They
+// replaced CARTO's, which now stamps "API KEY REQUIRED" over every tile.
 const BASEMAPS = {
-  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  light: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  dark: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 }
-const BASEMAP_ATTRIBUTION = '© OpenStreetMap, © CARTO · Radar © RainViewer'
+const BASEMAP_ATTRIBUTION = 'Tiles © Esri · Radar © RainViewer'
+const BASEMAP_MAX_ZOOM = 16
 
 function currentTheme(): 'light' | 'dark' {
   return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 }
 
 function radarTileUrl(host: string, path: string): string {
-  // 256px tiles, color scheme 4 (Universal Blue), no smoothing or snow. RainViewer
+  // 256px tiles, color scheme 2 (Universal Blue), no smoothing or snow. RainViewer
   // now serves blank tiles for the smoothed/snow options (`1_1`), and only
   // supports zoom 7 and below, so the layer scales its z7 tiles beyond that.
-  return `${host}${path}/256/{z}/{x}/{y}/4/0_0.png`
+  return `${host}${path}/256/{z}/{x}/{y}/2/0_0.png`
 }
 
 export function RadarMap({ coords }: { coords: Coords }) {
@@ -54,7 +56,7 @@ export function RadarMap({ coords }: { coords: Coords }) {
       opacity: 0.7,
       zIndex: 2,
       maxNativeZoom: 7,
-      maxZoom: 19,
+      maxZoom: BASEMAP_MAX_ZOOM,
     })
     nextLayer.addTo(map)
 
@@ -109,8 +111,7 @@ export function RadarMap({ coords }: { coords: Coords }) {
 
     const base = L.tileLayer(BASEMAPS[currentTheme()], {
       attribution: BASEMAP_ATTRIBUTION,
-      subdomains: 'abcd',
-      maxZoom: 19,
+      maxZoom: BASEMAP_MAX_ZOOM,
     })
     base.addTo(map)
     baseLayerRef.current = base
@@ -187,8 +188,7 @@ export function RadarMap({ coords }: { coords: Coords }) {
       baseLayerRef.current?.remove()
       const base = L.tileLayer(BASEMAPS[currentTheme()], {
         attribution: BASEMAP_ATTRIBUTION,
-        subdomains: 'abcd',
-        maxZoom: 19,
+        maxZoom: BASEMAP_MAX_ZOOM,
       })
       base.setZIndex(1)
       base.addTo(map)
