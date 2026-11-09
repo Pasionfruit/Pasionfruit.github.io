@@ -61,7 +61,7 @@ export function TasksPage({
     <div className="page-frame tasks-page" style={{ '--page-accent': '#d1453b' } as CSSProperties}>
       <section className="page-hero">
         <div className="page-hero-header">
-          <Link to="/" className="back-link" aria-label="Back to home" title="Back to home">
+          <Link to="/admin/tasks" className="back-link" aria-label="Back to tasks" title="Back to tasks">
             <span aria-hidden="true">&lt;</span>
           </Link>
           <div className="page-title-block">

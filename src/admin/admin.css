@@ -1608,18 +1608,19 @@
   cursor: default;
 }
 
-/* Keep the title/collapse control together and the period/refresh controls on
-   their own row. The date picker stays between equally sized navigation taps. */
+/* Phone header: the title and collapse button on top, then all three controls
+   (source, period, refresh) on one compact line. Collapsing the card hides that
+   line with the rest of the body, leaving just the title row. */
 @media (max-width: 48rem) {
   .garmin-wellness-card .admin-card-head {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.4rem;
   }
 
   .garmin-wellness-card .admin-card-head h3 {
-    grid-column: 1;
+    grid-column: 1 / 3;
     grid-row: 1;
   }
 
@@ -1628,31 +1629,46 @@
   }
 
   .garmin-wellness-card .section-collapse-btn {
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 1;
     justify-self: end;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 2rem;
+    height: 2rem;
   }
 
   .garmin-mode-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-column: 1;
     grid-row: 2;
     min-width: 0;
   }
 
+  .garmin-mode-toggle[aria-label='Data source'] {
+    grid-column: 1;
+  }
+
+  .garmin-mode-toggle[aria-label='Averaging period'] {
+    grid-column: 2;
+  }
+
   .garmin-mode-toggle button {
-    min-height: 2.75rem;
-    padding: 0.35rem;
+    min-height: 1.75rem;
+    padding: 0.2rem 0.3rem;
+    font-size: 0.7rem;
     white-space: nowrap;
   }
 
   .garmin-wellness-card .admin-card-actions > .secondary-action {
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 2;
-    min-height: 2.75rem;
+    min-height: 1.75rem;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.7rem;
+  }
+
+  .garmin-wellness-card.is-collapsed .garmin-mode-toggle,
+  .garmin-wellness-card.is-collapsed .admin-card-actions > .secondary-action {
+    display: none;
   }
 
   .garmin-date-row {

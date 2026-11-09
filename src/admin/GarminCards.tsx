@@ -426,7 +426,7 @@ function GarminCard({
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
 
   return (
-    <article className={`info-card admin-card ${className}`.trim()}>
+    <article className={`info-card admin-card ${className}${isCollapsed ? ' is-collapsed' : ''}`.trim()}>
       <div className="admin-card-head">
         <h3>{title}</h3>
         <div className="admin-card-actions">
