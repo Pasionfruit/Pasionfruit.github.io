@@ -87,6 +87,7 @@ import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { MealPlanCard } from './admin/meals/MealPlanCard'
+import { ChallengesCard } from './challenges/ChallengesCard'
 import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
 import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
@@ -388,6 +389,12 @@ function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
       <VerseOfTheDayCard title="Verse of the day" />
       <TrainingOfDayCard title="Training of the Day" />
       <ChoresCard title="Chores" idToken={googleIdToken} />
+      <ChallengesCard
+        title="365 Challenges"
+        canEdit
+        idToken={googleIdToken}
+        className="admin-card admin-card-wide"
+      />
       <CiaraDashboard idToken={googleIdToken} />
     </div>
   )
@@ -784,7 +791,7 @@ function HomeSection({
   )
 }
 
-const ALL_SECTION_IDS: SectionId[] = ['experiences', 'training', 'personal-sites', 'gaming']
+const ALL_SECTION_IDS: SectionId[] = ['experiences', 'training', 'personal-sites', 'gaming', 'challenges']
 
 /** The public home page: collapsible sections. Admins get AdminHomePage. */
 function HomePage() {
@@ -865,6 +872,14 @@ function HomePage() {
         onToggle={() => toggleSection('gaming')}
       >
         <MinecraftServerCards />
+      </HomeSection>
+
+      <HomeSection
+        id="challenges"
+        isOpen={openSections.includes('challenges')}
+        onToggle={() => toggleSection('challenges')}
+      >
+        <ChallengesCard title="365 Challenges" className="admin-card-wide" />
       </HomeSection>
 
     </div>

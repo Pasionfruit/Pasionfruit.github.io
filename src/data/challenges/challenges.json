@@ -1,0 +1,2922 @@
+[
+  {
+    "id": 1,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to hold a wall-supported handstand",
+    "duration": "7 days",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 2,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to do a crow pose",
+    "duration": "3 days",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 3,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn three jump-rope tricks",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 4,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Run a mile without checking your watch",
+    "duration": "20 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 5,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Guess your running pace within 15 seconds per mile",
+    "duration": "30 minutes",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 6,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner Pilates class",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 7,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn five dynamic warm-up drills",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 8,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner yoga flow",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 9,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Improve your single-leg balance over seven days",
+    "duration": "7 days",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 10,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to juggle while standing on one leg",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 11,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a resistance-band-only workout",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 12,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn a beginner calisthenics flow",
+    "duration": "3 days",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 13,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to hula hoop",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 14,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try an indoor cycling class",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 15,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Practice a dance routine as cardio",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 16,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn a safe forward roll on a padded mat",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 17,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a mobility routine every day for a week",
+    "duration": "7 days",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 18,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to dribble a basketball between your legs",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 19,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn three frisbee throws",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 20,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner boxing fitness class",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 21,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn the basics of footwork ladder drills",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 22,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try an easy trail run for the first time",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 23,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Practice running with a metronome",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 24,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Compare perceived effort with watch data on an easy run",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 25,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a guided stretching class",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 26,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn a simple jump-rope dance routine",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 27,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try an introductory barre class",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 28,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn the basic steps of salsa dancing",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 29,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to spin a basketball on one finger",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 30,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner tai chi routine",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 31,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn a basic shuffle dance",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 32,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner agility obstacle course",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 33,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to do a controlled pistol-squat progression",
+    "duration": "7 days",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 34,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Practice standing from the floor without using your hands",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 35,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner animal-flow sequence",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 36,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn the basics of shadowboxing",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 37,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a gentle recovery walk with a photography goal",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 38,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try an easy hike with a fixed turnaround point",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 39,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to perform a controlled Turkish get-up with a light object",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 40,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a guided breath-awareness session after training",
+    "duration": "20 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 41,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to perform three balance-board drills",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 42,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner dance fitness video",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 43,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Practice a smooth jump-rope crossover progression",
+    "duration": "3 days",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 44,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn to do a proper bear crawl",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 45,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try an easy bike ride on an unfamiliar paved route",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 46,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner climbing gym session",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 47,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Learn a basic cartwheel with qualified instruction",
+    "duration": "3 days",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 48,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a beginner swim dryland technique routine",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 49,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Try a noncompetitive park fitness circuit",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 50,
+    "category": "Fitness, Endurance & Physical Skills",
+    "challenge": "Create and complete your own low-impact coordination course",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 51,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a personal website in one hour",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 52,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a tiny game in Python",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 53,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a random dinner picker",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 54,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Automate one repetitive computer task",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 55,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Recreate a website homepage from memory",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 56,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a simple chatbot with an existing model",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 57,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a virtual pet that responds to clicks",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 58,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a retro Windows 95-style webpage",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 59,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a Pomodoro timer",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 60,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a mini expense tracker",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 61,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a program that generates absurd compliments",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 62,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a browser extension that changes webpage colors",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 63,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a voice-controlled soundboard",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 64,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a tiny text adventure",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 65,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a pixel-art drawing app",
+    "duration": "1 day",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 66,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a webpage using only HTML and CSS",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 67,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a keyboard-controlled maze game",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 68,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a cooking recipe randomizer",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 69,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a dashboard of your workout history",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 70,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a simple habit streak tracker",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 71,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a webpage that reacts to the weather",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 72,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a custom countdown widget",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 73,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a digital fortune cookie",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 74,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a simple quiz about yourself",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 75,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a tiny game using under 100 lines of code",
+    "duration": "3 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 76,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a program that turns text into ASCII art",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 77,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a digital dice roller with sound effects",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 78,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a website entirely from your phone",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 79,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a personal movie recommendation spinner",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 80,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a mini typing-speed test",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 81,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a Discord bot that tells bad jokes",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 82,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a local photo slideshow from your own images",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 83,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a browser game controlled by arrow keys",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 84,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a program that analyzes your sleep logs",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 85,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a simple flashcard app",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 86,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a digital vending machine simulator",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 87,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a basic password strength visualizer",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 88,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a tiny interactive map of places you've visited",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 89,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a webpage with a different theme every refresh",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 90,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a program that turns your daily tasks into quests",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 91,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a simple workout interval timer",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 92,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Make a cat-themed desktop widget",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 93,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a meal planner from your favorite recipes",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 94,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Create a small program that scores your own challenge videos",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 95,
+    "category": "Programming, Technology & Engineering",
+    "challenge": "Build a random challenge generator and complete its first pick",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 96,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make fresh pasta from scratch",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 97,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook an entire meal in a rice cooker",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 98,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade sushi rolls",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 99,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a restaurant-style steak dinner on a budget",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 100,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Bake bread without a stand mixer",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 101,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a three-course meal for under $20",
+    "duration": "3 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 102,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Recreate a favorite fast-food bowl",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 103,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade dumplings",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 104,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make pizza dough from scratch",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 105,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook a high-protein dinner for under $5 per serving",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 106,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a perfect French omelet",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 107,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook dinner using only five ingredients",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 108,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a one-pot pasta dish",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 109,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade gnocchi",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 110,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook a meal with only canned and pantry ingredients",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 111,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade ice cream without a machine",
+    "duration": "1 day",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 112,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a meal inspired by a video game",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 113,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Bake a cake without using a boxed mix",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 114,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a giant burrito that actually closes",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 115,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a tiny miniature sandwich",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 116,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook a dish from a cuisine you've never tried",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 117,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade mozzarella with a reliable recipe",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 118,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a soup entirely from scratch",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 119,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Create a new sandwich and name it",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 120,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade fried chicken",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 121,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a breakfast dish for dinner",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 122,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook three dishes using the same main ingredient",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 123,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a full meal using only a microwave",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 124,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Try baking macarons for the first time",
+    "duration": "4 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 125,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade tortillas",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 126,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a colorful bento box",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 127,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook a dish using a random spice selection",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 128,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a copycat café drink",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 129,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Bake cookies with a surprise filling",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 130,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a savory dish using fruit",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 131,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a meal using only frozen ingredients",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 132,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a homemade dipping sauce trio",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 133,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Recreate a dish from a childhood memory",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 134,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a fancy dessert with three ingredients",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 135,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a meal from a mystery grocery bag",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 136,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook a complete dinner on one sheet pan",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 137,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make homemade ramen noodles",
+    "duration": "4 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 138,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a dish from a random cookbook page",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 139,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Try decorating cupcakes like a professional",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 140,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a restaurant-style plated meal at home",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 141,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Create a new rice bowl combination",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 142,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make a savory waffle creation",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 143,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Make your own flavored popcorn trio",
+    "duration": "45 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 144,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Prepare five grab-and-go snacks in one session",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 145,
+    "category": "Cooking, Baking & Food Experiments",
+    "challenge": "Cook a meal chosen by a random number generator",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 146,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to spin a pen",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 147,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to juggle three balls",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 148,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to whistle with your fingers",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 149,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Land ten bottle flips in a row",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 150,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn the moonwalk",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 151,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Solve a Rubik's Cube using a beginner method",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 152,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a fancy card shuffle",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 153,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Roll a coin across your knuckles",
+    "duration": "3 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 154,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to snap with both hands",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 155,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Write a readable note with your non-dominant hand",
+    "duration": "7 days",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 156,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Fold five different paper airplanes",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 157,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Balance a spoon on your nose",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 158,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a beginner card magic trick",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 159,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn three convincing animal impressions",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 160,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Fold a fitted sheet neatly",
+    "duration": "30 minutes",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 161,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn cup-and-dice stacking",
+    "duration": "2 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 162,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a yo-yo sleeper trick",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 163,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Spin a basketball on your finger",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 164,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Tie five unusual knots",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 165,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to flip a pancake without a spatula",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 166,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a coin vanish trick",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 167,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to make a clover with your tongue if possible",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 168,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn three balloon animal shapes",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 169,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to toss and catch two objects behind your back",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 170,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Memorize the order of a shuffled ten-card sequence",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 171,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to make a paper fortune teller",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 172,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to whistle a recognizable tune",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 173,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to stack six dice into a tower",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 174,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to write mirror text",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 175,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to bounce a ping-pong ball into a cup five times",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 176,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a beginner rope trick",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 177,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to twirl a baton or stick safely",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 178,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a three-cup shell game demonstration",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 179,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to draw a perfect-looking circle freehand",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 180,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to fold a napkin into a swan",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 181,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to do a finger tutting sequence",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 182,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a simple hand shadow puppet",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 183,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to identify five coins by touch",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 184,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to do a tablecloth-free coin slide trick",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 185,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to make three origami stars",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 186,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to throw a playing card accurately at a paper target",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 187,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to spin a book on a flat surface",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 188,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn a beginner cup-stacking pattern",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 189,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn to do a convincing fake sneeze for acting",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 190,
+    "category": "Useless Skills & Party Tricks",
+    "challenge": "Learn five oddly specific tongue twisters",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 191,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try pottery on a wheel",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 192,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Crochet a tiny animal",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 193,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Paint a landscape with watercolors",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 194,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a scented candle from a beginner kit",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 195,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Learn basic calligraphy",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 196,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Build a miniature room diorama",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 197,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Learn a song on a ukulele",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 198,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a stop-motion short",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 199,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Create a clay self-portrait",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 200,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a terrarium",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 201,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try embroidery on an old shirt",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 202,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a friendship bracelet",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 203,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Invent a tabletop board game",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 204,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Create pixel art of your cat",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 205,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a custom keychain",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 206,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Fold an elaborate origami animal",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 207,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Draw a realistic eye",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 208,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a song using household sounds",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 209,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Shoot a short film on your phone",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 210,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try beatboxing",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 211,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Recreate a famous painting in your own style",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 212,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a comic strip about a bad day",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 213,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Design a fictional movie poster",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 214,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Create a font from your handwriting",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 215,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a flipbook animation",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 216,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Film a cinematic trailer for your morning routine",
+    "duration": "3 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 217,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Finger-paint a portrait",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 218,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Design a logo for an imaginary company",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 219,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Recreate a movie scene with household props",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 220,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Compose a melody without instruments",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 221,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try needle felting with proper tools",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 222,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a collage from old magazines",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 223,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try lino printing with beginner-safe tools",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 224,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a zine about a random topic",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 225,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try making a mosaic from craft tiles",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 226,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Paint a tiny canvas with a huge brush",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 227,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Create a shadow-box memory display",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 228,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try bookbinding a small notebook",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 229,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a puppet from a sock",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 230,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Design and print your own sticker sheet",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 231,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try digital sculpting for the first time",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 232,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make a paper-cut silhouette portrait",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 233,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Create a miniature cardboard city",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 234,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Try landscape photography with only your phone",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 235,
+    "category": "Arts, Crafts & Creative Hobbies",
+    "challenge": "Make an animated GIF of an original character",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 236,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a beginner pottery class",
+    "duration": "1 day",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 237,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try karaoke for the first time",
+    "duration": "1 evening",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 238,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Go to a board-game meetup",
+    "duration": "1 evening",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 239,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Take a beginner improv class",
+    "duration": "2 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 240,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Learn a dance from a willing friend",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 241,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a cuisine-specific cooking class",
+    "duration": "3 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 242,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try an escape room with a group",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 243,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Take an introductory archery lesson",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 244,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a beginner martial arts class",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 245,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a sport you've never played",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 246,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Join a local trivia night",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 247,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Take a beginner acting class",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 248,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try pickleball with beginners",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 249,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Volunteer at a community event",
+    "duration": "3 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 250,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a free public lecture outside your field",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 251,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Go to a language exchange meetup",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 252,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a beginner partner-dance class",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 253,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Visit a museum you've never entered",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 254,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a local open-mic night as an audience member",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 255,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Join a public park cleanup",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 256,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a guided art workshop",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 257,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a community chess meetup",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 258,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a beginner choir rehearsal open to newcomers",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 259,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Visit a local makerspace introduction session",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 260,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a tabletop roleplaying one-shot",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 261,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Take a group photography walk",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 262,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a beginner language lesson in person",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 263,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a public stargazing event",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 264,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a community gardening session",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 265,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Go to a local book club meeting",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 266,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a beginner sewing workshop",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 267,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a beginner comedy writing workshop",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 268,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Attend a cultural festival you've never experienced",
+    "duration": "3 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 269,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Try a public guided nature walk",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 270,
+    "category": "Social Challenges & New Experiences",
+    "challenge": "Invite friends to a themed homemade trivia night",
+    "duration": "1 evening",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 271,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Stack 100 coins into a stable tower",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 272,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build the tallest spaghetti tower you can",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 273,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make an unnecessarily complicated sandwich",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 274,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a cardboard castle for your cats",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 275,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create a tiny restaurant for toys",
+    "duration": "3 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 276,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Fly a paper airplane across your apartment",
+    "duration": "1 hour",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 277,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a Rube Goldberg machine that rings a bell",
+    "duration": "1 day",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 278,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a portrait entirely from sticky notes",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 279,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create the world's tiniest sandwich in your kitchen",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 280,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Stage a five-star restaurant experience at home",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 281,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a toy-car obstacle course",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 282,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a small cardboard stool prototype and test with weights",
+    "duration": "1 day",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 283,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a dramatic documentary about a houseplant",
+    "duration": "3 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 284,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create a museum exhibit for a random household object",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 285,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a domino chain around one room",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 286,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a trophy for the most ordinary accomplishment",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 287,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Design a fake product commercial for a spoon",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 288,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a tiny hat for a stuffed animal",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 289,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a paper bridge and test its load capacity",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 290,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create a fake nature documentary about your socks",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 291,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a miniature amusement park from recycled packaging",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 292,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Invent a board game that takes 30 seconds to play",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 293,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a marble maze from cardboard",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 294,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a snack vending machine from cardboard",
+    "duration": "1 day",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 295,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create a tiny award ceremony for completing chores",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 296,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a sculpture from 100 paper clips",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 297,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create a secret code for writing grocery lists",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 298,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a chain reaction using only office supplies",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 299,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a cardboard robot that cannot do anything",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 300,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Design a flag for your apartment",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 301,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Build a miniature golf hole in your living room",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 302,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create a fashion runway for action figures",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 303,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Make a cardboard vending machine for cat toys",
+    "duration": "1 day",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 304,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Invent a holiday and celebrate it for an hour",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 305,
+    "category": "Ridiculous Experiments & Pointless Projects",
+    "challenge": "Create an absurdly detailed instruction manual for making toast",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 306,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try indoor bouldering",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 307,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try disc golf at a public course",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 308,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Learn the basics of geocaching",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 309,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner kayaking session",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 310,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Take a guided paddleboarding lesson",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 311,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner tennis lesson",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 312,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Learn to throw a frisbee golf putt",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 313,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Go on a photo scavenger hunt",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 314,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner roller-skating session",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 315,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner ice-skating session",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 316,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Visit a botanical garden and photograph five unusual plants",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 317,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner badminton game",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 318,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try an orienteering course",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 319,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Learn basic birdwatching and identify five species",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 320,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner fencing lesson",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 321,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Take a beginner sailing lesson",
+    "duration": "3 hours",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 322,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a guided horseback riding lesson",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 323,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner outdoor yoga class",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 324,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner kickball game",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 325,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Learn to skip stones on water",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 326,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a safe introductory ropes course",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 327,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner fishing lesson with required permits",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 328,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Go on a sunrise photography walk",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 329,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Try a beginner bocce game",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 330,
+    "category": "Outdoor Adventures & New Sports",
+    "challenge": "Explore a new park using a self-made scavenger list",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 331,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Build an outfit entirely from thrift-store finds",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 332,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to sew on a button",
+    "duration": "30 minutes",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 333,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to hem a pair of pants",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 334,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Try a new hairstyle using a tutorial",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 335,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to tie five necktie knots",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 336,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Create a capsule wardrobe from clothes you already own",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 337,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to wrap a gift like a professional",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 338,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Arrange flowers into a bouquet",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 339,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to iron a shirt properly",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 340,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Try making a simple piece of jewelry",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 341,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn basic shoe cleaning and care",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 342,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Make a DIY desk organizer",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 343,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to fold clothes using a new method",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 344,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Design a personalized phone wallpaper",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 345,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn basic hand stitching",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 346,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Make a handmade greeting card",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 347,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Try a completely new clothing aesthetic for a day",
+    "duration": "1 day",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 348,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to pack a suitcase efficiently",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 349,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Create a themed photo corner in your room",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 350,
+    "category": "Lifestyle, Fashion & Personal Skills",
+    "challenge": "Learn to repair a small tear in clothing",
+    "duration": "1 hour",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 351,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Write code that randomly selects your dinner and cook it",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 352,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Build a virtual pet that levels up when you log exercise",
+    "duration": "1 day",
+    "difficulty": "Hard",
+    "status": "Not Started"
+  },
+  {
+    "id": 353,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Create a recipe based on randomly selected ingredients",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 354,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Build a program that chooses a new hobby to try",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 355,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Make a workout playlist from sounds you record yourself",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 356,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Cook a meal inspired by your favorite video game",
+    "duration": "2 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 357,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Build a simple app to rate every new hobby you try",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 358,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Design a cardboard gadget to hold your phone while cooking",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 359,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Create a stop-motion film starring a homemade snack",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 360,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Use your fitness data to design a playful infographic",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 361,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Build a timer that gives you ridiculous motivational messages",
+    "duration": "2 hours",
+    "difficulty": "Easy",
+    "status": "Not Started"
+  },
+  {
+    "id": 362,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Create a random drawing prompt generator and paint its output",
+    "duration": "3 hours",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 363,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Make a tiny game based on your cats' personalities",
+    "duration": "1 day",
+    "difficulty": "Medium",
+    "status": "Not Started"
+  },
+  {
+    "id": 364,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Learn a pointless skill chosen by a friend",
+    "duration": "1 day",
+    "difficulty": "Random",
+    "status": "Not Started"
+  },
+  {
+    "id": 365,
+    "category": "Hybrid Challenges & Wildcards",
+    "challenge": "Build a challenge roulette and do whatever safe task it picks",
+    "duration": "1 day",
+    "difficulty": "Random",
+    "status": "Not Started"
+  }
+]

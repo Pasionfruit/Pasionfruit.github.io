@@ -16,6 +16,7 @@ are no separate section routes any more.
 | Experiences | `/#experiences` | Education, technical skills, professional history, resume downloads |
 | Personal Sites | `/#personal-sites` | Deployed side projects, linked out for anyone to try |
 | Gaming | `/#gaming` | Minecraft connection guide and live server status with a link to the control dashboard |
+| 365 Challenges | `/#challenges` | The 365 challenges with a randomizer and video links; the admin home edits and marks them in place (progress in the db Worker's `challenges` table) |
 | Training | `/#training` | Today's planned workout, the Garmin training log, and the next event countdown — all read-only |
 
 Sections start collapsed. The side menu links to each anchor, which expands the

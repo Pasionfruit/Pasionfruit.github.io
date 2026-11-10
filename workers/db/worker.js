@@ -124,6 +124,14 @@ const TABLES = {
     read: 'public',
     ingestKey: 'RINGCONN_INGEST_KEY',
   },
+  // The 365 challenges' progress: one row per challenge that has been marked,
+  // reworded or given a video (workers/db/challenges.sql). The list itself ships
+  // with the site. Public to read, because the guest page shows it.
+  challenges: {
+    key: 'challenge_id',
+    columns: ['challenge_id', 'category', 'challenge', 'duration', 'difficulty', 'status', 'video_url', 'updated_at'],
+    read: 'public',
+  },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
 }

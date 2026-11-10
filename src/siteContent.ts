@@ -1,3 +1,4 @@
+import { challengesSectionPage } from './siteContent/challenges'
 import { gamingSectionPage } from './siteContent/gaming'
 import {
   educationEntries,
@@ -38,4 +39,5 @@ export const sectionPages: Record<SectionId, PageContent> = {
   'personal-sites': personalSitesSectionPage,
   gaming: gamingSectionPage,
   training: trainingSectionPage,
+  challenges: challengesSectionPage,
 }

@@ -306,7 +306,7 @@ describe('guest home page', () => {
     renderAt('/')
 
     const order = [...document.querySelectorAll('.home-section')].map((section) => section.id)
-    expect(order).toEqual(['experiences', 'training', 'personal-sites', 'gaming'])
+    expect(order).toEqual(['experiences', 'training', 'personal-sites', 'gaming', 'challenges'])
   })
 
   it('opens Experiences with its summary as a short bullet list', () => {
