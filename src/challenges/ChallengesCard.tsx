@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Dices, ExternalLink, Pencil } from 'lucide-react'
+import { ExternalLink, Pencil } from 'lucide-react'
+import { ChallengeWheel } from './ChallengeWheel'
 import {
   CHALLENGE_DIFFICULTIES,
   CHALLENGE_STATUSES,
@@ -43,6 +44,8 @@ export function ChallengesCard({
   const [status, setStatus] = useState<'all' | ChallengeStatus>('all')
   const [visible, setVisible] = useState(PAGE_SIZE)
   const [pickedId, setPickedId] = useState<number | null>(null)
+  // Bumped to deal the wheel a new set of challenges.
+  const [wheelDeal, setWheelDeal] = useState(0)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [draft, setDraft] = useState({ challenge: '', duration: '', difficulty: '', category: '', videoUrl: '' })
 
@@ -92,16 +95,6 @@ export function ChallengesCard({
       if (previous) setChallenges((list) => list.map((item) => (item.id === next.id ? previous : item)))
       setError(caught instanceof Error ? caught.message : 'Unable to save the challenge')
     }
-  }
-
-  function pickRandom() {
-    // Prefer what is still to do within the current filters; fall back to anything shown.
-    const open = filtered.filter((item) => item.status !== 'Done')
-    const pool = open.length > 0 ? open : filtered
-    if (pool.length === 0) return
-
-    const choices = pool.length > 1 ? pool.filter((item) => item.id !== pickedId) : pool
-    setPickedId(choices[Math.floor(Math.random() * choices.length)].id)
   }
 
   function startEdit(item: Challenge) {
@@ -292,9 +285,6 @@ export function ChallengesCard({
             </option>
           ))}
         </select>
-        <button type="button" className="challenge-btn is-primary" onClick={pickRandom} disabled={filtered.length === 0}>
-          <Dices size={14} aria-hidden="true" /> Surprise me
-        </button>
       </div>
 
       <datalist id="challenge-categories">
@@ -308,9 +298,18 @@ export function ChallengesCard({
         <p className="sheets-meta">Saved progress could not be loaded, so everything shows as not started.</p>
       ) : null}
 
+      {!isLoading ? (
+        <ChallengeWheel
+          key={`${category}|${status}|${wheelDeal}`}
+          pool={filtered}
+          onLanded={setPickedId}
+          onReshuffle={() => setWheelDeal((deal) => deal + 1)}
+        />
+      ) : null}
+
       {picked ? (
         <section className="challenge-picked" aria-label="Picked challenge">
-          <h4>Your challenge</h4>
+          <h4>The wheel says</h4>
           <ul className="challenge-list">{renderRow(picked, true)}</ul>
         </section>
       ) : null}

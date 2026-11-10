@@ -388,13 +388,13 @@ function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
     >
       <VerseOfTheDayCard title="Verse of the day" />
       <TrainingOfDayCard title="Training of the Day" />
-      <ChoresCard title="Chores" idToken={googleIdToken} />
       <ChallengesCard
         title="365 Challenges"
         canEdit
         idToken={googleIdToken}
         className="admin-card admin-card-wide"
       />
+      <ChoresCard title="Chores" idToken={googleIdToken} />
       <CiaraDashboard idToken={googleIdToken} />
     </div>
   )

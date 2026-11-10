@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const clientMocks = vi.hoisted(() => ({ rows: [] as unknown[], save: vi.fn() }))
@@ -45,15 +45,23 @@ describe('ChallengesCard', () => {
     expect(screen.queryByLabelText('Edit challenge 1')).toBeNull()
   })
 
-  it('picks a challenge at random', async () => {
-    const user = userEvent.setup()
+  it('lands the wheel on a challenge and shows it', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<ChallengesCard title="365 Challenges" />)
     await screen.findByText('0 / 365 done')
 
-    await user.click(screen.getByRole('button', { name: /Surprise me/ }))
+    await user.click(screen.getByRole('button', { name: 'Spin the wheel' }))
+    expect(screen.getByRole('button', { name: 'Spinning…' })).toBeTruthy()
+    expect(screen.queryByRole('region', { name: 'Picked challenge' })).toBeNull()
+
+    await act(async () => {
+      vi.advanceTimersByTime(5000)
+    })
 
     const picked = screen.getByRole('region', { name: 'Picked challenge' })
     expect(within(picked).getByText(/^#\d+$/)).toBeTruthy()
+    vi.useRealTimers()
   })
 
   it('lets the admin mark a challenge and add a video link without leaving the page', async () => {
