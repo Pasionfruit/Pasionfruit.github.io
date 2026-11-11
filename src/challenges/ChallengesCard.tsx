@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ExternalLink, Pencil } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ExternalLink, Pencil } from 'lucide-react'
 import { ChallengeWheel } from './ChallengeWheel'
 import {
   CHALLENGE_DIFFICULTIES,
@@ -14,7 +14,7 @@ import {
 } from '../data/challenges/client'
 import './challenges.css'
 
-const PAGE_SIZE = 40
+const PAGE_SIZE = 5
 
 function statusClass(status: ChallengeStatus) {
   return status === 'Done' ? 'is-done' : status === 'In Progress' ? 'is-active' : ''
@@ -42,7 +42,7 @@ export function ChallengesCard({
   const [error, setError] = useState('')
   const [category, setCategory] = useState('all')
   const [status, setStatus] = useState<'all' | ChallengeStatus>('all')
-  const [visible, setVisible] = useState(PAGE_SIZE)
+  const [page, setPage] = useState(0)
   const [pickedId, setPickedId] = useState<number | null>(null)
   // Bumped to deal the wheel a new set of challenges.
   const [wheelDeal, setWheelDeal] = useState(0)
@@ -79,6 +79,10 @@ export function ChallengesCard({
       ),
     [challenges, category, status],
   )
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount - 1)
+  const pageItems = filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE)
 
   const doneCount = challenges.filter((item) => item.status === 'Done').length
   const picked = challenges.find((item) => item.id === pickedId) ?? null
@@ -260,7 +264,7 @@ export function ChallengesCard({
           aria-label="Filter by category"
           onChange={(event) => {
             setCategory(event.target.value)
-            setVisible(PAGE_SIZE)
+            setPage(0)
           }}
         >
           <option value="all">All categories</option>
@@ -275,7 +279,7 @@ export function ChallengesCard({
           aria-label="Filter by status"
           onChange={(event) => {
             setStatus(event.target.value as 'all' | ChallengeStatus)
-            setVisible(PAGE_SIZE)
+            setPage(0)
           }}
         >
           <option value="all">Any status</option>
@@ -316,14 +320,34 @@ export function ChallengesCard({
 
       {isLoading ? <p className="sheets-meta">Loading challenges…</p> : null}
 
-      <ul className="challenge-list">{filtered.slice(0, visible).map((item) => renderRow(item))}</ul>
+      <ul className="challenge-list">{pageItems.map((item) => renderRow(item))}</ul>
 
       {!isLoading && filtered.length === 0 ? <p className="sheets-meta">No challenges match.</p> : null}
 
-      {filtered.length > visible ? (
-        <button type="button" className="challenge-btn challenge-more" onClick={() => setVisible((count) => count + PAGE_SIZE)}>
-          Show more ({filtered.length - visible} left)
-        </button>
+      {pageCount > 1 ? (
+        <nav className="challenge-pager" aria-label="Challenge pages">
+          <button
+            type="button"
+            className="challenge-icon-btn"
+            aria-label="Previous page"
+            disabled={currentPage === 0}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            <ChevronLeft size={14} aria-hidden="true" />
+          </button>
+          <span className="sheets-meta">
+            Page {currentPage + 1} of {pageCount}
+          </span>
+          <button
+            type="button"
+            className="challenge-icon-btn"
+            aria-label="Next page"
+            disabled={currentPage >= pageCount - 1}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            <ChevronRight size={14} aria-hidden="true" />
+          </button>
+        </nav>
       ) : null}
     </article>
   )

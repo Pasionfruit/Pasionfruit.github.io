@@ -156,7 +156,7 @@ export function ChallengeWheel({
                   dominantBaseline="middle"
                   className="challenge-wheel-label"
                 >
-                  {shorten(item.challenge, 17)}
+                  {shorten(item.challenge, 15)}
                 </text>
               </g>
             )

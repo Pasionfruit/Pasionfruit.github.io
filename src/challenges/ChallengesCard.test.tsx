@@ -84,6 +84,21 @@ describe('ChallengesCard', () => {
     expect(screen.getAllByRole('link', { name: /Watch/ })).toHaveLength(1)
   })
 
+  it('pages through the list five at a time', async () => {
+    const user = userEvent.setup()
+    render(<ChallengesCard title="365 Challenges" />)
+    await screen.findByText('0 / 365 done')
+
+    expect(screen.getByText('Page 1 of 73')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Previous page' })).toHaveProperty('disabled', true)
+    expect(screen.queryByText('#6')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
+    expect(screen.getByText('Page 2 of 73')).toBeTruthy()
+    expect(screen.getByText('#6')).toBeTruthy()
+    expect(screen.queryByText('#1')).toBeNull()
+  })
+
   it('puts the old status back when a save fails', async () => {
     const user = userEvent.setup()
     clientMocks.save.mockRejectedValue(new Error('Nope'))
