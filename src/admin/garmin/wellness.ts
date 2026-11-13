@@ -315,14 +315,29 @@ function ratingOf(scores: HealthScore[]): Rating | null {
   return { score, grade: gradeOf(score), days: scores.length }
 }
 
-/** The average rating over the seven days ending on `endDate`. */
-export function weekRating(scores: HealthScore[], endDate: string): Rating | null {
+/** The average rating over the `days` days ending on `endDate`; days with no rating are simply absent. */
+export function trailingRating(scores: HealthScore[], endDate: string, days: number): Rating | null {
   return ratingOf(
     scores.filter((entry) => {
       const gap = daysBetween(entry.date, endDate)
-      return gap >= 0 && gap <= 6
+      return gap >= 0 && gap < days
     }),
   )
+}
+
+/** The seven days ending on `endDate`. */
+export const weekRating = (scores: HealthScore[], endDate: string) => trailingRating(scores, endDate, 7)
+
+/** The 30 days ending on `endDate`: steadier than a week, and never a half-empty calendar month. */
+export const monthRating = (scores: HealthScore[], endDate: string) => trailingRating(scores, endDate, 30)
+
+/** The 90 days ending on `endDate`. */
+export const quarterRating = (scores: HealthScore[], endDate: string) => trailingRating(scores, endDate, 90)
+
+/** The date key `days` after `key` (negative for before), in UTC so a DST change cannot shift it. */
+export function addDays(key: string, days: number): string {
+  const [y, m, d] = key.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10)
 }
 
 /** The average rating of the calendar week that begins on `weekStart`. */

@@ -15,8 +15,12 @@ import {
   healthSeries,
   isoWeekRating,
   resolveDate,
+  addDays,
+  monthRating,
+  quarterRating,
   summarise,
   trendNote,
+  trailingRating,
   weekRating,
 } from './garmin/wellness'
 import { addDaysToKey, todayKey } from '../data/todoist/dates'
@@ -358,6 +362,25 @@ describe('health rating', () => {
     expect(weekRating([], '2026-09-09')).toBeNull()
   })
 
+  it('rates the month and quarter as the 30 and 90 days to a date, skipping days with no rating', () => {
+    const scores = [
+      { date: '2026-09-30', score: 90, grade: 'A' as const },
+      { date: '2026-09-01', score: 70, grade: 'C' as const }, // 29 days back: still in the month
+      { date: '2026-08-31', score: 50, grade: 'F' as const }, // 30 days back: only in the quarter
+      { date: '2026-07-03', score: 80, grade: 'B' as const }, // 89 days back: the quarter's edge
+      { date: '2026-07-02', score: 0, grade: 'F' as const }, // 90 days back: out
+    ]
+    expect(monthRating(scores, '2026-09-30')).toEqual({ score: 80, grade: 'B', days: 2 })
+    expect(quarterRating(scores, '2026-09-30')).toEqual({ score: 73, grade: 'C', days: 4 })
+    expect(trailingRating(scores, '2026-09-30', 1)).toEqual({ score: 90, grade: 'A', days: 1 })
+    expect(monthRating([], '2026-09-30')).toBeNull()
+  })
+
+  it('adds days to a date key across month ends', () => {
+    expect(addDays('2026-09-28', 6)).toBe('2026-10-04')
+    expect(addDays('2026-03-01', -1)).toBe('2026-02-28')
+  })
+
   it('draws the trendline oldest first, by day or averaged by week', () => {
     const scores = [
       { date: '2026-09-09', score: 90, grade: 'A' as const },
@@ -386,7 +409,9 @@ describe('health rating', () => {
     await user.click(screen.getByRole('button', { name: 'Expand Daily wellness' }))
     const health = await screen.findByRole('region', { name: 'Health rating' })
     expect(within(health).getByText('Day')).toBeTruthy()
-    expect(within(health).getByText(/\/100 · 4 days/)).toBeTruthy()
+    // Week, month and quarter all reach the same four rated days here.
+    for (const label of ['Week', 'Month', 'Quarter']) expect(within(health).getByText(label)).toBeTruthy()
+    expect(within(health).getAllByText(/\/100 · 4 days/)).toHaveLength(3)
     expect(health.querySelector('svg.garmin-trendline')).toBeTruthy()
   })
 

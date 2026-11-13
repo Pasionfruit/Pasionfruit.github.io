@@ -4,12 +4,15 @@ import { getGarminWellness, getRingconnHealth } from '../data/sheets/repositorie
 import { todayKey } from '../data/todoist/dates'
 import type { GarminWellnessRecord, RingconnHealthRecord } from '../data/sheets/types'
 import {
+  addDays,
   dailyHealthScores,
   daysBetween,
   formatDayLabel,
   formatValue,
   healthSeries,
   isoWeekRating,
+  monthRating,
+  quarterRating,
   resolveDate,
   summarise,
   toWeeklyAverages,
@@ -293,21 +296,31 @@ function HealthTrendLine({ points, selected }: { points: HealthPoint[]; selected
   )
 }
 
-/** Day and week A–F ratings, and the trendline under them. Nothing until two readings make a score. */
+/** Day, week, month and quarter A–F ratings, and the trendline under them. Nothing until two readings make a score. */
 function HealthRating({
   mode,
   day,
   week,
+  month,
+  quarter,
   series,
   selected,
 }: {
   mode: 'day' | 'week'
   day: { score: number; grade: Grade } | null
   week: Rating | null
+  month: Rating | null
+  quarter: Rating | null
   series: HealthPoint[]
   selected: string
 }) {
-  if (!day && !week && series.length === 0) return null
+  if (!day && !week && !month && !quarter && series.length === 0) return null
+
+  const periods: { label: string; rating: Rating | null }[] = [
+    { label: mode === 'week' ? 'This week' : 'Week', rating: week },
+    { label: 'Month', rating: month },
+    { label: 'Quarter', rating: quarter },
+  ]
 
   return (
     <section className="garmin-health" aria-label="Health rating">
@@ -321,22 +334,25 @@ function HealthRating({
             </span>
           </div>
         ) : null}
-        {week ? (
-          <div className="garmin-rating">
-            <GradeBadge grade={week.grade} />
-            <span>
-              <strong>{mode === 'week' ? 'This week' : 'Week'}</strong>
-              <small>
-                {week.score}/100 · {week.days} day{week.days === 1 ? '' : 's'}
-              </small>
-            </span>
-          </div>
-        ) : null}
+        {periods.map(({ label, rating }) =>
+          rating ? (
+            <div key={label} className="garmin-rating">
+              <GradeBadge grade={rating.grade} />
+              <span>
+                <strong>{label}</strong>
+                <small>
+                  {rating.score}/100 · {rating.days} day{rating.days === 1 ? '' : 's'}
+                </small>
+              </span>
+            </div>
+          ) : null,
+        )}
       </div>
       <HealthTrendLine points={series} selected={selected} />
       <p className="sheets-meta garmin-health-note">
         Average of sleep, HRV and resting HR against your own recent norm, steps, intensity minutes, stress and body
-        battery — whatever the source records. A 90+, B 80+, C 70+, D 60+.
+        battery — whatever the source records. A 90+, B 80+, C 70+, D 60+. Week, month and quarter average the last 7,
+        30 and 90 days to the date shown.
       </p>
     </section>
   )
@@ -754,6 +770,10 @@ function WellnessPanel<Row extends { date: string }>({
   // The rating for what the card is showing: that day and the week to it, or that week.
   const dayScore = mode === 'day' ? scores.find((entry) => entry.date === activeDate) : undefined
   const week = !activeDate ? null : mode === 'week' ? isoWeekRating(scores, activeDate) : weekRating(scores, activeDate)
+  // Month and quarter are the 30 and 90 days to the date shown; for a week, to its last day.
+  const windowEnd = !activeDate ? '' : mode === 'week' ? addDays(activeDate, 6) : activeDate
+  const month = windowEnd ? monthRating(scores, windowEnd) : null
+  const quarter = windowEnd ? quarterRating(scores, windowEnd) : null
   const series = useMemo(() => healthSeries(scores, mode), [scores, mode])
 
   return (
@@ -819,6 +839,8 @@ function WellnessPanel<Row extends { date: string }>({
         mode={mode}
         day={dayScore ? { score: dayScore.score, grade: dayScore.grade } : null}
         week={week}
+        month={month}
+        quarter={quarter}
         series={series}
         selected={activeDate}
       />
