@@ -44,8 +44,6 @@ export function ChallengesCard({
   const [status, setStatus] = useState<'all' | ChallengeStatus>('all')
   const [page, setPage] = useState(0)
   const [pickedId, setPickedId] = useState<number | null>(null)
-  // Bumped to deal the wheel a new set of challenges.
-  const [wheelDeal, setWheelDeal] = useState(0)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [draft, setDraft] = useState({ challenge: '', duration: '', difficulty: '', category: '', videoUrl: '' })
 
@@ -304,10 +302,9 @@ export function ChallengesCard({
 
       {!isLoading ? (
         <ChallengeWheel
-          key={`${category}|${status}|${wheelDeal}`}
+          key={`${category}|${status}`}
           pool={filtered}
           onLanded={setPickedId}
-          onReshuffle={() => setWheelDeal((deal) => deal + 1)}
         />
       ) : null}
 

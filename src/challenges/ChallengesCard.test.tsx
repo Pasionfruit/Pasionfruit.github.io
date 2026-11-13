@@ -64,6 +64,32 @@ describe('ChallengesCard', () => {
     vi.useRealTimers()
   })
 
+  it('spins a slot-machine reel of every challenge, with no New wheel button, and stops on the pick', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<ChallengesCard title="365 Challenges" />)
+    await screen.findByText('0 / 365 done')
+
+    expect(screen.queryByRole('button', { name: 'New wheel' })).toBeNull()
+    // At rest the window holds three rows, the middle one being the current pick.
+    expect(document.querySelectorAll('.challenge-reel-row')).toHaveLength(3)
+
+    await user.click(screen.getByRole('button', { name: 'Spin the wheel' }))
+    // Mid-spin the strip carries the rows the reel will pass, well beyond a dozen segments.
+    expect(document.querySelectorAll('.challenge-reel-row').length).toBeGreaterThan(40)
+
+    await act(async () => {
+      vi.advanceTimersByTime(5000)
+    })
+
+    expect(document.querySelectorAll('.challenge-reel-row')).toHaveLength(3)
+    const picked = within(screen.getByRole('region', { name: 'Picked challenge' })).getByText(/^#\d+$/)
+    expect(document.querySelector('.challenge-reel-row.is-middle .challenge-reel-num')?.textContent).toBe(
+      picked.textContent,
+    )
+    vi.useRealTimers()
+  })
+
   it('lets the admin mark a challenge and add a video link without leaving the page', async () => {
     const user = userEvent.setup()
     render(<ChallengesCard title="365 Challenges" canEdit idToken="token" />)

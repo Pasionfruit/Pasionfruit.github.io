@@ -54,8 +54,3 @@ export function playTick() {
 export function playWin() {
   ;[523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => blip(frequency, index * 0.11, 0.35, 0.18, 'triangle'))
 }
-
-/** A quick shuffle for dealing a new wheel. */
-export function playShuffle() {
-  ;[440, 554.37, 659.25].forEach((frequency, index) => blip(frequency, index * 0.06, 0.12, 0.12, 'sine'))
-}
