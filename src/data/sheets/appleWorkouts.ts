@@ -5,8 +5,27 @@ export type AppleWorkoutRow = Record<string, unknown>
 
 const text = (value: unknown) => String(value ?? '').trim()
 
+/**
+ * Minutes from what the Shortcut sent: plain minutes ("52"), or a clock time
+ * ("42:13" is 42 min 13 s, "1:05:00" an hour and five) when the Duration was not converted.
+ */
+function minutesOf(raw: string): string {
+  // "42.217 min" (a converted Duration, unit attached) is already minutes.
+  const withUnit = /^([\d.]+)\s*min(utes)?$/i.exec(raw)
+  if (withUnit) return Number(withUnit[1]).toFixed(1)
+  if (!raw.includes(':')) return raw
+  const parts = raw.split(':').map(Number)
+  if (parts.some((part) => !Number.isFinite(part))) return raw
+  const seconds = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + (parts[1] ?? 0)
+  return (seconds / 60).toFixed(1)
+}
+
+/** A Shortcut property mix-up leaves an energy reading ("276 Cal") where the type belongs. */
+const isEnergyReading = (raw: string) => /^([\d.,\s]+(k?cal|kj)?|active (energy|calories))$/i.test(raw)
+
 /** "Traditional Strength Training" → "strength_training"; the rest become snake_case. */
 function activityTypeOf(raw: string): string {
+  if (!raw || isEnergyReading(raw)) return 'workout'
   const snake = raw
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
@@ -42,16 +61,20 @@ export function mergeAppleWorkouts(
     const date = (text(row.date) || id).slice(0, 10)
     if (!id || !date) continue
 
-    const type = text(row.type)
+    const type = isEnergyReading(text(row.type)) ? '' : text(row.type)
+    // Shortcuts cannot read a workout's activity kind, only its Source (the app that
+    // wrote it). Hevy only records lifting, so a Hevy source is a strength session.
+    const fromHevy = /hevy/i.test(`${type} ${text(row.title)}`)
+    const calories = Number.parseFloat(text(row.calories))
     const record: GarminHealthRecord = {
       date,
-      activity_type: activityTypeOf(type),
-      title: text(row.title) || type,
+      activity_type: fromHevy ? 'strength_training' : activityTypeOf(type),
+      title: fromHevy ? 'Strength (Hevy)' : text(row.title) || type || 'Workout',
       distance_mi: text(row.distance_mi),
-      duration_min: text(row.duration_min),
+      duration_min: minutesOf(text(row.duration_min)),
       avg_hr: text(row.avg_hr),
       max_hr: text(row.max_hr),
-      calories: text(row.calories),
+      calories: Number.isFinite(calories) ? String(Math.round(calories)) : '',
       tss: '',
       activity_id: `apple_${id}`,
     }
