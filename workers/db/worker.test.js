@@ -103,8 +103,17 @@ describe('ringconn_health ingest key', () => {
     const response = await worker.fetch(request('ringconn_health', 'POST', RING_KEY, DAY), ringEnv(db))
 
     expect(response.status).toBe(200)
-    expect(db.runs[0].sql).toContain('INSERT OR REPLACE INTO ringconn_health')
     expect(db.runs[0].values.slice(0, 1)).toEqual(['2026-10-26'])
+  })
+
+  it('never lets an empty field blank a stored value', async () => {
+    const db = fakeDb()
+    await worker.fetch(request('ringconn_health', 'POST', RING_KEY, DAY), ringEnv(db))
+
+    const { sql } = db.runs[0]
+    expect(sql).toContain('ON CONFLICT(date) DO UPDATE SET')
+    expect(sql).toContain("steps = CASE WHEN excluded.steps <> '' THEN excluded.steps ELSE ringconn_health.steps END")
+    expect(sql).not.toContain('INSERT OR REPLACE')
   })
 
   it('does not accept the YouTube key, or write other tables', async () => {
@@ -117,5 +126,41 @@ describe('ringconn_health ingest key', () => {
   it('reads publicly', async () => {
     const response = await worker.fetch(request('ringconn_health', 'GET'), ringEnv())
     expect(response.status).toBe(200)
+  })
+})
+
+describe('apple_workouts ingest key', () => {
+  beforeEach(() => vi.stubGlobal('fetch', async () => new Response('{}', { status: 400 })))
+  afterEach(() => vi.unstubAllGlobals())
+
+  const WORKOUT_KEY = 'workout-key-not-the-real-one'
+  const WORKOUT = { workout_id: '2026-11-13T07:30', date: '2026-11-13', type: 'Traditional Strength Training', duration_min: 52 }
+  const workoutEnv = (db = fakeDb()) => ({
+    ...env(db),
+    RINGCONN_INGEST_KEY: 'ring-key-not-the-real-one',
+    WORKOUT_INGEST_KEY: WORKOUT_KEY,
+  })
+
+  it('lets the phone upsert a workout with its key', async () => {
+    const db = fakeDb()
+    const response = await worker.fetch(request('apple_workouts', 'POST', WORKOUT_KEY, WORKOUT), workoutEnv(db))
+
+    expect(response.status).toBe(200)
+    expect(db.runs[0].sql).toContain('INSERT OR REPLACE INTO apple_workouts')
+    expect(db.runs[0].values[0]).toBe('2026-11-13T07:30')
+  })
+
+  it('keeps the RingConn key and the workout key to their own tables', async () => {
+    const db = fakeDb()
+    expect((await worker.fetch(request('apple_workouts', 'POST', 'ring-key-not-the-real-one', WORKOUT), workoutEnv(db))).status).toBe(403)
+    expect((await worker.fetch(request('ringconn_health', 'POST', WORKOUT_KEY, { date: '2026-11-13' }), workoutEnv(db))).status).toBe(403)
+    expect(db.runs).toHaveLength(0)
+  })
+
+  it('cannot delete, and reads publicly', async () => {
+    const db = fakeDb()
+    expect((await worker.fetch(request('apple_workouts', 'DELETE', WORKOUT_KEY, { workout_id: 'x' }), workoutEnv(db))).status).toBe(403)
+    expect(db.runs).toHaveLength(0)
+    expect((await worker.fetch(request('apple_workouts', 'GET'), workoutEnv())).status).toBe(200)
   })
 })

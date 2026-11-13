@@ -1,3 +1,4 @@
+import { mergeAppleWorkouts } from './appleWorkouts'
 import { fetchSheetTable, postSheetsAction, type SheetsWriteResponse } from './client'
 import type {
   AppleHealthRecord,
@@ -193,9 +194,14 @@ export async function getPersonalTraining(): Promise<PersonalTrainingRecord[]> {
 }
 
 export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
-  const rows = await fetchSheetTable<Record<string, unknown>>('garmin_health')
+  // Workouts the phone pushes from Apple Health (Hevy and others) join the Garmin
+  // activities; that table failing leaves the Garmin rows as they were.
+  const [rows, appleRows] = await Promise.all([
+    fetchSheetTable<Record<string, unknown>>('garmin_health'),
+    dbRead<Record<string, unknown>>('apple_workouts').catch(() => []),
+  ])
 
-  return rows
+  const garmin = rows
     .map((row) => ({
       date:          String(row.date ?? '').trim(),
       activity_type: String(row.activity_type ?? '').trim(),
@@ -209,6 +215,8 @@ export async function getGarminHealth(): Promise<GarminHealthRecord[]> {
       activity_id:   String(row.activity_id ?? '').trim(),
     }))
     .filter((row) => row.date)
+
+  return mergeAppleWorkouts(garmin, appleRows)
 }
 
 /**

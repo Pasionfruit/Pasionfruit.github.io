@@ -111,6 +111,30 @@ Requires `GARMIN_EMAIL` and `GARMIN_PASSWORD` in `config.env`.
 0 6 * * * cd /path/to/scripts/health-ingestion && .venv/bin/python ingest_garmin.py --api
 ```
 
+### Workouts from Apple Health (Hevy strength sessions, anything the watch missed)
+
+Hevy writes each workout to Apple Health. An iPhone Shortcut pushes them to the db Worker's `apple_workouts` table, and the site adds them to the training records (Workouts view, Training of the Day). A workout that matches a Garmin row on the same date with a similar duration (within 20%, at least 5 minutes) is dropped, so a session counts once. Hevy's Apple Health data is a summary: type, duration, energy. No sets or reps.
+
+One-time server setup (from `workers/db`):
+```bash
+npx wrangler d1 execute pasion-db --remote --file=workouts.sql
+npx wrangler secret put WORKOUT_INGEST_KEY      # any long random string, not the RingConn one
+npx wrangler deploy
+```
+
+Shortcut (Automation → Time of Day, **Run Immediately**; see the unlock note under RingConn). **Find Health Samples** → Type **Workouts**, Start Date is in the last 2 days. **Repeat with Each** result, then **Get Contents of URL**:
+- URL `https://db.abepasion.workers.dev/db/apple_workouts`, Method `POST`
+- Header `Authorization: Bearer <WORKOUT_INGEST_KEY>`
+- JSON body keys:
+  - `workout_id`: Start Date formatted `yyyy-MM-dd'T'HH:mm` (must be identical every run, it is the row's key)
+  - `date`: Start Date formatted `yyyy-MM-dd`
+  - `type`: Workout Type, `title`: Name if it has one
+  - `duration_min`: Duration in minutes
+  - `calories`: Active Energy in kcal, `distance_mi`: Distance in miles
+  - `avg_hr` / `max_hr`: leave out unless you add a heart-rate lookup
+
+Re-sending a workout replaces its row, so overlapping days are safe.
+
 ### Ringconn
 1. Open the Ringconn app → Profile → Export Data → CSV
 2. Transfer the file to your computer
@@ -136,6 +160,8 @@ Shortcut (Shortcuts app → Automation → Time of Day, e.g. 9:00, **Run Immedia
    - URL `https://db.abepasion.workers.dev/db/ringconn_health`, Method `POST`
    - Header `Authorization: Bearer <RINGCONN_INGEST_KEY>`
    - Request Body JSON with the keys `date` (`yyyy-MM-dd`), `sleep_duration_h`, `deep_sleep_h`, `rem_sleep_h`, `light_sleep_h`, `resting_hr`, `hrv`, `skin_temp_c`, `steps`, `calories`. Leave `sleep_score` out.
+
+**Unlock note:** iOS encrypts Health data while the phone is locked, so a Shortcut that fires on a locked phone reads nothing and posts blanks. Time the automation for when the phone is usually unlocked (or use a "when I open an app / charger connected" trigger), and check Shortcuts → Automation that it is still enabled.
 
 Each POST replaces the whole day's row, so send every metric each time, or a missing one blanks the stored value. Apple Health has no RingConn sleep score, so that column stays empty for these days.
 

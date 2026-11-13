@@ -123,6 +123,20 @@ const TABLES = {
     ],
     read: 'public',
     ingestKey: 'RINGCONN_INGEST_KEY',
+    keepExisting: true,
+  },
+  // One row per workout from the phone's Apple Health (workers/db/workouts.sql):
+  // Hevy strength sessions and anything else the Garmin watch did not record.
+  // Public to read, like ringconn_health; written with WORKOUT_INGEST_KEY, which
+  // can write this table only.
+  apple_workouts: {
+    key: 'workout_id',
+    columns: [
+      'workout_id', 'date', 'type', 'title', 'duration_min', 'distance_mi',
+      'calories', 'avg_hr', 'max_hr',
+    ],
+    read: 'public',
+    ingestKey: 'WORKOUT_INGEST_KEY',
   },
   // The 365 challenges' progress: one row per challenge that has been marked,
   // reworded or given a video (workers/db/challenges.sql). The list itself ships
@@ -255,9 +269,17 @@ export default {
         }
         return storageValue(table, column, body[column])
       })
-      await env.DB.prepare(
-        `INSERT OR REPLACE INTO ${name} (${table.columns.join(', ')}) VALUES (${table.columns.map(() => '?').join(', ')})`,
-      )
+      const insert = `INSERT INTO ${name} (${table.columns.join(', ')}) VALUES (${table.columns.map(() => '?').join(', ')})`
+      // keepExisting: an empty field means "the phone had nothing", not "clear it",
+      // so it never overwrites a stored value (a Shortcut run on a locked phone
+      // reads nothing and would otherwise blank a good day).
+      const statement = table.keepExisting
+        ? `${insert} ON CONFLICT(${keys.join(', ')}) DO UPDATE SET ${table.columns
+            .filter((column) => !keys.includes(column))
+            .map((column) => `${column} = CASE WHEN excluded.${column} <> '' THEN excluded.${column} ELSE ${name}.${column} END`)
+            .join(', ')}`
+        : insert.replace('INSERT INTO', 'INSERT OR REPLACE INTO')
+      await env.DB.prepare(statement)
         .bind(...values)
         .run()
 
