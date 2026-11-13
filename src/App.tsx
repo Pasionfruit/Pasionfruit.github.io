@@ -86,6 +86,7 @@ import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { MealPlanCard } from './admin/meals/MealPlanCard'
 import { ChallengesCard } from './challenges/ChallengesCard'
+import { DecisionMaker } from './challenges/DecisionMaker'
 import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
 import { AceLauncher } from './admin/ace/AceLauncher'
 import { GarminWellnessCard } from './admin/GarminCards'
@@ -393,6 +394,7 @@ function AdminBoredomPage({ googleIdToken }: { googleIdToken: string }) {
         idToken={googleIdToken}
         className="admin-card admin-card-wide"
       />
+      <DecisionMaker />
       <CiaraDashboard idToken={googleIdToken} />
     </div>
   )

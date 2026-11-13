@@ -231,7 +231,7 @@
 }
 
 .challenge-reel {
-  --reel-row: 2.4rem;
+  --reel-row: 3rem;
   position: relative;
   flex: 1 1 16rem;
   max-width: 28rem;
@@ -279,7 +279,6 @@
   height: var(--reel-row);
   padding-inline: 0.9rem;
   font-size: 0.9rem;
-  white-space: nowrap;
 }
 
 .challenge-reel-row.is-middle {
@@ -293,10 +292,33 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Long challenges wrap to two lines instead of being cut to one. */
 .challenge-reel-text {
+  display: -webkit-box;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 30rem) {
+  .challenge-reel {
+    --reel-row: 3.4rem;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .challenge-reel-row {
+    gap: 0.4rem;
+    padding-inline: 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  .challenge-reel-num {
+    min-width: 2rem;
+  }
 }
 
 /* Arrows either side of the middle row, pointing at the pick. */
@@ -318,6 +340,44 @@
 .challenge-reel-marker.is-right {
   right: -0.1rem;
   border-right: 0.6rem solid var(--text, #111);
+}
+
+.decision-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.decision-add .task-input {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.decision-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0 0 0.8rem;
+  padding: 0;
+  list-style: none;
+}
+
+.decision-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.2rem 0.15rem 0.65rem;
+  border: 1px solid var(--border, rgb(0 0 0 / 0.14));
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  font-size: 0.85rem;
+}
+
+.decision-result {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
 .challenge-wheel-controls {

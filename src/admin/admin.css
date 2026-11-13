@@ -1546,6 +1546,139 @@
   color: var(--danger);
 }
 
+/* The collapsed wellness card: one line on how things are moving. */
+.garmin-collapsed-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.garmin-collapsed-note.good {
+  color: var(--success);
+}
+
+.garmin-collapsed-note.bad {
+  color: var(--danger);
+}
+
+/* Health rating: A–F badges, and the score over time. */
+.garmin-grade {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.35rem;
+  border-radius: 0.6rem;
+  background: var(--text-muted);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.garmin-grade.is-small {
+  min-width: 1.35rem;
+  height: 1.35rem;
+  margin-right: 0.35rem;
+  padding: 0 0.25rem;
+  border-radius: 0.4rem;
+  font-size: 0.75rem;
+  vertical-align: baseline;
+}
+
+.garmin-grade.grade-a { background: #16a34a; }
+.garmin-grade.grade-b { background: #65a30d; }
+.garmin-grade.grade-c { background: #ca8a04; }
+.garmin-grade.grade-d { background: #ea580c; }
+.garmin-grade.grade-f { background: #dc2626; }
+
+.garmin-health {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.garmin-health-ratings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+}
+
+.garmin-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.garmin-rating > span {
+  display: grid;
+  line-height: 1.2;
+}
+
+.garmin-rating small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.garmin-trendline {
+  width: 100%;
+  height: auto;
+  max-height: 7rem;
+}
+
+.garmin-trend-grid {
+  stroke: var(--border);
+  stroke-dasharray: 2 3;
+}
+
+.garmin-trend-letter {
+  fill: var(--text-muted);
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.garmin-trend-path {
+  stroke: var(--page-accent, #14b8a6);
+}
+
+.garmin-trend-dot {
+  fill: var(--page-accent, #14b8a6);
+}
+
+.garmin-trend-chosen {
+  fill: var(--surface);
+  stroke: var(--page-accent, #14b8a6);
+  stroke-width: 1.5;
+}
+
+.garmin-health-note {
+  margin: 0;
+  font-size: 0.72rem;
+}
+
+/* A tile's last fortnight as a tiny line, coloured like its trend arrow. */
+.garmin-sparkline {
+  width: 100%;
+  max-width: 4rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  stroke: var(--text-muted);
+  fill: var(--text-muted);
+}
+
+.garmin-sparkline.good {
+  stroke: var(--success);
+  fill: var(--success);
+}
+
+.garmin-sparkline.bad {
+  stroke: var(--danger);
+  fill: var(--danger);
+}
+
 /* Sleep & recovery: day / week-average toggle and date picker. */
 .garmin-mode-toggle {
   display: inline-flex;
@@ -1628,19 +1761,49 @@
   cursor: default;
 }
 
-/* Phone header: the title and collapse button on top, then all three controls
-   (source, period, refresh) on one compact line. Collapsing the card hides that
-   line with the rest of the body, leaving just the title row. */
+/* Wellness header. Desktop: the title, then the source and period switches on the left
+   (or, collapsed, the one-line trend note), with the refresh and collapse buttons on the
+   right of the same line. */
+.garmin-wellness-card .admin-card-head {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.garmin-head-lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.garmin-wellness-card.is-collapsed .admin-card-head {
+  flex-wrap: nowrap;
+}
+
+.garmin-wellness-card.is-collapsed .garmin-head-lead {
+  flex: 1 1 0;
+}
+
+.garmin-wellness-card.is-collapsed .garmin-collapsed-note {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Phone header: collapsed, the title, the note and the collapse button share one line (the
+   note clamps to two lines rather than wrapping the header). Expanded, the title and collapse
+   button are on top, then the source and period switches with refresh on the line below. */
 @media (max-width: 48rem) {
   .garmin-wellness-card .admin-card-head {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.4rem;
   }
 
   .garmin-wellness-card .admin-card-head h3 {
-    grid-column: 1 / 3;
+    grid-column: 1;
     grid-row: 1;
   }
 
@@ -1656,19 +1819,32 @@
     height: 2rem;
   }
 
+  .garmin-wellness-card .garmin-head-lead {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .garmin-wellness-card:not(.is-collapsed) .garmin-head-lead {
+    display: grid;
+    grid-column: 1 / 3;
+    grid-row: 2;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .garmin-wellness-card.is-collapsed .garmin-collapsed-note {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .garmin-mode-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-row: 2;
     min-width: 0;
-  }
-
-  .garmin-mode-toggle[aria-label='Data source'] {
-    grid-column: 1;
-  }
-
-  .garmin-mode-toggle[aria-label='Averaging period'] {
-    grid-column: 2;
   }
 
   .garmin-mode-toggle button {
@@ -1684,11 +1860,6 @@
     min-height: 1.75rem;
     padding: 0.2rem 0.55rem;
     font-size: 0.7rem;
-  }
-
-  .garmin-wellness-card.is-collapsed .garmin-mode-toggle,
-  .garmin-wellness-card.is-collapsed .admin-card-actions > .secondary-action {
-    display: none;
   }
 
   .garmin-date-row {

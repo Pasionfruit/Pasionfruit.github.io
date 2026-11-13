@@ -4,15 +4,23 @@ import { getGarminWellness, getRingconnHealth } from '../data/sheets/repositorie
 import { todayKey } from '../data/todoist/dates'
 import type { GarminWellnessRecord, RingconnHealthRecord } from '../data/sheets/types'
 import {
+  dailyHealthScores,
   daysBetween,
   formatDayLabel,
   formatValue,
+  healthSeries,
+  isoWeekRating,
   resolveDate,
   summarise,
   toWeeklyAverages,
+  trendNote,
+  weekRating,
   weekStartKey,
+  type Grade,
+  type HealthPoint,
   type Metric,
   type MetricSummary,
+  type Rating,
 } from './garmin/wellness'
 
 const SLEEP_METRICS: Metric[] = [
@@ -232,6 +240,129 @@ function MetricGroups<Row extends { date: string }>({
   )
 }
 
+function GradeBadge({ grade, small = false }: { grade: Grade; small?: boolean }) {
+  return (
+    <span className={`garmin-grade grade-${grade.toLowerCase()}${small ? ' is-small' : ''}`} title={`Health rating ${grade}`}>
+      {grade}
+    </span>
+  )
+}
+
+const GRADE_LINES: { grade: Grade; at: number }[] = [
+  { grade: 'A', at: 90 },
+  { grade: 'B', at: 80 },
+  { grade: 'C', at: 70 },
+  { grade: 'D', at: 60 },
+]
+
+/** The health score over time, with the grade boundaries drawn so the line reads as A–F. */
+function HealthTrendLine({ points, selected }: { points: HealthPoint[]; selected: string }) {
+  if (points.length < 2) return null
+
+  const width = 320
+  const height = 96
+  const pad = { left: 16, right: 6, top: 6, bottom: 6 }
+  const low = Math.min(50, ...points.map((point) => point.score))
+  const high = 100
+  const x = (index: number) => pad.left + (index / (points.length - 1)) * (width - pad.left - pad.right)
+  const y = (score: number) => pad.top + ((high - score) / (high - low)) * (height - pad.top - pad.bottom)
+  const line = points.map((point, index) => `${x(index).toFixed(1)},${y(point.score).toFixed(1)}`).join(' ')
+  const chosen = points.findIndex((point) => point.label === selected)
+
+  return (
+    <svg
+      className="garmin-trendline"
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label={`Health rating over the last ${points.length} entries, from ${points[0].score} to ${points[points.length - 1].score}`}
+    >
+      {GRADE_LINES.filter((entry) => entry.at > low).map((entry) => (
+        <g key={entry.grade}>
+          <line x1={pad.left} x2={width - pad.right} y1={y(entry.at)} y2={y(entry.at)} className="garmin-trend-grid" />
+          <text x="2" y={y(entry.at) + 3} className="garmin-trend-letter">
+            {entry.grade}
+          </text>
+        </g>
+      ))}
+      <polyline points={line} className="garmin-trend-path" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={x(points.length - 1)} cy={y(points[points.length - 1].score)} r="3" className="garmin-trend-dot" />
+      {chosen >= 0 && chosen < points.length - 1 ? (
+        <circle cx={x(chosen)} cy={y(points[chosen].score)} r="3.5" className="garmin-trend-chosen" />
+      ) : null}
+    </svg>
+  )
+}
+
+/** Day and week A–F ratings, and the trendline under them. Nothing until two readings make a score. */
+function HealthRating({
+  mode,
+  day,
+  week,
+  series,
+  selected,
+}: {
+  mode: 'day' | 'week'
+  day: { score: number; grade: Grade } | null
+  week: Rating | null
+  series: HealthPoint[]
+  selected: string
+}) {
+  if (!day && !week && series.length === 0) return null
+
+  return (
+    <section className="garmin-health" aria-label="Health rating">
+      <div className="garmin-health-ratings">
+        {day ? (
+          <div className="garmin-rating">
+            <GradeBadge grade={day.grade} />
+            <span>
+              <strong>Day</strong>
+              <small>{day.score}/100</small>
+            </span>
+          </div>
+        ) : null}
+        {week ? (
+          <div className="garmin-rating">
+            <GradeBadge grade={week.grade} />
+            <span>
+              <strong>{mode === 'week' ? 'This week' : 'Week'}</strong>
+              <small>
+                {week.score}/100 · {week.days} day{week.days === 1 ? '' : 's'}
+              </small>
+            </span>
+          </div>
+        ) : null}
+      </div>
+      <HealthTrendLine points={series} selected={selected} />
+      <p className="sheets-meta garmin-health-note">
+        Average of sleep, HRV and resting HR against your own recent norm, steps, intensity minutes, stress and body
+        battery — whatever the source records. A 90+, B 80+, C 70+, D 60+.
+      </p>
+    </section>
+  )
+}
+
+/** A fortnight's readings as a tiny line, so a tile shows the shape and not just today's number. */
+function Sparkline({ values, tone }: { values: number[]; tone: 'good' | 'bad' | 'flat' }) {
+  if (values.length < 3) return null
+
+  const width = 64
+  const height = 18
+  const min = Math.min(...values)
+  const range = Math.max(...values) - min || 1
+  const points = values
+    .map((value, index) => `${((index / (values.length - 1)) * width).toFixed(1)},${(height - 2 - ((value - min) / range) * (height - 4)).toFixed(1)}`)
+    .join(' ')
+  const last = points.split(' ').at(-1)?.split(',') ?? ['0', '0']
+
+  return (
+    <svg className={`garmin-sparkline ${tone}`} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+      <polyline points={points} fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={last[0]} cy={last[1]} r="2" />
+    </svg>
+  )
+}
+
 function MetricGrid<Row extends { date: string }>({
   summaries,
 }: {
@@ -267,6 +398,9 @@ function MetricGrid<Row extends { date: string }>({
               {summary?.average !== null && summary ? `≈ ${formatValue(summary.average)} avg` : ''}
             </span>
           )}
+          {summary ? (
+            <Sparkline values={summary.series} tone={summary.good === null ? 'flat' : summary.good ? 'good' : 'bad'} />
+          ) : null}
           {summary?.carried ? (
             <span className="garmin-metric-from">from {formatDayLabel(summary.latest.date)}</span>
           ) : null}
@@ -415,28 +549,47 @@ function GarminCard({
   actions,
   className = '',
   defaultCollapsed = false,
+  collapsed,
+  onCollapsedChange,
+  note,
+  lead,
   children,
 }: {
   title: string
+  /** Controls on the right of the header, left of the collapse button. */
   actions?: ReactNode
   className?: string
   defaultCollapsed?: boolean
+  /** Controlled collapse state, for a card whose body remounts (the wellness source switch). */
+  collapsed?: boolean
+  onCollapsedChange?: (collapsed: boolean) => void
+  /** A one-line summary shown beside the collapse button while collapsed; the header's controls hide with it. */
+  note?: ReactNode
+  /** Controls on the left of the header, right after the title, while expanded. */
+  lead?: ReactNode
   children: ReactNode
 }) {
-  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
+  const [ownCollapsed, setOwnCollapsed] = useState(defaultCollapsed)
+  const isCollapsed = collapsed ?? ownCollapsed
+  const setIsCollapsed = (next: boolean) => (onCollapsedChange ?? setOwnCollapsed)(next)
 
   return (
     <article className={`info-card admin-card ${className}${isCollapsed ? ' is-collapsed' : ''}`.trim()}>
       <div className="admin-card-head">
         <h3>{title}</h3>
+        {isCollapsed ? (
+          note !== undefined ? <div className="garmin-head-lead">{note}</div> : null
+        ) : lead ? (
+          <div className="garmin-head-lead">{lead}</div>
+        ) : null}
         <div className="admin-card-actions">
-          {actions}
+          {isCollapsed && note !== undefined ? null : actions}
           <button
             type="button"
             className="section-collapse-btn"
             aria-expanded={!isCollapsed}
             aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${title}`}
-            onClick={() => setIsCollapsed((value) => !value)}
+            onClick={() => setIsCollapsed(!isCollapsed)}
           >
             <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
@@ -495,8 +648,11 @@ const SOURCE_LABELS: Record<WellnessSource, string> = { garmin: 'Garmin', ringco
  *
  * No date pill in the header — the date row under it already names the day.
  */
-export function GarminWellnessCard({ title }: { title: string }) {
+export function GarminWellnessCard({ title, defaultCollapsed = true }: { title: string; defaultCollapsed?: boolean }) {
   const [source, setSource] = useState<WellnessSource>('garmin')
+  // Held here, not in the panel: the panel remounts when the source switches, and the
+  // card should stay open (or shut) through that.
+  const [collapsed, setCollapsed] = useState(defaultCollapsed)
   const garmin = useGarminWellness()
   const ringconn = useRingconnHealth()
 
@@ -505,6 +661,8 @@ export function GarminWellnessCard({ title }: { title: string }) {
     <WellnessPanel
       key="garmin"
       title={title}
+      collapsed={collapsed}
+      onCollapsedChange={setCollapsed}
       source={source}
       onSource={setSource}
       data={garmin}
@@ -522,6 +680,8 @@ export function GarminWellnessCard({ title }: { title: string }) {
     <WellnessPanel
       key="ringconn"
       title={title}
+      collapsed={collapsed}
+      onCollapsedChange={setCollapsed}
       source={source}
       onSource={setSource}
       data={ringconn}
@@ -534,6 +694,8 @@ export function GarminWellnessCard({ title }: { title: string }) {
 
 function WellnessPanel<Row extends { date: string }>({
   title,
+  collapsed,
+  onCollapsedChange,
   source,
   onSource,
   data,
@@ -542,6 +704,8 @@ function WellnessPanel<Row extends { date: string }>({
   empty,
 }: {
   title: string
+  collapsed: boolean
+  onCollapsedChange: (collapsed: boolean) => void
   source: WellnessSource
   onSource: (source: WellnessSource) => void
   data: { rows: Row[]; isLoading: boolean; error: string; refresh: () => Promise<void> }
@@ -566,11 +730,46 @@ function WellnessPanel<Row extends { date: string }>({
     return index < 0 ? shown : shown.slice(index)
   }, [shown, activeDate])
 
+  // A 0–100 rating per day (A–F), from whatever the source records; see HEALTH_PARTS.
+  const scores = useMemo(() => dailyHealthScores(rows, todayKey()), [rows])
+
+  // The collapsed card says how things are moving in a line, against the newest day.
+  const note = useMemo(() => {
+    const newest = rows[0]?.date
+    if (!newest && isLoading) return { tone: 'none' as const, text: 'Loading…', grade: null, week: null }
+    if (!newest) return { tone: 'none' as const, text: error || 'No readings yet.', grade: null, week: null }
+
+    const trend = trendNote(rows, groups.flatMap((group) => group.metrics))
+    const gap = daysBetween(newest, todayKey())
+    // Only when the newest day has a rating of its own: an older day's grade beside this line would mislead.
+    const latest = scores[0]?.date === newest ? scores[0] : undefined
+    return {
+      ...trend,
+      text: gap > 0 ? `${trend.text} (as of ${formatDayLabel(newest)})` : trend.text,
+      grade: latest?.grade ?? null,
+      week: latest ? weekRating(scores, latest.date) : null,
+    }
+  }, [rows, groups, isLoading, error, scores])
+
+  // The rating for what the card is showing: that day and the week to it, or that week.
+  const dayScore = mode === 'day' ? scores.find((entry) => entry.date === activeDate) : undefined
+  const week = !activeDate ? null : mode === 'week' ? isoWeekRating(scores, activeDate) : weekRating(scores, activeDate)
+  const series = useMemo(() => healthSeries(scores, mode), [scores, mode])
+
   return (
     <GarminCard
       title={title}
       className="garmin-wellness-card"
-      actions={
+      collapsed={collapsed}
+      onCollapsedChange={onCollapsedChange}
+      note={
+        <p className={`garmin-collapsed-note ${note.tone}`} role="status">
+          {note.grade ? <GradeBadge grade={note.grade} small /> : null}
+          {note.week ? <span className="garmin-note-week">Week {note.week.grade} · </span> : null}
+          {note.text}
+        </p>
+      }
+      lead={
         <>
           <div className="garmin-mode-toggle" role="group" aria-label="Data source">
             {(Object.keys(SOURCE_LABELS) as WellnessSource[]).map((key) => (
@@ -603,9 +802,9 @@ function WellnessPanel<Row extends { date: string }>({
               Week avg
             </button>
           </div>
-          <RefreshButton onClick={() => void refresh()} busy={isLoading} />
         </>
       }
+      actions={<RefreshButton onClick={() => void refresh()} busy={isLoading} />}
     >
       <WellnessDateNav
         unit={mode === 'week' ? 'week' : 'day'}
@@ -615,6 +814,14 @@ function WellnessPanel<Row extends { date: string }>({
       />
 
       {mode === 'day' ? <SyncNote rows={rows} error={error} source={syncName} /> : null}
+
+      <HealthRating
+        mode={mode}
+        day={dayScore ? { score: dayScore.score, grade: dayScore.grade } : null}
+        week={week}
+        series={series}
+        selected={activeDate}
+      />
 
       <MetricGroups
         rows={visible}

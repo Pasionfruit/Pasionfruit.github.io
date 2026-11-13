@@ -32,7 +32,7 @@ hamburger menu. The top bar becomes an icon nav and `/` lands on Tasks.
 | Nav item | Route | Contents |
 | --- | --- | --- |
 | Calendar | `/admin/calendar` | The month and week ahead, with the weather. Opens on today with its events, meals and tasks showing; the day's tasks have the same add, edit, complete and delete controls as Upcoming on the task manager |
-| Boredom | `/admin/boredom` | Verse of the day (mark it read to fold it, or open the whole chapter), daily wellness (sleep & recovery), the 365 challenges, and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
+| Boredom | `/admin/boredom` | Verse of the day (mark it read to fold it, or open the whole chapter), daily wellness (starts collapsed as a one-line note beside the collapse button, with an A–F health grade and the trend; expand for a day and week A–F rating, a trendline, and sleep & recovery and activity with a two-week sparkline per metric), the 365 challenges (a slot-machine reel over every challenge), a decision maker (your own options on a slot-machine reel, kept on the device), and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
 | Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager. The page an admin starts on |
 | Training | `/admin/training` | Training of the Day on top, then the next event countdown, Garmin and Apple Health workouts, and the training log |
 | News | `/admin/news` | Local, City, Nation, International and Tech headlines, with a digest and Ask Ace on each article |

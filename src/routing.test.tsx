@@ -627,6 +627,7 @@ describe('admin routing', () => {
     expect(await screen.findByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
     expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
     expect(screen.getByRole('heading', { name: '365 Challenges' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Decision maker' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'WW + TG' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Local' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Training of the Day' })).toBeNull()
