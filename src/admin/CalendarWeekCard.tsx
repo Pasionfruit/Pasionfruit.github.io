@@ -9,38 +9,14 @@ import { Pager } from '../components/Pager'
 import { dayKey, eventDayKeys, eventTimeLabelForDay } from './calendarDays'
 import { getCalendarEvents, type CalendarEventRecord } from '../data/sheets/repositories'
 import type { ConnectionStatus } from './integrations/types'
-import { getActiveTasks } from '../data/todoist/repositories'
 import { dueDateKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
+import { useTodoistData } from '../tasks/useTodoistData'
+import { AddTaskForm, TaskList } from '../tasks/TaskList'
+import { sortByPriorityThenDue, withAncestors } from '../tasks/grouping'
 import { isFilled, useMealPlan } from './meals/mealPlan'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-const MONTH_STORAGE_KEY = 'admin-calendar-month'
-
-function readStoredMonth(): Date | null {
-  try {
-    const raw = window.localStorage.getItem(MONTH_STORAGE_KEY)
-    if (!raw) return null
-
-    const [year, month] = raw.split('-').map(Number)
-    if (!year || !month) return null
-
-    return new Date(year, month - 1, 1)
-  } catch {
-    return null
-  }
-}
-
-function writeStoredMonth(month: Date) {
-  try {
-    const year = month.getFullYear()
-    const monthNumber = String(month.getMonth() + 1).padStart(2, '0')
-    window.localStorage.setItem(MONTH_STORAGE_KEY, `${year}-${monthNumber}`)
-  } catch {
-    // Nothing to do — the view opens on today's month next visit instead.
-  }
-}
 
 function formatDayHeading(key: string) {
   const [year, month, day] = key.split('-').map(Number)
@@ -87,27 +63,28 @@ function getStatus(idToken: string): ConnectionStatus {
  * without horizontal scrolling, which the previous week-strip layout could not
  * do.
  *
- * The viewed month is remembered in localStorage, the same idea as the sliding
- * session token: reopening the app lands back where you left off instead of
- * snapping to today's month every time. Collapsing is remembered the same way,
- * so a card folded away on the daily dashboard stays folded. The events still
- * load while collapsed, so the count in the header stays current.
+ * It opens on today's month with today already selected, so arriving on the
+ * page shows what is on today. The day's tasks carry the same add, edit,
+ * complete and delete controls as the Upcoming view on the task manager.
  */
 export function CalendarWeekCard({
   title,
   idToken,
   weather,
+  todoistConfigured = false,
+  canEditTasks = false,
 }: {
   title: string
   idToken: string
   weather: WeatherHook
+  /** Whether a Todoist token is set; without one the day panel shows no tasks. */
+  todoistConfigured?: boolean
+  /** Whether this account may add, edit, complete and delete tasks. */
+  canEditTasks?: boolean
 }) {
   const status = getStatus(idToken)
 
   const [month, setMonth] = useState(() => {
-    const stored = readStoredMonth()
-    if (stored) return stored
-
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1)
   })
@@ -116,16 +93,15 @@ export function CalendarWeekCard({
   const [appleConfigured, setAppleConfigured] = useState(true)
   const [isLoading, setIsLoading] = useState(status.state === 'connected')
   // Todoist tasks, so a selected day shows what is due as well as what is booked.
-  const [tasks, setTasks] = useState<TodoistTask[]>([])
-  const [selectedDayKey, setSelectedDayKey] = useState<string | null>(null)
+  const store = useTodoistData(todoistConfigured)
+  const tasks = store.tasks
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+  // Today is selected on arrival, so the day's activity is on screen without a tap.
+  const [selectedDayKey, setSelectedDayKey] = useState<string | null>(() => dayKey(new Date()))
   // The radar and hourly forecast share the card with the month grid.
   const [page, setPage] = useState<'month' | 'radar' | 'hourly' | 'days'>('month')
 
   const monthLabel = month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
-
-  useEffect(() => {
-    writeStoredMonth(month)
-  }, [month])
 
   useEffect(() => {
     if (status.state !== 'connected') {
@@ -162,25 +138,6 @@ export function CalendarWeekCard({
       cancelled = true
     }
   }, [status.state, idToken, month])
-
-  useEffect(() => {
-    if (!import.meta.env.VITE_TODOIST_API_TOKEN?.trim()) {
-      return
-    }
-
-    let cancelled = false
-    getActiveTasks()
-      .then((rows) => {
-        if (!cancelled) setTasks(rows)
-      })
-      .catch(() => {
-        // The calendar still works without tasks.
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   const tasksByDay = useMemo(() => {
     const map: Record<string, TodoistTask[]> = {}
@@ -234,7 +191,10 @@ export function CalendarWeekCard({
   const selectedEvents = selectedDayKey ? (eventsByDay[selectedDayKey] ?? []) : []
   const mealPlan = useMealPlan()
   const selectedMeals = selectedDayKey ? (mealPlan[selectedDayKey] ?? []).filter(isFilled) : []
-  const selectedTasks = selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : []
+  const selectedTasks = useMemo(
+    () => sortByPriorityThenDue(withAncestors(tasks, selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : [])),
+    [tasks, tasksByDay, selectedDayKey],
+  )
 
   return (
     <article className="info-card admin-card admin-card-wide">
@@ -377,17 +337,33 @@ export function CalendarWeekCard({
                 </button>
               </div>
 
-              {selectedTasks.length > 0 ? (
+              {selectedTasks.length > 0 || (todoistConfigured && canEditTasks) ? (
                 <>
                   <h5 className="calendar-dialog-section">Tasks</h5>
-                  <ul className="admin-calendar-day-list">
-                    {selectedTasks.map((task) => (
-                      <li key={task.id} className="source-todoist">
-                        <span className="calendar-event-title">{task.content}</span>
-                        {dueDateKey(task) < todayKey ? <span className="calendar-event-source">Overdue</span> : null}
-                      </li>
-                    ))}
-                  </ul>
+                  {store.writeError ? (
+                    <p className="sheets-error" role="alert">
+                      {store.writeError}
+                    </p>
+                  ) : null}
+                  {selectedTasks.length > 0 ? (
+                    <TaskList
+                      tasks={selectedTasks}
+                      store={store}
+                      canEdit={canEditTasks}
+                      editingTaskId={editingTaskId}
+                      onEditToggle={setEditingTaskId}
+                      // Overdue work rolls onto today, so today's list shows each task's own date.
+                      showDate={selectedDayKey === todayKey}
+                      emptyMessage=""
+                      orderKey={`day:${selectedDayKey}`}
+                    />
+                  ) : null}
+                  <AddTaskForm
+                    store={store}
+                    canEdit={canEditTasks && todoistConfigured}
+                    defaultDueDate={selectedDayKey}
+                    editingTaskId={editingTaskId}
+                  />
                 </>
               ) : null}
 

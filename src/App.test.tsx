@@ -348,7 +348,7 @@ afterEach(() => {
 
 describe('site sections and dashboards', () => {
   it('floats the Ace launcher over admin pages, and nowhere for guests', async () => {
-    renderAdminPage('/admin/overview')
+    renderAdminPage('/admin/boredom')
     expect(await screen.findByRole('button', { name: 'Open Ace' })).toBeTruthy()
     // Ace is no longer a card on the home dashboard.
     expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()

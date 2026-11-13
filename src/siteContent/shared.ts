@@ -5,10 +5,10 @@ export type SectionId = 'experiences' | 'personal-sites' | 'gaming' | 'training'
  * The private dashboards, available only to the admin Google account.
  * 'tasks' is the signed-in landing page.
  */
-export type AdminDashboardId = 'content' | 'tasks' | 'calendar' | 'training' | 'overview'
+export type AdminDashboardId = 'boredom' | 'tasks' | 'calendar' | 'training' | 'news'
 
 /** Icon key for the admin top-bar nav, mapped to a component in App.tsx. */
-export type AdminIconId = 'content' | 'tasks' | 'calendar' | 'training' | 'overview'
+export type AdminIconId = 'boredom' | 'tasks' | 'calendar' | 'training' | 'news'
 
 export type PageCard = {
   title: string

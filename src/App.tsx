@@ -19,7 +19,7 @@ import {
   ExternalLink,
   BookOpen,
   Dumbbell,
-  LayoutDashboard,
+  Newspaper,
   List,
   ListChecks,
   Plus,
@@ -47,7 +47,6 @@ import {
   Routes,
   useLocation,
   useNavigate,
-  useSearchParams,
 } from 'react-router-dom'
 import { useRouteMeta } from './routeMeta'
 import { RouteErrorBoundary } from './RouteErrorBoundary'
@@ -296,9 +295,12 @@ function App() {
           <Route path="admin" element={<AdminGate isAdmin={isAdmin} />}>
             {/* Tasks is where an admin starts, so the old hub lands there. */}
             <Route index element={<Navigate replace to="/admin/tasks" />} />
-            <Route path="content" element={<AdminContentPage googleIdToken={googleIdToken} />} />
+            <Route path="boredom" element={<AdminBoredomPage googleIdToken={googleIdToken} />} />
             <Route path="tasks" element={<AdminTasksPage profile={profile} googleIdToken={googleIdToken} />} />
-            <Route path="calendar" element={<AdminCalendarPage googleIdToken={googleIdToken} />} />
+            <Route
+              path="calendar"
+              element={<AdminCalendarPage profile={profile} googleIdToken={googleIdToken} />}
+            />
             <Route
               path="training"
               element={<AdminTrainingPage profile={profile} googleIdToken={googleIdToken} />}
@@ -306,14 +308,12 @@ function App() {
             {/* The Journal page is gone. */}
             <Route path="personal" element={<Navigate replace to="/admin/tasks" />} />
             <Route path="journal" element={<Navigate replace to="/admin/tasks" />} />
-            <Route
-              path="overview"
-              element={<AdminOverviewPage googleIdToken={googleIdToken} />}
-            />
-            {/* Health and News became tabs of Overview; WW + TG moved onto Content. */}
-            <Route path="health" element={<Navigate replace to="/admin/overview?tab=health" />} />
-            <Route path="news" element={<Navigate replace to="/admin/overview?tab=news" />} />
-            <Route path="ciara" element={<Navigate replace to="/admin/content" />} />
+            <Route path="news" element={<AdminNewsPage googleIdToken={googleIdToken} />} />
+            {/* Overview came back as News; its Health tab and WW + TG live on Boredom. */}
+            <Route path="overview" element={<Navigate replace to="/admin/news" />} />
+            {['health', 'ciara', 'content'].map((old) => (
+              <Route key={old} path={old} element={<Navigate replace to="/admin/boredom" />} />
+            ))}
           </Route>
 
           <Route
@@ -370,22 +370,23 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/admin/content`: the verse of the day, the 365 challenges and
- * WW + TG. Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card
- * here — it floats over every admin page (see AceLauncher).
+ * What the admin sees at `/admin/boredom`: the verse of the day, daily wellness, the 365
+ * challenges and WW + TG. Tasks and calendar are their own pages (see
+ * AdminBarePage). Ace is not a card here — it floats over every admin page (see AceLauncher).
  */
-function AdminContentPage({ googleIdToken }: { googleIdToken: string }) {
+function AdminBoredomPage({ googleIdToken }: { googleIdToken: string }) {
   return (
     /*
      * This page renders its own shell rather than going through AdminPage,
      * so it has to set --page-accent itself — without it, accented controls
-     * fall back to the global purple instead of the Content dashboard's blue.
+     * fall back to the global purple instead of the Boredom dashboard's blue.
      */
     <div
       className="admin-page admin-home"
-      style={{ '--page-accent': adminDashboardsById.content.accent } as CSSProperties}
+      style={{ '--page-accent': adminDashboardsById.boredom.accent } as CSSProperties}
     >
       <VerseOfTheDayCard title="Verse of the day" />
+      <GarminWellnessCard title="Daily wellness" />
       <ChallengesCard
         title="365 Challenges"
         canEdit
@@ -420,11 +421,17 @@ function AdminTasksPage({ profile, googleIdToken }: { profile: UserProfile; goog
   )
 }
 
-function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
+function AdminCalendarPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   const weather = useOutletContext<WeatherHook>()
   return (
     <AdminBarePage dashboard="calendar">
-      <CalendarWeekCard title="Calendar and Weather" idToken={googleIdToken} weather={weather} />
+      <CalendarWeekCard
+        title="Calendar and Weather"
+        idToken={googleIdToken}
+        weather={weather}
+        todoistConfigured={isTodoistConfigured()}
+        canEditTasks={profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL}
+      />
       <MealPlanCard title="Meal plan" />
     </AdminBarePage>
   )
@@ -448,47 +455,22 @@ function AdminTrainingPage({ profile, googleIdToken }: { profile: UserProfile; g
   )
 }
 
-/**
- * Health (daily wellness and sleep) and News under one nav item. Health is the default;
- * `?tab=news` opens the other.
- */
-function AdminOverviewPage({ googleIdToken }: { googleIdToken: string }) {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tab = searchParams.get('tab') === 'news' ? 'news' : 'health'
-
+/** The headlines: local, city, national, international and tech. */
+function AdminNewsPage({ googleIdToken }: { googleIdToken: string }) {
   return (
-    <AdminPage meta={adminDashboardsById.overview}>
-      <div className="experience-toggle" role="tablist" aria-label="Overview sections">
-        {(['health', 'news'] as const).map((id) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={tab === id}
-            className={`experience-toggle-btn ${tab === id ? 'active' : ''}`}
-            onClick={() => setSearchParams(id === 'health' ? {} : { tab: id }, { replace: true })}
-          >
-            {id === 'health' ? 'Health' : 'News'}
-          </button>
-        ))}
-      </div>
-
-      {tab === 'health' ? (
-        <GarminWellnessCard title="Daily wellness" />
-      ) : (
-        <NewsDashboard idToken={googleIdToken} />
-      )}
+    <AdminPage meta={adminDashboardsById.news}>
+      <NewsDashboard idToken={googleIdToken} />
     </AdminPage>
   )
 }
 
 /** Minimal line icons for the admin top bar, keyed off AdminDashboardMeta.icon. */
 const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
-  content: BookOpen,
+  boredom: BookOpen,
   tasks: ListChecks,
   calendar: CalendarDays,
   training: Dumbbell,
-  overview: LayoutDashboard,
+  news: Newspaper,
 }
 
 function AdminNav() {

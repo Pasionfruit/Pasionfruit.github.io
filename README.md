@@ -31,13 +31,13 @@ hamburger menu. The top bar becomes an icon nav and `/` lands on Tasks.
 
 | Nav item | Route | Contents |
 | --- | --- | --- |
-| Calendar | `/admin/calendar` | The month and week ahead, with the weather |
-| Content | `/admin/content` | Verse of the day (mark it read to fold it, or open the whole chapter), the 365 challenges, and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
-| Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager. The middle of the bar and the page an admin starts on |
+| Calendar | `/admin/calendar` | The month and week ahead, with the weather. Opens on today with its events, meals and tasks showing; the day's tasks have the same add, edit, complete and delete controls as Upcoming on the task manager |
+| Boredom | `/admin/boredom` | Verse of the day (mark it read to fold it, or open the whole chapter), daily wellness (sleep & recovery), the 365 challenges, and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
+| Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager. The page an admin starts on |
 | Training | `/admin/training` | Training of the Day on top, then the next event countdown, Garmin and Apple Health workouts, and the training log |
-| Overview | `/admin/overview` | Two tabs: Health (daily wellness with sleep & recovery; the default) and News (`?tab=news`) |
+| News | `/admin/news` | Local, City, Nation, International and Tech headlines, with a digest and Ask Ace on each article |
 
-`/` and `/admin` redirect an admin to Tasks. `/admin/journal` and `/admin/personal` (the removed Journal page) also land on Tasks. `/training` redirects to Training, `/admin/health` to Overview's Health tab, `/admin/news` to its News tab, and `/admin/ciara` to Content. The
+`/` and `/admin` redirect an admin to Tasks. `/admin/journal` and `/admin/personal` (the removed Journal page) also land on Tasks. `/training` redirects to Training, `/admin/overview` to News, and the retired Health, Content and WW + TG URLs (`/admin/health`, `/admin/content`, `/admin/ciara`) to Boredom. The
 Finance, Work and System dashboards were removed; their old URLs land on Tasks.
 
 Tasks and Calendar are modular pages: each holds one module with no page

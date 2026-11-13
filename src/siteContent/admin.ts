@@ -4,9 +4,9 @@ import type { AdminDashboardId, AdminDashboardMeta } from './shared'
  * The admin nav. Order here drives the icon bar in the top bar — there is no
  * hamburger menu and no section list once you are signed in as admin.
  *
- * Tasks sits in the middle of the bar and is where an admin lands. Content keeps
- * the verse, the 365 challenges and WW + TG; Training has the day's training on
- * top of the data and the log; Overview holds Health and News as tabs.
+ * Tasks sits in the middle and is where an admin lands. Boredom keeps the verse,
+ * daily wellness, the 365 challenges and WW + TG; Training has the day's training
+ * on top of the data and the log; News is the headlines.
  */
 export const adminDashboards: AdminDashboardMeta[] = [
   {
@@ -19,13 +19,13 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Schedule',
   },
   {
-    id: 'content',
-    title: 'Content',
-    path: '/admin/content',
-    icon: 'content',
-    summary: 'Verse of the day, the 365 challenges, and WW + TG',
+    id: 'boredom',
+    title: 'Boredom',
+    path: '/admin/boredom',
+    icon: 'boredom',
+    summary: 'Verse of the day, daily wellness, the 365 challenges, and WW + TG',
     accent: '#00cccc',
-    eyebrow: 'Daily driver',
+    eyebrow: 'For a slow moment',
   },
   {
     id: 'tasks',
@@ -46,13 +46,13 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Fitness',
   },
   {
-    id: 'overview',
-    title: 'Overview',
-    path: '/admin/overview',
-    icon: 'overview',
-    summary: 'Health data and the news headlines',
+    id: 'news',
+    title: 'News',
+    path: '/admin/news',
+    icon: 'news',
+    summary: 'Local, city, national, international and tech headlines',
     accent: '#14b8a6',
-    eyebrow: 'Health and news',
+    eyebrow: 'Headlines',
   },
 ]
 

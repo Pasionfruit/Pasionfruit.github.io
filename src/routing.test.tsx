@@ -490,12 +490,9 @@ describe('admin routing', () => {
     expect(hrefs).toEqual(adminDashboards.map((dashboard) => dashboard.path))
   })
 
-  it.each([
-    ['/admin/training', 'Training'],
-    ['/admin/overview', 'Overview'],
-  ])('renders %s for the admin account', (path, title) => {
-    renderAt(path, ADMIN_EMAIL)
-    expect(pageTitle()).toBe(title)
+  it('renders /admin/training for the admin account', () => {
+    renderAt('/admin/training', ADMIN_EMAIL)
+    expect(pageTitle()).toBe('Training')
   })
 
   it.each(['/admin/finance', '/admin/work', '/admin/system', '/finances', '/mrpasionfruit/finances'])(
@@ -510,8 +507,8 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    // Tasks sits in the middle; Health and News share Overview, WW + TG lives on Content.
-    expect(labels).toEqual(['Calendar', 'Content', 'Tasks', 'Training', 'Overview'])
+    // Tasks is in the middle; wellness and WW + TG live on Boredom, the headlines on News.
+    expect(labels).toEqual(['Calendar', 'Boredom', 'Tasks', 'Training', 'News'])
   })
 
   it.each(['/admin/journal', '/admin/personal'])('sends the removed Journal page %s to Tasks', async (path) => {
@@ -597,29 +594,25 @@ describe('admin routing', () => {
     expect(await screen.findByText('Personal records arrive with the next Garmin sync.')).toBeTruthy()
   })
 
-  it('puts Health and News on Overview tabs, and the old URLs land there', async () => {
-    const user = userEvent.setup()
-    renderAt('/admin/overview', ADMIN_EMAIL)
-    expect(pageTitle()).toBe('Overview')
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Health', 'News'])
-    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Local' })).toBeNull()
-
-    await user.click(screen.getByRole('tab', { name: 'News' }))
-    expect(await screen.findByRole('heading', { name: 'Local' })).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Training' })).toBeNull()
-    cleanup()
-
+  it('brings Overview back as News, with the headlines', async () => {
     renderAt('/admin/news', ADMIN_EMAIL)
-    expect(pageTitle()).toBe('Overview')
+    expect(pageTitle()).toBe('News')
     expect(await screen.findByRole('heading', { name: 'Local' })).toBeTruthy()
     cleanup()
 
-    renderAt('/admin/health', ADMIN_EMAIL)
-    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
+    renderAt('/admin/overview', ADMIN_EMAIL)
+    expect(pageTitle()).toBe('News')
   })
 
-  it('shows WW + TG at the bottom of Content and sends /admin/ciara there', async () => {
+  it.each(['/admin/health', '/admin/content', '/admin/ciara'])(
+    'sends the retired %s to Boredom',
+    async (path) => {
+      renderAt(path, ADMIN_EMAIL)
+      expect(await screen.findByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
+    },
+  )
+
+  it('shows WW + TG below the challenges on Boredom and sends /admin/ciara there', async () => {
     renderAt('/admin/ciara', ADMIN_EMAIL)
 
     const ciara = await screen.findByRole('heading', { name: 'WW + TG' })
@@ -628,12 +621,14 @@ describe('admin routing', () => {
     expect(screen.queryByRole('heading', { name: 'Chores' })).toBeNull()
   })
 
-  it('keeps Content to the verse, the challenges and WW + TG: the training moved to Training', async () => {
-    renderAt('/admin/content', ADMIN_EMAIL)
+  it('puts the verse, daily wellness, the challenges and WW + TG on Boredom, with no news and no training', async () => {
+    renderAt('/admin/boredom', ADMIN_EMAIL)
 
     expect(await screen.findByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
     expect(screen.getByRole('heading', { name: '365 Challenges' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'WW + TG' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Local' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Training of the Day' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Daily wellness', level: 3 })).toBeNull()
   })
 })

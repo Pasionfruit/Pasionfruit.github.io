@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const calendarMocks = vi.hoisted(() => ({
@@ -9,8 +9,22 @@ const calendarMocks = vi.hoisted(() => ({
 
 vi.mock('../data/sheets/repositories', () => calendarMocks)
 
+const todoistMocks = vi.hoisted(() => ({
+  getActiveTasks: vi.fn(),
+  getProjects: vi.fn(),
+  getSections: vi.fn(),
+  createTaskDetailed: vi.fn(),
+  updateTask: vi.fn(),
+  rescheduleTask: vi.fn(),
+  closeTask: vi.fn(),
+  deleteTask: vi.fn(),
+}))
+
+vi.mock('../data/todoist/repositories', () => todoistMocks)
+
 import { CalendarWeekCard } from './CalendarWeekCard'
 import type { WeatherHook } from '../weather/useWeather'
+import { addDaysToKey, todayKey } from '../data/todoist/dates'
 
 // No location yet: the radar and hourly pages show their waiting messages.
 const noWeather: WeatherHook = {
@@ -29,7 +43,29 @@ beforeEach(() => {
   window.localStorage.clear()
   vi.stubEnv('VITE_SHEETS_API_BASE_URL', 'https://script.google.com/macros/s/test/exec')
   calendarMocks.getCalendarEvents.mockResolvedValue({ events: [], errors: [], appleConfigured: true })
+  todoistMocks.getActiveTasks.mockResolvedValue([])
+  todoistMocks.getProjects.mockResolvedValue([{ id: 'proj-1', name: 'Inbox', is_inbox_project: true, child_order: 0 }])
+  todoistMocks.getSections.mockResolvedValue([])
+  todoistMocks.closeTask.mockResolvedValue(undefined)
+  todoistMocks.createTaskDetailed.mockResolvedValue(task({ id: 'new-1', content: 'Fresh task' }))
 })
+
+function task(overrides: Record<string, unknown>) {
+  return {
+    id: 'task-1',
+    parent_id: null,
+    project_id: 'proj-1',
+    section_id: null,
+    content: 'A task',
+    description: '',
+    labels: [],
+    priority: 4,
+    is_completed: false,
+    child_order: 0,
+    due: null,
+    ...overrides,
+  }
+}
 
 afterEach(() => {
   cleanup()
@@ -49,13 +85,84 @@ describe('CalendarWeekCard', () => {
     const user = userEvent.setup()
     render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
 
-    const grid = await screen.findByLabelText('Calendar view')
-    await user.click(grid.querySelector('button')!)
+    await screen.findByLabelText('Calendar view')
 
+    // Today is already open on arrival.
     expect(screen.queryByRole('dialog')).toBeNull()
     expect(screen.getByText('Nothing scheduled.')).toBeTruthy()
     await user.click(screen.getByRole('button', { name: 'Close' }))
     expect(screen.queryByText('Nothing scheduled.')).toBeNull()
+  })
+
+  it('opens on today, showing the day\'s activity without a tap', async () => {
+    const today = todayKey()
+    calendarMocks.getCalendarEvents.mockResolvedValue({
+      events: [
+        {
+          id: 'e1',
+          source: 'google',
+          title: 'Dentist',
+          start: `${today}T09:00:00`,
+          end: `${today}T10:00:00`,
+          allDay: false,
+          location: '',
+          calendarName: 'Personal',
+        },
+      ],
+      errors: [],
+      appleConfigured: true,
+    })
+    render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} />)
+
+    expect(await screen.findByText('Dentist')).toBeTruthy()
+    const todayCell = (await screen.findByLabelText('Calendar view')).querySelector('.is-today')
+    expect(todayCell?.getAttribute('aria-pressed')).toBe('true')
+  })
+
+  it('gives the selected day the same task controls as Upcoming: add, complete', async () => {
+    const user = userEvent.setup()
+    const today = todayKey()
+    todoistMocks.getActiveTasks.mockResolvedValue([
+      task({ id: 'today-1', content: 'Standup notes', priority: 2, due: { date: today } }),
+      task({ id: 'later-1', content: 'Quarterly review', due: { date: addDaysToKey(today, 1) } }),
+    ])
+    render(
+      <CalendarWeekCard
+        title="Calendar and Weather"
+        idToken="token"
+        weather={noWeather}
+        todoistConfigured
+        canEditTasks
+      />,
+    )
+
+    expect(await screen.findByText('Standup notes')).toBeTruthy()
+    expect(screen.queryByText('Quarterly review')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: /Add task/ }))
+    await user.type(screen.getByLabelText('New task name'), 'Fresh task')
+    // The new task defaults to the selected day.
+    expect((screen.getByLabelText('New task due date') as HTMLInputElement).value).toBe(today)
+    await user.click(screen.getByRole('button', { name: 'Add task' }))
+    await waitFor(() =>
+      expect(todoistMocks.createTaskDetailed).toHaveBeenCalledWith(
+        expect.objectContaining({ content: 'Fresh task', dueDate: today }),
+      ),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Complete Standup notes' }))
+    await waitFor(() => expect(todoistMocks.closeTask).toHaveBeenCalledWith('today-1'))
+  })
+
+  it('shows tasks read-only, with no add form, when the account cannot edit', async () => {
+    todoistMocks.getActiveTasks.mockResolvedValue([
+      task({ id: 'today-1', content: 'Standup notes', due: { date: todayKey() } }),
+    ])
+    render(<CalendarWeekCard title="Calendar and Weather" idToken="token" weather={noWeather} todoistConfigured />)
+
+    expect(await screen.findByText('Standup notes')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /Add task/ })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Complete Standup notes' })).toHaveProperty('disabled', true)
   })
 
   it('shows the radar and hourly forecast as pages of the month view', async () => {
