@@ -4,20 +4,11 @@ import type { AdminDashboardId, AdminDashboardMeta } from './shared'
  * The admin nav. Order here drives the icon bar in the top bar — there is no
  * hamburger menu and no section list once you are signed in as admin.
  *
- * Home sits in the middle of the bar. It keeps the verse, training and
- * WW + TG; tasks and calendar each get a bare page of their own, and Overview
- * holds Health and News as tabs.
+ * Tasks sits in the middle of the bar and is where an admin lands. Content keeps
+ * the verse, the 365 challenges and WW + TG; Training has the day's training on
+ * top of the data and the log; Overview holds Health and News as tabs.
  */
 export const adminDashboards: AdminDashboardMeta[] = [
-  {
-    id: 'tasks',
-    title: 'Tasks',
-    path: '/admin/tasks',
-    icon: 'tasks',
-    summary: 'Tasks of the day from Todoist',
-    accent: '#00cccc',
-    eyebrow: 'Todoist',
-  },
   {
     id: 'calendar',
     title: 'Calendar',
@@ -28,22 +19,31 @@ export const adminDashboards: AdminDashboardMeta[] = [
     eyebrow: 'Schedule',
   },
   {
-    id: 'home',
-    title: 'Home',
-    path: '/',
-    icon: 'home',
-    summary: "Verse of the day, today's training, and WW + TG",
+    id: 'content',
+    title: 'Content',
+    path: '/admin/content',
+    icon: 'content',
+    summary: 'Verse of the day, the 365 challenges, and WW + TG',
     accent: '#00cccc',
     eyebrow: 'Daily driver',
   },
   {
-    id: 'personal',
-    title: 'Journal',
-    path: '/admin/personal',
-    icon: 'personal',
-    summary: 'Journal entries with gratitude',
-    accent: '#a855f7',
-    eyebrow: 'Writing',
+    id: 'tasks',
+    title: 'Tasks',
+    path: '/admin/tasks',
+    icon: 'tasks',
+    summary: 'Tasks of the day from Todoist',
+    accent: '#00cccc',
+    eyebrow: 'Todoist',
+  },
+  {
+    id: 'training',
+    title: 'Training',
+    path: '/admin/training',
+    icon: 'training',
+    summary: "Today's training, workouts, and the training log",
+    accent: '#f97316',
+    eyebrow: 'Fitness',
   },
   {
     id: 'overview',

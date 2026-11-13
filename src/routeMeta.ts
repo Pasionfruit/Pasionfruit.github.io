@@ -41,12 +41,6 @@ const ROUTE_META: Record<string, RouteMeta> = {
     ads: false,
     index: false,
   },
-  '/admin/journal': {
-    title: `Journal — ${SITE_NAME}`,
-    description: 'Private journal.',
-    ads: false,
-    index: false,
-  },
   '/admin/training': {
     title: `Training — ${SITE_NAME}`,
     description: 'Private training and health data dashboard.',

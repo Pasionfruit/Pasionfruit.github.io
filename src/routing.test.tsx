@@ -425,18 +425,23 @@ describe('guest routing', () => {
 })
 
 describe('admin routing', () => {
-  it('lands the admin on the daily dashboard at /', async () => {
+  it('lands the admin on Tasks at /', async () => {
     renderAt('/', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
     // Ace floats over the page rather than taking a card on it.
     expect(screen.getByRole('button', { name: 'Open Ace' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Assistant Ace' })).toBeNull()
-    // Tasks and calendar moved to pages of their own; the inbox was removed.
-    expect(screen.queryByRole('heading', { name: 'Tasks of the Day' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Inbox' })).toBeNull()
-    expect(screen.getByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Verse of the day' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Calendar and Weather' })).toBeNull()
+  })
+
+  it('puts Tasks in the middle of the nav', () => {
+    renderAt('/', ADMIN_EMAIL)
+
+    const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
+    expect(labels[Math.floor(labels.length / 2)]).toBe('Tasks')
   })
 
   it.each([
@@ -486,7 +491,7 @@ describe('admin routing', () => {
   })
 
   it.each([
-    ['/admin/personal', 'Journal'],
+    ['/admin/training', 'Training'],
     ['/admin/overview', 'Overview'],
   ])('renders %s for the admin account', (path, title) => {
     renderAt(path, ADMIN_EMAIL)
@@ -497,7 +502,7 @@ describe('admin routing', () => {
     'sends the removed dashboard %s back to home',
     async (path) => {
       renderAt(path, ADMIN_EMAIL)
-      expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
+      expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
     },
   )
 
@@ -505,32 +510,30 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    // Home sits in the middle; Health and News share Overview, WW + TG lives on Home.
-    expect(labels).toEqual(['Tasks', 'Calendar', 'Home', 'Journal', 'Overview'])
+    // Tasks sits in the middle; Health and News share Overview, WW + TG lives on Content.
+    expect(labels).toEqual(['Calendar', 'Content', 'Tasks', 'Training', 'Overview'])
   })
 
-  it.each([
-    ['/admin/journal', 'Journal'],
-    ['/admin/training', 'Overview'],
-  ])('redirects the renamed route %s to %s', (path, title) => {
+  it.each(['/admin/journal', '/admin/personal'])('sends the removed Journal page %s to Tasks', async (path) => {
     renderAt(path, ADMIN_EMAIL)
-    expect(pageTitle()).toBe(title)
+    expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
   })
 
-  it('folds /admin back into the home dashboard', async () => {
+  it('folds /admin into Tasks', async () => {
     renderAt('/admin', ADMIN_EMAIL)
-    expect(await screen.findByRole('heading', { name: 'Training of the Day' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Tasks of the Day' })).toBeTruthy()
   })
 
-  it('sends the retired /training route to Overview', () => {
+  it('sends the retired /training route to the Training page', () => {
     renderAt('/training', ADMIN_EMAIL)
-    expect(pageTitle()).toBe('Overview')
+    expect(pageTitle()).toBe('Training')
   })
 
-  it('links the weekly reset from home and the full task manager from the Tasks page', async () => {
-    renderAt('/', ADMIN_EMAIL)
-    const homeHrefs = [...document.querySelectorAll('.admin-quick-link')].map((link) => link.getAttribute('href'))
-    expect(homeHrefs).toEqual(['/weekly-reset'])
+  it('links the weekly reset from Training and the full task manager from the Tasks page', async () => {
+    renderAt('/admin/training', ADMIN_EMAIL)
+    await screen.findByRole('heading', { name: 'Training of the Day' })
+    const trainingHrefs = [...document.querySelectorAll('.admin-quick-link')].map((link) => link.getAttribute('href'))
+    expect(trainingHrefs).toEqual(['/weekly-reset'])
     cleanup()
 
     renderAt('/admin/tasks', ADMIN_EMAIL)
@@ -557,37 +560,31 @@ describe('admin routing', () => {
     expect(within(tasksHeader).queryByRole('link', { name: 'Weekly reset' })).toBeNull()
 
     cleanup()
-    renderAt('/', ADMIN_EMAIL)
+    renderAt('/admin/training', ADMIN_EMAIL)
     const trainingHeader = await headerOf('Training of the Day')
     const reset = within(trainingHeader).getByRole('link', { name: 'Weekly reset' })
     expect(reset.textContent).toBe('')
     expect(reset.getAttribute('href')).toBe('/weekly-reset')
   })
 
-  it('keeps the Training tab to workouts and puts daily wellness (sleep) on Health: no Milestones', async () => {
-    renderAt('/admin/overview', ADMIN_EMAIL)
+  it('puts Training of the Day at the top of the Training page, above the workouts: no Milestones', async () => {
+    renderAt('/admin/training', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Training' })).toBeTruthy()
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
-      'Training',
-      'Health',
-      'News',
-      'Workouts',
-      'Runs',
-      'Swims',
-      'Bikes',
-    ])
+    const today = await screen.findByRole('heading', { name: 'Training of the Day' })
+    const workouts = await screen.findByRole('tab', { name: 'Workouts' })
+    expect(today.compareDocumentPosition(workouts) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const tabs = screen.getAllByRole('tab').map((tab) => tab.textContent)
+    expect(tabs).toEqual(expect.arrayContaining(['Workouts', 'Runs', 'Swims', 'Bikes']))
+    expect(tabs).not.toContain('Health')
+    expect(tabs).not.toContain('News')
     expect(screen.queryByRole('heading', { name: 'Milestones' })).toBeNull()
-    // Sleep & recovery has its own Health tab, not the Training one.
+    // Sleep & recovery lives on Overview's Health tab, not here.
     expect(screen.queryByRole('heading', { name: 'Daily wellness', level: 3 })).toBeNull()
-    await userEvent.setup().click(screen.getByRole('tab', { name: 'Health' }))
-    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Training Log' })).toBeNull()
   })
 
   it('switches the Training Log between its tiles and the PR board', async () => {
     const user = userEvent.setup()
-    renderAt('/admin/overview', ADMIN_EMAIL)
+    renderAt('/admin/training', ADMIN_EMAIL)
 
     const tiles = await screen.findByRole('button', { name: 'Tiles' })
     const prs = screen.getByRole('button', { name: 'PRs' })
@@ -600,11 +597,12 @@ describe('admin routing', () => {
     expect(await screen.findByText('Personal records arrive with the next Garmin sync.')).toBeTruthy()
   })
 
-  it('puts Training, Health and News on Overview tabs, and the old URLs land there', async () => {
+  it('puts Health and News on Overview tabs, and the old URLs land there', async () => {
     const user = userEvent.setup()
-    renderAt('/admin/training', ADMIN_EMAIL)
+    renderAt('/admin/overview', ADMIN_EMAIL)
     expect(pageTitle()).toBe('Overview')
-    expect(await screen.findByRole('heading', { name: 'Training' })).toBeTruthy()
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Health', 'News'])
+    expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Local' })).toBeNull()
 
     await user.click(screen.getByRole('tab', { name: 'News' }))
@@ -621,7 +619,7 @@ describe('admin routing', () => {
     expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
   })
 
-  it('shows WW + TG at the bottom of Home and sends /admin/ciara there', async () => {
+  it('shows WW + TG at the bottom of Content and sends /admin/ciara there', async () => {
     renderAt('/admin/ciara', ADMIN_EMAIL)
 
     const ciara = await screen.findByRole('heading', { name: 'WW + TG' })
@@ -630,12 +628,12 @@ describe('admin routing', () => {
     expect(screen.queryByRole('heading', { name: 'Chores' })).toBeNull()
   })
 
-  it('keeps Personal to the entries, with the verse of the day on Home', async () => {
-    renderAt('/admin/personal', ADMIN_EMAIL)
+  it('keeps Content to the verse, the challenges and WW + TG: the training moved to Training', async () => {
+    renderAt('/admin/content', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Entries' })).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Verse of the day' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Mood', level: 3 })).toBeNull()
+    expect(await screen.findByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: '365 Challenges' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Training of the Day' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Daily wellness', level: 3 })).toBeNull()
   })
 })

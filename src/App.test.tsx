@@ -89,7 +89,7 @@ function eventDateInDays(days: number) {
 }
 
 function renderTrainingPage(email = 'pasionabe@gmail.com') {
-  return renderAdminPage('/admin/overview', email)
+  return renderAdminPage('/admin/training', email)
 }
 
 function renderAdminTasksPage(email = 'pasionabe@gmail.com') {
@@ -608,7 +608,7 @@ describe('site sections and dashboards', () => {
 
   async function openTrainingTab() {
     const user = userEvent.setup()
-    renderAdminPage('/')
+    renderAdminPage('/admin/training')
     const heading = await screen.findByRole('heading', { name: 'Training of the Day' })
     const card = heading.closest('article')
     if (!card) {
@@ -634,13 +634,15 @@ describe('site sections and dashboards', () => {
       toRow({ id: '200', title: 'Treadmill Running', minutes: '40' }),
       toRow({ id: '201', title: 'Pool Swim', minutes: '30' }),
     ])
+    // The Training page's other cards load Garmin data too; only the refresh is counted here.
+    const callsBefore = repoMocks.getGarminHealth.mock.calls.length
     await user.click(within(card).getByRole('button', { name: 'Refresh from Garmin' }))
 
     await waitFor(() => {
       const [, , refreshedEvening] = within(card).getAllByRole('row')
       expect(within(refreshedEvening).getByText('Pool Swim · 30 min')).toBeTruthy()
     })
-    expect(repoMocks.getGarminHealth).toHaveBeenCalledTimes(2)
+    expect(repoMocks.getGarminHealth).toHaveBeenCalledTimes(callsBefore + 1)
   })
 
   it('fills planned slots in the order Garmin recorded them, skipping rest days', async () => {

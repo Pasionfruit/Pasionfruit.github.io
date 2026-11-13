@@ -27,24 +27,23 @@ the full page to crawlers — it is the only indexed URL on the site.
 ### Private (admin Google account only)
 
 Signing in as admin replaces the public site entirely — no sections, no
-hamburger menu. The top bar becomes an icon nav and `/` becomes the daily
-dashboard.
+hamburger menu. The top bar becomes an icon nav and `/` lands on Tasks.
 
 | Nav item | Route | Contents |
 | --- | --- | --- |
-| Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager |
 | Calendar | `/admin/calendar` | The month and week ahead, with the weather |
-| Home | `/` | Verse of the day (mark it read to fold it, or open the whole chapter), today's training, chores, and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
-| Journal | `/admin/personal` | Journal entries with gratitude prompts |
-| Overview | `/admin/overview` | Three tabs: Training (next event countdown, Garmin data, training log; the default), Health (`?tab=health`: daily wellness with sleep & recovery) and News (`?tab=news`) |
+| Content | `/admin/content` | Verse of the day (mark it read to fold it, or open the whole chapter), the 365 challenges, and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
+| Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager. The middle of the bar and the page an admin starts on |
+| Training | `/admin/training` | Training of the Day on top, then the next event countdown, Garmin and Apple Health workouts, and the training log |
+| Overview | `/admin/overview` | Two tabs: Health (daily wellness with sleep & recovery; the default) and News (`?tab=news`) |
 
-`/admin/journal` redirects to Journal. `/admin/training` redirects to Overview, `/admin/health` to its Health tab, `/admin/news` to its News tab, and `/admin/ciara` to Home. The
-Finance, Work and System dashboards were removed; their old URLs land on `/`.
+`/` and `/admin` redirect an admin to Tasks. `/admin/journal` and `/admin/personal` (the removed Journal page) also land on Tasks. `/training` redirects to Training, `/admin/health` to Overview's Health tab, `/admin/news` to its News tab, and `/admin/ciara` to Content. The
+Finance, Work and System dashboards were removed; their old URLs land on Tasks.
 
 Tasks and Calendar are modular pages: each holds one module with no page
-title and no card frame (`AdminBarePage`). `/admin` redirects to `/`. The full
-Todoist manager (`/tasks`) is linked from the Tasks page and `/weekly-reset`
-from Training of the Day on Home.
+title and no card frame (`AdminBarePage`). The full Todoist manager
+(`/tasks`) is linked from the Tasks page and `/weekly-reset` from Training of
+the Day on the Training page.
 
 `/weekly-reset` edits the workouts for today and the six days after it.
 **Paste plan**, beside the edit pencil, opens the editor and accepts Markdown

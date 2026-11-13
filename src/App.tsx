@@ -17,12 +17,12 @@ import {
   ChevronDown,
   ChevronUp,
   ExternalLink,
-  House,
+  BookOpen,
+  Dumbbell,
   LayoutDashboard,
   List,
   ListChecks,
   Plus,
-  NotebookPen,
   Pencil,
   RotateCcw,
   Trash2,
@@ -88,7 +88,6 @@ import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { MealPlanCard } from './admin/meals/MealPlanCard'
 import { ChallengesCard } from './challenges/ChallengesCard'
 import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
-import { JournalDashboard } from './admin/JournalDashboard'
 import { AceLauncher } from './admin/ace/AceLauncher'
 import { GarminWellnessCard } from './admin/GarminCards'
 import { NewsDashboard } from './admin/news/NewsDashboard'
@@ -264,7 +263,7 @@ function App() {
             index
             element={
               isAdmin ? (
-                <AdminHomePage googleIdToken={googleIdToken} />
+                <Navigate replace to="/admin/tasks" />
               ) : (
                 <HomePage />
               )
@@ -295,25 +294,26 @@ function App() {
 
           {/* Private dashboards */}
           <Route path="admin" element={<AdminGate isAdmin={isAdmin} />}>
-            {/* Home is the daily dashboard now, so the old hub and the pages that
-                merged into it all land back on `/`. */}
-            <Route index element={<Navigate replace to="/" />} />
+            {/* Tasks is where an admin starts, so the old hub lands there. */}
+            <Route index element={<Navigate replace to="/admin/tasks" />} />
+            <Route path="content" element={<AdminContentPage googleIdToken={googleIdToken} />} />
             <Route path="tasks" element={<AdminTasksPage profile={profile} googleIdToken={googleIdToken} />} />
             <Route path="calendar" element={<AdminCalendarPage googleIdToken={googleIdToken} />} />
             <Route
-              path="personal"
-              element={<JournalDashboard canWrite={isAdmin} idToken={googleIdToken} />}
+              path="training"
+              element={<AdminTrainingPage profile={profile} googleIdToken={googleIdToken} />}
             />
-            <Route path="journal" element={<Navigate replace to="/admin/personal" />} />
+            {/* The Journal page is gone. */}
+            <Route path="personal" element={<Navigate replace to="/admin/tasks" />} />
+            <Route path="journal" element={<Navigate replace to="/admin/tasks" />} />
             <Route
               path="overview"
-              element={<AdminOverviewPage profile={profile} googleIdToken={googleIdToken} />}
+              element={<AdminOverviewPage googleIdToken={googleIdToken} />}
             />
-            {/* Health and News became tabs of Overview; WW + TG moved onto Home. */}
+            {/* Health and News became tabs of Overview; WW + TG moved onto Content. */}
             <Route path="health" element={<Navigate replace to="/admin/overview?tab=health" />} />
-            <Route path="training" element={<Navigate replace to="/admin/overview" />} />
             <Route path="news" element={<Navigate replace to="/admin/overview?tab=news" />} />
-            <Route path="ciara" element={<Navigate replace to="/" />} />
+            <Route path="ciara" element={<Navigate replace to="/admin/content" />} />
           </Route>
 
           <Route
@@ -343,8 +343,8 @@ function App() {
 
           {/* Sections that moved or were retired. Finance, Work and System are
               gone entirely; their old URLs fall through to the catch-all. */}
-          <Route path="training" element={<Navigate replace to="/admin/overview" />} />
-          <Route path="training/*" element={<Navigate replace to="/admin/overview" />} />
+          <Route path="training" element={<Navigate replace to="/admin/training" />} />
+          <Route path="training/*" element={<Navigate replace to="/admin/training" />} />
           <Route path="mrpasionfruit" element={<Navigate replace to="/" />} />
           <Route path="mrpasionfruit/*" element={<Navigate replace to="/" />} />
           <Route path="cooking" element={<Navigate replace to="/#personal-sites" />} />
@@ -370,23 +370,22 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/`: the verse of the day, today's training and WW + TG.
- * Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card here — it
- * floats over every admin page (see AceLauncher).
+ * What the admin sees at `/admin/content`: the verse of the day, the 365 challenges and
+ * WW + TG. Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card
+ * here — it floats over every admin page (see AceLauncher).
  */
-function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
+function AdminContentPage({ googleIdToken }: { googleIdToken: string }) {
   return (
     /*
-     * The admin home renders its own shell rather than going through AdminPage,
+     * This page renders its own shell rather than going through AdminPage,
      * so it has to set --page-accent itself — without it, accented controls
-     * fall back to the global purple instead of the Home dashboard's blue.
+     * fall back to the global purple instead of the Content dashboard's blue.
      */
     <div
       className="admin-page admin-home"
-      style={{ '--page-accent': adminDashboardsById.home.accent } as CSSProperties}
+      style={{ '--page-accent': adminDashboardsById.content.accent } as CSSProperties}
     >
       <VerseOfTheDayCard title="Verse of the day" />
-      <TrainingOfDayCard title="Training of the Day" />
       <ChallengesCard
         title="365 Challenges"
         canEdit
@@ -432,40 +431,49 @@ function AdminCalendarPage({ googleIdToken }: { googleIdToken: string }) {
 }
 
 /**
- * Training, Health (daily wellness and sleep) and News under one nav item.
- * Training folds in what used to be spread across /training, /training/records
- * and /training/data, and is the default; `?tab=health` and `?tab=news` open the others.
+ * Training: the day's training on top, then the next event, the training data and the
+ * training log (what used to be spread across /training, /training/records and
+ * /training/data).
  */
-function AdminOverviewPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const requested = searchParams.get('tab')
-  const tab = requested === 'news' || requested === 'health' ? requested : 'training'
+function AdminTrainingPage({ profile, googleIdToken }: { profile: UserProfile; googleIdToken: string }) {
   const canWrite = profile === 'admin' && getGoogleTokenEmail(googleIdToken) === TODOIST_EDITOR_EMAIL
+
+  return (
+    <AdminPage meta={adminDashboardsById.training}>
+      <TrainingOfDayCard title="Training of the Day" />
+      <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
+      <TrainingDataCard title="Training" />
+      <TrainingLogCard title="Training Log" />
+    </AdminPage>
+  )
+}
+
+/**
+ * Health (daily wellness and sleep) and News under one nav item. Health is the default;
+ * `?tab=news` opens the other.
+ */
+function AdminOverviewPage({ googleIdToken }: { googleIdToken: string }) {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('tab') === 'news' ? 'news' : 'health'
 
   return (
     <AdminPage meta={adminDashboardsById.overview}>
       <div className="experience-toggle" role="tablist" aria-label="Overview sections">
-        {(['training', 'health', 'news'] as const).map((id) => (
+        {(['health', 'news'] as const).map((id) => (
           <button
             key={id}
             type="button"
             role="tab"
             aria-selected={tab === id}
             className={`experience-toggle-btn ${tab === id ? 'active' : ''}`}
-            onClick={() => setSearchParams(id === 'training' ? {} : { tab: id }, { replace: true })}
+            onClick={() => setSearchParams(id === 'health' ? {} : { tab: id }, { replace: true })}
           >
-            {id === 'training' ? 'Training' : id === 'health' ? 'Health' : 'News'}
+            {id === 'health' ? 'Health' : 'News'}
           </button>
         ))}
       </div>
 
-      {tab === 'training' ? (
-        <>
-          <NextEventCountdownCard title="Next Event Countdown" canWrite={canWrite} idToken={googleIdToken} />
-          <TrainingDataCard title="Training" />
-          <TrainingLogCard title="Training Log" />
-        </>
-      ) : tab === 'health' ? (
+      {tab === 'health' ? (
         <GarminWellnessCard title="Daily wellness" />
       ) : (
         <NewsDashboard idToken={googleIdToken} />
@@ -476,10 +484,10 @@ function AdminOverviewPage({ profile, googleIdToken }: { profile: UserProfile; g
 
 /** Minimal line icons for the admin top bar, keyed off AdminDashboardMeta.icon. */
 const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
-  home: House,
+  content: BookOpen,
   tasks: ListChecks,
   calendar: CalendarDays,
-  personal: NotebookPen,
+  training: Dumbbell,
   overview: LayoutDashboard,
 }
 

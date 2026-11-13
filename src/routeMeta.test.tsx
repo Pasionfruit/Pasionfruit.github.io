@@ -44,7 +44,7 @@ describe('useRouteMeta', () => {
     expect(hasAdScript()).toBe(false)
   })
 
-  it.each(['/login', '/admin', '/admin/journal', '/admin/training', '/tasks', '/weekly-reset', '/unknown-route'])(
+  it.each(['/login', '/admin', '/admin/news', '/admin/training', '/tasks', '/weekly-reset', '/unknown-route'])(
     'marks private route %s noindex',
     (path) => {
       renderHook(() => useRouteMeta(path))
@@ -61,7 +61,7 @@ describe('useRouteMeta', () => {
   )
 
   it('gives each route a unique title and description', () => {
-    const paths = ['/', '/login', '/admin/tasks', '/admin/journal', '/admin/training']
+    const paths = ['/', '/login', '/admin/tasks', '/admin/news', '/admin/training']
     const titles = new Set<string>()
 
     for (const path of paths) {
