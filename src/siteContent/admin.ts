@@ -4,7 +4,7 @@ import type { AdminDashboardId, AdminDashboardMeta } from './shared'
  * The admin nav. Order here drives the icon bar in the top bar — there is no
  * hamburger menu and no section list once you are signed in as admin.
  *
- * Home sits in the middle of the bar. It keeps the verse, training, chores and
+ * Home sits in the middle of the bar. It keeps the verse, training and
  * WW + TG; tasks and calendar each get a bare page of their own, and Overview
  * holds Health and News as tabs.
  */
@@ -32,7 +32,7 @@ export const adminDashboards: AdminDashboardMeta[] = [
     title: 'Home',
     path: '/',
     icon: 'home',
-    summary: "Verse of the day, today's training, chores, and WW + TG",
+    summary: "Verse of the day, today's training, and WW + TG",
     accent: '#00cccc',
     eyebrow: 'Daily driver',
   },

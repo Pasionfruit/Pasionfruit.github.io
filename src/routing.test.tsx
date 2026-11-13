@@ -624,10 +624,10 @@ describe('admin routing', () => {
   it('shows WW + TG at the bottom of Home and sends /admin/ciara there', async () => {
     renderAt('/admin/ciara', ADMIN_EMAIL)
 
-    expect(await screen.findByRole('heading', { name: 'Chores' })).toBeTruthy()
-    const ciara = screen.getByRole('heading', { name: 'WW + TG' })
-    const chores = screen.getByRole('heading', { name: 'Chores' })
-    expect(chores.compareDocumentPosition(ciara) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const ciara = await screen.findByRole('heading', { name: 'WW + TG' })
+    const challenges = screen.getByRole('heading', { name: '365 Challenges' })
+    expect(challenges.compareDocumentPosition(ciara) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Chores' })).toBeNull()
   })
 
   it('keeps Personal to the entries, with the verse of the day on Home', async () => {

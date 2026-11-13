@@ -67,7 +67,6 @@ import './App.css'
 import './admin/admin.css'
 import { DEV_SIGN_IN_ACCOUNTS, makeDevIdToken } from './devAuth'
 import { HomeHero } from './components/HomeHero'
-import { ChoresCard } from './admin/chores/ChoresCard'
 import { MonthTileHeatmap, type HeatmapDay } from './components/MonthTileHeatmap'
 import { GitHubActivity } from './components/GitHubActivity'
 import { profile } from './siteContent/profile'
@@ -371,7 +370,7 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/`: the verse of the day, today's training, chores and WW + TG.
+ * What the admin sees at `/`: the verse of the day, today's training and WW + TG.
  * Tasks and calendar are their own pages (see AdminBarePage). Ace is not a card here — it
  * floats over every admin page (see AceLauncher).
  */
@@ -394,7 +393,6 @@ function AdminHomePage({ googleIdToken }: { googleIdToken: string }) {
         idToken={googleIdToken}
         className="admin-card admin-card-wide"
       />
-      <ChoresCard title="Chores" idToken={googleIdToken} />
       <CiaraDashboard idToken={googleIdToken} />
     </div>
   )
