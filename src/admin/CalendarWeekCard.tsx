@@ -13,7 +13,7 @@ import { dueDateKey } from '../data/todoist/dates'
 import type { TodoistTask } from '../data/todoist/types'
 import { useTodoistData } from '../tasks/useTodoistData'
 import { AddTaskForm, TaskList } from '../tasks/TaskList'
-import { sortByPriorityThenDue, withAncestors } from '../tasks/grouping'
+import { sortByPriorityThenDue } from '../tasks/grouping'
 import { isFilled, useMealPlan } from './meals/mealPlan'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -192,8 +192,9 @@ export function CalendarWeekCard({
   const mealPlan = useMealPlan()
   const selectedMeals = selectedDayKey ? (mealPlan[selectedDayKey] ?? []).filter(isFilled) : []
   const selectedTasks = useMemo(
-    () => sortByPriorityThenDue(withAncestors(tasks, selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : [])),
-    [tasks, tasksByDay, selectedDayKey],
+    // Only what is due that day: a subtask stands alone, without the parents it sits under.
+    () => sortByPriorityThenDue(selectedDayKey ? (tasksByDay[selectedDayKey] ?? []) : []),
+    [tasksByDay, selectedDayKey],
   )
 
   return (
