@@ -346,6 +346,7 @@ export function CalendarWeekCard({
                     </p>
                   ) : null}
                   {selectedTasks.length > 0 ? (
+                    <div className="calendar-day-tasks">
                     <TaskList
                       tasks={selectedTasks}
                       store={store}
@@ -357,6 +358,7 @@ export function CalendarWeekCard({
                       emptyMessage=""
                       orderKey={`day:${selectedDayKey}`}
                     />
+                    </div>
                   ) : null}
                   <AddTaskForm
                     store={store}

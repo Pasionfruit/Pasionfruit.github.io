@@ -558,6 +558,37 @@
   border-left-color: #8e8e93;
 }
 
+/* Todoist tasks in a day's panel read as event cards: same fill, radius and coloured left edge. */
+.calendar-day-tasks {
+  margin-top: 0.8rem;
+}
+
+.calendar-day-tasks .task-list {
+  gap: 0.55rem;
+}
+
+.calendar-day-tasks .task-row {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 0;
+  border-left: 3px solid #d1453b;
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.calendar-day-tasks .task-row:hover {
+  background: var(--surface-muted);
+}
+
+.calendar-day-tasks .task-row.is-editing {
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface-muted));
+}
+
+.calendar-day-tasks .task-title {
+  color: var(--text-strong);
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
 .calendar-event-time {
   color: var(--text-muted);
   font-size: 0.72rem;
