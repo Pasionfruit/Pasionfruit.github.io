@@ -41,6 +41,13 @@ export function AddTaskForm({
   const nameInputRef = useRef<HTMLInputElement>(null)
   const [seenEditingId, setSeenEditingId] = useState(editingTaskId)
 
+  // Follow the default date when the parent changes it (e.g. picking another day in Upcoming).
+  const [seenDefaultDue, setSeenDefaultDue] = useState(defaultDueDate)
+  if (defaultDueDate !== seenDefaultDue) {
+    setSeenDefaultDue(defaultDueDate)
+    setDueDate(defaultDueDate ?? '')
+  }
+
   function reset() {
     setContent('')
     setDueDate(defaultDueDate ?? '')
