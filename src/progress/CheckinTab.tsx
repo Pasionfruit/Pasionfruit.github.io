@@ -114,70 +114,66 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
         </div>
         <p className="sheets-meta">
           {day && day <= 90 ? `Day ${day} of 90` : date < PERIOD_START ? `Starts ${PERIOD_START}` : `Day ${day}`}
-          {saved ? ' · editing a saved day' : ' · new day'}
+          {saved ? ' · saved' : ''}
         </p>
       </div>
 
       <section>
-        <h4>Skin</h4>
         <div className="pg-grid">
-          <label className="pg-check"><input type="checkbox" checked={draft.am_done === 'yes'} onChange={(e) => set('am_done', e.target.checked ? 'yes' : '')} /> AM routine</label>
-          <label className="pg-check"><input type="checkbox" checked={draft.pm_done === 'yes'} onChange={(e) => set('pm_done', e.target.checked ? 'yes' : '')} /> PM routine</label>
-          <Num label="Active acne · face" value={draft.acne_face} onChange={(v) => set('acne_face', v)} />
-          <Num label="Active acne · back" value={draft.acne_back} onChange={(v) => set('acne_back', v)} />
-          <Scale label="Redness (1–5)" value={draft.redness} onChange={(v) => set('redness', v)} />
-          <Scale label="Scar texture (1–5)" value={draft.scar} onChange={(v) => set('scar', v)} />
+          <label className="pg-check"><input type="checkbox" checked={draft.am_done === 'yes'} onChange={(e) => set('am_done', e.target.checked ? 'yes' : '')} /> Skincare AM</label>
+          <label className="pg-check"><input type="checkbox" checked={draft.pm_done === 'yes'} onChange={(e) => set('pm_done', e.target.checked ? 'yes' : '')} /> Skincare PM</label>
         </div>
-        <label className="pg-field">
-          <span>Products & treatments used</span>
-          <input type="text" value={draft.products} placeholder="e.g. adapalene, SPF 50" onChange={(e) => set('products', e.target.value)} />
-        </label>
-      </section>
-
-      <section>
-        <h4>Body</h4>
         <div className="pg-grid">
-          <Num label={imported.sleep_h && !saved ? 'Sleep (h) · from watch' : 'Sleep (h)'} value={draft.sleep_h} step="0.1" onChange={(v) => set('sleep_h', v)} />
-          <Scale label="Energy (1–5)" value={draft.energy} onChange={(v) => set('energy', v)} />
-          <Scale label="Mood (1–5)" value={draft.mood} onChange={(v) => set('mood', v)} />
-          <Scale label="Stress (1–5)" value={draft.stress} onChange={(v) => set('stress', v)} />
+          <Scale label="Energy" value={draft.energy} onChange={(v) => set('energy', v)} />
+          <Scale label="Mood" value={draft.mood} onChange={(v) => set('mood', v)} />
+          <Scale label="Stress" value={draft.stress} onChange={(v) => set('stress', v)} />
+        </div>
+        <div className="pg-grid pg-two">
+          <Num label={imported.sleep_h && !saved ? 'Sleep h · watch' : 'Sleep (h)'} value={draft.sleep_h} step="0.1" onChange={(v) => set('sleep_h', v)} />
+          <Num label={imported.min_training && !saved ? 'Training min · watch' : 'Training (min)'} value={draft.min_training} onChange={(v) => set('min_training', v)} />
         </div>
       </section>
 
-      <section>
-        <h4>Nutrition</h4>
-        <div className="pg-grid">
-          <Num label="Added sugar (g)" value={draft.sugar_g} onChange={(v) => set('sugar_g', v)} />
-          <Num label="Protein (g)" value={draft.protein_g} onChange={(v) => set('protein_g', v)} />
-          <Num label="Carbs (g)" value={draft.carbs_g} onChange={(v) => set('carbs_g', v)} />
-          <fieldset className="pg-field pg-scale">
-            <legend>Dairy / whey</legend>
-            <div className="pg-scale-buttons">
-              {['yes', 'no'].map((v) => (
-                <button key={v} type="button" className={draft.dairy === v ? 'is-on' : ''} aria-pressed={draft.dairy === v} onClick={() => set('dairy', draft.dairy === v ? '' : v)}>
-                  {v}
-                </button>
-              ))}
-            </div>
-          </fieldset>
+      <details className="pg-details">
+        <summary>More (acne, skin, food, time, notes)</summary>
+        <div className="pg-more">
+          <div className="pg-grid pg-two">
+            <Num label="Acne · face" value={draft.acne_face} onChange={(v) => set('acne_face', v)} />
+            <Num label="Acne · back" value={draft.acne_back} onChange={(v) => set('acne_back', v)} />
+          </div>
+          <div className="pg-grid">
+            <Scale label="Redness" value={draft.redness} onChange={(v) => set('redness', v)} />
+            <Scale label="Scar texture" value={draft.scar} onChange={(v) => set('scar', v)} />
+          </div>
+          <label className="pg-field">
+            <span>Products & treatments</span>
+            <input type="text" value={draft.products} placeholder="e.g. adapalene, SPF 50" onChange={(e) => set('products', e.target.value)} />
+          </label>
+          <div className="pg-grid pg-two">
+            <Num label="Added sugar (g)" value={draft.sugar_g} onChange={(v) => set('sugar_g', v)} />
+            <Num label="Protein (g)" value={draft.protein_g} onChange={(v) => set('protein_g', v)} />
+            <Num label="Carbs (g)" value={draft.carbs_g} onChange={(v) => set('carbs_g', v)} />
+            <fieldset className="pg-field pg-scale">
+              <legend>Dairy / whey</legend>
+              <div className="pg-scale-buttons">
+                {['yes', 'no'].map((v) => (
+                  <button key={v} type="button" className={draft.dairy === v ? 'is-on' : ''} aria-pressed={draft.dairy === v} onClick={() => set('dairy', draft.dairy === v ? '' : v)}>
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <Num label="Content (min)" value={draft.min_content} onChange={(v) => set('min_content', v)} />
+            <Num label="Leisure (min)" value={draft.min_leisure} onChange={(v) => set('min_leisure', v)} />
+          </div>
+          <label className="pg-field">
+            <span>Notes</span>
+            <textarea rows={2} value={draft.notes} onChange={(e) => set('notes', e.target.value)} />
+          </label>
         </div>
-      </section>
+      </details>
 
-      <section>
-        <h4>Where the time went (minutes)</h4>
-        <div className="pg-grid">
-          <Num label={imported.min_training && !saved ? 'Training · from watch' : 'Training'} value={draft.min_training} onChange={(v) => set('min_training', v)} />
-          <Num label="Content" value={draft.min_content} onChange={(v) => set('min_content', v)} />
-          <Num label="Leisure" value={draft.min_leisure} onChange={(v) => set('min_leisure', v)} />
-        </div>
-      </section>
-
-      <label className="pg-field">
-        <span>Notes</span>
-        <textarea rows={2} value={draft.notes} onChange={(e) => set('notes', e.target.value)} />
-      </label>
-
-      <div className="pg-actions">
+      <div className="pg-actions pg-sticky">
         <button type="submit" className="primary-action" disabled={status === 'saving'}>
           {status === 'saving' ? 'Saving…' : saved ? 'Update day' : 'Save day'}
         </button>

@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { CONTENT_CATEGORIES, CONTENT_STATUSES, deleteRow, saveRow, type ContentItem } from './client'
-import { LineChart } from './LineChart'
-import { contentHours, engagementRate, inRange, num, todayLocal, weeklyContent, type DateRange } from './analytics'
+import { contentHours, engagementRate, inRange, num, todayLocal, type DateRange } from './analytics'
 import type { ProgressData } from './useProgressData'
 
 const blank = (): ContentItem => ({
@@ -14,10 +13,11 @@ export function ContentTab({ idToken, data, range, onChanged }: { idToken: strin
   const [editing, setEditing] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [filter, setFilter] = useState<string>('idea')
+  const [formOpen, setFormOpen] = useState(false)
   const set = (field: keyof ContentItem, value: string) => setDraft((d) => ({ ...d, [field]: value }))
 
   const published = data.content.filter((c) => c.status === 'published' && c.post_date && inRange(c.post_date, range))
-  const weeks = weeklyContent(data.content).filter((w) => inRange(w.week, { from: range.from.slice(0, 8) + '01', to: range.to }))
   const hours = data.content.reduce((n, c) => n + contentHours(c), 0)
   const rate = engagementRate(published)
 
@@ -46,6 +46,7 @@ export function ContentTab({ idToken, data, range, onChanged }: { idToken: strin
       })
       setDraft(blank())
       setEditing(false)
+      setFormOpen(false)
       onChanged()
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Could not save.')
@@ -81,40 +82,37 @@ export function ContentTab({ idToken, data, range, onChanged }: { idToken: strin
         <div><b>{rate === null ? '—' : `${rate.toFixed(1)}%`}</b><span>engagement</span></div>
       </div>
 
-      <div className="pg-charts">
-        <LineChart title="Posts per week" format={(n) => String(Math.round(n))} series={[{ label: 'Posts', color: 'var(--page-accent)', points: weeks.map((w) => ({ x: w.week, y: w.posts })) }]} />
-        <LineChart title="Production hours per week" series={[{ label: 'Hours', color: '#f59e0b', points: weeks.map((w) => ({ x: w.week, y: w.hours })) }]} />
-      </div>
-
-      <div className="pg-board">
-        {CONTENT_STATUSES.map((status) => (
-          <section key={status}>
-            <h4>{status[0].toUpperCase() + status.slice(1)} <span className="sheets-meta">{data.content.filter((c) => c.status === status).length}</span></h4>
-            <ul className="pg-list pg-cards">
-              {data.content
-                .filter((c) => c.status === status)
-                .sort((a, b) => (b.post_date || b.updated_at).localeCompare(a.post_date || a.updated_at))
-                .map((c) => (
-                  <li key={c.content_id}>
-                    <div>
-                      <strong>{c.title}</strong>
-                      <p className="sheets-meta">{[c.platform, c.category, c.post_date].filter(Boolean).join(' · ')}</p>
-                      {(c.views || c.likes) && <p className="sheets-meta">{c.views || 0} views · {c.likes || 0} likes</p>}
-                    </div>
-                    <div className="pg-row-actions">
-                      {status !== 'published' && <button type="button" className="secondary-action" onClick={() => advance(c)}>→</button>}
-                      <button type="button" className="secondary-action" onClick={() => { setDraft(c); setEditing(true) }}>Edit</button>
-                      <button type="button" className="secondary-action" onClick={() => remove(c)} aria-label={`Delete ${c.title}`}>✕</button>
-                    </div>
-                  </li>
-                ))}
-            </ul>
-          </section>
+      <div className="pg-subtabs" role="group" aria-label="Status">
+        {CONTENT_STATUSES.map((st) => (
+          <button key={st} type="button" className={filter === st ? 'is-on' : ''} aria-pressed={filter === st} onClick={() => setFilter(st)}>
+            {st} {data.content.filter((c) => c.status === st).length}
+          </button>
         ))}
       </div>
+      <ul className="pg-list pg-cards">
+        {data.content
+          .filter((c) => c.status === filter)
+          .sort((a, b) => (b.post_date || b.updated_at).localeCompare(a.post_date || a.updated_at))
+          .map((c) => (
+            <li key={c.content_id}>
+              <div>
+                <strong>{c.title}</strong>
+                <p className="sheets-meta">{[c.platform, c.category, c.post_date].filter(Boolean).join(' · ')}</p>
+                {(c.views || c.likes) && <p className="sheets-meta">{c.views || 0} views · {c.likes || 0} likes</p>}
+              </div>
+              <div className="pg-row-actions">
+                {filter !== 'published' && <button type="button" className="secondary-action" onClick={() => advance(c)} aria-label={`Move ${c.title} to next stage`}>→</button>}
+                <button type="button" className="secondary-action" onClick={() => { setDraft(c); setEditing(true); setFormOpen(true) }}>Edit</button>
+                <button type="button" className="secondary-action" onClick={() => remove(c)} aria-label={`Delete ${c.title}`}>✕</button>
+              </div>
+            </li>
+          ))}
+        {data.content.every((c) => c.status !== filter) && <li className="sheets-meta">Nothing here yet.</li>}
+      </ul>
 
+      <details className="pg-details" open={formOpen} onToggle={(e) => setFormOpen(e.currentTarget.open)}>
+      <summary>{editing ? 'Edit video' : '+ Add an idea'}</summary>
       <form className="pg-form" onSubmit={submit}>
-        <h4>{editing ? 'Edit video' : 'Add an idea'}</h4>
         <div className="pg-grid">
           <label className="pg-field pg-wide"><span>Title</span><input type="text" value={draft.title} onChange={(e) => set('title', e.target.value)} /></label>
           <label className="pg-field"><span>Status</span>
@@ -136,6 +134,7 @@ export function ContentTab({ idToken, data, range, onChanged }: { idToken: strin
           {error && <span className="pg-error" role="alert">{error}</span>}
         </div>
       </form>
+      </details>
     </div>
   )
 }

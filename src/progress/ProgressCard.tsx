@@ -11,16 +11,15 @@ import { useProgressData } from './useProgressData'
 import './progress.css'
 
 const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'checkin', label: 'Check-in' },
+  { id: 'today', label: 'Today' },
   { id: 'skin', label: 'Skin' },
   { id: 'training', label: 'Training' },
   { id: 'content', label: 'Content' },
-  { id: 'insights', label: 'Insights' },
+  { id: 'trends', label: 'Trends' },
 ] as const
 type TabId = (typeof TABS)[number]['id']
 
-type Preset = '30' | '60' | '90' | 'period' | 'all' | 'custom'
+type Preset = '30' | '90' | 'period' | 'all'
 
 /**
  * The 90-day Progress tracker (skin, endurance, content), shown on the Projects
@@ -29,18 +28,16 @@ type Preset = '30' | '60' | '90' | 'period' | 'all' | 'custom'
  */
 export function ProgressCard({ title, idToken }: { title: string; idToken: string }) {
   const [collapsed, setCollapsed] = useState(false)
-  const [tab, setTab] = useState<TabId>('overview')
-  const [preset, setPreset] = useState<Preset>('90')
-  const [custom, setCustom] = useState<DateRange>({ from: PERIOD_START, to: PERIOD_END })
+  const [tab, setTab] = useState<TabId>('today')
+  const [preset, setPreset] = useState<Preset>('30')
   const { data, status, error, reload } = useProgressData(idToken)
 
   const range = useMemo<DateRange>(() => {
     const today = todayLocal()
-    if (preset === 'custom') return custom
     if (preset === 'period') return { from: PERIOD_START, to: PERIOD_END }
     if (preset === 'all') return { from: '2000-01-01', to: '2999-12-31' }
     return lastDays(Number(preset), today)
-  }, [preset, custom])
+  }, [preset])
 
   return (
     <article className="info-card admin-card pg-card admin-card-wide">
@@ -55,7 +52,6 @@ export function ProgressCard({ title, idToken }: { title: string; idToken: strin
 
       {!collapsed && (
         <>
-          <p className="sheets-meta">Progress · skin, endurance and content, 90 days from {PERIOD_START}</p>
           <div className="pg-tabs" role="tablist" aria-label="Progress sections">
             {TABS.map((t) => (
               <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? 'is-on' : ''} onClick={() => setTab(t.id)}>
@@ -64,20 +60,16 @@ export function ProgressCard({ title, idToken }: { title: string; idToken: strin
             ))}
           </div>
 
-          {tab !== 'checkin' && (
-            <div className="pg-range">
-              {(['30', '60', '90', 'period', 'all', 'custom'] as Preset[]).map((p) => (
-                <button key={p} type="button" className={preset === p ? 'is-on' : ''} aria-pressed={preset === p} onClick={() => setPreset(p)}>
-                  {p === 'period' ? '90-day run' : p === 'all' ? 'All' : p === 'custom' ? 'Custom' : `${p}d`}
-                </button>
-              ))}
-              {preset === 'custom' && (
-                <>
-                  <input type="date" aria-label="From" value={custom.from} onChange={(e) => e.target.value && setCustom((c) => ({ ...c, from: e.target.value }))} />
-                  <input type="date" aria-label="To" value={custom.to} onChange={(e) => e.target.value && setCustom((c) => ({ ...c, to: e.target.value }))} />
-                </>
-              )}
-            </div>
+          {tab !== 'today' && (
+            <label className="pg-range">
+              <span className="sheets-meta">Show</span>
+              <select value={preset} onChange={(e) => setPreset(e.target.value as Preset)}>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="period">The 90-day run</option>
+                <option value="all">Everything</option>
+              </select>
+            </label>
           )}
 
           {status === 'loading' && <p className="sheets-meta">Loading…</p>}
@@ -88,12 +80,19 @@ export function ProgressCard({ title, idToken }: { title: string; idToken: strin
           )}
           {status === 'ready' && (
             <div className="pg-body">
-              {tab === 'overview' && <OverviewTab data={data} range={range} />}
-              {tab === 'checkin' && <CheckinTab idToken={idToken} data={data} onSaved={reload} />}
+              {tab === 'today' && <CheckinTab idToken={idToken} data={data} onSaved={reload} />}
               {tab === 'skin' && <SkinTab idToken={idToken} data={data} range={range} onChanged={reload} />}
               {tab === 'training' && <TrainingTab idToken={idToken} data={data} range={range} onChanged={reload} />}
               {tab === 'content' && <ContentTab idToken={idToken} data={data} range={range} onChanged={reload} />}
-              {tab === 'insights' && <InsightsTab data={data} range={range} />}
+              {tab === 'trends' && (
+                <div className="pg-stack">
+                  <OverviewTab data={data} range={range} />
+                  <details className="pg-details">
+                    <summary>Averages, weekly summaries and patterns</summary>
+                    <InsightsTab data={data} range={range} />
+                  </details>
+                </div>
+              )}
             </div>
           )}
         </>

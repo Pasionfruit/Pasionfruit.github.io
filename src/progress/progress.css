@@ -77,3 +77,26 @@
 .pg-marks { position: absolute; inset: 0; width: 100%; height: 100%; }
 .pg-marks text { paint-order: stroke; stroke: rgb(255 255 255 / 0.85); stroke-width: 0.004; }
 .pg-review { border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; max-width: 40rem; }
+
+/* ── Simpler, phone-first layout ── */
+.pg-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.25rem; overflow: visible; border-bottom: 0; }
+.pg-tabs button { padding: 0.5rem 0.2rem; min-height: 2.75rem; font-size: 0.8rem; border-radius: var(--radius-sm); }
+.pg-range { display: flex; align-items: center; gap: 0.5rem; }
+.pg-range select { flex: 1; max-width: 14rem; font: inherit; padding: 0.4rem 0.55rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); min-height: 2.75rem; }
+.pg-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pg-more { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 0.6rem; }
+.pg-details > summary { min-height: 2.75rem; display: flex; align-items: center; font-weight: 600; color: var(--text-strong); }
+.pg-scale-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(2.5rem, 1fr)); }
+.pg-scale-buttons button { min-height: 2.75rem; padding: 0.3rem; justify-content: center; }
+.pg-field input, .pg-field select, .pg-field textarea, .pg-daynav input { min-height: 2.75rem; font-size: 1rem; }
+.pg-check { min-height: 2.75rem; font-size: 1rem; }
+.pg-card .primary-action, .pg-card .secondary-action { min-height: 2.75rem; }
+.pg-sticky { position: sticky; bottom: calc(3.5rem + env(safe-area-inset-bottom)); background: var(--surface); padding: 0.6rem 0; z-index: 2; }
+.pg-cards > li { gap: 0.5rem; }
+.pg-list > li { flex-wrap: wrap; }
+.pg-list select { min-height: 2.75rem; }
+
+@media (min-width: 720px) {
+  .pg-sticky { position: static; padding: 0; }
+  .pg-tabs { max-width: 32rem; }
+}

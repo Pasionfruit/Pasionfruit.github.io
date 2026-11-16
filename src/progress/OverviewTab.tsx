@@ -51,7 +51,7 @@ export function OverviewTab({ data, range }: { data: ProgressData; range: DateRa
         ]} />
       </div>
 
-      <h4>Fitness</h4>
+      <h4>Training</h4>
       <div className="pg-charts">
         <LineChart title="Weekly training hours" series={[{ label: 'Hours', color: 'var(--page-accent)', points: volume.map((w) => ({ x: w.week, y: w.minutes / 60 })) }]} />
       </div>

@@ -19,6 +19,6 @@ database_id = "f8d1ee38-8bee-4dd2-b62e-d13578b9c4d3"
 # /photos/* answers 500 meanwhile. To turn on: enable R2 in the dashboard, then
 #   npx wrangler r2 bucket create pasion-photos
 # and uncomment:
-# [[r2_buckets]]
-# binding = "PHOTOS"
-# bucket_name = "pasion-photos"
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "pasion-photos"

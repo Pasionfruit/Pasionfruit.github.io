@@ -62,25 +62,24 @@ export function TrainingTab({ idToken, data, range, onChanged }: { idToken: stri
         <div><b>{kept.pct}%</b><span>days trained ({kept.activeDays}/{kept.days})</span></div>
       </div>
 
-      <div className="pg-charts">
-        <LineChart title="Weekly training hours" series={[{ label: 'Hours', color: 'var(--page-accent)', points: weeks.map((w) => ({ x: w.week, y: w.minutes / 60 })) }]} />
-        <LineChart title="Weekly miles" series={[{ label: 'Miles', color: '#3b82f6', points: weeks.map((w) => ({ x: w.week, y: w.miles })) }]} />
-      </div>
+      <LineChart title="Weekly training hours" series={[{ label: 'Hours', color: 'var(--page-accent)', points: weeks.map((w) => ({ x: w.week, y: w.minutes / 60 })) }]} />
 
       <section>
         <h4>Running efficiency</h4>
-        <p className="sheets-meta">Average pace on runs whose average heart rate sat in a band. Pace falling at the same heart rate is the signal.</p>
-        <div className="pg-grid pg-band">
-          <label className="pg-field"><span>HR from</span><input type="number" value={low} onChange={(e) => setLow(e.target.value)} /></label>
-          <label className="pg-field"><span>to (bpm)</span><input type="number" value={high} onChange={(e) => setHigh(e.target.value)} /></label>
-        </div>
-        <LineChart title="Pace in band (min/mi)" format={formatPace} emptyText="No runs with heart rate in this band yet." series={[{ label: 'Pace', color: '#10b981', points: band.map((w) => ({ x: w.week, y: w.pace })) }]} />
+        <LineChart title={`Pace at ${low}–${high} bpm (min/mi)`} format={formatPace} emptyText="No runs with heart rate in this band yet." series={[{ label: 'Pace', color: '#10b981', points: band.map((w) => ({ x: w.week, y: w.pace })) }]} />
+        <details className="pg-details">
+          <summary>Change heart-rate band</summary>
+          <div className="pg-grid pg-two pg-band">
+            <label className="pg-field"><span>From (bpm)</span><input type="number" inputMode="numeric" value={low} onChange={(e) => setLow(e.target.value)} /></label>
+            <label className="pg-field"><span>To (bpm)</span><input type="number" inputMode="numeric" value={high} onChange={(e) => setHigh(e.target.value)} /></label>
+          </div>
+        </details>
       </section>
 
       <section>
         <h4>Recent sessions · rate effort</h4>
         <ul className="pg-list">
-          {[...inView].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 12).map((a) => {
+          {[...inView].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8).map((a) => {
             const key = activityKey(a)
             const pace = sportOf(a.activity_type) === 'run' && num(a.distance_mi) ? formatPace((num(a.duration_min) ?? 0) / (num(a.distance_mi) ?? 1)) : ''
             return (
@@ -101,21 +100,21 @@ export function TrainingTab({ idToken, data, range, onChanged }: { idToken: stri
         {error && <p className="pg-error" role="alert">{error}</p>}
       </section>
 
-      <section>
-        <h4>Race countdown</h4>
-        {upcoming.length === 0 ? <p className="sheets-meta">No upcoming events. Add them in Next Event Countdown on the Training page.</p> : (
+      {upcoming.length > 0 && (
+        <section>
+          <h4>Next race</h4>
           <ul className="pg-list">
-            {upcoming.slice(0, 4).map((e) => (
+            {upcoming.slice(0, 2).map((e) => (
               <li key={e.event_id}><span>{e.event_name}</span><b>{daysBetween(todayLocal(), e.event_date)} days</b></li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
 
-      <section>
-        <h4>Personal records</h4>
+      <details className="pg-details">
+        <summary>Personal records</summary>
         <TrainingPrs />
-      </section>
+      </details>
     </div>
   )
 }
