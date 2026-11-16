@@ -40,12 +40,18 @@ export function ProgressCard({ title, idToken }: { title: string; idToken: strin
   }, [preset])
 
   return (
-    <article className="info-card admin-card pg-card admin-card-wide">
+    <article className={`info-card admin-card pg-card admin-card-wide${collapsed ? ' is-collapsed' : ''}`}>
       <div className="admin-card-head">
         <h3>{title}</h3>
         <div className="admin-card-actions">
-          <button type="button" className="secondary-action" aria-expanded={!collapsed} aria-label={collapsed ? `Expand ${title}` : `Collapse ${title}`} onClick={() => setCollapsed((v) => !v)}>
-            <ChevronDown size={16} style={{ transform: collapsed ? 'rotate(-90deg)' : undefined }} />
+          <button
+            type="button"
+            className="section-collapse-btn"
+            aria-expanded={!collapsed}
+            aria-label={`${collapsed ? 'Expand' : 'Collapse'} ${title}`}
+            onClick={() => setCollapsed((v) => !v)}
+          >
+            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
         </div>
       </div>

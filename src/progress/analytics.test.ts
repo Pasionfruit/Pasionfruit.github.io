@@ -167,3 +167,22 @@ describe('imported sleep and training, and upkeep', () => {
     expect(upkeep([], '2026-11-20')).toEqual({ masksThisWeek: 0, towelDaysAgo: null, sheetsDaysAgo: null })
   })
 })
+
+import { foodTotals, parseFood } from './food'
+
+describe('meal estimates', () => {
+  it('keeps plausible items, clamps wild numbers and totals the macros', () => {
+    const items = parseFood({
+      items: [
+        { name: 'Chicken breast', grams: 150, protein_g: 46, carbs_g: 0, sugar_g: 0 },
+        { name: 'Rice', grams: 200, protein_g: 5, carbs_g: 56, sugar_g: 0 },
+        { name: '', grams: 100 },
+        { name: 'Ghost', grams: 0 },
+        { name: 'Mountain of rice', grams: 99999, protein_g: -4, carbs_g: 99999, sugar_g: 1 },
+      ],
+    })
+    expect(items.map((i) => i.name)).toEqual(['Chicken breast', 'Rice', 'Mountain of rice'])
+    expect(items[2]).toMatchObject({ grams: 2000, protein_g: 0, carbs_g: 400 })
+    expect(foodTotals(items.slice(0, 2))).toEqual({ protein_g: 51, carbs_g: 56, sugar_g: 0 })
+  })
+})

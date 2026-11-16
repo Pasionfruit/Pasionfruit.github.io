@@ -119,3 +119,14 @@
 .pg-more { gap: 0.5rem; }
 .pg-card { gap: 0.5rem; }
 .pg-tabs button { min-height: 2.5rem; }
+
+/* ── Camera row and meal review ── */
+.pg-camera { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.pg-camera .pg-chip { display: inline-flex; align-items: center; gap: 0.35rem; flex: 1; justify-content: center; }
+.pg-food { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.pg-food li { display: flex; flex-direction: column; gap: 0.3rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.pg-food-name { display: flex; gap: 0.35rem; }
+.pg-food-name input { flex: 1; min-width: 0; }
+.pg-food-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.35rem; }
+.pg-food-nums label { display: flex; flex-direction: column; font-size: 0.7rem; color: var(--text-muted); }
+.pg-food input { font: inherit; padding: 0.3rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); min-height: 2.5rem; width: 100%; box-sizing: border-box; }

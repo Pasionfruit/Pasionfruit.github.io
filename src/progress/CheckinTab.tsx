@@ -1,7 +1,13 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { Camera } from 'lucide-react'
+import { useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { addDaysToKey } from '../data/todoist/dates'
 import { blankCheckin, saveRow, type Checkin } from './client'
 import type { ProgressData } from './useProgressData'
+import { FoodReview } from './FoodReview'
+import { estimateMeal, type FoodItem } from './food'
+import { Review } from './ReviewPanel'
+import { addSkinPhoto } from './skinPhotos'
+import type { SkinPhoto } from './client'
 import { PERIOD_START, importedDay, periodDay, todayLocal, upkeep } from './analytics'
 
 type Draft = Omit<Checkin, 'updated_at'>
@@ -100,6 +106,49 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
     }
   }
 
+  const faceInput = useRef<HTMLInputElement>(null)
+  const backInput = useRef<HTMLInputElement>(null)
+  const mealInput = useRef<HTMLInputElement>(null)
+  const [reviewing, setReviewing] = useState<{ photo: SkinPhoto; source: File } | null>(null)
+  const [meal, setMeal] = useState<{ phase: 'scanning' | 'ready'; items: FoodItem[] } | null>(null)
+  const [cameraError, setCameraError] = useState('')
+  const [uploading, setUploading] = useState(false)
+
+  /** A skin photo straight from the camera: stored, then circled for review. */
+  async function onSkinPhoto(angle: 'face' | 'back', event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    setCameraError('')
+    setMeal(null)
+    setUploading(true)
+    try {
+      const photo = await addSkinPhoto(idToken, file, date, angle)
+      setReviewing({ photo, source: file })
+    } catch (caught) {
+      setCameraError(caught instanceof Error ? caught.message : 'Could not save the photo.')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function onMealPhoto(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    setCameraError('')
+    setReviewing(null)
+    setMeal({ phase: 'scanning', items: [] })
+    try {
+      setMeal({ phase: 'ready', items: await estimateMeal(idToken, file) })
+    } catch (caught) {
+      setMeal(null)
+      setCameraError(caught instanceof Error ? caught.message : 'Could not read the meal.')
+    }
+  }
+
+  const addNumber = (current: string, extra: number) => String(Math.round((Number(current) || 0) + extra))
+
   const day = periodDay(date)
   return (
     <form className="pg-form" onSubmit={submit}>
@@ -126,6 +175,16 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
         <p className="sheets-meta">
           Masks this week {chores.masksThisWeek}/2 · towel {ago(chores.towelDaysAgo)} · sheets {ago(chores.sheetsDaysAgo)}
         </p>
+        <div className="pg-camera" role="group" aria-label="Take a photo">
+          <button type="button" className="pg-chip" disabled={uploading} onClick={() => faceInput.current?.click()}><Camera size={16} aria-hidden="true" /> Face</button>
+          <button type="button" className="pg-chip" disabled={uploading} onClick={() => backInput.current?.click()}><Camera size={16} aria-hidden="true" /> Back</button>
+          <button type="button" className="pg-chip" onClick={() => mealInput.current?.click()}><Camera size={16} aria-hidden="true" /> Meal</button>
+          <input ref={faceInput} type="file" accept="image/*" capture="user" hidden onChange={(e) => void onSkinPhoto('face', e)} />
+          <input ref={backInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => void onSkinPhoto('back', e)} />
+          <input ref={mealInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => void onMealPhoto(e)} />
+        </div>
+        {uploading && <p className="sheets-meta" role="status">Saving photo…</p>}
+        {cameraError && <p className="pg-error" role="alert">{cameraError}</p>}
         <Rating label="Energy" value={draft.energy} onChange={(v) => set('energy', v)} />
         <Rating label="Mood" value={draft.mood} onChange={(v) => set('mood', v)} />
         <Rating label="Stress" value={draft.stress} onChange={(v) => set('stress', v)} />
@@ -133,6 +192,31 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
           From your logs: sleep {imported.sleep_h ? `${imported.sleep_h} h` : '—'} · training {imported.min_training ? `${imported.min_training} min` : '—'}
         </p>
       </section>
+
+      {reviewing && (
+        <Review
+          key={reviewing.photo.photo_id}
+          idToken={idToken}
+          photo={reviewing.photo}
+          source={reviewing.source}
+          data={data}
+          onCounts={(angle, acne) => set(angle === 'back' ? 'acne_back' : 'acne_face', String(acne))}
+          onDone={() => { setReviewing(null); onSaved() }}
+        />
+      )}
+      {meal && meal.phase === 'scanning' && <p className="sheets-meta" role="status">Your PC is looking at the meal. This can take a minute.</p>}
+      {meal && meal.phase === 'ready' && (
+        <FoodReview
+          items={meal.items}
+          onChange={(items) => setMeal({ phase: 'ready', items })}
+          onAdd={(t) => {
+            setDraft((d) => ({ ...d, protein_g: addNumber(d.protein_g, t.protein_g), carbs_g: addNumber(d.carbs_g, t.carbs_g), sugar_g: addNumber(d.sugar_g, t.sugar_g) }))
+            setStatus('idle')
+            setMeal(null)
+          }}
+          onClose={() => setMeal(null)}
+        />
+      )}
 
       <details className="pg-details">
         <summary>More (acne, skin, food, time, notes)</summary>

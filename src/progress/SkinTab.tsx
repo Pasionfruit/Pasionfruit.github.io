@@ -1,108 +1,19 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { fetchTimelinePhotoUrl, putPhotoBytes, removePhotoBytes } from '../data/timeline/client'
-import { blankCheckin, deleteRow, parseStoredMarks, saveRow, SKIN_ANGLES, type SkinMark, type SkinPhoto } from './client'
-import { detectSkinMarks, skinVisionModel } from './detect'
+import { useMemo, useState, type FormEvent } from 'react'
+import { removePhotoBytes } from '../data/timeline/client'
+import { deleteRow, parseStoredMarks, SKIN_ANGLES, type SkinPhoto } from './client'
+import { Review } from './ReviewPanel'
+import { usePhotoUrl } from './usePhotoUrl'
+import { addSkinPhoto } from './skinPhotos'
 import { LineChart } from './LineChart'
 import { MarkedImage } from './MarkEditor'
 import { acneTotal, daysBetween, num, todayLocal, type DateRange, inRange } from './analytics'
 import type { ProgressData } from './useProgressData'
-
-/** The photo's bytes as an object URL, released when the photo changes. */
-function usePhotoUrl(idToken: string, photoId: string) {
-  const [state, setState] = useState<{ id: string; src: string; failed: boolean }>({ id: '', src: '', failed: false })
-  useEffect(() => {
-    const controller = new AbortController()
-    let url = ''
-    fetchTimelinePhotoUrl(idToken, photoId, controller.signal)
-      .then((u) => {
-        url = u
-        setState({ id: photoId, src: u, failed: false })
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setState({ id: photoId, src: '', failed: true })
-      })
-    return () => {
-      controller.abort()
-      if (url) URL.revokeObjectURL(url)
-    }
-  }, [idToken, photoId])
-  return state.id === photoId ? state : { id: photoId, src: '', failed: false }
-}
 
 function SkinImage({ idToken, photo, alt }: { idToken: string; photo: SkinPhoto; alt: string }) {
   const { src, failed } = usePhotoUrl(idToken, photo.photo_id)
   if (failed) return <p className="sheets-meta">This photo could not be loaded.</p>
   if (!src) return <p className="sheets-meta">Loading photo…</p>
   return <MarkedImage src={src} alt={alt} marks={parseStoredMarks(photo.marks)} />
-}
-
-/** Review one photo: run the local model, correct its circles, then confirm. */
-function Review({ idToken, photo, source, data, onDone }: {
-  idToken: string
-  photo: SkinPhoto
-  /** The just-uploaded file, so the model does not need the photo fetched back. */
-  source?: File
-  data: ProgressData
-  onDone: () => void
-}) {
-  const { src } = usePhotoUrl(idToken, photo.photo_id)
-  const stored = parseStoredMarks(photo.marks)
-  const [marks, setMarks] = useState<SkinMark[]>(stored)
-  const [phase, setPhase] = useState<'idle' | 'scanning' | 'ready' | 'error'>(stored.length || photo.verified ? 'ready' : 'idle')
-  const [error, setError] = useState('')
-  const [saving, setSaving] = useState(false)
-  const acne = marks.filter((m) => m.kind === 'acne').length
-
-  async function scan() {
-    setPhase('scanning')
-    setError('')
-    try {
-      const blob: Blob = source ?? (await (await fetch(src)).blob())
-      setMarks(await detectSkinMarks(idToken, blob, photo.angle))
-      setPhase('ready')
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Scan failed.')
-      setPhase('error')
-    }
-  }
-
-  async function confirm() {
-    setSaving(true)
-    setError('')
-    try {
-      await saveRow(idToken, 'progress_skin_photos', { ...photo, marks: JSON.stringify(marks), verified: 'yes' })
-      // The verified count becomes that day's acne number, so it never has to be typed.
-      const date = photo.taken_at.slice(0, 10)
-      const existing = data.logged.find((c) => c.date === date) ?? blankCheckin(date)
-      await saveRow(idToken, 'progress_checkins', {
-        ...existing,
-        [photo.angle === 'back' ? 'acne_back' : 'acne_face']: String(acne),
-        updated_at: new Date().toISOString(),
-      })
-      onDone()
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Could not save.')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  return (
-    <section className="pg-review">
-      <h4>Review · {photo.angle} · {photo.taken_at.slice(0, 10)}</h4>
-      {!src ? <p className="sheets-meta">Loading photo…</p> : <MarkedImage src={src} alt={`${photo.angle} photo to review`} marks={marks} onChange={phase === 'scanning' ? undefined : setMarks} />}
-      <div className="pg-actions">
-        {phase !== 'scanning' && <button type="button" className="secondary-action" onClick={scan} disabled={!src}>{phase === 'idle' ? `Find spots (${skinVisionModel()})` : 'Scan again'}</button>}
-        {phase === 'scanning' && <span className="sheets-meta" role="status">Your PC is looking at the photo. This can take a minute.</span>}
-        <button type="button" className="primary-action" onClick={confirm} disabled={saving || phase === 'scanning'}>
-          {saving ? 'Saving…' : `Confirm · ${acne} acne, ${marks.length - acne} scar${marks.length - acne === 1 ? '' : 's'}`}
-        </button>
-        <button type="button" className="secondary-action" onClick={onDone}>Close</button>
-      </div>
-      <p className="sheets-meta">The circles are a first guess from a local model. Fix them before confirming. Confirming sets that day&rsquo;s {photo.angle === 'back' ? 'back' : 'face'} acne count.</p>
-      {error && <p className="pg-error" role="alert">{error}</p>}
-    </section>
-  )
 }
 
 /** Every photo of an angle, oldest first. */
@@ -143,16 +54,8 @@ export function SkinTab({ idToken, data, range, onChanged }: { idToken: string; 
     if (!file) return
     setBusy(true)
     setError('')
-    const photoId = crypto.randomUUID()
-    const row: SkinPhoto = { photo_id: photoId, taken_at: takenAt, angle: uploadAngle, notes: notes.trim(), marks: '[]', verified: '', created_at: new Date().toISOString() }
     try {
-      await putPhotoBytes(idToken, photoId, file)
-      try {
-        await saveRow(idToken, 'progress_skin_photos', row)
-      } catch (caught) {
-        await removePhotoBytes(idToken, photoId)
-        throw caught
-      }
+      const row = await addSkinPhoto(idToken, file, takenAt, uploadAngle, notes.trim())
       setReviewing({ photo: row, source: file })
       setFile(null)
       setFileKey((k) => k + 1)

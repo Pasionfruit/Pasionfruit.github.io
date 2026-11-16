@@ -56,7 +56,7 @@ export function parseMarks(raw: { spots?: RawSpot[] } | null | undefined, width:
   return marks
 }
 
-async function toBase64(blob: Blob): Promise<{ data: string; width: number; height: number }> {
+export async function prepareImage(blob: Blob): Promise<{ data: string; width: number; height: number }> {
   const bitmap = await createImageBitmap(blob).catch(() => {
     throw new Error("Couldn't read that photo.")
   })
@@ -79,7 +79,7 @@ export async function detectSkinMarks(idToken: string, photo: Blob, angle: strin
   const base = getAceConfig()
   if (!base) throw new Error('Ace is not configured (VITE_ACE_BASE_URL), so there is no local model to ask.')
 
-  const { data, width, height } = await toBase64(photo)
+  const { data, width, height } = await prepareImage(photo)
   const where = angle === 'back' ? "a person's back" : "a person's face"
   const result = await aceJson<{ spots?: RawSpot[] }>({
     config: { ...base, model: skinVisionModel() },
