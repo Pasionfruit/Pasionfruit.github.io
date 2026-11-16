@@ -160,7 +160,7 @@ const TABLES = {
   // Skin photo metadata; the image bytes are in R2 at /photos/<photo_id>.
   progress_skin_photos: {
     key: 'photo_id',
-    columns: ['photo_id', 'taken_at', 'angle', 'notes', 'created_at'],
+    columns: ['photo_id', 'taken_at', 'angle', 'notes', 'marks', 'verified', 'created_at'],
     read: 'admin',
   },
   progress_content: {

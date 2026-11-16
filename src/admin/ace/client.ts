@@ -18,6 +18,8 @@ export type AceRole = 'system' | 'user' | 'assistant'
 export type AceMessage = {
   role: AceRole
   content: string
+  /** Base64 images, for vision models. */
+  images?: string[]
 }
 
 export type AceConfig = {

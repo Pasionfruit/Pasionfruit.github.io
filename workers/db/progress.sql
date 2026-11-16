@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS progress_skin_photos (
   taken_at TEXT NOT NULL DEFAULT '',
   angle TEXT NOT NULL DEFAULT '',
   notes TEXT NOT NULL DEFAULT '',
+  -- JSON array of {kind, x, y, r} circles, 0-1 of the image width.
+  marks TEXT NOT NULL DEFAULT '[]',
+  verified TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS progress_content (

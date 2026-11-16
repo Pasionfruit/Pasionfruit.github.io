@@ -32,10 +32,42 @@ export type Checkin = {
   updated_at: string
 }
 
-export const SKIN_ANGLES = ['front', 'left', 'right', 'back'] as const
+export const SKIN_ANGLES = ['face', 'back'] as const
 export type SkinAngle = (typeof SKIN_ANGLES)[number]
 
-export type SkinPhoto = { photo_id: string; taken_at: string; angle: string; notes: string; created_at: string }
+/** A circled spot. x and y are the centre, r the radius, all as a fraction of the image width. */
+export type SkinMark = { kind: 'acne' | 'scar'; x: number; y: number; r: number }
+
+export type SkinPhoto = {
+  photo_id: string
+  taken_at: string
+  angle: string
+  notes: string
+  /** JSON array of SkinMark. */
+  marks: string
+  /** 'yes' once the marks have been checked by hand. */
+  verified: string
+  created_at: string
+}
+
+export function parseStoredMarks(text: string | undefined): SkinMark[] {
+  try {
+    const value = JSON.parse(text || '[]') as unknown
+    return Array.isArray(value)
+      ? value.filter((m): m is SkinMark => !!m && (m.kind === 'acne' || m.kind === 'scar') && [m.x, m.y, m.r].every(Number.isFinite))
+      : []
+  } catch {
+    return []
+  }
+}
+
+export function blankCheckin(date: string): Checkin {
+  return {
+    date, am_done: '', pm_done: '', acne_face: '', acne_back: '', redness: '', scar: '', products: '',
+    sleep_h: '', energy: '', mood: '', stress: '', sugar_g: '', protein_g: '', carbs_g: '', dairy: '',
+    min_training: '', min_content: '', min_leisure: '', notes: '', updated_at: '',
+  }
+}
 
 export const CONTENT_STATUSES = ['idea', 'filming', 'editing', 'published'] as const
 export type ContentStatus = (typeof CONTENT_STATUSES)[number]

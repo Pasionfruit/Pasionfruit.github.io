@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { parseMarks } from './detect'
 import type { GarminHealthRecord } from '../data/sheets/types'
 import type { Checkin } from './client'
 import {
@@ -99,5 +100,40 @@ describe('progress analytics', () => {
     const w = windows(rows, (c) => Number(c.sleep_h), '2027-01-15')
     expect(w.d30).toBe(8)
     expect(w.d60).toBe(7)
+  })
+})
+
+
+
+describe('parseMarks', () => {
+  it('turns pixel boxes into circles as a fraction of the width', () => {
+    const marks = parseMarks({ spots: [{ kind: 'acne', bbox_2d: [100, 200, 120, 220] }] }, 1000, 1000)
+    expect(marks).toHaveLength(1)
+    expect(marks[0].x).toBeCloseTo(0.11)
+    expect(marks[0].y).toBeCloseTo(0.21)
+    expect(marks[0].r).toBeCloseTo(0.012) // floor so tiny spots stay tappable
+  })
+
+  it('drops malformed, oversized, off-image and overlapping spots', () => {
+    const marks = parseMarks(
+      {
+        spots: [
+          { kind: 'acne', bbox_2d: [100, 100, 130, 130] },
+          { kind: 'acne', bbox_2d: [101, 101, 131, 131] }, // overlaps the first
+          { kind: 'dragon', bbox_2d: [300, 300, 320, 320] },
+          { kind: 'scar', bbox_2d: [0, 0, 900, 900] }, // a whole face is not a spot
+          { kind: 'scar', bbox_2d: [2000, 100, 2020, 120] }, // off the image
+          { kind: 'scar', bbox_2d: [1, 2, 3] },
+          { kind: 'scar', bbox_2d: [500, 500, 530, 530] },
+        ],
+      },
+      1000,
+      1000,
+    )
+    expect(marks.map((m) => m.kind)).toEqual(['acne', 'scar'])
+  })
+
+  it('copes with no result at all', () => {
+    expect(parseMarks(null, 100, 100)).toEqual([])
   })
 })
