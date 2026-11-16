@@ -97,3 +97,18 @@ export async function fetchTimelinePhotoUrl(idToken: string, photoId: string, si
   if (!response.ok) throw await failure(response, 'Photo read failed')
   return URL.createObjectURL(await response.blob())
 }
+
+/** Store a photo's bytes only (resized), for features that keep their own metadata row. */
+export async function putPhotoBytes(idToken: string, photoId: string, file: File): Promise<void> {
+  const image = await shrinkPhoto(file)
+  const upload = await fetch(`${DB_BASE_URL}/photos/${photoId}`, {
+    method: 'POST',
+    headers: { ...authHeaders(idToken), 'Content-Type': image.type },
+    body: image,
+  })
+  if (!upload.ok) throw await failure(upload, 'Photo upload failed')
+}
+
+export async function removePhotoBytes(idToken: string, photoId: string): Promise<void> {
+  await fetch(`${DB_BASE_URL}/photos/${photoId}`, { method: 'DELETE', headers: authHeaders(idToken) })
+}

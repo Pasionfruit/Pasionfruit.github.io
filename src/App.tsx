@@ -85,13 +85,13 @@ import { useWeather, type WeatherHook } from './weather/useWeather'
 import { AdminPage } from './admin/AdminPage'
 import { CalendarWeekCard } from './admin/CalendarWeekCard'
 import { MealPlanCard } from './admin/meals/MealPlanCard'
-import { ChallengesCard } from './challenges/ChallengesCard'
 import { DecisionMaker } from './challenges/DecisionMaker'
 import { VerseOfTheDayCard } from './admin/VerseOfTheDayCard'
 import { AceLauncher } from './admin/ace/AceLauncher'
 import { GarminWellnessCard } from './admin/GarminCards'
 import { NewsDashboard } from './admin/news/NewsDashboard'
 import { CiaraDashboard } from './admin/ciara/CiaraDashboard'
+import { ProgressCard } from './progress/ProgressCard'
 import { WorkoutText } from './training/WorkoutText'
 import { TrainingOfDayCard } from './training/TrainingOfDayCard'
 import {
@@ -296,7 +296,8 @@ function App() {
           <Route path="admin" element={<AdminGate isAdmin={isAdmin} />}>
             {/* Tasks is where an admin starts, so the old hub lands there. */}
             <Route index element={<Navigate replace to="/admin/tasks" />} />
-            <Route path="boredom" element={<AdminBoredomPage googleIdToken={googleIdToken} />} />
+            <Route path="projects" element={<AdminProjectsPage googleIdToken={googleIdToken} />} />
+            <Route path="boredom" element={<Navigate replace to="/admin/projects" />} />
             <Route path="tasks" element={<AdminTasksPage profile={profile} googleIdToken={googleIdToken} />} />
             <Route
               path="calendar"
@@ -310,11 +311,12 @@ function App() {
             <Route path="personal" element={<Navigate replace to="/admin/tasks" />} />
             <Route path="journal" element={<Navigate replace to="/admin/tasks" />} />
             <Route path="news" element={<AdminNewsPage googleIdToken={googleIdToken} />} />
-            {/* Overview came back as News; its Health tab and WW + TG live on Boredom. */}
+            {/* Overview came back as News; its Health tab lives on Projects and WW + TG on News. */}
             <Route path="overview" element={<Navigate replace to="/admin/news" />} />
-            {['health', 'ciara', 'content'].map((old) => (
-              <Route key={old} path={old} element={<Navigate replace to="/admin/boredom" />} />
+            {['health', 'content'].map((old) => (
+              <Route key={old} path={old} element={<Navigate replace to="/admin/projects" />} />
             ))}
+            <Route path="ciara" element={<Navigate replace to="/admin/news" />} />
           </Route>
 
           <Route
@@ -371,31 +373,25 @@ function AdminGate({ isAdmin }: { isAdmin: boolean }) {
 }
 
 /**
- * What the admin sees at `/admin/boredom`: the verse of the day, daily wellness, the 365
- * challenges and WW + TG. Tasks and calendar are their own pages (see
+ * What the admin sees at `/admin/projects`: the verse of the day, daily wellness, the
+ * Progress tracker and the decision maker. Tasks and calendar are their own pages (see
  * AdminBarePage). Ace is not a card here — it floats over every admin page (see AceLauncher).
  */
-function AdminBoredomPage({ googleIdToken }: { googleIdToken: string }) {
+function AdminProjectsPage({ googleIdToken }: { googleIdToken: string }) {
   return (
     /*
      * This page renders its own shell rather than going through AdminPage,
      * so it has to set --page-accent itself — without it, accented controls
-     * fall back to the global purple instead of the Boredom dashboard's blue.
+     * fall back to the global purple instead of the Projects dashboard's blue.
      */
     <div
       className="admin-page admin-home"
-      style={{ '--page-accent': adminDashboardsById.boredom.accent } as CSSProperties}
+      style={{ '--page-accent': adminDashboardsById.projects.accent } as CSSProperties}
     >
       <VerseOfTheDayCard title="Verse of the day" />
       <GarminWellnessCard title="Daily wellness" />
-      <ChallengesCard
-        title="365 Challenges"
-        canEdit
-        idToken={googleIdToken}
-        className="admin-card admin-card-wide"
-      />
+      <ProgressCard title="Projects" idToken={googleIdToken} />
       <DecisionMaker />
-      <CiaraDashboard idToken={googleIdToken} />
     </div>
   )
 }
@@ -462,13 +458,14 @@ function AdminNewsPage({ googleIdToken }: { googleIdToken: string }) {
   return (
     <AdminPage meta={adminDashboardsById.news}>
       <NewsDashboard idToken={googleIdToken} />
+      <CiaraDashboard idToken={googleIdToken} />
     </AdminPage>
   )
 }
 
 /** Minimal line icons for the admin top bar, keyed off AdminDashboardMeta.icon. */
 const ADMIN_NAV_ICONS: Record<AdminIconId, LucideIcon> = {
-  boredom: BookOpen,
+  projects: BookOpen,
   tasks: ListChecks,
   calendar: CalendarDays,
   training: Dumbbell,
@@ -781,7 +778,7 @@ function HomeSection({
   )
 }
 
-const ALL_SECTION_IDS: SectionId[] = ['experiences', 'training', 'personal-sites', 'gaming', 'challenges']
+const ALL_SECTION_IDS: SectionId[] = ['experiences', 'training', 'personal-sites', 'gaming']
 
 /** The public home page: collapsible sections. Admins get AdminHomePage. */
 function HomePage() {
@@ -862,14 +859,6 @@ function HomePage() {
         onToggle={() => toggleSection('gaming')}
       >
         <MinecraftServerCards />
-      </HomeSection>
-
-      <HomeSection
-        id="challenges"
-        isOpen={openSections.includes('challenges')}
-        onToggle={() => toggleSection('challenges')}
-      >
-        <ChallengesCard title="365 Challenges" className="admin-card-wide" />
       </HomeSection>
 
     </div>

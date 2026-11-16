@@ -16,7 +16,6 @@ are no separate section routes any more.
 | Experiences | `/#experiences` | Education, technical skills, professional history, resume downloads |
 | Personal Sites | `/#personal-sites` | Deployed side projects, linked out for anyone to try |
 | Gaming | `/#gaming` | Minecraft connection guide and live server status with a link to the control dashboard |
-| 365 Challenges | `/#challenges` | The 365 challenges with a randomizer and video links; the admin home edits and marks them in place (progress in the db Worker's `challenges` table) |
 | Training | `/#training` | Today's planned workout, the Garmin training log, and the next event countdown — all read-only |
 
 Sections start collapsed. The side menu links to each anchor, which expands the
@@ -32,12 +31,12 @@ hamburger menu. The top bar becomes an icon nav and `/` lands on Tasks.
 | Nav item | Route | Contents |
 | --- | --- | --- |
 | Calendar | `/admin/calendar` | The month and week ahead, with the weather. Opens on today with its events, meals and tasks showing; the day's tasks have the same add, edit, complete and delete controls as Upcoming on the task manager |
-| Boredom | `/admin/boredom` | Verse of the day (mark it read to fold it, or open the whole chapter), daily wellness (starts collapsed as a one-line note beside the collapse button, with an A–F health grade and the trend; expand for day, week, month and quarter A–F ratings, a trendline, and sleep & recovery and activity with a two-week sparkline per metric), the 365 challenges (a slot-machine reel over every challenge), a decision maker (your own options on a slot-machine reel, kept on the device), and WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) |
+| Projects | `/admin/projects` | Verse of the day, daily wellness (collapsed by default, A–F health grade and trends), then **Projects**: the 90-day Progress tracker starting 2026-11-16 (Overview, one-form daily Check-in, private Skin photo timeline with side-by-side comparison, Training from Garmin/Apple data with RPE and pace-at-heart-rate, Content pipeline, and Insights with 30/60/90-day averages and cautious correlations; data in the db Worker's `progress_*` tables, apply `workers/db/progress.sql`), and a decision maker (your own options on a slot-machine reel, kept on the device) |
 | Tasks | `/admin/tasks` | Tasks of the Day from Todoist, linking the full manager. The page an admin starts on |
 | Training | `/admin/training` | Training of the Day on top, then the next event countdown, Garmin and Apple Health workouts, and the training log |
-| News | `/admin/news` | Local, City, Nation, International and Tech headlines, with a digest and Ask Ace on each article |
+| News | `/admin/news` | Local, City, Nation, International and Tech headlines, with a digest and Ask Ace on each article; WW + TG (time together since 11:00 PM, Nov 19 2022, sticky notes and a photo timeline) below |
 
-`/` and `/admin` redirect an admin to Tasks. `/admin/journal` and `/admin/personal` (the removed Journal page) also land on Tasks. `/training` redirects to Training, `/admin/overview` to News, and the retired Health, Content and WW + TG URLs (`/admin/health`, `/admin/content`, `/admin/ciara`) to Boredom. The
+`/` and `/admin` redirect an admin to Tasks. `/admin/journal` and `/admin/personal` (the removed Journal page) also land on Tasks. `/training` redirects to Training, `/admin/overview` to News, the retired Health, Content and Boredom URLs (`/admin/health`, `/admin/content`, `/admin/boredom`) to Projects, and `/admin/ciara` to News. The
 Finance, Work and System dashboards were removed; their old URLs land on Tasks.
 
 Tasks and Calendar are modular pages: each holds one module with no page

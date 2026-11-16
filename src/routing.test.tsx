@@ -306,7 +306,7 @@ describe('guest home page', () => {
     renderAt('/')
 
     const order = [...document.querySelectorAll('.home-section')].map((section) => section.id)
-    expect(order).toEqual(['experiences', 'training', 'personal-sites', 'gaming', 'challenges'])
+    expect(order).toEqual(['experiences', 'training', 'personal-sites', 'gaming'])
   })
 
   it('opens Experiences with its summary as a short bullet list', () => {
@@ -507,8 +507,8 @@ describe('admin routing', () => {
     renderAt('/', ADMIN_EMAIL)
 
     const labels = [...document.querySelectorAll('.admin-nav-link')].map((link) => link.textContent?.trim())
-    // Tasks is in the middle; wellness and WW + TG live on Boredom, the headlines on News.
-    expect(labels).toEqual(['Calendar', 'Boredom', 'Tasks', 'Training', 'News'])
+    // Tasks is in the middle; wellness and Progress live on Projects, headlines and WW + TG on News.
+    expect(labels).toEqual(['Calendar', 'Projects', 'Tasks', 'Training', 'News'])
   })
 
   it.each(['/admin/journal', '/admin/personal'])('sends the removed Journal page %s to Tasks', async (path) => {
@@ -604,31 +604,31 @@ describe('admin routing', () => {
     expect(pageTitle()).toBe('News')
   })
 
-  it.each(['/admin/health', '/admin/content', '/admin/ciara'])(
-    'sends the retired %s to Boredom',
+  it.each(['/admin/health', '/admin/content', '/admin/boredom'])(
+    'sends the retired %s to Projects',
     async (path) => {
       renderAt(path, ADMIN_EMAIL)
       expect(await screen.findByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
     },
   )
 
-  it('shows WW + TG below the challenges on Boredom and sends /admin/ciara there', async () => {
+  it('puts WW + TG on News and sends /admin/ciara there', async () => {
     renderAt('/admin/ciara', ADMIN_EMAIL)
 
-    const ciara = await screen.findByRole('heading', { name: 'WW + TG' })
-    const challenges = screen.getByRole('heading', { name: '365 Challenges' })
-    expect(challenges.compareDocumentPosition(ciara) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'WW + TG' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Local' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: 'Chores' })).toBeNull()
   })
 
-  it('puts the verse, daily wellness, the challenges and WW + TG on Boredom, with no news and no training', async () => {
-    renderAt('/admin/boredom', ADMIN_EMAIL)
+  it('puts the verse, daily wellness and Projects on the Projects page, with no news, WW + TG or training', async () => {
+    renderAt('/admin/projects', ADMIN_EMAIL)
 
     expect(await screen.findByRole('heading', { name: 'Verse of the day' })).toBeTruthy()
     expect(await screen.findByRole('heading', { name: 'Daily wellness', level: 3 })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: '365 Challenges' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Projects' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: '365 Challenges' })).toBeNull()
     expect(screen.getByRole('heading', { name: 'Decision maker' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'WW + TG' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'WW + TG' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Local' })).toBeNull()
     expect(screen.queryByRole('heading', { name: 'Training of the Day' })).toBeNull()
   })

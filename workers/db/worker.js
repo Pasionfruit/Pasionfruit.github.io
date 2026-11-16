@@ -146,6 +146,38 @@ const TABLES = {
     columns: ['challenge_id', 'category', 'challenge', 'duration', 'difficulty', 'status', 'video_url', 'updated_at'],
     read: 'public',
   },
+  // The Projects page's Progress tracker (workers/db/progress.sql). All admin-only,
+  // both ways. Every measurement is text so an empty string means "skipped".
+  progress_checkins: {
+    key: 'date',
+    columns: [
+      'date', 'am_done', 'pm_done', 'acne_face', 'acne_back', 'redness', 'scar', 'products',
+      'sleep_h', 'energy', 'mood', 'stress', 'sugar_g', 'protein_g', 'carbs_g', 'dairy',
+      'min_training', 'min_content', 'min_leisure', 'notes', 'updated_at',
+    ],
+    read: 'admin',
+  },
+  // Skin photo metadata; the image bytes are in R2 at /photos/<photo_id>.
+  progress_skin_photos: {
+    key: 'photo_id',
+    columns: ['photo_id', 'taken_at', 'angle', 'notes', 'created_at'],
+    read: 'admin',
+  },
+  progress_content: {
+    key: 'content_id',
+    columns: [
+      'content_id', 'title', 'status', 'platform', 'category', 'post_date',
+      'filming_min', 'editing_min', 'views', 'likes', 'comments', 'notes', 'updated_at',
+    ],
+    read: 'admin',
+  },
+  // Perceived effort for a Garmin/Apple activity, which the watch does not record.
+  // workout_key is "<date>|<activity_id or title>".
+  progress_workout_rpe: {
+    key: 'workout_key',
+    columns: ['workout_key', 'rpe', 'updated_at'],
+    read: 'admin',
+  },
   // No finance tables: the Finance dashboard was removed, and that data never
   // belonged on Cloudflare.
 }

@@ -1,5 +1,4 @@
 import type { NavSection } from './shared'
-import { challengesNavSection } from './challenges'
 import { experiencesNavSection } from './experiences'
 import { gamingNavSection } from './gaming'
 import { personalSitesNavSection } from './personalSites'
@@ -10,5 +9,4 @@ export const navSections: NavSection[] = [
   trainingNavSection,
   personalSitesNavSection,
   gamingNavSection,
-  challengesNavSection,
 ]

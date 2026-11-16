@@ -1,14 +1,14 @@
 /** Sections a signed-out visitor can reach. Everything else lives behind /admin. */
-export type SectionId = 'experiences' | 'personal-sites' | 'gaming' | 'training' | 'challenges'
+export type SectionId = 'experiences' | 'personal-sites' | 'gaming' | 'training'
 
 /**
  * The private dashboards, available only to the admin Google account.
  * 'tasks' is the signed-in landing page.
  */
-export type AdminDashboardId = 'boredom' | 'tasks' | 'calendar' | 'training' | 'news'
+export type AdminDashboardId = 'projects' | 'tasks' | 'calendar' | 'training' | 'news'
 
 /** Icon key for the admin top-bar nav, mapped to a component in App.tsx. */
-export type AdminIconId = 'boredom' | 'tasks' | 'calendar' | 'training' | 'news'
+export type AdminIconId = 'projects' | 'tasks' | 'calendar' | 'training' | 'news'
 
 export type PageCard = {
   title: string

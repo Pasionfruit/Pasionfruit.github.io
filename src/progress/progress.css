@@ -1,0 +1,73 @@
+/* The Progress tracker on the Projects page. Reuses the admin card chrome; only layout lives here. */
+.pg-card { display: flex; flex-direction: column; gap: 0.75rem; }
+.pg-stack { display: flex; flex-direction: column; gap: 1rem; }
+.pg-card h4 { margin: 0.25rem 0 0.4rem; font-size: 0.9rem; color: var(--text-strong); }
+
+.pg-tabs, .pg-range, .pg-subtabs, .pg-scale-buttons { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.pg-tabs { border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; overflow-x: auto; flex-wrap: nowrap; }
+.pg-tabs button, .pg-range button, .pg-subtabs button, .pg-scale-buttons button {
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-muted);
+  border-radius: var(--radius-pill); padding: 0.35rem 0.8rem; font: inherit; font-size: 0.82rem;
+  cursor: pointer; min-height: 2.25rem; white-space: nowrap; text-transform: capitalize;
+}
+.pg-tabs button.is-on, .pg-range button.is-on, .pg-subtabs button.is-on, .pg-scale-buttons button.is-on {
+  background: var(--page-accent, var(--accent)); border-color: var(--page-accent, var(--accent)); color: #fff;
+}
+.pg-range { font-size: 0.82rem; }
+.pg-range input, .pg-field input, .pg-field select, .pg-field textarea, .pg-daynav input, .pg-list select {
+  font: inherit; padding: 0.4rem 0.55rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); min-height: 2.25rem; max-width: 100%;
+}
+
+.pg-form { display: flex; flex-direction: column; gap: 0.9rem; }
+.pg-form-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.pg-daynav { display: flex; gap: 0.35rem; align-items: center; }
+.pg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.6rem; align-items: end; }
+.pg-wide { grid-column: 1 / -1; }
+.pg-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem; color: var(--text-muted); border: 0; padding: 0; margin: 0; min-width: 0; }
+.pg-field > span, .pg-field legend { padding: 0; font-size: 0.8rem; }
+.pg-check { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; min-height: 2.25rem; }
+.pg-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.pg-error { color: var(--danger); font-size: 0.85rem; }
+.pg-banner { background: var(--accent-soft); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; font-size: 0.85rem; margin: 0; }
+
+.pg-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: 0.6rem; }
+.pg-tiles > div { background: var(--surface-muted); border-radius: var(--radius-sm); padding: 0.6rem 0.75rem; display: flex; flex-direction: column; }
+.pg-tiles b { font-size: 1.35rem; font-variant-numeric: tabular-nums; color: var(--text-strong); }
+.pg-tiles span { font-size: 0.75rem; color: var(--text-muted); }
+
+.pg-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.8rem; }
+.pg-chart { margin: 0; }
+.pg-chart figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.4rem; font-size: 0.82rem; margin-bottom: 0.2rem; }
+.pg-legend { display: flex; flex-wrap: wrap; gap: 0.6rem; font-size: 0.75rem; color: var(--text-muted); }
+.pg-legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+.pg-legend i { width: 0.6rem; height: 0.6rem; border-radius: 50%; display: inline-block; }
+.pg-svg { width: 100%; height: auto; display: block; }
+.pg-axis { stroke: var(--border-strong); stroke-width: 1; }
+.pg-axis-faint { stroke: var(--border); stroke-dasharray: 3 3; }
+.pg-tick { fill: var(--text-muted); font-size: 8px; }
+
+.pg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.pg-list > li { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; font-size: 0.85rem; padding: 0.3rem 0; border-bottom: 1px solid var(--border); }
+.pg-notes > li { flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+.pg-notes span { color: var(--text-muted); }
+.pg-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.8rem; }
+.pg-cards > li { background: var(--surface-muted); border: 0; border-radius: var(--radius-sm); padding: 0.55rem 0.7rem; align-items: flex-start; flex-wrap: wrap; }
+.pg-cards p { margin: 0.1rem 0 0; }
+.pg-row-actions { display: flex; gap: 0.25rem; }
+.pg-details summary { cursor: pointer; font-size: 0.85rem; color: var(--text-muted); }
+
+.pg-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.pg-photo { width: 100%; height: auto; border-radius: var(--radius-sm); display: block; }
+
+.pg-table-wrap { overflow-x: auto; }
+.pg-table { border-collapse: collapse; width: 100%; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.pg-table th, .pg-table td { padding: 0.35rem 0.5rem; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.pg-table th:first-child { text-align: left; font-weight: 600; }
+
+.pg-bar { display: flex; height: 0.9rem; border-radius: var(--radius-pill); overflow: hidden; background: var(--surface-muted); }
+.pg-band { max-width: 20rem; }
+
+@media (max-width: 560px) {
+  .pg-compare { grid-template-columns: 1fr; }
+}
