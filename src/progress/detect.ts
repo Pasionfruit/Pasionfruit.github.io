@@ -80,7 +80,8 @@ export async function detectSkinMarks(idToken: string, photo: Blob, angle: strin
   if (!base) throw new Error('Ace is not configured (VITE_ACE_BASE_URL), so there is no local model to ask.')
 
   const { data, width, height } = await prepareImage(photo)
-  const where = angle === 'back' ? "a person's back" : "a person's face"
+  const where =
+    angle === 'back' ? "a person's back" : angle === 'front' || angle === 'face' ? "a person's face, seen from the front" : `the ${angle} side of a person's face`
   const result = await aceJson<{ spots?: RawSpot[] }>({
     config: { ...base, model: skinVisionModel() },
     idToken,

@@ -36,7 +36,18 @@ export type Checkin = {
   updated_at: string
 }
 
-export const SKIN_ANGLES = ['face', 'back'] as const
+/** The face is three shots (front, left, right); the back is one. */
+export const SKIN_ANGLES = ['front', 'left', 'right', 'back'] as const
+export const FACE_ANGLES = ['front', 'left', 'right'] as const
+
+/** Photos taken before the face was split into three shots are stored as 'face': treat them as front. */
+export function normalizeAngle(angle: string): string {
+  return angle === 'face' ? 'front' : angle
+}
+
+export function isFaceAngle(angle: string): boolean {
+  return (FACE_ANGLES as readonly string[]).includes(normalizeAngle(angle))
+}
 export type SkinAngle = (typeof SKIN_ANGLES)[number]
 
 /** A circled spot. x and y are the centre, r the radius, all as a fraction of the image width. */

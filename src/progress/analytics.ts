@@ -1,7 +1,7 @@
 import type { GarminHealthRecord, GarminWellnessRecord } from '../data/sheets/types'
 import { sportOf } from '../admin/training/activities'
 import { addDaysToKey, dateFromKey, toLocalDateKey } from '../data/todoist/dates'
-import { blankCheckin, type Checkin, type ContentItem, type NutritionDay } from './client'
+import { blankCheckin, isFaceAngle, parseStoredMarks, type Checkin, type ContentItem, type NutritionDay, type SkinPhoto } from './client'
 
 /** The first 90-day period. Tracking carries on past it; the end date is only a reference. */
 export const PERIOD_START = '2026-11-16'
@@ -373,4 +373,20 @@ export function upkeep(logged: Checkin[], today: string): Upkeep {
     towelDaysAgo: since('towel'),
     sheetsDaysAgo: since('sheets'),
   }
+}
+
+/**
+ * A day's face acne count: the verified acne circles across the front, left and
+ * right shots. `override` stands in for the photo being confirmed right now, whose
+ * saved marks are not in `photos` yet. A spot seen from two angles counts twice, so
+ * treat the number as a consistent index for trends rather than an exact tally.
+ */
+export function faceAcneFor(date: string, photos: SkinPhoto[], override?: { photoId: string; acne: number }): number {
+  let total = override ? override.acne : 0
+  for (const p of photos) {
+    if (p.taken_at.slice(0, 10) !== date || !isFaceAngle(p.angle) || !p.verified) continue
+    if (override && p.photo_id === override.photoId) continue
+    total += parseStoredMarks(p.marks).filter((m) => m.kind === 'acne').length
+  }
+  return total
 }

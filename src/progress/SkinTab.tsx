@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { removePhotoBytes } from '../data/timeline/client'
-import { deleteRow, parseStoredMarks, SKIN_ANGLES, type SkinPhoto } from './client'
+import { deleteRow, normalizeAngle, parseStoredMarks, SKIN_ANGLES, type SkinPhoto } from './client'
 import { Review } from './ReviewPanel'
 import { usePhotoUrl } from './usePhotoUrl'
 import { addSkinPhoto } from './skinPhotos'
@@ -18,15 +18,15 @@ function SkinImage({ idToken, photo, alt }: { idToken: string; photo: SkinPhoto;
 
 /** Every photo of an angle, oldest first. */
 function forAngle(photos: SkinPhoto[], angle: string) {
-  return photos.filter((p) => p.angle === angle).sort((a, b) => a.taken_at.localeCompare(b.taken_at))
+  return photos.filter((p) => normalizeAngle(p.angle) === angle).sort((a, b) => a.taken_at.localeCompare(b.taken_at))
 }
 
 export function SkinTab({ idToken, data, range, onChanged }: { idToken: string; data: ProgressData; range: DateRange; onChanged: () => void }) {
-  const [angle, setAngle] = useState<string>('face')
+  const [angle, setAngle] = useState<string>('front')
   const [file, setFile] = useState<File | null>(null)
   const [fileKey, setFileKey] = useState(0)
   const [takenAt, setTakenAt] = useState(todayLocal)
-  const [uploadAngle, setUploadAngle] = useState<string>('face')
+  const [uploadAngle, setUploadAngle] = useState<string>('front')
   const [notes, setNotes] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')

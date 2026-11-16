@@ -130,3 +130,12 @@
 .pg-food-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.35rem; }
 .pg-food-nums label { display: flex; flex-direction: column; font-size: 0.7rem; color: var(--text-muted); }
 .pg-food input { font: inherit; padding: 0.3rem 0.4rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); min-height: 2.5rem; width: 100%; box-sizing: border-box; }
+
+/* ── Header matches the Daily wellness card on phones: title left, collapse button right ── */
+.pg-camera .pg-chip { text-transform: capitalize; min-width: 4.2rem; }
+@media (max-width: 48rem) {
+  .pg-card .admin-card-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.4rem; }
+  .pg-card .admin-card-head h3 { grid-column: 1; grid-row: 1; }
+  .pg-card .admin-card-actions { display: contents; }
+  .pg-card .section-collapse-btn { grid-column: 2; grid-row: 1; justify-self: end; width: 2rem; height: 2rem; }
+}

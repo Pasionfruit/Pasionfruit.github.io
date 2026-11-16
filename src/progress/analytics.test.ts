@@ -177,21 +177,28 @@ describe('imported sleep and training, and upkeep', () => {
   })
 })
 
-import { foodTotals, parseFood } from './food'
+import { faceAcneFor } from './analytics'
+import type { SkinPhoto } from './client'
 
-describe('meal estimates', () => {
-  it('keeps plausible items, clamps wild numbers and totals the macros', () => {
-    const items = parseFood({
-      items: [
-        { name: 'Chicken breast', grams: 150, protein_g: 46, carbs_g: 0, sugar_g: 0 },
-        { name: 'Rice', grams: 200, protein_g: 5, carbs_g: 56, sugar_g: 0 },
-        { name: '', grams: 100 },
-        { name: 'Ghost', grams: 0 },
-        { name: 'Mountain of rice', grams: 99999, protein_g: -4, carbs_g: 99999, sugar_g: 1 },
-      ],
-    })
-    expect(items.map((i) => i.name)).toEqual(['Chicken breast', 'Rice', 'Mountain of rice'])
-    expect(items[2]).toMatchObject({ grams: 2000, protein_g: 0, carbs_g: 400 })
-    expect(foodTotals(items.slice(0, 2))).toEqual({ protein_g: 51, carbs_g: 56, sugar_g: 0 })
+describe('face acne from three shots', () => {
+  const photo = (id: string, angle: string, taken: string, acne: number, verified = 'yes'): SkinPhoto => ({
+    photo_id: id, taken_at: taken, angle, notes: '', verified, created_at: '',
+    marks: JSON.stringify(Array.from({ length: acne }, (_, i) => ({ kind: 'acne', x: i / 10, y: 0.1, r: 0.02 }))),
+  })
+
+  it('sums the verified front, left and right shots for the day and ignores the back and other days', () => {
+    const photos = [
+      photo('a', 'front', '2026-11-16', 3),
+      photo('b', 'left', '2026-11-16', 2),
+      photo('c', 'back', '2026-11-16', 9),
+      photo('d', 'front', '2026-11-15', 7),
+      photo('e', 'right', '2026-11-16', 4, ''),
+      photo('f', 'face', '2026-11-16', 1), // taken before the face was split into three shots
+    ]
+    expect(faceAcneFor('2026-11-16', photos)).toBe(6)
+  })
+
+  it('uses the photo being confirmed instead of its saved marks', () => {
+    expect(faceAcneFor('2026-11-16', [photo('a', 'front', '2026-11-16', 3), photo('b', 'left', '2026-11-16', 2)], { photoId: 'a', acne: 5 })).toBe(7)
   })
 })
