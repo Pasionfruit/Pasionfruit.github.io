@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { getEvents, getGarminHealth, getGarminWellness } from '../data/sheets/repositories'
 import type { EventRecord, GarminHealthRecord, GarminWellnessRecord } from '../data/sheets/types'
 import { withImported } from './analytics'
-import { listRows, type Checkin, type ContentItem, type SkinPhoto, type WorkoutRpe } from './client'
+import { listRows, type Checkin, type ContentItem, type NutritionDay, type SkinPhoto, type WorkoutRpe } from './client'
 
 export type ProgressData = {
   /** What was saved by hand. */
@@ -12,12 +12,13 @@ export type ProgressData = {
   photos: SkinPhoto[]
   content: ContentItem[]
   rpe: WorkoutRpe[]
+  nutrition: NutritionDay[]
   activities: GarminHealthRecord[]
   wellness: GarminWellnessRecord[]
   events: EventRecord[]
 }
 
-const EMPTY: ProgressData = { logged: [], checkins: [], photos: [], content: [], rpe: [], activities: [], wellness: [], events: [] }
+const EMPTY: ProgressData = { logged: [], checkins: [], photos: [], content: [], rpe: [], nutrition: [], activities: [], wellness: [], events: [] }
 
 /**
  * Everything the tracker shows. The imports (Garmin, Apple, wellness, events) are
@@ -39,18 +40,21 @@ export function useProgressData(idToken: string) {
           listRows<ContentItem>(idToken, 'progress_content'),
           listRows<WorkoutRpe>(idToken, 'progress_workout_rpe'),
         ])
-        const [activities, wellness, events] = await Promise.all([
+        const [activities, wellness, events, nutrition] = await Promise.all([
           getGarminHealth().catch(() => []),
           getGarminWellness().catch(() => []),
           getEvents().catch(() => []),
+          // Cronometer is optional: a missing table or key just leaves food manual.
+          listRows<NutritionDay>(idToken, 'nutrition_daily').catch(() => []),
         ])
         if (cancelled) return
         setData({
           logged: checkins.sort((a, b) => a.date.localeCompare(b.date)),
-          checkins: withImported(checkins, wellness, activities),
+          checkins: withImported(checkins, wellness, activities, nutrition),
           photos,
           content,
           rpe,
+          nutrition,
           activities,
           wellness,
           events,

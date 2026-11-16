@@ -146,6 +146,16 @@ const TABLES = {
     columns: ['challenge_id', 'category', 'challenge', 'duration', 'difficulty', 'status', 'video_url', 'updated_at'],
     read: 'public',
   },
+  // Daily nutrition totals from Cronometer, pushed from the phone's Apple Health
+  // (workers/db/nutrition.sql). Admin-only to read; written with NUTRITION_INGEST_KEY,
+  // which can write this table only. An empty field never overwrites a stored value.
+  nutrition_daily: {
+    key: 'date',
+    columns: ['date', 'calories', 'protein_g', 'carbs_g', 'sugar_g', 'added_sugar_g'],
+    read: 'admin',
+    ingestKey: 'NUTRITION_INGEST_KEY',
+    keepExisting: true,
+  },
   // The Projects page's Progress tracker (workers/db/progress.sql). All admin-only,
   // both ways. Every measurement is text so an empty string means "skipped".
   progress_checkins: {

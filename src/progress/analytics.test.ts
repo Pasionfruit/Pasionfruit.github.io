@@ -145,8 +145,8 @@ describe('imported sleep and training, and upkeep', () => {
   const activities = [run('2026-11-16', '3', '30', '150'), run('2026-11-16', '1', '15', '150')]
 
   it('reads sleep from Garmin and training minutes from every logged workout', () => {
-    expect(importedDay('2026-11-16', wellness, activities)).toEqual({ sleep_h: '7.2', min_training: '45' })
-    expect(importedDay('2026-11-17', wellness, activities)).toEqual({ sleep_h: '', min_training: '' })
+    expect(importedDay('2026-11-16', wellness, activities)).toMatchObject({ sleep_h: '7.2', min_training: '45' })
+    expect(importedDay('2026-11-17', wellness, activities)).toMatchObject({ sleep_h: '', min_training: '' })
   })
 
   it('fills saved days from the logs and adds days that only have imported data', () => {
@@ -155,6 +155,15 @@ describe('imported sleep and training, and upkeep', () => {
       ['2026-11-16', '7.2', '45', '4'],
       ['2026-11-18', '', '20', ''],
     ])
+  })
+
+  it('takes food from Cronometer, preferring added sugar, and keeps manual values on days it sent nothing', () => {
+    const nutrition = [{ date: '2026-11-16', calories: '2100', protein_g: '140.4', carbs_g: '210', sugar_g: '60', added_sugar_g: '25' }]
+    expect(importedDay('2026-11-16', [], [], nutrition)).toMatchObject({ protein_g: '140', carbs_g: '210', sugar_g: '25' })
+    expect(importedDay('2026-11-16', [], [], [{ ...nutrition[0], added_sugar_g: '' }]).sugar_g).toBe('60')
+
+    const rows = withImported([checkin('2026-11-17', { protein_g: '90', updated_at: 'x' })], [], [], nutrition)
+    expect(rows.map((r) => [r.date, r.protein_g])).toEqual([['2026-11-16', '140'], ['2026-11-17', '90']])
   })
 
   it('counts masks this week and days since the towel and sheets changed', () => {

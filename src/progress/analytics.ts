@@ -1,7 +1,7 @@
 import type { GarminHealthRecord, GarminWellnessRecord } from '../data/sheets/types'
 import { sportOf } from '../admin/training/activities'
 import { addDaysToKey, dateFromKey, toLocalDateKey } from '../data/todoist/dates'
-import { blankCheckin, type Checkin, type ContentItem } from './client'
+import { blankCheckin, type Checkin, type ContentItem, type NutritionDay } from './client'
 
 /** The first 90-day period. Tracking carries on past it; the end date is only a reference. */
 export const PERIOD_START = '2026-11-16'
@@ -301,23 +301,36 @@ export function todayLocal(): string {
 
 // ── Imported sleep and training; routine upkeep ─────────────────────────────
 
-/** Sleep hours (Garmin) and training minutes (Garmin plus Hevy/Apple workouts) for a day. */
+export type ImportedDay = { sleep_h: string; min_training: string; protein_g: string; carbs_g: string; sugar_g: string }
+
+/**
+ * Sleep hours (Garmin), training minutes (Garmin plus Hevy/Apple workouts) and
+ * Cronometer's protein, carbs and sugar for a day. Added sugar wins over total
+ * sugar when Cronometer sent it. Anything the logs do not have is ''.
+ */
 export function importedDay(
   date: string,
   wellness: GarminWellnessRecord[],
   activities: GarminHealthRecord[],
-): { sleep_h: string; min_training: string } {
+  nutrition: NutritionDay[] = [],
+): ImportedDay {
   const watch = wellness.find((w) => w.date.slice(0, 10) === date)
   const hours = num(watch?.sleep_duration_h)
   const minutes = trainingMinutesOn(activities, date)
+  const food = nutrition.find((n) => n.date.slice(0, 10) === date)
+  const grams = (v: string | undefined) => (num(v) ? String(Math.round(num(v) as number)) : '')
   return {
     sleep_h: hours ? String(Math.round(hours * 10) / 10) : '',
     min_training: minutes > 0 ? String(minutes) : '',
+    protein_g: grams(food?.protein_g),
+    carbs_g: grams(food?.carbs_g),
+    sugar_g: grams(food?.added_sugar_g) || grams(food?.sugar_g),
   }
 }
 
 /**
- * Check-ins with sleep and training filled from the logs, so neither is ever typed.
+ * Check-ins with sleep, training and food filled from the logs, so none is typed.
+ * Food falls back to what was entered by hand on days Cronometer sent nothing.
  * A day with only imported data becomes a row with no `updated_at`, which the
  * weekly summaries do not count as a check-in.
  */
@@ -325,14 +338,25 @@ export function withImported(
   logged: Checkin[],
   wellness: GarminWellnessRecord[],
   activities: GarminHealthRecord[],
+  nutrition: NutritionDay[] = [],
 ): Checkin[] {
   const dates = new Set<string>(logged.map((c) => c.date))
   for (const w of wellness) if (num(w.sleep_duration_h)) dates.add(w.date.slice(0, 10))
   for (const a of activities) dates.add(a.date.slice(0, 10))
+  for (const n of nutrition) dates.add(n.date.slice(0, 10))
   const byDate = new Map(logged.map((c) => [c.date, c]))
-  return [...dates]
-    .sort()
-    .map((date) => ({ ...(byDate.get(date) ?? blankCheckin(date)), ...importedDay(date, wellness, activities) }))
+  return [...dates].sort().map((date) => {
+    const base = byDate.get(date) ?? blankCheckin(date)
+    const imp = importedDay(date, wellness, activities, nutrition)
+    return {
+      ...base,
+      sleep_h: imp.sleep_h,
+      min_training: imp.min_training,
+      protein_g: imp.protein_g || base.protein_g,
+      carbs_g: imp.carbs_g || base.carbs_g,
+      sugar_g: imp.sugar_g || base.sugar_g,
+    }
+  })
 }
 
 export type Upkeep = { masksThisWeek: number; towelDaysAgo: number | null; sheetsDaysAgo: number | null }

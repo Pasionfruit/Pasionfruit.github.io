@@ -63,7 +63,7 @@ function ago(days: number | null) {
 export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: ProgressData; onSaved: () => void }) {
   const [date, setDate] = useState(todayLocal)
   const saved = useMemo(() => data.logged.find((c) => c.date === date), [data.logged, date])
-  const imported = useMemo(() => importedDay(date, data.wellness, data.activities), [date, data.wellness, data.activities])
+  const imported = useMemo(() => importedDay(date, data.wellness, data.activities, data.nutrition), [date, data.wellness, data.activities, data.nutrition])
   const chores = useMemo(() => upkeep(data.logged, date), [data.logged, date])
 
   const seed = useMemo<Draft>(() => ({ ...blankCheckin(date), ...(saved ?? {}), date }), [saved, date])
@@ -191,6 +191,9 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
         <p className="sheets-meta">
           From your logs: sleep {imported.sleep_h ? `${imported.sleep_h} h` : '—'} · training {imported.min_training ? `${imported.min_training} min` : '—'}
         </p>
+        <p className="sheets-meta">
+          From Cronometer: {imported.protein_g || imported.carbs_g || imported.sugar_g ? `protein ${imported.protein_g || '—'} g · carbs ${imported.carbs_g || '—'} g · sugar ${imported.sugar_g || '—'} g` : 'nothing synced for this day yet'}
+        </p>
       </section>
 
       {reviewing && (
@@ -232,9 +235,12 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
             <input type="text" value={draft.products} placeholder="e.g. adapalene, SPF 50" onChange={(e) => set('products', e.target.value)} />
           </label>
           <div className="pg-grid pg-two">
+            <p className="sheets-meta pg-wide">Food, only used on days Cronometer sends nothing:</p>
             <Num label="Added sugar (g)" value={draft.sugar_g} onChange={(v) => set('sugar_g', v)} />
             <Num label="Protein (g)" value={draft.protein_g} onChange={(v) => set('protein_g', v)} />
             <Num label="Carbs (g)" value={draft.carbs_g} onChange={(v) => set('carbs_g', v)} />
+          </div>
+          <div className="pg-grid pg-two">
             <Num label="Content (min)" value={draft.min_content} onChange={(v) => set('min_content', v)} />
             <Num label="Leisure (min)" value={draft.min_leisure} onChange={(v) => set('min_leisure', v)} />
           </div>

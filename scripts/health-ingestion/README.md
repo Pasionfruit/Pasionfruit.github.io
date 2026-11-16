@@ -165,6 +165,26 @@ Shortcut (Shortcuts app → Automation → Time of Day, e.g. 9:00, **Run Immedia
 
 Each POST replaces the whole day's row, so send every metric each time, or a missing one blanks the stored value. Apple Health has no RingConn sleep score, so that column stays empty for these days.
 
+### Food from Cronometer (via Apple Health)
+
+Cronometer writes each day's nutrition to Apple Health (Cronometer → Settings → Integrations → Apple Health, allow writing nutrition). An iPhone Shortcut pushes the day's totals to the db Worker's `nutrition_daily` table, and the Projects check-in shows them and uses them in the charts and patterns. Days Cronometer sends nothing fall back to anything typed by hand.
+
+One-time server setup (from `workers/db`):
+```bash
+npx wrangler d1 execute pasion-db --remote --file=nutrition.sql
+npx wrangler secret put NUTRITION_INGEST_KEY      # any long random string, not another ingest key
+npx wrangler deploy
+```
+
+Shortcut (Automation → Time of Day, e.g. 9:30 PM and 9:00 AM, **Run Immediately**; see the unlock note under RingConn). For each of yesterday and today:
+1. **Find Health Samples** per metric, date = that day, summed: Dietary Energy, Protein, Carbohydrates, Sugar, and Added Sugar if Apple Health lists it (Browse → Nutrition).
+2. **Get Contents of URL**
+   - URL `https://db.abepasion.workers.dev/db/nutrition_daily`, Method `POST`
+   - Header `Authorization: Bearer <NUTRITION_INGEST_KEY>`
+   - Request Body JSON with the keys `date` (`yyyy-MM-dd`), `calories`, `protein_g`, `carbs_g`, `sugar_g`, `added_sugar_g`. Leave out any key Apple Health does not have; an empty value never overwrites a stored one.
+
+Added sugar is used for the sugar patterns when present, otherwise total sugar.
+
 ### Apple Health
 1. iPhone → Health app → tap your profile picture (top-right) → **Export All Health Data**
 2. The export creates a `.zip`. Unzip it — you'll find `export.xml` inside.

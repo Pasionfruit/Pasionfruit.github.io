@@ -98,9 +98,19 @@ export type ContentItem = {
   updated_at: string
 }
 
+/** One day of Cronometer totals, as pushed from Apple Health. */
+export type NutritionDay = {
+  date: string
+  calories: string
+  protein_g: string
+  carbs_g: string
+  sugar_g: string
+  added_sugar_g: string
+}
+
 export type WorkoutRpe = { workout_key: string; rpe: string; updated_at: string }
 
-export type ProgressTable = 'progress_checkins' | 'progress_skin_photos' | 'progress_content' | 'progress_workout_rpe'
+export type ProgressTable = 'nutrition_daily' | 'progress_checkins' | 'progress_skin_photos' | 'progress_content' | 'progress_workout_rpe'
 
 function headers(idToken: string, json = false): Record<string, string> {
   return json ? { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' } : { Authorization: `Bearer ${idToken}` }
