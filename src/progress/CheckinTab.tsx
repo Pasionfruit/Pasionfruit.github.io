@@ -1,71 +1,66 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { addDaysToKey } from '../data/todoist/dates'
-import { saveRow, type Checkin } from './client'
+import { blankCheckin, saveRow, type Checkin } from './client'
 import type { ProgressData } from './useProgressData'
-import { PERIOD_START, periodDay, todayLocal, trainingMinutesOn } from './analytics'
+import { PERIOD_START, importedDay, periodDay, todayLocal, upkeep } from './analytics'
 
 type Draft = Omit<Checkin, 'updated_at'>
 
-const BLANK: Omit<Draft, 'date'> = {
-  am_done: '', pm_done: '', acne_face: '', acne_back: '', redness: '', scar: '', products: '',
-  sleep_h: '', energy: '', mood: '', stress: '', sugar_g: '', protein_g: '', carbs_g: '', dairy: '',
-  min_training: '', min_content: '', min_leisure: '', notes: '',
-}
-
-const SCALE = ['1', '2', '3', '4', '5']
-
-/** Sensible bounds, so a typo cannot land as 800 hours of sleep. */
+/** Sensible bounds, so a typo cannot land as 800 hours of sugar. */
 const LIMITS: Partial<Record<keyof Draft, [number, number]>> = {
-  acne_face: [0, 200], acne_back: [0, 200], sleep_h: [0, 24], sugar_g: [0, 1000], protein_g: [0, 1000],
-  carbs_g: [0, 2000], min_training: [0, 1440], min_content: [0, 1440], min_leisure: [0, 1440],
+  acne_face: [0, 200], acne_back: [0, 200], sugar_g: [0, 1000], protein_g: [0, 1000],
+  carbs_g: [0, 2000], min_content: [0, 1440], min_leisure: [0, 1440],
 }
 
-function Scale({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+/** One line: the label, then 1–5. Tap a selected number again to clear it. */
+function Rating({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
-    <fieldset className="pg-field pg-scale">
-      <legend>{label}</legend>
-      <div className="pg-scale-buttons">
-        {SCALE.map((n) => (
+    <div className="pg-rating" role="group" aria-label={label}>
+      <span>{label}</span>
+      <div>
+        {['1', '2', '3', '4', '5'].map((n) => (
           <button key={n} type="button" className={value === n ? 'is-on' : ''} aria-pressed={value === n} onClick={() => onChange(value === n ? '' : n)}>
             {n}
           </button>
         ))}
       </div>
-    </fieldset>
+    </div>
   )
 }
 
-function Num({ label, value, onChange, hint, step = '1' }: { label: string; value: string; onChange: (v: string) => void; hint?: string; step?: string }) {
+function Chip({ label, on, onToggle }: { label: string; on: boolean; onToggle: () => void }) {
+  return (
+    <button type="button" className={`pg-chip${on ? ' is-on' : ''}`} aria-pressed={on} onClick={onToggle}>
+      {on ? '✓ ' : ''}{label}
+    </button>
+  )
+}
+
+function Num({ label, value, onChange, step = '1' }: { label: string; value: string; onChange: (v: string) => void; step?: string }) {
   return (
     <label className="pg-field">
       <span>{label}</span>
-      <input type="number" inputMode="decimal" min="0" step={step} value={value} placeholder={hint} onChange={(e) => onChange(e.target.value)} />
+      <input type="number" inputMode="decimal" min="0" step={step} value={value} onChange={(e) => onChange(e.target.value)} />
     </label>
   )
 }
 
+/** The age of an upkeep task, as a short phrase. */
+function ago(days: number | null) {
+  return days === null ? 'not logged' : days === 0 ? 'today' : `${days}d ago`
+}
+
 /**
- * One form for the whole day, any field skippable. Pick any past date to edit it.
- * Sleep and training time are pre-filled from the watch when nothing is saved yet.
+ * One form for the whole day. Sleep and training are not typed: they come from the
+ * Garmin and Hevy/Apple logs. Pick any past date to edit it.
  */
 export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: ProgressData; onSaved: () => void }) {
   const [date, setDate] = useState(todayLocal)
-  const saved = useMemo(() => data.checkins.find((c) => c.date === date), [data.checkins, date])
+  const saved = useMemo(() => data.logged.find((c) => c.date === date), [data.logged, date])
+  const imported = useMemo(() => importedDay(date, data.wellness, data.activities), [date, data.wellness, data.activities])
+  const chores = useMemo(() => upkeep(data.logged, date), [data.logged, date])
 
-  const imported = useMemo(() => {
-    const watch = data.wellness.find((w) => w.date.slice(0, 10) === date)
-    const minutes = trainingMinutesOn(data.activities, date)
-    return {
-      sleep_h: watch?.sleep_duration_h ? String(Math.round(Number(watch.sleep_duration_h) * 10) / 10) : '',
-      min_training: minutes > 0 ? String(minutes) : '',
-    }
-  }, [data.wellness, data.activities, date])
-
-  // Reset the draft whenever the day (or its saved row) changes.
-  const seed = useMemo<Draft>(
-    () => ({ ...BLANK, ...imported, ...(saved ?? {}), date }),
-    [saved, imported, date],
-  )
+  const seed = useMemo<Draft>(() => ({ ...blankCheckin(date), ...(saved ?? {}), date }), [saved, date])
   const [draft, setDraft] = useState<Draft>(seed)
   const [seedKey, setSeedKey] = useState(`${date}|${saved?.updated_at ?? ''}`)
   const key = `${date}|${saved?.updated_at ?? ''}`
@@ -80,6 +75,7 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
     setDraft((d) => ({ ...d, [field]: value }))
     setStatus('idle')
   }
+  const flip = (field: 'am_done' | 'pm_done' | 'mask' | 'towel' | 'sheets') => set(field, draft[field] === 'yes' ? '' : 'yes')
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -93,7 +89,8 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
     }
     setStatus('saving')
     try {
-      await saveRow(idToken, 'progress_checkins', { ...draft, updated_at: new Date().toISOString() })
+      // Sleep and training are never stored from here; the logs are the source.
+      await saveRow(idToken, 'progress_checkins', { ...draft, sleep_h: '', min_training: '', updated_at: new Date().toISOString() })
       setStatus('saved')
       setMessage('Saved.')
       onSaved()
@@ -106,32 +103,35 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
   const day = periodDay(date)
   return (
     <form className="pg-form" onSubmit={submit}>
-      <div className="pg-form-top">
-        <div className="pg-daynav">
-          <button type="button" className="secondary-action" onClick={() => setDate(addDaysToKey(date, -1))} aria-label="Previous day">‹</button>
+      <div className="pg-daynav">
+        <button type="button" className="secondary-action" onClick={() => setDate(addDaysToKey(date, -1))} aria-label="Previous day">‹</button>
+        <div className="pg-daynav-mid">
           <input type="date" value={date} max={todayLocal()} onChange={(e) => e.target.value && setDate(e.target.value)} aria-label="Check-in date" />
-          <button type="button" className="secondary-action" onClick={() => setDate(addDaysToKey(date, 1))} disabled={date >= todayLocal()} aria-label="Next day">›</button>
+          <span className="sheets-meta">
+            {day && day <= 90 ? `Day ${day} of 90` : date < PERIOD_START ? `Starts ${PERIOD_START}` : `Day ${day}`}
+            {saved ? ' · saved' : ''}
+          </span>
         </div>
-        <p className="sheets-meta">
-          {day && day <= 90 ? `Day ${day} of 90` : date < PERIOD_START ? `Starts ${PERIOD_START}` : `Day ${day}`}
-          {saved ? ' · saved' : ''}
-        </p>
+        <button type="button" className="secondary-action" onClick={() => setDate(addDaysToKey(date, 1))} disabled={date >= todayLocal()} aria-label="Next day">›</button>
       </div>
 
-      <section>
-        <div className="pg-grid">
-          <label className="pg-check"><input type="checkbox" checked={draft.am_done === 'yes'} onChange={(e) => set('am_done', e.target.checked ? 'yes' : '')} /> Skincare AM</label>
-          <label className="pg-check"><input type="checkbox" checked={draft.pm_done === 'yes'} onChange={(e) => set('pm_done', e.target.checked ? 'yes' : '')} /> Skincare PM</label>
+      <section className="pg-compact">
+        <div className="pg-chips">
+          <Chip label="Morning" on={draft.am_done === 'yes'} onToggle={() => flip('am_done')} />
+          <Chip label="Night" on={draft.pm_done === 'yes'} onToggle={() => flip('pm_done')} />
+          <Chip label="Mask" on={draft.mask === 'yes'} onToggle={() => flip('mask')} />
+          <Chip label="Towel" on={draft.towel === 'yes'} onToggle={() => flip('towel')} />
+          <Chip label="Sheets" on={draft.sheets === 'yes'} onToggle={() => flip('sheets')} />
         </div>
-        <div className="pg-grid">
-          <Scale label="Energy" value={draft.energy} onChange={(v) => set('energy', v)} />
-          <Scale label="Mood" value={draft.mood} onChange={(v) => set('mood', v)} />
-          <Scale label="Stress" value={draft.stress} onChange={(v) => set('stress', v)} />
-        </div>
-        <div className="pg-grid pg-two">
-          <Num label={imported.sleep_h && !saved ? 'Sleep h · watch' : 'Sleep (h)'} value={draft.sleep_h} step="0.1" onChange={(v) => set('sleep_h', v)} />
-          <Num label={imported.min_training && !saved ? 'Training min · watch' : 'Training (min)'} value={draft.min_training} onChange={(v) => set('min_training', v)} />
-        </div>
+        <p className="sheets-meta">
+          Masks this week {chores.masksThisWeek}/2 · towel {ago(chores.towelDaysAgo)} · sheets {ago(chores.sheetsDaysAgo)}
+        </p>
+        <Rating label="Energy" value={draft.energy} onChange={(v) => set('energy', v)} />
+        <Rating label="Mood" value={draft.mood} onChange={(v) => set('mood', v)} />
+        <Rating label="Stress" value={draft.stress} onChange={(v) => set('stress', v)} />
+        <p className="sheets-meta">
+          From your logs: sleep {imported.sleep_h ? `${imported.sleep_h} h` : '—'} · training {imported.min_training ? `${imported.min_training} min` : '—'}
+        </p>
       </section>
 
       <details className="pg-details">
@@ -141,10 +141,8 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
             <Num label="Acne · face" value={draft.acne_face} onChange={(v) => set('acne_face', v)} />
             <Num label="Acne · back" value={draft.acne_back} onChange={(v) => set('acne_back', v)} />
           </div>
-          <div className="pg-grid">
-            <Scale label="Redness" value={draft.redness} onChange={(v) => set('redness', v)} />
-            <Scale label="Scar texture" value={draft.scar} onChange={(v) => set('scar', v)} />
-          </div>
+          <Rating label="Redness" value={draft.redness} onChange={(v) => set('redness', v)} />
+          <Rating label="Scars" value={draft.scar} onChange={(v) => set('scar', v)} />
           <label className="pg-field">
             <span>Products & treatments</span>
             <input type="text" value={draft.products} placeholder="e.g. adapalene, SPF 50" onChange={(e) => set('products', e.target.value)} />
@@ -153,18 +151,12 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
             <Num label="Added sugar (g)" value={draft.sugar_g} onChange={(v) => set('sugar_g', v)} />
             <Num label="Protein (g)" value={draft.protein_g} onChange={(v) => set('protein_g', v)} />
             <Num label="Carbs (g)" value={draft.carbs_g} onChange={(v) => set('carbs_g', v)} />
-            <fieldset className="pg-field pg-scale">
-              <legend>Dairy / whey</legend>
-              <div className="pg-scale-buttons">
-                {['yes', 'no'].map((v) => (
-                  <button key={v} type="button" className={draft.dairy === v ? 'is-on' : ''} aria-pressed={draft.dairy === v} onClick={() => set('dairy', draft.dairy === v ? '' : v)}>
-                    {v}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
             <Num label="Content (min)" value={draft.min_content} onChange={(v) => set('min_content', v)} />
             <Num label="Leisure (min)" value={draft.min_leisure} onChange={(v) => set('min_leisure', v)} />
+          </div>
+          <div className="pg-chips">
+            <Chip label="Dairy / whey" on={draft.dairy === 'yes'} onToggle={() => set('dairy', draft.dairy === 'yes' ? 'no' : draft.dairy === 'no' ? '' : 'yes')} />
+            {draft.dairy === 'no' && <span className="sheets-meta">no dairy today</span>}
           </div>
           <label className="pg-field">
             <span>Notes</span>

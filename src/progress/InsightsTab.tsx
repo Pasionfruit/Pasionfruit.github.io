@@ -57,11 +57,11 @@ export function InsightsTab({ data, range }: { data: ProgressData; range: DateRa
         {weeks.length === 0 ? <p className="sheets-meta">Log a few days to see weekly summaries.</p> : (
           <div className="pg-table-wrap">
             <table className="pg-table">
-              <thead><tr><th>Week of</th><th>Days</th><th>Acne</th><th>Skincare</th><th>Sleep</th><th>Energy</th><th>Sugar</th><th>Protein</th></tr></thead>
+              <thead><tr><th>Week of</th><th>Days</th><th>Acne</th><th>Routine</th><th>Masks</th><th>Sleep</th><th>Energy</th><th>Sugar</th><th>Protein</th></tr></thead>
               <tbody>
                 {weeks.map((w) => (
                   <tr key={w.week}>
-                    <th scope="row">{w.week.slice(5)}</th><td>{w.checkins}</td><td>{fmt(w.acne)}</td><td>{w.skincareDays}/{w.checkins}</td>
+                    <th scope="row">{w.week.slice(5)}</th><td>{w.checkins}</td><td>{fmt(w.acne)}</td><td>{w.skincareDays}/{w.checkins}</td><td>{w.masks}</td>
                     <td>{fmt(w.sleep)}</td><td>{fmt(w.energy)}</td><td>{fmt(w.sugar, 0)}</td><td>{fmt(w.protein, 0)}</td>
                   </tr>
                 ))}

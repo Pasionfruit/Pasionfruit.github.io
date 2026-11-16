@@ -12,6 +12,10 @@ export type Checkin = {
   date: string
   am_done: string
   pm_done: string
+  /** 'yes' on days the towel / bed sheets were changed or a mask was done. */
+  towel: string
+  sheets: string
+  mask: string
   acne_face: string
   acne_back: string
   redness: string
@@ -63,7 +67,7 @@ export function parseStoredMarks(text: string | undefined): SkinMark[] {
 
 export function blankCheckin(date: string): Checkin {
   return {
-    date, am_done: '', pm_done: '', acne_face: '', acne_back: '', redness: '', scar: '', products: '',
+    date, am_done: '', pm_done: '', towel: '', sheets: '', mask: '', acne_face: '', acne_back: '', redness: '', scar: '', products: '',
     sleep_h: '', energy: '', mood: '', stress: '', sugar_g: '', protein_g: '', carbs_g: '', dairy: '',
     min_training: '', min_content: '', min_leisure: '', notes: '', updated_at: '',
   }

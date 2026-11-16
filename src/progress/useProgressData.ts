@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getEvents, getGarminHealth, getGarminWellness } from '../data/sheets/repositories'
 import type { EventRecord, GarminHealthRecord, GarminWellnessRecord } from '../data/sheets/types'
+import { withImported } from './analytics'
 import { listRows, type Checkin, type ContentItem, type SkinPhoto, type WorkoutRpe } from './client'
 
 export type ProgressData = {
+  /** What was saved by hand. */
+  logged: Checkin[]
+  /** Saved days plus sleep and training from Garmin/Hevy, for every chart. */
   checkins: Checkin[]
   photos: SkinPhoto[]
   content: ContentItem[]
@@ -13,7 +17,7 @@ export type ProgressData = {
   events: EventRecord[]
 }
 
-const EMPTY: ProgressData = { checkins: [], photos: [], content: [], rpe: [], activities: [], wellness: [], events: [] }
+const EMPTY: ProgressData = { logged: [], checkins: [], photos: [], content: [], rpe: [], activities: [], wellness: [], events: [] }
 
 /**
  * Everything the tracker shows. The imports (Garmin, Apple, wellness, events) are
@@ -42,7 +46,8 @@ export function useProgressData(idToken: string) {
         ])
         if (cancelled) return
         setData({
-          checkins: checkins.sort((a, b) => a.date.localeCompare(b.date)),
+          logged: checkins.sort((a, b) => a.date.localeCompare(b.date)),
+          checkins: withImported(checkins, wellness, activities),
           photos,
           content,
           rpe,

@@ -73,7 +73,7 @@ function Review({ idToken, photo, source, data, onDone }: {
       await saveRow(idToken, 'progress_skin_photos', { ...photo, marks: JSON.stringify(marks), verified: 'yes' })
       // The verified count becomes that day's acne number, so it never has to be typed.
       const date = photo.taken_at.slice(0, 10)
-      const existing = data.checkins.find((c) => c.date === date) ?? blankCheckin(date)
+      const existing = data.logged.find((c) => c.date === date) ?? blankCheckin(date)
       await saveRow(idToken, 'progress_checkins', {
         ...existing,
         [photo.angle === 'back' ? 'acne_back' : 'acne_face']: String(acne),

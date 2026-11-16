@@ -151,7 +151,7 @@ const TABLES = {
   progress_checkins: {
     key: 'date',
     columns: [
-      'date', 'am_done', 'pm_done', 'acne_face', 'acne_back', 'redness', 'scar', 'products',
+      'date', 'am_done', 'pm_done', 'towel', 'sheets', 'mask', 'acne_face', 'acne_back', 'redness', 'scar', 'products',
       'sleep_h', 'energy', 'mood', 'stress', 'sugar_g', 'protein_g', 'carbs_g', 'dairy',
       'min_training', 'min_content', 'min_leisure', 'notes', 'updated_at',
     ],

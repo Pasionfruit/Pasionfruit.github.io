@@ -18,7 +18,7 @@ import {
 
 function checkin(date: string, extra: Partial<Checkin> = {}): Checkin {
   return {
-    date, am_done: '', pm_done: '', acne_face: '', acne_back: '', redness: '', scar: '', products: '',
+    date, am_done: '', pm_done: '', towel: '', sheets: '', mask: '', acne_face: '', acne_back: '', redness: '', scar: '', products: '',
     sleep_h: '', energy: '', mood: '', stress: '', sugar_g: '', protein_g: '', carbs_g: '', dairy: '',
     min_training: '', min_content: '', min_leisure: '', notes: '', updated_at: '', ...extra,
   }
@@ -135,5 +135,35 @@ describe('parseMarks', () => {
 
   it('copes with no result at all', () => {
     expect(parseMarks(null, 100, 100)).toEqual([])
+  })
+})
+
+import { importedDay, upkeep, withImported } from './analytics'
+
+describe('imported sleep and training, and upkeep', () => {
+  const wellness = [{ date: '2026-11-16', sleep_duration_h: '7.24' }] as never[]
+  const activities = [run('2026-11-16', '3', '30', '150'), run('2026-11-16', '1', '15', '150')]
+
+  it('reads sleep from Garmin and training minutes from every logged workout', () => {
+    expect(importedDay('2026-11-16', wellness, activities)).toEqual({ sleep_h: '7.2', min_training: '45' })
+    expect(importedDay('2026-11-17', wellness, activities)).toEqual({ sleep_h: '', min_training: '' })
+  })
+
+  it('fills saved days from the logs and adds days that only have imported data', () => {
+    const rows = withImported([checkin('2026-11-16', { energy: '4', updated_at: 'x' })], wellness, [...activities, run('2026-11-18', '2', '20', '150')])
+    expect(rows.map((r) => [r.date, r.sleep_h, r.min_training, r.energy])).toEqual([
+      ['2026-11-16', '7.2', '45', '4'],
+      ['2026-11-18', '', '20', ''],
+    ])
+  })
+
+  it('counts masks this week and days since the towel and sheets changed', () => {
+    const logged = [
+      checkin('2026-11-15', { mask: 'yes' }), // last week
+      checkin('2026-11-17', { mask: 'yes', towel: 'yes' }),
+      checkin('2026-11-19', { mask: 'yes', sheets: 'yes' }),
+    ]
+    expect(upkeep(logged, '2026-11-20')).toEqual({ masksThisWeek: 2, towelDaysAgo: 3, sheetsDaysAgo: 1 })
+    expect(upkeep([], '2026-11-20')).toEqual({ masksThisWeek: 0, towelDaysAgo: null, sheetsDaysAgo: null })
   })
 })

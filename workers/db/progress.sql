@@ -5,6 +5,7 @@
 CREATE TABLE IF NOT EXISTS progress_checkins (
   date TEXT PRIMARY KEY,
   am_done TEXT NOT NULL DEFAULT '', pm_done TEXT NOT NULL DEFAULT '',
+  towel TEXT NOT NULL DEFAULT '', sheets TEXT NOT NULL DEFAULT '', mask TEXT NOT NULL DEFAULT '',
   acne_face TEXT NOT NULL DEFAULT '', acne_back TEXT NOT NULL DEFAULT '',
   redness TEXT NOT NULL DEFAULT '', scar TEXT NOT NULL DEFAULT '',
   products TEXT NOT NULL DEFAULT '',

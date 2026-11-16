@@ -1,7 +1,7 @@
-import type { GarminHealthRecord } from '../data/sheets/types'
+import type { GarminHealthRecord, GarminWellnessRecord } from '../data/sheets/types'
 import { sportOf } from '../admin/training/activities'
 import { addDaysToKey, dateFromKey, toLocalDateKey } from '../data/todoist/dates'
-import type { Checkin, ContentItem } from './client'
+import { blankCheckin, type Checkin, type ContentItem } from './client'
 
 /** The first 90-day period. Tracking carries on past it; the end date is only a reference. */
 export const PERIOD_START = '2026-11-16'
@@ -260,6 +260,7 @@ export type WeekSummary = {
   sugar: number | null
   protein: number | null
   skincareDays: number
+  masks: number
 }
 
 export function weeklySummaries(rows: Checkin[]): WeekSummary[] {
@@ -271,13 +272,14 @@ export function weeklySummaries(rows: Checkin[]): WeekSummary[] {
   return [...weeks.entries()]
     .map(([week, list]) => ({
       week,
-      checkins: list.length,
+      checkins: list.filter((c) => c.updated_at).length,
       acne: mean(list.map(acneTotal)),
       sleep: mean(list.map((c) => num(c.sleep_h))),
       energy: mean(list.map((c) => num(c.energy))),
       sugar: mean(list.map((c) => num(c.sugar_g))),
       protein: mean(list.map((c) => num(c.protein_g))),
       skincareDays: list.filter((c) => c.am_done === 'yes' && c.pm_done === 'yes').length,
+      masks: list.filter((c) => c.mask === 'yes').length,
     }))
     .sort((a, b) => a.week.localeCompare(b.week))
 }
@@ -295,4 +297,56 @@ export function periodDay(date: string): number | null {
 
 export function todayLocal(): string {
   return toLocalDateKey(new Date())
+}
+
+// ── Imported sleep and training; routine upkeep ─────────────────────────────
+
+/** Sleep hours (Garmin) and training minutes (Garmin plus Hevy/Apple workouts) for a day. */
+export function importedDay(
+  date: string,
+  wellness: GarminWellnessRecord[],
+  activities: GarminHealthRecord[],
+): { sleep_h: string; min_training: string } {
+  const watch = wellness.find((w) => w.date.slice(0, 10) === date)
+  const hours = num(watch?.sleep_duration_h)
+  const minutes = trainingMinutesOn(activities, date)
+  return {
+    sleep_h: hours ? String(Math.round(hours * 10) / 10) : '',
+    min_training: minutes > 0 ? String(minutes) : '',
+  }
+}
+
+/**
+ * Check-ins with sleep and training filled from the logs, so neither is ever typed.
+ * A day with only imported data becomes a row with no `updated_at`, which the
+ * weekly summaries do not count as a check-in.
+ */
+export function withImported(
+  logged: Checkin[],
+  wellness: GarminWellnessRecord[],
+  activities: GarminHealthRecord[],
+): Checkin[] {
+  const dates = new Set<string>(logged.map((c) => c.date))
+  for (const w of wellness) if (num(w.sleep_duration_h)) dates.add(w.date.slice(0, 10))
+  for (const a of activities) dates.add(a.date.slice(0, 10))
+  const byDate = new Map(logged.map((c) => [c.date, c]))
+  return [...dates]
+    .sort()
+    .map((date) => ({ ...(byDate.get(date) ?? blankCheckin(date)), ...importedDay(date, wellness, activities) }))
+}
+
+export type Upkeep = { masksThisWeek: number; towelDaysAgo: number | null; sheetsDaysAgo: number | null }
+
+/** Masks so far this week (target 2) and days since the towel and sheets were last changed. */
+export function upkeep(logged: Checkin[], today: string): Upkeep {
+  const start = weekStart(today)
+  const since = (field: 'towel' | 'sheets') => {
+    const last = logged.filter((c) => c[field] === 'yes' && c.date <= today).map((c) => c.date).sort().slice(-1)[0]
+    return last ? daysBetween(last, today) : null
+  }
+  return {
+    masksThisWeek: logged.filter((c) => c.mask === 'yes' && c.date >= start && c.date <= today).length,
+    towelDaysAgo: since('towel'),
+    sheetsDaysAgo: since('sheets'),
+  }
 }

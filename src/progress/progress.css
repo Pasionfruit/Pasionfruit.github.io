@@ -100,3 +100,22 @@
   .pg-sticky { position: static; padding: 0; }
   .pg-tabs { max-width: 32rem; }
 }
+
+/* ── Compact check-in ── */
+.pg-daynav { justify-content: center; gap: 0.6rem; }
+.pg-daynav-mid { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; }
+.pg-daynav-mid input { text-align: center; }
+.pg-compact { display: flex; flex-direction: column; gap: 0.5rem; }
+.pg-compact p { margin: 0; }
+.pg-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.pg-chip { border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); border-radius: var(--radius-pill); padding: 0.4rem 0.85rem; min-height: 2.5rem; font: inherit; font-size: 0.9rem; cursor: pointer; }
+.pg-chip.is-on { background: var(--page-accent, var(--accent)); border-color: var(--page-accent, var(--accent)); color: #fff; }
+.pg-rating { display: flex; align-items: center; gap: 0.6rem; }
+.pg-rating > span { flex: 0 0 4.2rem; font-size: 0.9rem; color: var(--text-strong); }
+.pg-rating > div { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.25rem; }
+.pg-rating button { border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); border-radius: var(--radius-sm); min-height: 2.5rem; font: inherit; cursor: pointer; }
+.pg-rating button.is-on { background: var(--page-accent, var(--accent)); border-color: var(--page-accent, var(--accent)); color: #fff; }
+.pg-form { gap: 0.6rem; }
+.pg-more { gap: 0.5rem; }
+.pg-card { gap: 0.5rem; }
+.pg-tabs button { min-height: 2.5rem; }
