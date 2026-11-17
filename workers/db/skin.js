@@ -62,7 +62,8 @@ export async function skinRoute(request, env, { json, deny }) {
   if (request.method !== 'POST') return deny(405, 'Use POST', request, env)
   const auth = await verifyAdmin(request, env)
   if (!auth.ok) return deny(403, auth.reason, request, env)
-  if (!env.ANTHROPIC_API_KEY) return deny(500, 'ANTHROPIC_API_KEY is not set on this worker', request, env)
+  const apiKey = String(env.ANTHROPIC_API_KEY ?? '').trim().replace(/^["']|["']$/g, '')
+  if (!apiKey) return deny(500, 'ANTHROPIC_API_KEY is not set on this worker', request, env)
 
   let body
   try {
@@ -76,7 +77,7 @@ export async function skinRoute(request, env, { json, deny }) {
 
   const upstream = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 2048,
