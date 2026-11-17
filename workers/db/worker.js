@@ -8,8 +8,6 @@
  *
  * Routes: GET/POST/PUT/DELETE /db/<table>. Only tables declared below exist.
  * Also GET/POST/DELETE /photos/<id>, the timeline's image bytes in R2 (photos.js).
- * Also POST /skin/count, which has Claude Haiku count acne in a photo (skin.js;
- * secret ANTHROPIC_API_KEY).
  * Also POST /auth/session and GET /auth/verify — this Worker is where the
  * browser trades a Google ID token for a long-lived session, and where Apps
  * Script checks one. Both live here rather than in the Ace gateway because the
@@ -23,7 +21,6 @@
 
 import { bearerToken, createHttp, mintSessionRoute, verifyAdmin, verifyRoute } from '../shared/admin.js'
 import { photoRoute } from './photos.js'
-import { skinRoute } from './skin.js'
 
 const { json, deny, preflight, corsHeaders } = createHttp({ methods: 'GET, POST, PUT, DELETE, OPTIONS' })
 
@@ -249,10 +246,6 @@ export default {
 
     if (url.pathname.startsWith('/photos/')) {
       return photoRoute(request, env, { json, deny, corsHeaders })
-    }
-
-    if (url.pathname === '/skin/count') {
-      return skinRoute(request, env, { json, deny })
     }
 
     const match = /^\/db\/([a-z_]+)$/.exec(url.pathname)

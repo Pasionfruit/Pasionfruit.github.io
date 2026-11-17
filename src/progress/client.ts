@@ -3,7 +3,7 @@
  * is admin-only, so every call carries the same session the dashboards use.
  */
 
-export const DB_BASE_URL =
+const DB_BASE_URL =
   (import.meta.env.VITE_DB_BASE_URL as string | undefined)?.trim().replace(/\/+$/, '') ||
   'https://db.abepasion.workers.dev'
 
