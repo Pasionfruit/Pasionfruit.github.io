@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+
+/** Seconds before the back photo fires, so there is time to put the phone down and turn around. */
+const BACK_COUNTDOWN = 10
 import type { SkinAngle } from './client'
 
 /**
@@ -66,6 +69,7 @@ export function GuideCamera({ angle, onShot, onClose, onFallback }: {
 }) {
   const video = useRef<HTMLVideoElement>(null)
   const [ready, setReady] = useState(false)
+  const [count, setCount] = useState<number | null>(null)
   const facing = angle === 'back' ? 'environment' : 'user'
 
   useEffect(() => {
@@ -96,22 +100,48 @@ export function GuideCamera({ angle, onShot, onClose, onFallback }: {
   async function shoot() {
     const el = video.current
     if (!el || !ready) return
+    if (angle === 'back' && count === null) {
+      setCount(BACK_COUNTDOWN)
+      return
+    }
     const blob = await snap(el)
     if (blob) onShot(new File([blob], `${angle}-${Date.now()}.jpg`, { type: 'image/jpeg' }))
   }
+
+  // The back photo counts down, then fires itself.
+  useEffect(() => {
+    if (count === null) return
+    const timer = setTimeout(() => {
+      if (count > 1) {
+        setCount(count - 1)
+      } else {
+        setCount(null)
+        void shoot()
+      }
+    }, 1000)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count])
 
   return (
     <div className="pg-guide" role="dialog" aria-label={`Take the ${angle} photo`}>
       <div className="pg-guide-frame">
         <video ref={video} playsInline muted className={facing === 'user' ? 'is-mirrored' : ''} />
         <GuideOutline angle={angle} />
+        {count !== null && <div className="pg-guide-count" role="timer" aria-live="polite">{count}</div>}
       </div>
       <p className="pg-guide-hint">
         {angle === 'back' ? 'Back inside the outline, shoulders on the dashed line.' : `Head inside the outline, eyes on the dashed line. ${angle === 'front' ? 'Face the camera.' : `Turn your ${angle} side to it.`}`}
       </p>
       <div className="pg-guide-actions">
         <button type="button" className="secondary-action" onClick={onClose}>Cancel</button>
-        <button type="button" className="primary-action" onClick={() => void shoot()} disabled={!ready}>Take {angle} photo</button>
+        {count !== null ? (
+          <button type="button" className="secondary-action" onClick={() => setCount(null)}>Stop timer</button>
+        ) : (
+          <button type="button" className="primary-action" onClick={() => void shoot()} disabled={!ready}>
+            {angle === 'back' ? `Start ${BACK_COUNTDOWN}s timer` : `Take ${angle} photo`}
+          </button>
+        )}
       </div>
     </div>
   )

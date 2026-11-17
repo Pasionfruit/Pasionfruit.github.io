@@ -365,11 +365,13 @@ function App() {
  * page rather than shown a login prompt — the dashboards are not advertised.
  */
 function AdminGate({ isAdmin }: { isAdmin: boolean }) {
+  // Outlet context does not pass through a nested Outlet by itself; forward the layout's weather.
+  const context = useOutletContext<WeatherHook>()
   if (!isAdmin) {
     return <Navigate replace to="/" />
   }
 
-  return <Outlet />
+  return <Outlet context={context} />
 }
 
 /**
