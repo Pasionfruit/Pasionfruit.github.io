@@ -103,7 +103,12 @@ export async function skinRoute(request, env, { json, deny }) {
   })
 
   if (!upstream.ok) {
-    return deny(502, `Claude returned ${upstream.status}`, request, env)
+    const detail = await upstream.json().catch(() => null)
+    const reason = detail?.error?.message ? `: ${detail.error.message}` : ''
+    if (upstream.status === 401) {
+      return deny(502, 'Anthropic rejected the API key. Re-set it with: npx wrangler secret put ANTHROPIC_API_KEY (in workers/db), then redeploy.', request, env)
+    }
+    return deny(502, `Claude returned ${upstream.status}${reason}`, request, env)
   }
   const data = await upstream.json().catch(() => null)
   const block = data?.content?.find?.((c) => c.type === 'tool_use')
