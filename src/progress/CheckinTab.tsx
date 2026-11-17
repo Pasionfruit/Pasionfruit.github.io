@@ -1,9 +1,10 @@
 import { Camera } from 'lucide-react'
-import { useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useCallback, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { addDaysToKey } from '../data/todoist/dates'
 import { blankCheckin, saveRow, type Checkin } from './client'
 import type { ProgressData } from './useProgressData'
 import { Review } from './ReviewPanel'
+import { GuideCamera } from './GuideCamera'
 import { addSkinPhoto } from './skinPhotos'
 import { SKIN_ANGLES, type SkinAngle, type SkinPhoto } from './client'
 import { PERIOD_START, importedDay, periodDay, todayLocal, upkeep } from './analytics'
@@ -109,11 +110,24 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
   const [cameraError, setCameraError] = useState('')
   const [uploading, setUploading] = useState(false)
 
-  /** A skin photo straight from the camera: stored, then circled for review. */
-  async function onSkinPhoto(angle: SkinAngle, event: ChangeEvent<HTMLInputElement>) {
+  const [guide, setGuide] = useState<SkinAngle | null>(null)
+  /** No live camera (permission denied, desktop without one): fall back to the file picker. */
+  const fallBack = useCallback(() => {
+    setGuide((angle) => {
+      if (angle) setTimeout(() => inputs.current[angle]?.click(), 0)
+      return null
+    })
+  }, [])
+
+  function onPicked(angle: SkinAngle, event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     event.target.value = ''
-    if (!file) return
+    if (file) void onSkinPhoto(angle, file)
+  }
+
+  /** A skin photo from the outline camera: stored, then counted for review. */
+  async function onSkinPhoto(angle: SkinAngle, file: File) {
+    setGuide(null)
     setCameraError('')
     setUploading(true)
     try {
@@ -154,7 +168,7 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
         </p>
         <div className="pg-camera" role="group" aria-label="Take a photo">
           {SKIN_ANGLES.map((angle) => (
-            <button key={angle} type="button" className="pg-chip" disabled={uploading} onClick={() => inputs.current[angle]?.click()}>
+            <button key={angle} type="button" className="pg-chip" disabled={uploading} onClick={() => setGuide(angle)}>
               <Camera size={16} aria-hidden="true" /> {angle}
             </button>
           ))}
@@ -166,10 +180,11 @@ export function CheckinTab({ idToken, data, onSaved }: { idToken: string; data: 
               accept="image/*"
               capture={angle === 'back' ? 'environment' : 'user'}
               hidden
-              onChange={(e) => void onSkinPhoto(angle, e)}
+              onChange={(e) => onPicked(angle, e)}
             />
           ))}
         </div>
+        {guide && <GuideCamera angle={guide} onShot={(file) => void onSkinPhoto(guide, file)} onClose={() => setGuide(null)} onFallback={fallBack} />}
         {uploading && <p className="sheets-meta" role="status">Saving photo…</p>}
         {cameraError && <p className="pg-error" role="alert">{cameraError}</p>}
         <Rating label="Energy" value={draft.energy} onChange={(v) => set('energy', v)} />

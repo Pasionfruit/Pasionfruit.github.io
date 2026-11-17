@@ -106,25 +106,21 @@ describe('progress analytics', () => {
 
 
 describe('parseMarks', () => {
-  it('turns pixel boxes into circles as a fraction of the width', () => {
-    const marks = parseMarks({ spots: [{ kind: 'acne', bbox_2d: [100, 200, 120, 220] }] }, 1000, 1000)
-    expect(marks).toHaveLength(1)
-    expect(marks[0].x).toBeCloseTo(0.11)
-    expect(marks[0].y).toBeCloseTo(0.21)
-    expect(marks[0].r).toBeCloseTo(0.012) // floor so tiny spots stay tappable
+  it('turns fractional spots into circles in width units', () => {
+    const marks = parseMarks({ spots: [{ kind: 'acne', x: 0.25, y: 0.5 }] }, 1000, 2000)
+    expect(marks).toEqual([{ kind: 'acne', x: 0.25, y: 1, r: 0.018 }])
   })
 
-  it('drops malformed, oversized, off-image and overlapping spots', () => {
+  it('drops malformed, off-image and overlapping spots', () => {
     const marks = parseMarks(
       {
         spots: [
-          { kind: 'acne', bbox_2d: [100, 100, 130, 130] },
-          { kind: 'acne', bbox_2d: [101, 101, 131, 131] }, // overlaps the first
-          { kind: 'dragon', bbox_2d: [300, 300, 320, 320] },
-          { kind: 'scar', bbox_2d: [0, 0, 900, 900] }, // a whole face is not a spot
-          { kind: 'scar', bbox_2d: [2000, 100, 2020, 120] }, // off the image
-          { kind: 'scar', bbox_2d: [1, 2, 3] },
-          { kind: 'scar', bbox_2d: [500, 500, 530, 530] },
+          { kind: 'acne', x: 0.3, y: 0.3 },
+          { kind: 'acne', x: 0.301, y: 0.301 }, // on top of the first
+          { kind: 'dragon', x: 0.5, y: 0.5 },
+          { kind: 'scar', x: 1.5, y: 0.5 }, // off the image
+          { kind: 'scar', x: 'a', y: 0.5 },
+          { kind: 'scar', x: 0.7, y: 0.7 },
         ],
       },
       1000,

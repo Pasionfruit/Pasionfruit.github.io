@@ -1,56 +1,27 @@
-import { aceJson, getAceConfig } from '../admin/ace/client'
-import type { SkinMark } from './client'
+import { DB_BASE_URL, type SkinMark } from './client'
 
-/** Longest edge sent to the vision model. Bigger costs time and VRAM without finding more spots. */
-const MAX_EDGE = 896
-const MAX_MARKS = 80
+/** Longest edge sent to Claude. Bigger costs more tokens without finding more spots. */
+const MAX_EDGE = 1280
+const MAX_MARKS = 120
 
-/** Ollama tag of a vision model that can point at things (Qwen2.5-VL returns pixel boxes). */
-export function skinVisionModel(): string {
-  return (import.meta.env.VITE_SKIN_VISION_MODEL as string | undefined)?.trim() || 'qwen2.5vl:7b'
-}
-
-const SCHEMA = {
-  type: 'object',
-  properties: {
-    spots: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          kind: { type: 'string', enum: ['acne', 'scar'] },
-          bbox_2d: { type: 'array', items: { type: 'number' }, minItems: 4, maxItems: 4 },
-        },
-        required: ['kind', 'bbox_2d'],
-      },
-    },
-  },
-  required: ['spots'],
-}
-
-type RawSpot = { kind?: unknown; bbox_2d?: unknown }
+type RawSpot = { kind?: unknown; x?: unknown; y?: unknown }
 
 /**
- * Turn the model's pixel boxes into circles. Anything malformed, outside the
- * image, absurdly large or sitting on top of another circle is dropped, so a
- * rambling model cannot flood the photo.
+ * Turn Claude's spots (0-1 fractions of the image) into circles. The counts are
+ * what matters; positions are approximate, so circles are a fixed small size and
+ * anything malformed, outside the image or on top of another is dropped.
  */
 export function parseMarks(raw: { spots?: RawSpot[] } | null | undefined, width: number, height: number): SkinMark[] {
   const marks: SkinMark[] = []
   for (const spot of raw?.spots ?? []) {
     const kind = spot.kind === 'scar' ? 'scar' : spot.kind === 'acne' ? 'acne' : null
-    const box = Array.isArray(spot.bbox_2d) ? spot.bbox_2d.map(Number) : []
-    if (!kind || box.length !== 4 || box.some((n) => !Number.isFinite(n))) continue
-    const [x1, y1, x2, y2] = box
-    const w = Math.abs(x2 - x1)
-    const h = Math.abs(y2 - y1)
-    if (w <= 0 || h <= 0 || w > width * 0.25 || h > width * 0.25) continue // a spot is small
-    const x = (x1 + x2) / 2 / width
-    const y = (y1 + y2) / 2 / width
-    if (x < 0 || x > 1 || y < 0 || y > height / width) continue
-    const r = Math.max(0.012, Math.max(w, h) / 2 / width)
-    if (marks.some((m) => Math.hypot(m.x - x, m.y - y) < Math.min(m.r, r))) continue
-    marks.push({ kind, x, y, r })
+    const fx = Number(spot.x)
+    const fy = Number(spot.y)
+    if (!kind || !Number.isFinite(fx) || !Number.isFinite(fy) || fx < 0 || fx > 1 || fy < 0 || fy > 1) continue
+    const x = fx
+    const y = (fy * height) / width // marks use the image width as the unit
+    if (marks.some((m) => Math.hypot(m.x - x, m.y - y) < 0.012)) continue
+    marks.push({ kind, x, y, r: 0.018 })
     if (marks.length >= MAX_MARKS) break
   }
   return marks
@@ -71,33 +42,20 @@ export async function prepareImage(blob: Blob): Promise<{ data: string; width: n
 }
 
 /**
- * Ask the local vision model (on the Ace host, through the Ace gateway) to find
- * acne and scars. The photo goes to your own machine only. The result is a
- * first guess for the user to correct, never a diagnosis.
+ * Ask Claude Haiku (through the db Worker, which holds the API key) to count
+ * acne and scars. The photo is sent to Anthropic for this one request. The
+ * result is a first guess for the user to correct, never a diagnosis.
  */
 export async function detectSkinMarks(idToken: string, photo: Blob, angle: string): Promise<SkinMark[]> {
-  const base = getAceConfig()
-  if (!base) throw new Error('Ace is not configured (VITE_ACE_BASE_URL), so there is no local model to ask.')
-
   const { data, width, height } = await prepareImage(photo)
-  const where =
-    angle === 'back' ? "a person's back" : angle === 'front' || angle === 'face' ? "a person's face, seen from the front" : `the ${angle} side of a person's face`
-  const result = await aceJson<{ spots?: RawSpot[] }>({
-    config: { ...base, model: skinVisionModel() },
-    idToken,
-    format: SCHEMA,
-    temperature: 0,
-    messages: [
-      {
-        role: 'user',
-        content:
-          `This is a photo of ${where}, ${width}x${height} pixels. Find every active acne spot (red or inflamed pimples, whiteheads, cysts) ` +
-          'and every acne scar (flat or pitted marks, dark or red post-acne marks). ' +
-          'Return JSON {"spots":[{"kind":"acne"|"scar","bbox_2d":[x1,y1,x2,y2]}]} with boxes in pixel coordinates of this image. ' +
-          'Mark each spot separately and tightly. Ignore freckles, moles, hair, eyes, lips and nostrils. If you see none, return {"spots":[]}.',
-        images: [data],
-      },
-    ],
+  const response = await fetch(`${DB_BASE_URL}/skin/count`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: data, angle }),
   })
-  return parseMarks(result, width, height)
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as { error?: string } | null
+    throw new Error(body?.error || `Counting failed: ${response.status}`)
+  }
+  return parseMarks((await response.json()) as { spots?: RawSpot[] }, width, height)
 }

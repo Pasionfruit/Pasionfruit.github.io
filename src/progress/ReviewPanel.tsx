@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { blankCheckin, isFaceAngle, normalizeAngle, parseStoredMarks, saveRow, type SkinMark, type SkinPhoto } from './client'
 import { faceAcneFor } from './analytics'
-import { detectSkinMarks, skinVisionModel } from './detect'
+import { detectSkinMarks } from './detect'
 import { MarkedImage } from './MarkEditor'
 import { usePhotoUrl } from './usePhotoUrl'
 import type { ProgressData } from './useProgressData'
@@ -71,14 +71,14 @@ export function Review({ idToken, photo, source, data, onDone, onCounts }: {
       <h4>Review · {normalizeAngle(photo.angle)} · {photo.taken_at.slice(0, 10)}</h4>
       {!src ? <p className="sheets-meta">Loading photo…</p> : <MarkedImage src={src} alt={`${photo.angle} photo to review`} marks={marks} onChange={phase === 'scanning' ? undefined : setMarks} />}
       <div className="pg-actions">
-        {phase !== 'scanning' && <button type="button" className="secondary-action" onClick={scan} disabled={!src}>{phase === 'idle' ? `Find spots (${skinVisionModel()})` : 'Scan again'}</button>}
-        {phase === 'scanning' && <span className="sheets-meta" role="status">Your PC is looking at the photo. This can take a minute.</span>}
+        {phase !== 'scanning' && <button type="button" className="secondary-action" onClick={scan} disabled={!src}>{phase === 'idle' ? 'Count spots' : 'Scan again'}</button>}
+        {phase === 'scanning' && <span className="sheets-meta" role="status">Claude is counting the spots…</span>}
         <button type="button" className="primary-action" onClick={confirm} disabled={saving || phase === 'scanning'}>
           {saving ? 'Saving…' : `Confirm · ${acne} acne, ${marks.length - acne} scar${marks.length - acne === 1 ? '' : 's'}`}
         </button>
         <button type="button" className="secondary-action" onClick={onDone}>Close</button>
       </div>
-      <p className="sheets-meta">The circles are a first guess from a local model. Fix them before confirming. Confirming sets that day&rsquo;s {isFaceAngle(photo.angle) ? 'face acne count (front, left and right together)' : 'back acne count'}.</p>
+      <p className="sheets-meta">The count is a first guess from Claude Haiku and the circles are approximate. Fix them before confirming. Confirming sets that day&rsquo;s {isFaceAngle(photo.angle) ? 'face acne count (front, left and right together)' : 'back acne count'}.</p>
       {error && <p className="pg-error" role="alert">{error}</p>}
     </section>
   )

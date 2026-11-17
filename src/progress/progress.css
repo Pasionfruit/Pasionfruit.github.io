@@ -139,3 +139,12 @@
   .pg-card .admin-card-actions { display: contents; }
   .pg-card .section-collapse-btn { grid-column: 2; grid-row: 1; justify-self: end; width: 2rem; height: 2rem; }
 }
+
+/* Outline camera: same silhouette every shot so the photos line up. */
+.pg-guide { position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.75rem 1rem; box-sizing: border-box; }
+.pg-guide-frame { position: relative; aspect-ratio: 3 / 4; height: min(72dvh, calc((100vw - 2rem) * 4 / 3)); max-width: 100%; overflow: hidden; border-radius: var(--radius-sm); background: #111; }
+.pg-guide-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pg-guide-frame video.is-mirrored { transform: scaleX(-1); }
+.pg-guide-outline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.85; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8)); }
+.pg-guide-hint { margin: 0; font-size: 0.85rem; text-align: center; max-width: 24rem; }
+.pg-guide-actions { display: flex; gap: 0.5rem; }
